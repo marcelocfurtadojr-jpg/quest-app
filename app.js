@@ -424,6 +424,93 @@ const QUOTES = [
   { kombat: 'KOMBAT NEVER ENDS.',                 pt: 'A disciplina é o combate diário.', source: 'MK' },
 ];
 
+// Pool de coreografias K-pop para sorteio (apenas metadados — sem letras).
+// diff: 1 (fácil) a 5 (extremo).
+const KPOP_CHOREOS = [
+  { song: 'Magnetic',         artist: 'ILLIT',         year: 2024, diff: 2, style: 'pop bounce',     dur: '2:35', tip: 'Foco no isolamento de quadril e expressão facial.' },
+  { song: 'Super Shy',        artist: 'NewJeans',      year: 2023, diff: 2, style: 'casual pop',     dur: '2:34', tip: 'Coreografia leve, ótima pra estrear no estilo.' },
+  { song: 'OMG',              artist: 'NewJeans',      year: 2023, diff: 3, style: 'urban pop',      dur: '3:35', tip: 'Trabalha sincronia em duplas. Cuide o footwork.' },
+  { song: 'God\'s Menu',      artist: 'Stray Kids',    year: 2020, diff: 4, style: 'powerful boy',   dur: '3:11', tip: 'Movimentos pesados, marca o "stomp". Energia explosiva.' },
+  { song: 'Maniac',           artist: 'Stray Kids',    year: 2022, diff: 4, style: 'powerful boy',   dur: '3:13', tip: 'Trabalha agachamento de pulo e core forte.' },
+  { song: 'Lalalala',         artist: 'Stray Kids',    year: 2023, diff: 4, style: 'aggressive',     dur: '3:11', tip: 'Movimentos curtos com pausa — staccato.' },
+  { song: 'Antifragile',      artist: 'LE SSERAFIM',   year: 2022, diff: 3, style: 'latin pop',      dur: '2:36', tip: 'Body wave + cadeira de samba. Quadril liberado.' },
+  { song: 'Easy',             artist: 'LE SSERAFIM',   year: 2024, diff: 3, style: 'sensual pop',    dur: '2:50', tip: 'Movimento contínuo, controle de braços.' },
+  { song: 'Drama',            artist: 'aespa',         year: 2023, diff: 3, style: 'urban',          dur: '3:09', tip: 'Foco na expressão e angularidade dos braços.' },
+  { song: 'Spicy',            artist: 'aespa',         year: 2023, diff: 3, style: 'pop',            dur: '3:21', tip: 'Trabalha rolagens de ombro e tornozelo solto.' },
+  { song: 'Eleven',           artist: 'IVE',           year: 2021, diff: 2, style: 'feminine pop',   dur: '3:11', tip: 'Foco em linhas longas com os braços.' },
+  { song: 'After LIKE',       artist: 'IVE',           year: 2022, diff: 3, style: 'retro disco',    dur: '2:56', tip: 'Pose disco no refrão. Atitude > técnica.' },
+  { song: 'Kitsch',           artist: 'IVE',           year: 2023, diff: 3, style: 'fashion pop',    dur: '3:00', tip: 'Coreografia "passarela" — postura ereta sempre.' },
+  { song: 'Cupid',            artist: 'FIFTY FIFTY',   year: 2023, diff: 2, style: 'soft pop',       dur: '2:54', tip: 'Coreografia minimalista, ótima primeira tentativa.' },
+  { song: 'Crazy',            artist: 'LE SSERAFIM',   year: 2024, diff: 4, style: 'powerful girl',  dur: '2:50', tip: 'Stomp + viradas rápidas. Aquecimento de tornozelo é mandatório.' },
+  { song: 'Smart',            artist: 'LE SSERAFIM',   year: 2024, diff: 3, style: 'cute pop',       dur: '2:25', tip: 'Movimento de cabeça acentuado. Faça frente ao espelho.' },
+  { song: 'I Am',             artist: 'IVE',           year: 2023, diff: 3, style: 'powerful girl',  dur: '3:14', tip: 'Movimento amplo de braços, postura régia.' },
+  { song: 'Standing Next to You', artist: 'Jungkook',  year: 2023, diff: 5, style: 'michael jackson',dur: '3:31', tip: 'Coreografia inspirada em MJ — pulso, deslize, isolamento total.' },
+  { song: 'Seven',            artist: 'Jungkook',      year: 2023, diff: 3, style: 'urban pop',      dur: '3:04', tip: 'Energia leve, sequência fluida de hip-hop.' },
+  { song: 'Hype Boy',         artist: 'NewJeans',      year: 2022, diff: 3, style: 'urban casual',   dur: '2:59', tip: 'Footwork e mudanças de direção rápidas.' },
+  { song: 'Bubble Gum',       artist: 'NewJeans',      year: 2024, diff: 2, style: 'retro pop',      dur: '3:25', tip: 'Vibe leve — foca nos gestos das mãos.' },
+  { song: 'TOMBOY',           artist: '(G)I-DLE',      year: 2022, diff: 3, style: 'attitude pop',   dur: '2:53', tip: 'Postura aberta e confiante. Pisadas firmes.' },
+  { song: 'Queencard',        artist: '(G)I-DLE',      year: 2023, diff: 3, style: 'pop attitude',   dur: '3:07', tip: 'Atitude > técnica. Erre com confiança.' },
+  { song: 'Crazy In Love',    artist: 'ITZY',          year: 2023, diff: 3, style: 'powerful girl',  dur: '3:11', tip: 'Mudanças de níveis (alto/médio/baixo).' },
+  { song: 'WANNABE',          artist: 'ITZY',          year: 2020, diff: 4, style: 'powerful girl',  dur: '3:14', tip: 'Movimentos pesados, salto agachado. Resistência alta.' },
+  { song: 'How You Like That',artist: 'BLACKPINK',     year: 2020, diff: 3, style: 'powerful',       dur: '3:01', tip: 'Foco no "killing part" central — pose impactante.' },
+  { song: 'Shut Down',        artist: 'BLACKPINK',     year: 2022, diff: 3, style: 'urban',          dur: '2:55', tip: 'Coreografia minimalista, atitude máxima.' },
+  { song: 'Magnetic Pulses',  artist: 'NCT 127',       year: 2023, diff: 5, style: 'noise dance',    dur: '3:30', tip: 'Movimento robótico complexo. Sincronia milimétrica.' },
+  { song: 'Sticker',          artist: 'NCT 127',       year: 2021, diff: 5, style: 'experimental',   dur: '3:21', tip: 'Coreografia famosa pela dificuldade. Comece em 0.5x.' },
+  { song: 'Crazy',            artist: 'NCT Dream',     year: 2024, diff: 4, style: 'urban boy',      dur: '3:01', tip: 'Sequência rápida — domina 8 contagens por vez.' },
+  { song: 'Smoothie',         artist: 'NCT Dream',     year: 2024, diff: 3, style: 'funky pop',      dur: '2:58', tip: 'Body roll central. Tronco solto.' },
+];
+
+// Desafios físicos temáticos — mistura corpos de lutadores MK + idols K-pop.
+// Ideal pra alternar quando o foco normal "cansa" (TDAH-friendly).
+const BODY_CHALLENGES = [
+  { id: 'c01', name: 'Bíceps do Kano',        inspiration: 'Kano (MK)',         focus: 'bíceps',     xp: 5, icon: '💪',
+    sets: 'Método 21s: 7 reps meia-amplitude baixa + 7 meia-amplitude alta + 7 completas. 3 séries.',
+    tip: 'Carga moderada. Sente cada porção do movimento.' },
+  { id: 'c02', name: 'Peito do Liu Kang',      inspiration: 'Liu Kang (MK)',     focus: 'peito',      xp: 6, icon: '🔥',
+    sets: '4× supino reto até a falha (8-12 reps) + 3× crucifixo polia (12-15). Pausa 90s.',
+    tip: 'Aperto máximo no topo do crucifixo, 1s de pausa.' },
+  { id: 'c03', name: 'Costas do Sub-Zero',     inspiration: 'Sub-Zero (MK)',     focus: 'dorsal',     xp: 6, icon: '❄️',
+    sets: '5× pull-up AMRAP + 3× remada curvada (8-10) + 3× pulldown pegada fechada (12).',
+    tip: 'Foco em escápula retraída antes do braço se mexer.' },
+  { id: 'c04', name: 'Ombros do Scorpion',     inspiration: 'Scorpion (MK)',     focus: 'ombro',      xp: 5, icon: '🟡',
+    sets: '4× desenvolvimento militar (6-10) + drop set elevação lateral (15→12→10).',
+    tip: 'Cotovelo guia o movimento na lateral, não o pulso.' },
+  { id: 'c05', name: 'Pernas da Kitana',       inspiration: 'Kitana (MK)',       focus: 'perna+glúteo', xp: 7, icon: '🦵',
+    sets: '5× agachamento (8-12) + 4× afundo passada (10/perna) + 3× hip thrust (12).',
+    tip: 'Aperta glúteo 1s no topo do hip thrust.' },
+  { id: 'c06', name: 'Antebraço do Raiden',    inspiration: 'Raiden (MK)',       focus: 'antebraço',  xp: 4, icon: '⚡',
+    sets: '4× farmer\'s walk 30 passos + 3× rosca punho (15).',
+    tip: 'Pegada firme, ombros pra trás durante o walk.' },
+  { id: 'c07', name: 'Pescoço do Shao Kahn',   inspiration: 'Shao Kahn (MK)',    focus: 'pescoço/trapézio', xp: 4, icon: '👹',
+    sets: '4× encolhimento halteres pesado (12) + 3× face pull (15).',
+    tip: 'Face pull obrigatório — equilibra postura.' },
+
+  { id: 'c08', name: 'Abdômen do Lee Jeno',    inspiration: 'Lee Jeno (NCT Dream)', focus: 'core',    xp: 5, icon: '🎯',
+    sets: '4× crunch (20) + 4× elevação de pernas (15) + 4× prancha (45s).',
+    tip: 'Abdômen marcado vem de cut + core treinado. Os dois.' },
+  { id: 'c09', name: 'Braços do Jay Park',     inspiration: 'Jay Park',          focus: 'braços',     xp: 6, icon: '🥊',
+    sets: 'Superset: rosca direta + tríceps testa 4×10. Termina com 21s de bíceps.',
+    tip: 'Pump masivo — descanso curto (45s) entre supersets.' },
+  { id: 'c10', name: 'Vascularidade do Wonho', inspiration: 'Wonho',             focus: 'cardio+pump',xp: 7, icon: '🩸',
+    sets: '20 min HIIT + sessão de bíceps/ombro com sets longos (15-20 reps).',
+    tip: 'Veias aparecem em BF baixo + bombeamento muscular alto.' },
+  { id: 'c11', name: 'Coxa da Lisa',           inspiration: 'Lisa (BLACKPINK)',  focus: 'glúteo+coxa',xp: 6, icon: '💃',
+    sets: '5× agachamento sumô (12) + 4× elevação pélvica unilateral (12/lado) + 3× cadeira abdutora (15).',
+    tip: 'Pé ligeiramente pra fora no sumô — recruta mais glúteo interno.' },
+  { id: 'c12', name: 'Cintura do Karina',      inspiration: 'Karina (aespa)',    focus: 'core+oblíquos', xp: 6, icon: '⏳',
+    sets: '4× woodchopper (12/lado) + 4× side plank (30s/lado) + 4× russian twist (20).',
+    tip: 'Trabalha rotação e estabilidade — cintura definida.' },
+  { id: 'c13', name: 'Postura do Hyunjin',     inspiration: 'Hyunjin (Stray Kids)', focus: 'postura', xp: 5, icon: '🎭',
+    sets: '3× face pull (15) + 3× remada vertical T-bar (10) + sequência 5min mobilidade torácica.',
+    tip: 'Postura de dançarino = costas abertas + coluna ereta.' },
+  { id: 'c14', name: 'Energia do Felix',       inspiration: 'Felix (Stray Kids)', focus: 'cardio+dança', xp: 7, icon: '🌟',
+    sets: '40min de dança intensa (cardio) + 4× burpees (10).',
+    tip: 'Dança queima muito porque combina cardio + coordenação. Energia explosiva.' },
+  { id: 'c15', name: 'Total Stage Ready',      inspiration: 'idol full pack',    focus: 'corpo todo', xp: 10, icon: '🏆',
+    sets: 'Sessão completa: peito + dorsal + perna leve + 30min cardio. Tudo em uma sessão.',
+    tip: '"Stage ready" = pronto pra ficar 2h dançando no palco. Resistência total.' },
+];
+
 // Frases curtas pra trigger de eventos especiais (overlays).
 const KOMBAT_EVENTS = {
   flawless:  { title: 'FLAWLESS VICTORY',    sub: 'Dia 7/7 XP — perfeito' },
@@ -1709,10 +1796,12 @@ function viewDashboard() {
   <section class="px-4 mt-6">
     <div class="kombat-divider">⚔ ARSENAL ⚔</div>
     <div class="grid grid-cols-2 gap-3">
-      ${quickTile('sleep',    'Sono',        I.moon,  'modal')}
-      ${quickTile('reading',  'Leitura',     I.book,  'modal')}
-      ${quickTile('rewards',  'Recompensas', I.gift,  'modal')}
-      ${quickTile('library',  'Biblioteca',  I.brain, 'modal')}
+      ${quickTile('choreo',   'Dança K-pop', I.spark,  'modal')}
+      ${quickTile('challenge','Desafios',    I.fist,   'modal')}
+      ${quickTile('sleep',    'Sono',        I.moon,   'modal')}
+      ${quickTile('reading',  'Leitura',     I.book,   'modal')}
+      ${quickTile('library',  'Biblioteca',  I.brain,  'modal')}
+      ${quickTile('rewards',  'Recompensas', I.gift,   'modal')}
       ${quickTile('achievements', `Conquistas · ${unlockedCount}`, I.award, 'modal')}
       ${quickTile('config',   'Config',      I.cog)}
     </div>
@@ -2837,6 +2926,151 @@ function modalAchievements() {
   `);
 }
 
+// ----- 6.7c Choreography (K-pop) modal --------------------
+
+function modalChoreo() {
+  // Estado persistido: histórico de coreografias aprendidas
+  if (!state.user.choreosLearned) state.user.choreosLearned = [];
+  // Sorteia uma do pool, evitando últimas 3 aprendidas
+  const recent = new Set(state.user.choreosLearned.slice(-3).map((c) => c.id));
+  const candidates = KPOP_CHOREOS.map((c, i) => ({ ...c, id: i })).filter((c) => !recent.has(c.id));
+  const c = candidates[Math.floor(Math.random() * candidates.length)] || KPOP_CHOREOS[0];
+  const diffStars = '★'.repeat(c.diff) + '☆'.repeat(5 - c.diff);
+  const searchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(c.artist + ' ' + c.song + ' dance practice')}`;
+
+  openModal(`
+    <header class="flex items-center justify-between p-4 border-b border-ink/5 dark:border-paper/5">
+      <div>
+        <div class="kombat-tagline text-[10px]">🎵 DANCE ARENA 🎵</div>
+        <h2 class="font-extrabold text-lg mt-0.5">Coreografia sorteada</h2>
+      </div>
+      <button class="modal-close p-1"><span class="w-5 h-5">${I.close}</span></button>
+    </header>
+    <div class="p-4 space-y-3">
+      <div class="q-card p-4 text-center" style="background: linear-gradient(135deg, rgba(255,183,197,0.15), rgba(183,181,255,0.15))">
+        <div class="text-xs uppercase tracking-widest text-ink/45 dark:text-paper/45">${c.artist} · ${c.year}</div>
+        <div class="font-extrabold text-2xl mt-1">${c.song}</div>
+        <div class="font-kombat text-xs text-ink/55 dark:text-paper/55 mt-2 tracking-widest">${c.style} · ${c.dur}</div>
+        <div class="mt-2 text-lg" style="color:#E84A1A">${diffStars}</div>
+        <div class="text-xs text-ink/55 dark:text-paper/55 mt-3 italic">"${c.tip}"</div>
+      </div>
+
+      <a href="${searchUrl}" target="_blank" rel="noopener" class="q-btn q-btn-primary w-full text-center">
+        🔍 Buscar "dance practice" no YouTube
+      </a>
+
+      <div class="flex gap-2">
+        <button id="choreo-reroll" class="q-btn q-btn-ghost flex-1">🎲 Sortear outra</button>
+        <button id="choreo-done" class="q-btn q-btn-finish flex-1">✓ Aprendi (+${4 + c.diff} XP)</button>
+      </div>
+
+      ${state.user.choreosLearned.length ? `
+        <div class="mt-3">
+          <h3 class="font-bold text-sm mb-2">Já aprendi (${state.user.choreosLearned.length})</h3>
+          <div class="q-card divide-y divide-ink/5 dark:divide-paper/5 max-h-40 overflow-y-auto">
+            ${state.user.choreosLearned.slice().reverse().slice(0, 10).map(l => `
+              <div class="p-2 text-xs flex justify-between">
+                <span class="font-semibold">${l.song}</span>
+                <span class="text-ink/55 dark:text-paper/55">${l.artist} · ${formatDateBR(l.date)}</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      ` : ''}
+    </div>
+  `);
+
+  document.getElementById('choreo-reroll').onclick = () => { closeModal(); modalChoreo(); };
+  document.getElementById('choreo-done').onclick = () => {
+    state.user.choreosLearned.push({ id: c.id, song: c.song, artist: c.artist, date: todayISO() });
+    const xp = 4 + c.diff;
+    addAttributeXP('resistencia', 2);
+    const change = gainXP(xp, { attr: 'vitalidade' });
+    saveState();
+    closeModal();
+    toast(`+${xp} XP — ${c.song} aprendida 🕺`);
+    confetti(900);
+    render();
+    if (change.changed) levelUpOverlay(change.from, change.to, change.promoted);
+  };
+}
+
+// ----- 6.7d Body challenges modal --------------------------
+
+function modalChallenge() {
+  if (!state.user.challengesDone) state.user.challengesDone = [];
+  // Sorteia 3 desafios não recém-feitos
+  const recent = new Set(state.user.challengesDone.slice(-5).map((c) => c.id));
+  const pool = BODY_CHALLENGES.filter((c) => !recent.has(c.id));
+  const picked = sample(pool.length ? pool : BODY_CHALLENGES, 3);
+
+  openModal(`
+    <header class="flex items-center justify-between p-4 border-b border-ink/5 dark:border-paper/5">
+      <div>
+        <div class="kombat-tagline text-[10px]">⚔ MIRROR MATCH ⚔</div>
+        <h2 class="font-extrabold text-lg mt-0.5">Desafios físicos</h2>
+        <p class="text-xs text-ink/55 dark:text-paper/55">Inspirações de quem você admira.</p>
+      </div>
+      <button class="modal-close p-1"><span class="w-5 h-5">${I.close}</span></button>
+    </header>
+    <div class="p-4 space-y-3 overflow-y-auto" style="max-height:75vh">
+      ${picked.map(c => `
+        <div class="q-card p-4 challenge-card" data-id="${c.id}">
+          <div class="flex items-start gap-3">
+            <div class="text-3xl">${c.icon}</div>
+            <div class="flex-1 min-w-0">
+              <div class="font-extrabold text-base">${c.name}</div>
+              <div class="font-kombat text-[10px] text-blood dark:text-ember tracking-widest">${c.inspiration} · ${c.focus}</div>
+              <p class="text-sm mt-2 text-ink/75 dark:text-paper/75">${c.sets}</p>
+              <p class="text-xs italic mt-1 text-ink/55 dark:text-paper/55">💡 ${c.tip}</p>
+            </div>
+            <div class="pill is-kombat flex-shrink-0">+${c.xp} XP</div>
+          </div>
+          <button class="q-btn q-btn-primary w-full mt-3 text-sm challenge-done" data-id="${c.id}" data-xp="${c.xp}" data-name="${c.name}">
+            ✓ Concluí esse desafio
+          </button>
+        </div>
+      `).join('')}
+
+      <button id="challenge-reroll" class="q-btn q-btn-ghost w-full">🎲 Sortear outros 3</button>
+
+      ${state.user.challengesDone.length ? `
+        <div class="mt-3">
+          <h3 class="font-bold text-sm mb-2">Histórico (${state.user.challengesDone.length})</h3>
+          <div class="q-card divide-y divide-ink/5 dark:divide-paper/5 max-h-40 overflow-y-auto">
+            ${state.user.challengesDone.slice().reverse().slice(0, 10).map(d => `
+              <div class="p-2 text-xs flex justify-between">
+                <span class="font-semibold">${d.name}</span>
+                <span class="text-ink/55 dark:text-paper/55">${formatDateBR(d.date)}</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      ` : ''}
+    </div>
+  `);
+
+  document.getElementById('challenge-reroll').onclick = () => { closeModal(); modalChallenge(); };
+  document.querySelectorAll('.challenge-done').forEach((btn) => btn.onclick = () => {
+    const id = btn.dataset.id;
+    const xp = +btn.dataset.xp;
+    const name = btn.dataset.name;
+    const ch = BODY_CHALLENGES.find((c) => c.id === id);
+    state.user.challengesDone.push({ id, name, date: todayISO() });
+    if (ch) addAttributeXP('forca', 2);
+    const change = gainXP(xp, { attr: 'forca' });
+    saveState();
+    toast(`+${xp} XP — ${name} concluído 💪`);
+    confetti(1100);
+    vibrate(25);
+    btn.disabled = true;
+    btn.textContent = '✓ Concluído!';
+    btn.classList.remove('q-btn-primary');
+    btn.classList.add('q-btn-ghost');
+    if (change.changed) setTimeout(() => kombatOverlay('brutality'), 400);
+  });
+}
+
 // ----- 6.8 Rewards modal -----------------------------------
 
 function modalRewards() {
@@ -3078,6 +3312,8 @@ function attachHandlers() {
       if (t === 'rewards')      modalRewards();
       if (t === 'library')      modalLibrary();
       if (t === 'achievements') modalAchievements();
+      if (t === 'choreo')       modalChoreo();
+      if (t === 'challenge')    modalChallenge();
     } else go(t);
   }));
 
