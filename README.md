@@ -231,11 +231,28 @@ Streaks ativos aplicam multiplicador ao XP ganho:
 
 ## Estética
 
-- Paleta: pink `#FFB7C5`, lavender `#B7B5FF`, mint `#A8E6CF`, ink `#1A1A2E`,
-  navy `#0F1729`
-- Tipografia: Inter (corpo) + Noto Sans KR (acentos coreanos: 좋은 아침, 주간 미션...)
+Mistura K-pop minimalista + **Mortal Kombat** (tagline, overlays e tipografia
+"kombat"), dosado pra não cansar.
+
+- **Paleta base (pastel):** pink `#FFB7C5`, lavender `#B7B5FF`, mint `#A8E6CF`,
+  ink `#1A1A2E`, navy `#0F1729`
+- **Accents Mortal Kombat:** blood `#B8242E`, ember `#E84A1A`, kgold `#D6A93E`
+- **Tipografia:** Inter (corpo) + Noto Sans KR (acentos coreanos discretos) +
+  **Russo One** (títulos kombat, "TEST YOUR MIGHT", "FINISH IT!", ranks)
+- **Mortal Kombat overlays:**
+  - `FLAWLESS VICTORY` — quando bate o cap diário (7/7 XP)
+  - `FATALITY` — quando completa weekly quest
+  - `BRUTALITY` — quando bate Personal Record em algum exercício
+  - `OUTSTANDING!` — promoção de rank
+  - `TOASTY!` — easter egg raro (5% das vezes ao completar daily quest)
+- **Damage numbers** flutuantes ao ganhar XP (estilo RPG)
+- **Health-bar** style nos XP bars (gradiente dourado→vermelho)
+- **Dragão MK** decorativo no header do dashboard
+- **Fighter silhouette** no header de Treino
+- Quote do dia rotativa: 50% coreana, 50% Mortal Kombat ("There is no
+  knowledge that is not power", "Your soul is mine", etc.)
 - Microinterações: confete sutil, animação pop, vibração curta em mobile
-- Modo escuro (toggle no canto superior direito do dashboard)
+- Modo escuro (toggle no canto superior direito)
 - Mobile-first, otimizado para viewports < 400px
 
 ## Roadmap v2

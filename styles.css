@@ -278,3 +278,229 @@ input[type=number] { -moz-appearance: textfield; }
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
   overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
 }
+
+/* =============================================================
+   MORTAL KOMBAT ACCENTS — tipografia, overlays, damage numbers,
+   health-bar style, hero ornamentação
+   ============================================================= */
+
+.font-kombat {
+  font-family: 'Russo One', 'Cinzel', Impact, system-ui, sans-serif;
+  letter-spacing: 0.04em;
+}
+
+/* Tagline tipo "TEST YOUR MIGHT" ------------------------------ */
+.kombat-tagline {
+  font-family: 'Russo One', Impact, system-ui, sans-serif;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  background: linear-gradient(180deg, #E8C56B 0%, #B8242E 70%, #6A1518 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 1px 0 rgba(184,36,46,0.10);
+  font-weight: 400;
+}
+
+/* Botão "FINISH IT!" -------------------------------------- */
+.q-btn-finish {
+  background: linear-gradient(135deg, #B8242E 0%, #E84A1A 50%, #D6A93E 100%);
+  color: #FFF9E8;
+  font-family: 'Russo One', Impact, system-ui, sans-serif;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  box-shadow: 0 6px 22px rgba(184,36,46,0.5), inset 0 1px 0 rgba(255,255,255,0.2);
+  text-shadow: 0 1px 1px rgba(0,0,0,0.4);
+  border: 1px solid rgba(214,169,62,0.5);
+  animation: emberPulse 3s ease-in-out infinite;
+}
+.q-btn-finish:hover { box-shadow: 0 8px 28px rgba(184,36,46,0.65); }
+@keyframes emberPulse {
+  0%,100% { box-shadow: 0 6px 22px rgba(184,36,46,0.5),  inset 0 1px 0 rgba(255,255,255,0.2); }
+  50%     { box-shadow: 0 8px 30px rgba(232,74,26,0.65), inset 0 1px 0 rgba(255,255,255,0.25); }
+}
+
+/* Health-bar style nas XP bars (ativada por classe .is-kombat) ---- */
+.xp-track.is-kombat {
+  background: rgba(26,26,46,0.18);
+  border: 1px solid rgba(214,169,62,0.35);
+  height: 12px;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+}
+.xp-track.is-kombat .xp-fill {
+  background: linear-gradient(90deg, #E8C56B 0%, #E84A1A 60%, #B8242E 100%);
+  box-shadow: 0 0 12px rgba(232,74,26,0.5);
+}
+.dark .xp-track.is-kombat { background: rgba(0,0,0,0.4); }
+
+/* Overlay FATALITY / FLAWLESS / BRUTALITY ----------------- */
+.mk-overlay {
+  position: fixed; inset: 0; z-index: 60;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: radial-gradient(circle at center,
+    rgba(184,36,46,0.35) 0%,
+    rgba(15,5,5,0.92) 70%);
+  animation: mkFadeIn .35s ease-out;
+  pointer-events: auto;
+}
+@keyframes mkFadeIn { from { opacity: 0 } to { opacity: 1 } }
+.mk-overlay::before,
+.mk-overlay::after {
+  content: '';
+  position: absolute;
+  width: 200%; height: 8px;
+  background: linear-gradient(90deg, transparent, #E84A1A 50%, transparent);
+  filter: blur(2px);
+  opacity: .6;
+  animation: scanline 1.2s ease-in-out infinite alternate;
+}
+.mk-overlay::before { top: 20%; }
+.mk-overlay::after  { bottom: 20%; animation-delay: -.4s; }
+@keyframes scanline {
+  from { transform: translateX(-30%); }
+  to   { transform: translateX(30%); }
+}
+
+.mk-text {
+  font-family: 'Russo One', Impact, system-ui, sans-serif;
+  font-weight: 400;
+  font-size: clamp(2.5rem, 12vw, 5rem);
+  letter-spacing: 0.12em;
+  background: linear-gradient(180deg, #FFE69E 0%, #E84A1A 55%, #6A1518 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-align: center;
+  filter: drop-shadow(0 4px 18px rgba(232,74,26,0.7));
+  animation: mkScale .55s cubic-bezier(.18,.95,.3,1.3), mkShake .5s ease-in-out .55s;
+}
+@keyframes mkScale {
+  0%   { transform: scale(.4) rotate(-3deg); opacity: 0; }
+  60%  { transform: scale(1.15) rotate(1deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0); opacity: 1; }
+}
+@keyframes mkShake {
+  0%,100% { transform: translateX(0); }
+  25%     { transform: translateX(-6px); }
+  75%     { transform: translateX(6px); }
+}
+.mk-sub {
+  font-family: 'Russo One', Impact, system-ui, sans-serif;
+  color: #E8C56B;
+  letter-spacing: 0.3em;
+  font-size: 0.85rem;
+  margin-top: 1rem;
+  text-transform: uppercase;
+  animation: mkFadeIn .8s ease-out .4s both;
+}
+.mk-close {
+  margin-top: 2rem;
+  padding: .6rem 1.4rem;
+  border: 2px solid #D6A93E;
+  border-radius: 4px;
+  background: rgba(0,0,0,0.5);
+  color: #E8C56B;
+  font-family: 'Russo One', Impact, sans-serif;
+  letter-spacing: 0.15em;
+  font-size: .8rem;
+  cursor: pointer;
+  animation: mkFadeIn .8s ease-out .6s both;
+}
+.mk-close:hover { background: rgba(184,36,46,0.4); color: #FFF; }
+
+/* Damage numbers flutuantes ao ganhar XP ------------------ */
+.dmg-num {
+  position: fixed;
+  font-family: 'Russo One', Impact, sans-serif;
+  font-size: 1.6rem;
+  color: #E8C56B;
+  text-shadow: 0 0 12px rgba(232,74,26,0.8), 0 1px 1px rgba(0,0,0,0.5);
+  pointer-events: none;
+  z-index: 55;
+  animation: dmgFloat 1.6s cubic-bezier(.25,.9,.3,1) forwards;
+  letter-spacing: 0.05em;
+}
+@keyframes dmgFloat {
+  0%   { opacity: 0; transform: translateY(0) scale(.4); }
+  20%  { opacity: 1; transform: translateY(-12px) scale(1.15); }
+  100% { opacity: 0; transform: translateY(-80px) scale(.9); }
+}
+
+/* Hero ornament background no header ---------------------- */
+.kombat-hero {
+  position: relative;
+  overflow: hidden;
+}
+.kombat-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 90% 10%, rgba(232,74,26,0.08) 0%, transparent 40%),
+    radial-gradient(circle at 10% 90%, rgba(184,36,46,0.06) 0%, transparent 35%);
+  pointer-events: none;
+}
+.kombat-hero-svg {
+  position: absolute;
+  right: -20px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 130px;
+  height: 130px;
+  opacity: 0.12;
+  pointer-events: none;
+  filter: drop-shadow(0 0 8px rgba(184,36,46,0.4));
+}
+.dark .kombat-hero-svg { opacity: 0.22; }
+
+/* Sello/divider ornamental tipo dojo ---------------------- */
+.kombat-divider {
+  display: flex; align-items: center; justify-content: center;
+  gap: .6rem;
+  margin: .4rem 0 .8rem;
+  color: rgba(184,36,46,0.45);
+  font-family: 'Russo One', sans-serif;
+  font-size: .65rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+}
+.kombat-divider::before,
+.kombat-divider::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(184,36,46,0.35), transparent);
+}
+.dark .kombat-divider { color: rgba(232,74,26,0.55); }
+.dark .kombat-divider::before,
+.dark .kombat-divider::after {
+  background: linear-gradient(90deg, transparent, rgba(232,74,26,0.5), transparent);
+}
+
+/* Card "rank" com glow dourado quando em tier alto -------- */
+.rank-elite {
+  position: relative;
+}
+.rank-elite::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(214,169,62,0.4), rgba(184,36,46,0.3), rgba(214,169,62,0.4));
+  z-index: -1;
+  filter: blur(8px);
+  animation: glowPulse 3s ease-in-out infinite;
+}
+@keyframes glowPulse {
+  0%,100% { opacity: 0.5; }
+  50%     { opacity: 0.9; }
+}
+
+/* Pill kombat (vermelho/dourado) -------------------------- */
+.pill.is-kombat {
+  background: linear-gradient(135deg, rgba(184,36,46,0.18), rgba(214,169,62,0.18));
+  border: 1px solid rgba(214,169,62,0.4);
+  color: #8B2424;
+  font-family: 'Russo One', sans-serif;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.dark .pill.is-kombat { color: #E8C56B; }

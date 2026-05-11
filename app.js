@@ -277,30 +277,44 @@ function hasPR(s) {
   return false;
 }
 
-// Frases coreanas motivacionais — rotaciona no dashboard, 1 por dia.
-// Mistura ditados clássicos, expressões k-pop e frases de fitness coreano.
-const KOREAN_QUOTES = [
+// Quotes do dia — mistura ditados coreanos (~50%) com falas Mortal Kombat (~50%).
+// Lado kombat: { kombat: 'TEXTO', pt: 'tradução', source: 'origem' }
+// Lado coreano: { ko: '...', pt: '...' }
+const QUOTES = [
+  // === Coreano (50%) ===
   { ko: '천 리 길도 한 걸음부터', pt: 'Mil milhas começam com um passo' },
-  { ko: '화이팅!',                  pt: 'Força! / Vai com tudo!' },
   { ko: '하루하루 강해진다',         pt: 'Mais forte a cada dia' },
-  { ko: '꿈꾸는 자만이 이긴다',       pt: 'Só quem sonha vence' },
   { ko: '오늘의 나는 어제의 나보다 강하다', pt: 'Hoje sou mais forte que ontem' },
   { ko: '천천히, 그러나 멈추지 마라', pt: 'Devagar, mas sem parar' },
   { ko: '실패는 성공의 어머니',       pt: 'O fracasso é mãe do sucesso' },
   { ko: '운동은 약이다',              pt: 'Exercício é remédio' },
   { ko: '한계는 머릿속에 있다',       pt: 'O limite está na cabeça' },
   { ko: '땀은 거짓말 하지 않는다',     pt: 'O suor não mente' },
-  { ko: '포기하지 마',                pt: 'Não desista' },
-  { ko: '오늘도 수고했어',            pt: 'Bom trabalho hoje também' },
   { ko: '시작이 반이다',              pt: 'Começar já é metade' },
   { ko: '꾸준함이 답이다',            pt: 'Consistência é a resposta' },
-  { ko: '괜찮아, 잘 하고 있어',       pt: 'Tá tudo bem, você tá indo bem' },
-  { ko: '한 번 더!',                  pt: 'Mais uma vez!' },
-  { ko: '근육은 거짓말 하지 않는다',   pt: 'Os músculos não mentem' },
-  { ko: '오늘이 가장 젊은 날',         pt: 'Hoje é o dia mais jovem que você terá' },
-  { ko: '나는 나의 영웅이다',          pt: 'Eu sou o meu próprio herói' },
-  { ko: '쉬어도 괜찮아',               pt: 'Tudo bem descansar também' },
+
+  // === Mortal Kombat (50%) ===
+  { kombat: 'TEST YOUR MIGHT.',                   pt: 'Hoje você é seu próprio adversário.', source: 'MK' },
+  { kombat: 'THERE IS NO KNOWLEDGE THAT IS NOT POWER.', pt: 'Não há conhecimento que não seja poder.', source: 'MK3' },
+  { kombat: 'FATALITY IS NOT THE END — IT IS THE PROOF.', pt: 'O fim não é o fim — é a prova.', source: 'MK' },
+  { kombat: 'YOUR SOUL IS MINE.',                 pt: 'Seu progresso é seu — ninguém tira.', source: 'Shang Tsung' },
+  { kombat: 'POWER. STRENGTH. DISCIPLINE.',       pt: 'Os três pilares do treino.', source: 'MK' },
+  { kombat: 'GET OVER HERE!',                     pt: 'Levanta. Hoje é dia de luta.', source: 'Scorpion' },
+  { kombat: 'WE FIGHT NOT FOR HONOR, BUT FOR LIFE.', pt: 'Treinamos pela vida, não pela glória.', source: 'Liu Kang' },
+  { kombat: 'FLAWLESS VICTORY AWAITS THE PATIENT.', pt: 'A vitória impecável recompensa quem persiste.', source: 'MK' },
+  { kombat: 'IT HAS BEGUN.',                      pt: 'A jornada começou.', source: 'Shao Kahn' },
+  { kombat: 'KOMBAT NEVER ENDS.',                 pt: 'A disciplina é o combate diário.', source: 'MK' },
 ];
+
+// Frases curtas pra trigger de eventos especiais (overlays).
+const KOMBAT_EVENTS = {
+  flawless:  { title: 'FLAWLESS VICTORY',    sub: 'Dia 7/7 XP — perfeito' },
+  fatality:  { title: 'FATALITY',            sub: 'Weekly quest derrotada' },
+  brutality: { title: 'BRUTALITY',           sub: 'PERSONAL RECORD batido' },
+  finish:    { title: 'FINISH IT!',          sub: 'Dia registrado' },
+  outstanding:{ title: 'OUTSTANDING!',       sub: 'Promoção de rank' },
+  toasty:    { title: 'TOASTY!',             sub: 'Surpresa de combo' },
+};
 
 // 5 atributos / 능력치 — crescem por categoria de ação.
 // 힘 força, 지구력 resistência, 지혜 sabedoria, 절제 disciplina, 활력 vitalidade
@@ -836,12 +850,14 @@ function checkAchievements() {
   }
 }
 
-/** Retorna a frase coreana do dia (determinística — muda 1x por dia). */
-function dailyKoreanQuote() {
+/** Retorna a quote do dia (determinística — muda 1x por dia).
+ *  Pode retornar quote coreana OU frase Mortal Kombat. */
+function dailyQuote() {
   const d = new Date(todayISO()).getTime();
-  const idx = Math.floor(d / 86400000) % KOREAN_QUOTES.length;
-  return KOREAN_QUOTES[idx];
+  const idx = Math.floor(d / 86400000) % QUOTES.length;
+  return QUOTES[idx];
 }
+const dailyKoreanQuote = dailyQuote; // compat — chamada antiga ainda funciona
 
 /** Calcula XP do dia a partir de um log diário. Cap em DAILY_XP_CAP. */
 function computeDayXP(log) {
@@ -966,6 +982,23 @@ const I = {
   award:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.5 17 22l-5-3-5 3 1.5-8.5"/></svg>`,
   brain:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-1.04Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-1.04Z"/></svg>`,
   info:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`,
+  // === Decorativos MK ===
+  // Dragão MK estilizado (silhouette ornamental — para background de hero)
+  dragon: `<svg viewBox="0 0 200 200" fill="currentColor"><path d="M100 18c-12 0-22 8-28 20-4-2-10-2-14 2-6 6-4 16 2 22-8 4-14 14-12 24 2 10 12 18 22 18-2 4-2 10 2 14 4 4 10 4 14 2-2 8 0 18 8 22 8 4 18 0 22-8 4 8 14 12 22 8 8-4 10-14 8-22 4 2 10 2 14-2 4-4 4-10 2-14 10 0 20-8 22-18 2-10-4-20-12-24 6-6 8-16 2-22-4-4-10-4-14-2-6-12-16-20-28-20zm-32 60c4 0 8 4 8 8s-4 8-8 8-8-4-8-8 4-8 8-8zm64 0c4 0 8 4 8 8s-4 8-8 8-8-4-8-8 4-8 8-8zm-46 30h28c-2 8-8 14-14 14s-12-6-14-14z"/></svg>`,
+  // Punho cerrado (fighter pose)
+  fist: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M5.5 9c0-1.5 1-2.5 2.5-2.5h1V5c0-1.5 1-2.5 2.5-2.5S14 3.5 14 5v1.5h1.5C17 6.5 18 7.5 18 9v6c0 3-2 5-5 5h-2c-3 0-5-2-5-5V9z"/></svg>`,
+  // Lightning bolt (Raiden style)
+  bolt: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L4 14h6l-2 8 10-14h-7z"/></svg>`,
+  // Chama (Scorpion ember)
+  flame: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c-1 4-4 5-4 9 0 2 1 4 4 4s4-2 4-4c0-2-2-3-4-9zm-3 13c-2 0-4 2-4 5h14c0-3-2-5-4-5-1 0-2 1-3 1s-2-1-3-1z"/></svg>`,
+  // Floco/cristal (Sub-Zero)
+  ice: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2v20M2 12h20M5 5l14 14M19 5L5 19"/></svg>`,
+  // Caveira (boss / brutal)
+  skull: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C7 2 4 5 4 10v5l2 2v3h3v-2h2v2h2v-2h2v2h3v-3l2-2v-5c0-5-3-8-8-8zm-3 8a2 2 0 110 4 2 2 0 010-4zm6 0a2 2 0 110 4 2 2 0 010-4z"/></svg>`,
+  // Espada (Kitana fans)
+  sword: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="14 6 18 2 22 6 18 10 18 14 14 18 10 14 14 10"/><line x1="14" y1="18" x2="2" y2="22"/></svg>`,
+  // Fighter silhouette (combat pose) — usado como hero na tela Treino
+  fighter: `<svg viewBox="0 0 120 200" fill="currentColor"><circle cx="60" cy="22" r="14"/><path d="M50 38c-4 8-12 14-22 18-4 1-4 8 0 8l18-2 6 22-22 28c-3 4 1 10 6 8l24-12 4 30c0 6 8 6 8 0l4-30 24 12c5 2 9-4 6-8L84 84l6-22 18 2c4 0 4-7 0-8-10-4-18-10-22-18-2-3-12-3-14 0l-6 6-6-6c-2-3-12-3-14 0z"/></svg>`,
 };
 
 // ===== 5. FX (efeitos visuais e hápticos) ====================
@@ -997,6 +1030,44 @@ function confetti(durationMs = 1400) {
     fx.appendChild(c);
     setTimeout(() => c.remove(), durationMs + 400);
   }
+}
+
+/** Overlay tipo Mortal Kombat — "FATALITY!", "FLAWLESS VICTORY!", etc. */
+function kombatOverlay(kind = 'finish') {
+  const ev = KOMBAT_EVENTS[kind] || KOMBAT_EVENTS.finish;
+  const overlay = document.createElement('div');
+  overlay.className = 'mk-overlay';
+  overlay.innerHTML = `
+    <div class="mk-text">${ev.title}</div>
+    <div class="mk-sub">${ev.sub}</div>
+    <button class="mk-close">PROSSEGUIR</button>
+  `;
+  document.body.appendChild(overlay);
+  vibrate([60, 30, 100]);
+  confetti(1500);
+  // Auto-close em 2.4s ou no clique
+  const close = () => overlay.remove();
+  overlay.querySelector('.mk-close').onclick = close;
+  overlay.onclick = (e) => { if (e.target === overlay) close(); };
+  setTimeout(close, 2800);
+}
+
+/** Damage number flutuante — emerge perto do dedo do usuário ao ganhar XP. */
+function damageNumber(amount, anchorEl) {
+  const fx = document.getElementById('fx');
+  const num = document.createElement('div');
+  num.className = 'dmg-num';
+  num.textContent = `+${amount} XP`;
+  let x = window.innerWidth / 2, y = window.innerHeight / 2;
+  if (anchorEl) {
+    const rect = anchorEl.getBoundingClientRect();
+    x = rect.left + rect.width / 2;
+    y = rect.top + rect.height / 2;
+  }
+  num.style.left = `${x - 30}px`;
+  num.style.top  = `${y - 20}px`;
+  fx.appendChild(num);
+  setTimeout(() => num.remove(), 1700);
 }
 
 function levelUpOverlay(fromRank, toRank, promoted = true) {
@@ -1074,9 +1145,18 @@ function viewDashboard() {
   const attrs = state.user.attributes || { forca:0, resistencia:0, sabedoria:0, disciplina:0, vitalidade:0 };
   const unlockedCount = (state.user.achievementsUnlocked || []).length;
 
+  // Renderiza quote: coreano OU kombat estilo MK
+  const quoteHtml = quote.kombat
+    ? `<div class="font-kombat text-sm tracking-widest text-blood dark:text-ember">${quote.kombat}</div>
+       <div class="text-xs italic text-ink/55 dark:text-paper/55">"${quote.pt}" <span class="opacity-60">— ${quote.source || 'Mortal Kombat'}</span></div>`
+    : `<div class="font-display text-base text-ink/80 dark:text-paper/80">${quote.ko}</div>
+       <div class="text-xs italic text-ink/55 dark:text-paper/55">"${quote.pt}"</div>`;
+  const borderClass = quote.kombat ? 'border-blood/60' : 'border-pink/60 dark:border-pink/50';
+
   return `
-  <header class="pt-7 pb-3 px-5">
-    <div class="flex items-center justify-between">
+  <header class="pt-7 pb-3 px-5 kombat-hero">
+    <div class="kombat-hero-svg text-blood">${I.dragon}</div>
+    <div class="flex items-center justify-between relative">
       <div>
         <div class="font-display text-xs uppercase tracking-widest text-ink/40 dark:text-paper/40">${g.ko}</div>
         <h1 class="text-2xl font-extrabold mt-0.5">${g.pt}, ${u.name}.</h1>
@@ -1085,25 +1165,24 @@ function viewDashboard() {
         ${state.user.darkMode ? '☀️' : '🌙'}
       </button>
     </div>
-    <div class="mt-3 pl-3 border-l-2 border-pink/60 dark:border-pink/50">
-      <div class="font-display text-base text-ink/80 dark:text-paper/80">${quote.ko}</div>
-      <div class="text-xs italic text-ink/55 dark:text-paper/55">"${quote.pt}"</div>
+    <div class="mt-3 pl-3 border-l-2 ${borderClass} relative">
+      ${quoteHtml}
     </div>
   </header>
 
   <section class="px-4">
-    <div class="q-card p-4 flex items-center gap-4">
+    <div class="q-card p-4 flex items-center gap-4 ${RANKS.indexOf(r) >= 6 ? 'rank-elite' : ''}">
       <div class="rank-badge text-paper" style="background:${r.color}">
         ${r.name[0].toUpperCase()}
       </div>
       <div class="flex-1 min-w-0">
         <div class="flex items-baseline justify-between gap-2">
-          <div class="font-extrabold text-lg" style="color:${r.color}">${r.name}</div>
+          <div class="font-kombat text-lg uppercase tracking-wider" style="color:${r.color}">${r.name}</div>
           <div class="text-xs text-ink/50 dark:text-paper/50">
-            ${next ? `→ ${next.name} em ${next.threshold - rxp} XP` : 'CHALLENGER 👑'}
+            ${next ? `→ ${next.name} em ${next.threshold - rxp} XP` : '👑 CHALLENGER'}
           </div>
         </div>
-        <div class="xp-track mt-2"><div class="xp-fill" style="width:${progress}%"></div></div>
+        <div class="xp-track is-kombat mt-2"><div class="xp-fill" style="width:${progress}%"></div></div>
         <div class="flex justify-between text-xs mt-1 text-ink/55 dark:text-paper/55">
           <span>Rank: <b>${rxp} XP</b></span>
           <span>Semana: <b>${wxp}</b></span>
@@ -1126,9 +1205,8 @@ function viewDashboard() {
   <section class="px-4 mt-4">
     <div class="q-card p-3">
       <div class="flex items-center justify-between mb-2">
-        <h3 class="font-extrabold text-sm flex items-center gap-2">
-          능력치 <span class="font-normal text-xs text-ink/50 dark:text-paper/50">atributos</span>
-        </h3>
+        <h3 class="font-kombat text-sm tracking-widest uppercase">Atributos</h3>
+        <span class="text-xs text-ink/45 dark:text-paper/45">stats de combate</span>
       </div>
       <div class="grid grid-cols-5 gap-1">
         ${ATTRIBUTES.map(a => {
@@ -1138,10 +1216,11 @@ function viewDashboard() {
           return `
           <div class="flex flex-col items-center gap-1">
             <div class="flex flex-col-reverse items-center h-14 w-full">
-              <div class="w-7 rounded-md transition-all" style="height:${h}px; background:${a.color}"></div>
+              <div class="w-7 rounded-md transition-all" style="height:${h}px; background:${a.color}; box-shadow: 0 0 8px ${a.color}55"></div>
             </div>
+            <div class="text-base">${a.icon}</div>
             <div class="text-[10px] font-bold" style="color:${a.color}">${val}</div>
-            <div class="font-display text-[10px] text-ink/55 dark:text-paper/55">${a.ko}</div>
+            <div class="text-[10px] text-ink/55 dark:text-paper/55">${a.name}</div>
           </div>`;
         }).join('')}
       </div>
@@ -1196,16 +1275,16 @@ function viewDashboard() {
   ` : ''}
 
   <section class="px-4 mt-6">
-    <button id="open-log" class="q-btn q-btn-primary w-full py-4 text-base">
-      <span class="w-5 h-5">${I.plus}</span> Registrar dia
+    <button id="open-log" class="q-btn q-btn-finish w-full py-4 text-base">
+      <span class="w-5 h-5">${I.flame}</span> FINISH IT! <span class="w-5 h-5">${I.flame}</span>
     </button>
+    <p class="text-center text-xs text-ink/45 dark:text-paper/45 mt-2">
+      Registrar dia · ${dayXP}/${DAILY_XP_CAP} XP capturados hoje
+    </p>
   </section>
 
   <section class="px-4 mt-6">
-    <div class="flex items-center justify-between mb-2">
-      <h2 class="font-extrabold text-lg">Acessos rápidos</h2>
-      <span class="font-display text-xs text-ink/40 dark:text-paper/40">빠른 메뉴</span>
-    </div>
+    <div class="kombat-divider">⚔ ARSENAL ⚔</div>
     <div class="grid grid-cols-2 gap-3">
       ${quickTile('sleep',    'Sono',        I.moon,  'modal')}
       ${quickTile('reading',  'Leitura',     I.book,  'modal')}
@@ -1217,7 +1296,7 @@ function viewDashboard() {
   </section>
 
   <section class="px-4 mt-6 pb-2 text-center">
-    <div class="font-display text-xs text-ink/35 dark:text-paper/35">화이팅! · 오늘도 수고했어 · 한 번 더!</div>
+    <div class="font-kombat text-[10px] text-blood/50 dark:text-ember/50 tracking-[0.4em]">— MORTAL KOMBAT NEVER ENDS —</div>
   </section>
   `;
 }
@@ -1346,12 +1425,22 @@ function modalDailyLog() {
     saveState();
 
     closeModal();
-    toast(`+${newLog.xp} XP salvos 🎉`);
+    // Damage number flutuante perto do botão clicado
+    const finishBtn = document.getElementById('open-log');
+    damageNumber(newLog.xp, finishBtn);
     confetti(900);
     vibrate(25);
 
+    // FLAWLESS VICTORY se dia perfeito (cap atingido)
+    if (newLog.xp >= DAILY_XP_CAP) {
+      setTimeout(() => kombatOverlay('flawless'), 400);
+    } else {
+      toast(`+${newLog.xp} XP salvos 🎉`);
+    }
+
     if (change.changed) {
-      levelUpOverlay(change.from, change.to, change.promoted);
+      setTimeout(() => kombatOverlay('outstanding'), 800);
+      setTimeout(() => levelUpOverlay(change.from, change.to, change.promoted), 1400);
     }
     render();
   });
@@ -1380,30 +1469,40 @@ function upsertDailyLog(log) {
 // ----- 6.3 Workout view -------------------------------------
 
 function viewWorkout() {
-  const types = Object.keys(EXERCISE_LIBRARY); // todos os tipos com exercícios cadastrados
-  const labels = {
-    'Upper A': '벤치 데이', 'Upper B': '인클라인 데이',
-    'Lower A': '스쿼트 데이', 'Lower B': '힙 데이',
-    'Push': '푸시', 'Pull': '풀',
-    'Core/Abs': '코어', 'Cardio HIIT': '카디오',
-    'Calistenia': '맨몸', 'Dança K-pop': '댄스', 'Outro': '기타',
+  const types = Object.keys(EXERCISE_LIBRARY);
+  const subtitles = {
+    'Upper A': 'peito + dorsais', 'Upper B': 'peito alto + ombros',
+    'Lower A': 'compostos pesados', 'Lower B': 'glúteo + acessórios',
+    'Push': 'peito · ombro · tríceps', 'Pull': 'dorsais · bíceps',
+    'Core/Abs': 'núcleo de combate', 'Cardio HIIT': 'queima · resistência',
+    'Calistenia': 'sem peso · só corpo', 'Dança K-pop': 'cardio + coordenação',
+    'Outro': 'modo livre',
+  };
+  const icons = {
+    'Upper A': I.fist, 'Upper B': I.fist, 'Lower A': I.bolt, 'Lower B': I.bolt,
+    'Push': I.flame, 'Pull': I.dumb, 'Core/Abs': I.skull,
+    'Cardio HIIT': I.bolt, 'Calistenia': I.fighter, 'Dança K-pop': I.spark,
+    'Outro': I.sword,
   };
   return `
-  <header class="pt-7 pb-3 px-5">
-    <div class="font-display text-xs uppercase tracking-widest text-ink/40 dark:text-paper/40">운동</div>
-    <h1 class="text-2xl font-extrabold">Treino</h1>
-    <p class="text-sm text-ink/55 dark:text-paper/55">Escolha um split. Toque (i) em qualquer exercício pra ver técnica completa.</p>
+  <header class="pt-7 pb-3 px-5 kombat-hero">
+    <div class="absolute right-2 top-6 w-24 h-32 text-blood opacity-15 dark:opacity-25 pointer-events-none">${I.fighter}</div>
+    <div class="kombat-tagline text-xs">⚔ TEST YOUR MIGHT ⚔</div>
+    <h1 class="text-2xl font-extrabold mt-1">Treino</h1>
+    <p class="text-sm text-ink/55 dark:text-paper/55 max-w-[75%]">Escolha um split. Toque <b>(i)</b> em qualquer exercício pra técnica completa.</p>
     <button id="open-library" class="q-btn q-btn-ghost mt-3 text-sm">
-      <span class="w-4 h-4">${I.brain}</span> Biblioteca de exercícios
+      <span class="w-4 h-4">${I.brain}</span> Biblioteca completa
     </button>
   </header>
   <section class="px-4 space-y-3">
+    <div class="kombat-divider">SELECIONE SEU ESTILO</div>
     <div class="grid grid-cols-2 gap-2">
       ${types.map(t => `
-        <button class="q-card p-3 text-left workout-start" data-type="${t}">
-          <div class="font-display text-xs text-ink/45 dark:text-paper/45">${labels[t] || ''}</div>
-          <div class="font-bold">${t}</div>
-          <div class="text-xs text-ink/45 dark:text-paper/45 mt-0.5">${(EXERCISE_LIBRARY[t]||[]).length} exercícios</div>
+        <button class="q-card p-3 text-left workout-start relative" data-type="${t}">
+          <div class="absolute top-2 right-2 w-5 h-5 text-blood/50">${icons[t] || I.dumb}</div>
+          <div class="font-kombat text-[10px] text-blood/70 dark:text-ember/70 tracking-widest uppercase">${(EXERCISE_LIBRARY[t]||[]).length} moves</div>
+          <div class="font-bold mt-0.5">${t}</div>
+          <div class="text-xs text-ink/50 dark:text-paper/50 mt-0.5 leading-tight">${subtitles[t] || ''}</div>
         </button>`).join('')}
     </div>
   </section>
@@ -1602,14 +1701,30 @@ function modalWorkoutSession(type, dateISO = null) {
     });
     start.exercises = start.exercises.filter((ex) => ex.sets.length);
     if (!start.exercises.length) { toast('Nada para salvar'); return; }
+
+    // Detecta PR (peso > sessão anterior em algum exercício)
+    let prDetected = false;
+    for (const ex of start.exercises) {
+      const last = lastSessionsFor(ex.name, 1)[0];
+      if (!last) continue;
+      const curTop = Math.max(...ex.sets.map(s => +s.weight || 0));
+      const lastTop = Math.max(...last.sets.map(s => +s.weight || 0));
+      if (curTop > lastTop && lastTop > 0) { prDetected = true; break; }
+    }
+
     // Substitui sessão do mesmo dia/tipo
     const idx = state.workouts.findIndex((w) => w.date === start.date && w.type === start.type);
     if (idx >= 0) state.workouts[idx] = start;
     else state.workouts.push(start);
     saveState();
     closeModal();
-    toast('Treino salvo 💪');
     confetti(700);
+    if (prDetected) {
+      kombatOverlay('brutality');
+      addAttributeXP('forca', 5);
+    } else {
+      toast('Treino salvo 💪');
+    }
     render();
   });
 }
@@ -1652,9 +1767,9 @@ function viewNutrition() {
   const pPct     = Math.min(100, (totals.p / pGoal) * 100);
 
   return `
-  <header class="pt-7 pb-3 px-5">
-    <div class="font-display text-xs uppercase tracking-widest text-ink/40 dark:text-paper/40">식단 · NUTRIÇÃO</div>
-    <h1 class="text-2xl font-extrabold">Nutrição hoje</h1>
+  <header class="pt-7 pb-3 px-5 kombat-hero">
+    <div class="kombat-tagline text-xs">🔥 FUEL FOR BATTLE 🔥</div>
+    <h1 class="text-2xl font-extrabold mt-1">Nutrição</h1>
     <p class="text-sm text-ink/55 dark:text-paper/55">Toque em um alimento pra adicionar.</p>
   </header>
 
@@ -1689,10 +1804,7 @@ function viewNutrition() {
   </section>
 
   <section class="px-4 mb-4">
-    <h2 class="font-extrabold mb-2 flex items-center gap-2">
-      Refeições de hoje
-      <span class="font-display text-xs text-ink/40 dark:text-paper/40">오늘의 식사</span>
-    </h2>
+    <h2 class="font-extrabold mb-2">Refeições de hoje</h2>
     <div class="q-card divide-y divide-ink/5 dark:divide-paper/5">
       ${log.meals.length ? log.meals.slice().reverse().map((m, idx) => `
         <div class="p-3 flex items-center gap-3 text-sm">
@@ -1955,9 +2067,9 @@ function viewInsights() {
   const weakest = findWeakestArea(last7);
 
   return `
-  <header class="pt-7 pb-3 px-5">
-    <div class="font-display text-xs uppercase tracking-widest text-ink/40 dark:text-paper/40">주간 분석</div>
-    <h1 class="text-2xl font-extrabold">Insights da semana</h1>
+  <header class="pt-7 pb-3 px-5 kombat-hero">
+    <div class="kombat-tagline text-xs">⚡ BATTLE REPORT ⚡</div>
+    <h1 class="text-2xl font-extrabold mt-1">Insights da semana</h1>
   </header>
 
   <section class="px-4 space-y-3">
@@ -2193,8 +2305,8 @@ function modalLibrary() {
   openModal(`
     <header class="flex items-center justify-between p-4 border-b border-ink/5 dark:border-paper/5">
       <div>
-        <div class="font-display text-xs uppercase tracking-widest text-ink/40 dark:text-paper/40">운동 도서관</div>
-        <h2 class="font-extrabold text-lg">Biblioteca de exercícios</h2>
+        <div class="kombat-tagline text-[10px]">MOVE-SET ARCHIVE</div>
+        <h2 class="font-extrabold text-lg mt-0.5">Biblioteca de exercícios</h2>
       </div>
       <button class="modal-close p-1"><span class="w-5 h-5">${I.close}</span></button>
     </header>
@@ -2249,8 +2361,8 @@ function modalAchievements() {
   openModal(`
     <header class="flex items-center justify-between p-4 border-b border-ink/5 dark:border-paper/5">
       <div>
-        <div class="font-display text-xs uppercase tracking-widest text-ink/40 dark:text-paper/40">업적</div>
-        <h2 class="font-extrabold text-lg">Conquistas <span class="text-sm font-normal text-ink/55 dark:text-paper/55">${unlocked.length}/${total}</span></h2>
+        <div class="kombat-tagline text-[10px]">⚔ HALL OF FAME ⚔</div>
+        <h2 class="font-extrabold text-lg mt-0.5">Conquistas <span class="text-sm font-normal text-ink/55 dark:text-paper/55">${unlocked.length}/${total}</span></h2>
       </div>
       <button class="modal-close p-1"><span class="w-5 h-5">${I.close}</span></button>
     </header>
@@ -2484,8 +2596,11 @@ function attachHandlers() {
         state.quests.dailyAssigned.completed.push(qid);
         confetti(500); vibrate(15);
         change = addQuestXP(q?.xp || 1, q?.tag);
+        damageNumber(change.finalAmt, row);
         const mult = change.mult > 1 ? ` (combo ×${change.mult.toFixed(1)})` : '';
-        toast(`+${change.finalAmt} XP${mult}`);
+        if (change.mult > 1) toast(`COMBO ×${change.mult.toFixed(1)}!`);
+        // Easter egg "TOASTY!" 5% das vezes
+        if (Math.random() < 0.05) setTimeout(() => kombatOverlay('toasty'), 600);
       }
       saveState(); render();
       if (change.changed) levelUpOverlay(change.from, change.to, change.promoted);
@@ -2498,12 +2613,12 @@ function attachHandlers() {
     let change = { changed: false };
     if (wq.completed) {
       change = addQuestXP(wq.item.xp);
-      confetti(1200); toast(`+${wq.item.xp} XP weekly!`);
+      kombatOverlay('fatality'); // weekly = FATALITY
     } else {
       change = addQuestXP(-wq.item.xp);
     }
     saveState(); render();
-    if (change.changed) levelUpOverlay(change.from, change.to, change.promoted);
+    if (change.changed) setTimeout(() => levelUpOverlay(change.from, change.to, change.promoted), 2900);
   });
 
   document.querySelectorAll('.tile-btn').forEach((b) => b.addEventListener('click', () => {
