@@ -2122,6 +2122,343 @@ const FOOD_DB = [
   { name: 'Macarrão instantâneo (1 pacote)',  kcal: 380, p: 9,    c: 55,   f: 14,   cat: 'erro' },
   { name: 'Sopa instantânea Knorr (1 sachê)', kcal: 130, p: 3,    c: 22,   f: 3,    cat: 'erro' },
   { name: 'Cup Noodles (1 copo)',             kcal: 320, p: 8,    c: 50,   f: 11,   cat: 'erro' },
+
+  // ============================================================
+  // ===== 2ª EXPANSÃO — +300 itens =============================
+  // ============================================================
+
+  // ===== Comida de boteco / petiscos =====
+  { name: 'Bolinho de bacalhau (3un)',         kcal: 480, p: 22,   c: 38,   f: 26,   cat: 'erro' },
+  { name: 'Linguiça acebolada (100g)',         kcal: 290, p: 14,   c: 5,    f: 23,   cat: 'proteina' },
+  { name: 'Calabresa acebolada (100g)',        kcal: 320, p: 14,   c: 4,    f: 27,   cat: 'proteina' },
+  { name: 'Carne seca acebolada (100g)',       kcal: 280, p: 28,   c: 5,    f: 15,   cat: 'proteina' },
+  { name: 'Frango à passarinho (100g)',        kcal: 280, p: 22,   c: 5,    f: 18,   cat: 'erro' },
+  { name: 'Polenta frita (100g)',              kcal: 240, p: 4,    c: 28,   f: 12,   cat: 'erro' },
+  { name: 'Mandioca frita (100g)',             kcal: 270, p: 1.2,  c: 37,   f: 13,   cat: 'erro' },
+  { name: 'Aipim com carne seca (200g)',       kcal: 350, p: 22,   c: 32,   f: 14,   cat: 'prato' },
+  { name: 'Isca de tilápia (100g)',            kcal: 220, p: 18,   c: 14,   f: 10,   cat: 'erro' },
+  { name: 'Isca de fígado (100g)',             kcal: 240, p: 22,   c: 10,   f: 12,   cat: 'erro' },
+  { name: 'Casquinha de siri (1un)',           kcal: 180, p: 12,   c: 14,   f: 9,    cat: 'prato' },
+  { name: 'Bolinho de queijo (5un)',           kcal: 380, p: 14,   c: 30,   f: 22,   cat: 'erro' },
+  { name: 'Bolinho de aipim (5un)',            kcal: 350, p: 6,    c: 42,   f: 16,   cat: 'erro' },
+  { name: 'Croquete de bacalhau (3un)',        kcal: 420, p: 18,   c: 32,   f: 24,   cat: 'erro' },
+  { name: 'Pastel de feira (1un grande)',      kcal: 280, p: 8,    c: 24,   f: 16,   cat: 'erro' },
+  { name: 'Caldo de mocotó (1 tigela)',        kcal: 240, p: 16,   c: 8,    f: 14,   cat: 'prato' },
+  { name: 'Bobó de frango (300g)',             kcal: 380, p: 28,   c: 22,   f: 18,   cat: 'prato' },
+  { name: 'Galeto à passarinho (200g)',        kcal: 380, p: 35,   c: 0,    f: 26,   cat: 'proteina' },
+  { name: 'Espetinho de carne (1un)',          kcal: 165, p: 18,   c: 1,    f: 10,   cat: 'proteina' },
+  { name: 'Espetinho de frango (1un)',         kcal: 130, p: 18,   c: 1,    f: 6,    cat: 'proteina' },
+  { name: 'Espetinho de medalhão (1un)',       kcal: 220, p: 16,   c: 1,    f: 17,   cat: 'erro' },
+  { name: 'Espetinho de queijo coalho (1un)',  kcal: 110, p: 8,    c: 1,    f: 8,    cat: 'proteina' },
+  { name: 'Choripán (1un)',                    kcal: 420, p: 16,   c: 32,   f: 24,   cat: 'erro' },
+  { name: 'Pernil prensado no pão (1un)',      kcal: 460, p: 28,   c: 40,   f: 20,   cat: 'erro' },
+
+  // ===== Comidas regionais brasileiras =====
+  { name: 'Tapioca com queijo coalho (1un)',   kcal: 260, p: 14,   c: 35,   f: 8,    cat: 'prato' },
+  { name: 'Tapioca com carne seca (1un)',      kcal: 320, p: 22,   c: 36,   f: 10,   cat: 'prato' },
+  { name: 'Tapioca de chocolate (1un)',        kcal: 230, p: 3,    c: 42,   f: 5,    cat: 'doce' },
+  { name: 'Tapioca de banana com canela',      kcal: 200, p: 2,    c: 40,   f: 3,    cat: 'doce' },
+  { name: 'Cocada baiana (1 fatia)',           kcal: 220, p: 1.5,  c: 32,   f: 10,   cat: 'doce' },
+  { name: 'Casadinho (1un)',                   kcal: 90,  p: 1,    c: 15,   f: 3,    cat: 'doce' },
+  { name: 'Sequilho de leite (3un)',           kcal: 100, p: 1.5,  c: 15,   f: 4,    cat: 'doce' },
+  { name: 'Doce de abóbora (50g)',             kcal: 130, p: 0.5,  c: 32,   f: 0.1,  cat: 'doce' },
+  { name: 'Doce de mamão (50g)',               kcal: 135, p: 0.3,  c: 33,   f: 0.1,  cat: 'doce' },
+  { name: 'Pamonha salgada (1un)',             kcal: 250, p: 8,    c: 32,   f: 10,   cat: 'snack' },
+  { name: 'Pamonha doce (1un)',                kcal: 220, p: 4,    c: 38,   f: 6,    cat: 'doce' },
+  { name: 'Pé de moça (1un)',                  kcal: 70,  p: 1.2,  c: 12,   f: 2,    cat: 'doce' },
+  { name: 'Doce de batata-doce (50g)',         kcal: 130, p: 0.5,  c: 30,   f: 0.5,  cat: 'doce' },
+  { name: 'Beiju doce de coco (1un)',          kcal: 180, p: 1.5,  c: 32,   f: 5,    cat: 'doce' },
+  { name: 'Cuscuz com leite (1 tigela)',       kcal: 270, p: 7,    c: 42,   f: 8,    cat: 'prato' },
+  { name: 'Polenta com ragu (300g)',           kcal: 380, p: 14,   c: 42,   f: 15,   cat: 'prato' },
+  { name: 'Bauru paulista (1 sanduíche)',      kcal: 480, p: 28,   c: 38,   f: 22,   cat: 'erro' },
+  { name: 'Beirute (1 sanduíche)',             kcal: 520, p: 30,   c: 45,   f: 24,   cat: 'erro' },
+  { name: 'X-egg (1 sanduíche)',               kcal: 580, p: 28,   c: 40,   f: 32,   cat: 'erro' },
+  { name: 'Sanduíche prensado (1un)',          kcal: 380, p: 18,   c: 38,   f: 18,   cat: 'erro' },
+
+  // ===== Frutas regionais =====
+  { name: 'Pitomba (10un)',                    kcal: 60,  p: 1,    c: 14,   f: 0.5,  cat: 'fruta' },
+  { name: 'Cajá-manga (1un)',                  kcal: 45,  p: 1,    c: 11,   f: 0.3,  cat: 'fruta' },
+  { name: 'Umbu (1un)',                        kcal: 22,  p: 0.5,  c: 5.5,  f: 0.1,  cat: 'fruta' },
+  { name: 'Seriguela (5un)',                   kcal: 50,  p: 0.6,  c: 12,   f: 0.4,  cat: 'fruta' },
+  { name: 'Buriti polpa (50g)',                kcal: 92,  p: 1,    c: 13,   f: 4.5,  cat: 'fruta' },
+  { name: 'Tucumã polpa (50g)',                kcal: 130, p: 1.5,  c: 6,    f: 12,   cat: 'gordura' },
+  { name: 'Bacuri polpa (100g)',               kcal: 76,  p: 0.7,  c: 19,   f: 0.3,  cat: 'fruta' },
+  { name: 'Murici (10un)',                     kcal: 50,  p: 0.8,  c: 11,   f: 0.7,  cat: 'fruta' },
+  { name: 'Mangaba (5un)',                     kcal: 43,  p: 1,    c: 10,   f: 0.2,  cat: 'fruta' },
+  { name: 'Sapoti (1un)',                      kcal: 85,  p: 0.6,  c: 22,   f: 1,    cat: 'fruta' },
+  { name: 'Açaí grosso (300g)',                kcal: 270, p: 4,    c: 30,   f: 18,   cat: 'fruta' },
+  { name: 'Cupuaçu cremoso (200g)',            kcal: 220, p: 3,    c: 38,   f: 7,    cat: 'doce' },
+  { name: 'Graviola polpa (100g)',             kcal: 66,  p: 1,    c: 17,   f: 0.3,  cat: 'fruta' },
+  { name: 'Tamarindo polpa (50g)',             kcal: 120, p: 1.4,  c: 31,   f: 0.3,  cat: 'fruta' },
+
+  // ===== Verduras adicionais =====
+  { name: 'Salsão / aipo (100g)',              kcal: 16,  p: 0.7,  c: 3,    f: 0.2,  cat: 'veg' },
+  { name: 'Erva-doce (100g)',                  kcal: 31,  p: 1.2,  c: 7,    f: 0.2,  cat: 'veg' },
+  { name: 'Funcho (100g)',                     kcal: 31,  p: 1.2,  c: 7,    f: 0.2,  cat: 'veg' },
+  { name: 'Pak choi (100g)',                   kcal: 13,  p: 1.5,  c: 2.2,  f: 0.2,  cat: 'veg' },
+  { name: 'Mostarda em folhas (100g)',         kcal: 27,  p: 2.8,  c: 4.7,  f: 0.4,  cat: 'veg' },
+  { name: 'Taioba refogada (100g)',            kcal: 28,  p: 2.7,  c: 4,    f: 0.4,  cat: 'veg' },
+  { name: 'Folha de mandioca (100g)',          kcal: 38,  p: 4,    c: 6,    f: 0.6,  cat: 'veg' },
+  { name: 'Chuchu refogado (100g)',            kcal: 22,  p: 0.8,  c: 5,    f: 0.1,  cat: 'veg' },
+  { name: 'Maxixe (100g)',                     kcal: 12,  p: 0.8,  c: 2.5,  f: 0.1,  cat: 'veg' },
+  { name: 'Jiló refogado (100g)',              kcal: 35,  p: 1.2,  c: 7,    f: 0.2,  cat: 'veg' },
+  { name: 'Cará-roxo cozido (100g)',           kcal: 110, p: 1.5,  c: 26,   f: 0.2,  cat: 'carb' },
+
+  // ===== Café da manhã + brunch =====
+  { name: 'Café da manhã hotel completo',      kcal: 720, p: 30,   c: 65,   f: 38,   cat: 'erro' },
+  { name: 'Bowl proteico (aveia+whey+banana)', kcal: 420, p: 35,   c: 50,   f: 9,    cat: 'prato' },
+  { name: 'Açaí proteico (whey 30g+banana)',   kcal: 380, p: 30,   c: 45,   f: 8,    cat: 'prato' },
+  { name: 'Iogurte com cereal Nestlé Fitness', kcal: 220, p: 9,    c: 38,   f: 4,    cat: 'snack' },
+  { name: 'Pão integral c/ ovo e abacate (1)', kcal: 320, p: 14,   c: 25,   f: 18,   cat: 'prato' },
+  { name: 'Pão integral c/ pasta amend.+banana', kcal: 280, p: 8,    c: 32,   f: 12,   cat: 'snack' },
+  { name: 'Crepioca de banana e whey',         kcal: 280, p: 22,   c: 28,   f: 7,    cat: 'prato' },
+  { name: 'Omelete fit (3 claras + 1 ovo)',    kcal: 130, p: 18,   c: 1,    f: 5,    cat: 'proteina' },
+  { name: 'Granola c/ leite (200ml)',          kcal: 300, p: 9,    c: 45,   f: 10,   cat: 'snack' },
+  { name: 'Mingau de aveia c/ canela e mel',   kcal: 290, p: 11,   c: 45,   f: 7,    cat: 'prato' },
+  { name: 'Tigela de açaí + frutas + chia',    kcal: 380, p: 6,    c: 65,   f: 11,   cat: 'snack' },
+  { name: 'Cookie de aveia caseiro (1un)',     kcal: 110, p: 2,    c: 17,   f: 4,    cat: 'doce' },
+  { name: 'Bolo proteico aveia/whey (1 fatia)',kcal: 200, p: 16,   c: 22,   f: 6,    cat: 'snack' },
+
+  // ===== Lanchonete brasileira =====
+  { name: 'Pão de queijo gigante (1un 120g)',  kcal: 380, p: 10,   c: 38,   f: 21,   cat: 'snack' },
+  { name: 'Salgado folhado de presunto+queijo',kcal: 320, p: 12,   c: 28,   f: 18,   cat: 'erro' },
+  { name: 'Mini-pizza muçarela',               kcal: 180, p: 8,    c: 22,   f: 7,    cat: 'snack' },
+  { name: 'Pão recheado de salsicha (1un)',    kcal: 320, p: 10,   c: 32,   f: 16,   cat: 'erro' },
+  { name: 'Empanado de frango (1un)',          kcal: 180, p: 12,   c: 14,   f: 8,    cat: 'erro' },
+  { name: 'Sanduíche de pernil (1un)',         kcal: 380, p: 22,   c: 32,   f: 16,   cat: 'erro' },
+  { name: 'Sanduíche de mortadela (1un)',      kcal: 420, p: 18,   c: 35,   f: 22,   cat: 'erro' },
+  { name: 'X-salada simples (1un)',            kcal: 520, p: 24,   c: 42,   f: 28,   cat: 'erro' },
+  { name: 'Vitamina laranja+cenoura+beterraba',kcal: 130, p: 2,    c: 30,   f: 0.5,  cat: 'bebida' },
+  { name: 'Suco verde detox (limão+couve)',    kcal: 60,  p: 1.5,  c: 14,   f: 0.3,  cat: 'bebida' },
+
+  // ===== Acompanhamentos =====
+  { name: 'Farofa de cebola caseira (50g)',    kcal: 200, p: 2,    c: 28,   f: 8,    cat: 'carb' },
+  { name: 'Farofa de bacon (50g)',             kcal: 240, p: 4,    c: 24,   f: 14,   cat: 'erro' },
+  { name: 'Farofa de banana (50g)',            kcal: 180, p: 2,    c: 30,   f: 6,    cat: 'carb' },
+  { name: 'Vinagrete (4 col sopa)',            kcal: 25,  p: 0.5,  c: 4,    f: 0.5,  cat: 'veg' },
+  { name: 'Maionese de batata (100g)',         kcal: 220, p: 3,    c: 18,   f: 14,   cat: 'erro' },
+  { name: 'Maionese de cenoura+ovo (100g)',    kcal: 180, p: 4,    c: 14,   f: 12,   cat: 'erro' },
+  { name: 'Salada de batata e ovo (100g)',     kcal: 200, p: 5,    c: 16,   f: 13,   cat: 'erro' },
+  { name: 'Repolho refogado c/ alho (100g)',   kcal: 50,  p: 1.5,  c: 7,    f: 2,    cat: 'veg' },
+  { name: 'Couve refogada na manteiga (100g)', kcal: 70,  p: 3,    c: 5,    f: 4,    cat: 'veg' },
+  { name: 'Brócolis na manteiga (100g)',       kcal: 80,  p: 3,    c: 7,    f: 5,    cat: 'veg' },
+
+  // ===== Doces de festa / sobremesas elaboradas =====
+  { name: 'Bem-casado tradicional (1un)',      kcal: 180, p: 2,    c: 28,   f: 7,    cat: 'doce' },
+  { name: 'Camafeu de nozes (1un)',            kcal: 110, p: 1.5,  c: 13,   f: 6,    cat: 'doce' },
+  { name: 'Mãe-bento (1un)',                   kcal: 90,  p: 1.5,  c: 15,   f: 3,    cat: 'doce' },
+  { name: 'Sonho de padaria recheado (1un)',   kcal: 280, p: 5,    c: 38,   f: 12,   cat: 'doce' },
+  { name: 'Rosca recheada doce (1 fatia)',     kcal: 230, p: 4,    c: 36,   f: 7,    cat: 'doce' },
+  { name: 'Bolo formigueiro (1 fatia)',        kcal: 280, p: 4,    c: 45,   f: 10,   cat: 'doce' },
+  { name: 'Bolo de aniversário c/ recheio',    kcal: 380, p: 6,    c: 50,   f: 17,   cat: 'doce' },
+  { name: 'Pavê de chocolate (1 fatia)',       kcal: 380, p: 6,    c: 38,   f: 22,   cat: 'doce' },
+  { name: 'Pavê de bolacha c/ leite condensado',kcal: 420, p: 6,    c: 50,   f: 20,   cat: 'doce' },
+  { name: 'Torta de bolacha + sorvete',        kcal: 480, p: 7,    c: 60,   f: 22,   cat: 'doce' },
+  { name: 'Bolo de rolo (1 fatia)',            kcal: 320, p: 5,    c: 50,   f: 11,   cat: 'doce' },
+  { name: 'Bolo nega-maluca (1 fatia)',        kcal: 310, p: 5,    c: 50,   f: 11,   cat: 'doce' },
+  { name: 'Empadinha de leite condensado',     kcal: 240, p: 4,    c: 38,   f: 8,    cat: 'doce' },
+  { name: 'Brownie c/ sorvete (1 porção)',     kcal: 540, p: 7,    c: 65,   f: 28,   cat: 'doce' },
+
+  // ===== Sushi e pratos japoneses adicionais =====
+  { name: 'California roll (5un)',             kcal: 240, p: 9,    c: 36,   f: 7,    cat: 'prato' },
+  { name: 'Salmão skin (5un)',                 kcal: 320, p: 12,   c: 30,   f: 18,   cat: 'erro' },
+  { name: 'Niguiri kani (1un)',                kcal: 42,  p: 2,    c: 7,    f: 0.5,  cat: 'prato' },
+  { name: 'Sushi de manga (1un)',              kcal: 55,  p: 1,    c: 11,   f: 0.8,  cat: 'prato' },
+  { name: 'Joe spicy salmon (5un)',            kcal: 280, p: 10,   c: 30,   f: 12,   cat: 'erro' },
+  { name: 'Combinado 20 peças',                kcal: 800, p: 35,   c: 110,  f: 22,   cat: 'erro' },
+  { name: 'Sashimi salmão (1 porção 100g)',    kcal: 208, p: 22,   c: 0,    f: 13,   cat: 'proteina' },
+  { name: 'Yakitori frango (3 espetos)',       kcal: 220, p: 24,   c: 6,    f: 11,   cat: 'proteina' },
+  { name: 'Donburi de salmão (1 tigela)',      kcal: 480, p: 26,   c: 60,   f: 14,   cat: 'prato' },
+  { name: 'Donburi de frango (oyakodon)',      kcal: 520, p: 28,   c: 70,   f: 12,   cat: 'prato' },
+  { name: 'Tempurá legumes (5un)',             kcal: 280, p: 5,    c: 32,   f: 14,   cat: 'erro' },
+  { name: 'Edamame com sal (100g)',            kcal: 121, p: 12,   c: 9,    f: 5,    cat: 'proteina' },
+  { name: 'Missoshiru (1 tigela)',             kcal: 80,  p: 6,    c: 8,    f: 3,    cat: 'prato' },
+
+  // ===== Comida indiana / mediterrânea =====
+  { name: 'Falafel pita c/ tzatziki (1 wrap)', kcal: 420, p: 13,   c: 50,   f: 18,   cat: 'prato' },
+  { name: 'Shawarma de frango (1un)',          kcal: 540, p: 32,   c: 50,   f: 22,   cat: 'erro' },
+  { name: 'Shawarma de cordeiro (1un)',        kcal: 620, p: 32,   c: 50,   f: 32,   cat: 'erro' },
+  { name: 'Kebab no espeto (200g)',            kcal: 380, p: 35,   c: 0,    f: 26,   cat: 'proteina' },
+  { name: 'Kafta grelhada (200g)',             kcal: 420, p: 28,   c: 4,    f: 32,   cat: 'proteina' },
+  { name: 'Coalhada seca (100g)',              kcal: 105, p: 6,    c: 5,    f: 7,    cat: 'proteina' },
+  { name: 'Babaganoush (100g)',                kcal: 130, p: 3,    c: 9,    f: 9,    cat: 'snack' },
+  { name: 'Pão sírio + hummus (1 porção)',     kcal: 280, p: 9,    c: 38,   f: 10,   cat: 'snack' },
+  { name: 'Curry de grão-de-bico (300g)',      kcal: 360, p: 14,   c: 45,   f: 14,   cat: 'prato' },
+  { name: 'Dal indiano (300g)',                kcal: 280, p: 14,   c: 38,   f: 8,    cat: 'prato' },
+  { name: 'Naan c/ alho (1un)',                kcal: 290, p: 8,    c: 45,   f: 8,    cat: 'snack' },
+  { name: 'Lassi de manga (300ml)',            kcal: 220, p: 6,    c: 38,   f: 5,    cat: 'bebida' },
+  { name: 'Doce gulab jamun (3un)',            kcal: 280, p: 4,    c: 45,   f: 10,   cat: 'doce' },
+
+  // ===== Pratos mexicanos / latinos =====
+  { name: 'Guacamole (3 col sopa)',            kcal: 110, p: 2,    c: 7,    f: 9,    cat: 'gordura' },
+  { name: 'Pico de gallo (3 col)',             kcal: 20,  p: 0.5,  c: 4,    f: 0.2,  cat: 'veg' },
+  { name: 'Salsa verde (3 col)',               kcal: 25,  p: 0.5,  c: 5,    f: 0.5,  cat: 'veg' },
+  { name: 'Fajita de frango (1 porção)',       kcal: 480, p: 30,   c: 45,   f: 18,   cat: 'prato' },
+  { name: 'Fajita de carne (1 porção)',        kcal: 540, p: 32,   c: 45,   f: 24,   cat: 'prato' },
+  { name: 'Enchilada (1un)',                   kcal: 380, p: 18,   c: 35,   f: 18,   cat: 'erro' },
+  { name: 'Chimichanga (1un)',                 kcal: 480, p: 22,   c: 42,   f: 24,   cat: 'erro' },
+  { name: 'Tortilla de milho (1un)',           kcal: 60,  p: 1.6,  c: 13,   f: 0.6,  cat: 'snack' },
+  { name: 'Empanada argentina (1un)',          kcal: 280, p: 12,   c: 26,   f: 14,   cat: 'erro' },
+  { name: 'Pão de minuto/pão árabe (1un)',     kcal: 165, p: 5.5,  c: 33,   f: 1.5,  cat: 'snack' },
+
+  // ===== Coreanos básicos (PT puro, sem hangul) =====
+  { name: 'Bibimbap completo (1 tigela)',      kcal: 560, p: 25,   c: 75,   f: 16,   cat: 'prato', kpopOnly: true },
+  { name: 'Tigela proteica coreana (frango+arroz)',kcal: 480, p: 38,  c: 55, f: 10,   cat: 'prato' },
+  { name: 'Frango ao alho coreano (200g)',     kcal: 380, p: 32,   c: 14,   f: 18,   cat: 'prato' },
+  { name: 'Carne bulgogi caseira (200g)',      kcal: 360, p: 30,   c: 8,    f: 22,   cat: 'prato', kpopOnly: true },
+  { name: 'Pão tipo bao c/ pernil (1un)',      kcal: 280, p: 12,   c: 32,   f: 11,   cat: 'prato' },
+  { name: 'Bolinho recheado vapor (1un)',      kcal: 200, p: 7,    c: 26,   f: 7,    cat: 'snack' },
+
+  // ===== Veganos extras =====
+  { name: 'Hambúrguer de grão-de-bico (1un)',  kcal: 220, p: 9,    c: 28,   f: 8,    cat: 'prato' },
+  { name: 'Hambúrguer de feijão preto (1un)',  kcal: 200, p: 11,   c: 25,   f: 6,    cat: 'prato' },
+  { name: 'Hambúrguer de lentilha (1un)',      kcal: 210, p: 12,   c: 26,   f: 6,    cat: 'prato' },
+  { name: 'Almôndega de grão-de-bico (3un)',   kcal: 180, p: 7,    c: 22,   f: 7,    cat: 'prato' },
+  { name: 'Strogonoff de cogumelos (300g)',    kcal: 320, p: 11,   c: 30,   f: 18,   cat: 'prato' },
+  { name: 'Lasanha vegana (200g)',             kcal: 280, p: 11,   c: 30,   f: 13,   cat: 'prato' },
+  { name: 'Pizza vegana (1 fatia)',            kcal: 220, p: 7,    c: 30,   f: 8,    cat: 'erro' },
+  { name: 'Bowl de quinoa, abacate e grão',    kcal: 420, p: 14,   c: 55,   f: 15,   cat: 'prato' },
+  { name: 'Pasta de homus c/ pita (1 porção)', kcal: 280, p: 9,    c: 38,   f: 10,   cat: 'snack' },
+  { name: 'Tofu mexido c/ vegetais (200g)',    kcal: 220, p: 18,   c: 12,   f: 12,   cat: 'prato' },
+  { name: 'Smoothie verde proteico (vegano)',  kcal: 260, p: 22,   c: 28,   f: 5,    cat: 'bebida' },
+  { name: 'Iogurte de coco c/ granola',        kcal: 260, p: 5,    c: 38,   f: 10,   cat: 'snack' },
+  { name: 'Sorvete vegano (100g)',             kcal: 180, p: 2,    c: 24,   f: 8,    cat: 'doce' },
+
+  // ===== Preparos saudáveis / fit =====
+  { name: 'Frango grelhado c/ legumes (300g)', kcal: 380, p: 45,   c: 18,   f: 12,   cat: 'prato' },
+  { name: 'Salmão grelhado c/ legumes (300g)', kcal: 420, p: 38,   c: 14,   f: 24,   cat: 'prato' },
+  { name: 'Bolo de carne magra (200g)',        kcal: 320, p: 32,   c: 8,    f: 18,   cat: 'prato' },
+  { name: 'Atum c/ batata-doce e brócolis',    kcal: 380, p: 35,   c: 32,   f: 12,   cat: 'prato' },
+  { name: 'Bowl açaí proteico fit',            kcal: 320, p: 26,   c: 35,   f: 8,    cat: 'snack' },
+  { name: 'Crepioca c/ frango desfiado',       kcal: 280, p: 24,   c: 18,   f: 12,   cat: 'prato' },
+  { name: 'Frittata de claras e legumes',      kcal: 160, p: 18,   c: 8,    f: 6,    cat: 'prato' },
+  { name: 'Salada de quinoa c/ grão-de-bico',  kcal: 360, p: 14,   c: 50,   f: 12,   cat: 'prato' },
+  { name: 'Hambúrguer caseiro low-carb (1)',   kcal: 280, p: 28,   c: 5,    f: 18,   cat: 'proteina' },
+  { name: 'Wrap proteico de frango (1un)',     kcal: 380, p: 30,   c: 35,   f: 12,   cat: 'prato' },
+  { name: 'Pizza low-carb base couve-flor',    kcal: 240, p: 14,   c: 12,   f: 14,   cat: 'prato' },
+  { name: 'Brigadeiro fit (whey+cacau)',       kcal: 50,  p: 4,    c: 5,    f: 1.5,  cat: 'doce' },
+
+  // ===== Bebidas funcionais =====
+  { name: 'Kombucha rosa (300ml)',             kcal: 35,  p: 0,    c: 8,    f: 0,    cat: 'bebida' },
+  { name: 'Kombucha gengibre (300ml)',         kcal: 30,  p: 0,    c: 7,    f: 0,    cat: 'bebida' },
+  { name: 'Kefir de coco (200ml)',             kcal: 70,  p: 1,    c: 8,    f: 4,    cat: 'bebida' },
+  { name: 'Chá kombucha caseiro (300ml)',      kcal: 25,  p: 0,    c: 6,    f: 0,    cat: 'bebida' },
+  { name: 'Suco vegetal natural (300ml)',      kcal: 110, p: 3,    c: 22,   f: 1,    cat: 'bebida' },
+  { name: 'Smoothie de açaí com proteína',     kcal: 340, p: 22,   c: 40,   f: 10,   cat: 'bebida' },
+  { name: 'Vitamina de mamão (300ml)',         kcal: 160, p: 4,    c: 32,   f: 2,    cat: 'bebida' },
+  { name: 'Vitamina de morango com banana',    kcal: 220, p: 7,    c: 38,   f: 4,    cat: 'bebida' },
+  { name: 'Café gelado proteico (300ml)',      kcal: 160, p: 22,   c: 12,   f: 2,    cat: 'bebida' },
+  { name: 'Bulletproof coffee (1 caneca)',     kcal: 260, p: 1,    c: 1,    f: 28,   cat: 'bebida' },
+  { name: 'Chá de hibisco gelado (300ml)',     kcal: 8,   p: 0,    c: 2,    f: 0,    cat: 'bebida' },
+  { name: 'Chá detox (300ml)',                 kcal: 10,  p: 0,    c: 2,    f: 0,    cat: 'bebida' },
+  { name: 'Whey shake com banana (300ml)',     kcal: 290, p: 30,   c: 30,   f: 4,    cat: 'bebida' },
+  { name: 'Whey shake com aveia (300ml)',      kcal: 320, p: 32,   c: 35,   f: 5,    cat: 'bebida' },
+  { name: 'Café com colágeno (200ml)',         kcal: 50,  p: 10,   c: 1,    f: 0,    cat: 'bebida' },
+
+  // ===== Sopas e caldos extras =====
+  { name: 'Sopa de macarrão (1 tigela)',       kcal: 240, p: 10,   c: 38,   f: 6,    cat: 'prato' },
+  { name: 'Sopa Toscana (1 tigela)',           kcal: 320, p: 12,   c: 18,   f: 22,   cat: 'prato' },
+  { name: 'Sopa minestrone (1 tigela)',        kcal: 200, p: 7,    c: 28,   f: 6,    cat: 'prato' },
+  { name: 'Sopa de batata e alho-poró',        kcal: 240, p: 6,    c: 30,   f: 10,   cat: 'prato' },
+  { name: 'Sopa de cenoura e gengibre',        kcal: 170, p: 3,    c: 25,   f: 6,    cat: 'prato' },
+  { name: 'Sopa de feijão branco (1 tigela)',  kcal: 240, p: 12,   c: 35,   f: 5,    cat: 'prato' },
+  { name: 'Sopa de lentilha (1 tigela)',       kcal: 220, p: 12,   c: 32,   f: 4,    cat: 'prato' },
+  { name: 'Caldo de feijoada (200ml)',         kcal: 180, p: 9,    c: 18,   f: 7,    cat: 'prato' },
+
+  // ===== Massas regionais =====
+  { name: 'Espaguete à puttanesca (300g)',     kcal: 480, p: 14,   c: 65,   f: 17,   cat: 'prato' },
+  { name: 'Linguini ao limone (300g)',         kcal: 460, p: 13,   c: 62,   f: 18,   cat: 'prato' },
+  { name: 'Lasagna 4 queijos (200g)',          kcal: 420, p: 18,   c: 30,   f: 24,   cat: 'erro' },
+  { name: 'Canelone de ricota e espinafre',    kcal: 360, p: 14,   c: 38,   f: 16,   cat: 'prato' },
+  { name: 'Canelone de carne (200g)',          kcal: 380, p: 18,   c: 36,   f: 18,   cat: 'prato' },
+  { name: 'Ravioli c/ molho funghi (200g)',    kcal: 380, p: 14,   c: 48,   f: 14,   cat: 'prato' },
+  { name: 'Tortellini ao alho e óleo (200g)',  kcal: 460, p: 14,   c: 55,   f: 18,   cat: 'prato' },
+  { name: 'Cappelletti caldo (300ml)',         kcal: 280, p: 14,   c: 36,   f: 8,    cat: 'prato' },
+  { name: 'Penne ao molho rosé (300g)',        kcal: 460, p: 14,   c: 56,   f: 18,   cat: 'prato' },
+  { name: 'Talharim ao funghi (300g)',         kcal: 440, p: 12,   c: 60,   f: 16,   cat: 'prato' },
+
+  // ===== Bebidas alcoólicas extras =====
+  { name: 'Aperol Spritz (1 copo)',            kcal: 180, p: 0,    c: 18,   f: 0,    cat: 'bebida' },
+  { name: 'Pina colada (1 copo)',              kcal: 280, p: 1,    c: 32,   f: 6,    cat: 'bebida' },
+  { name: 'Daiquiri morango (1 copo)',         kcal: 240, p: 0.5,  c: 28,   f: 0,    cat: 'bebida' },
+  { name: 'Bloody Mary (1 copo)',              kcal: 130, p: 1,    c: 7,    f: 0.2,  cat: 'bebida' },
+  { name: 'Negroni (1 copo)',                  kcal: 215, p: 0,    c: 12,   f: 0,    cat: 'bebida' },
+  { name: 'Old Fashioned (1 copo)',            kcal: 180, p: 0,    c: 5,    f: 0,    cat: 'bebida' },
+  { name: 'Sake (200ml)',                      kcal: 270, p: 0.6,  c: 9,    f: 0,    cat: 'bebida' },
+  { name: 'Soju (200ml)',                      kcal: 240, p: 0,    c: 0,    f: 0,    cat: 'bebida' },
+  { name: 'Chopp pilsen (1 chopp 300ml)',      kcal: 125, p: 1.2,  c: 10,   f: 0,    cat: 'bebida' },
+  { name: 'Cachaça artesanal (50ml)',          kcal: 115, p: 0,    c: 0,    f: 0,    cat: 'bebida' },
+  { name: 'Conhaque (50ml)',                   kcal: 115, p: 0,    c: 0,    f: 0,    cat: 'bebida' },
+  { name: 'Licor de cacau (50ml)',             kcal: 145, p: 0,    c: 16,   f: 0,    cat: 'bebida' },
+  { name: 'Hidromel (200ml)',                  kcal: 200, p: 0.2,  c: 12,   f: 0,    cat: 'bebida' },
+  { name: 'Drink batida coco (1 copo)',        kcal: 280, p: 1,    c: 32,   f: 5,    cat: 'bebida' },
+
+  // ===== Snacks proteicos / fit =====
+  { name: 'Iogurte grego YoPro morango',       kcal: 100, p: 15,   c: 9,    f: 0.5,  cat: 'proteina' },
+  { name: 'Iogurte grego YoPro coco',          kcal: 100, p: 15,   c: 8,    f: 0.5,  cat: 'proteina' },
+  { name: 'Iogurte Mais Proteínas Itambé',     kcal: 105, p: 15,   c: 10,   f: 0.5,  cat: 'proteina' },
+  { name: 'Barra Hue protein bar (1un)',       kcal: 190, p: 18,   c: 20,   f: 5,    cat: 'snack' },
+  { name: 'Barra Trio proteica (1un)',         kcal: 150, p: 12,   c: 18,   f: 5,    cat: 'snack' },
+  { name: 'Pasta amend Vitao (1 col)',         kcal: 90,  p: 4,    c: 3,    f: 7,    cat: 'gordura' },
+  { name: 'Whey-bar choco fit (1un)',          kcal: 200, p: 20,   c: 18,   f: 6,    cat: 'snack' },
+  { name: 'Pó de bolinho proteico (1un)',      kcal: 140, p: 15,   c: 15,   f: 3,    cat: 'snack' },
+  { name: 'Chips de batata-doce assado (40g)', kcal: 170, p: 2,    c: 22,   f: 8,    cat: 'snack' },
+  { name: 'Chips de couve crocante (30g)',     kcal: 140, p: 3,    c: 14,   f: 8,    cat: 'snack' },
+  { name: 'Cracker integral c/ chia (5un)',    kcal: 130, p: 3,    c: 20,   f: 4,    cat: 'snack' },
+
+  // ===== Sobremesas geladas =====
+  { name: 'Açaí 500ml turbinado (banana+leite+granola)', kcal: 580, p: 8, c: 90, f: 18, cat: 'erro' },
+  { name: 'Açaí 700ml completão',              kcal: 850, p: 11,   c: 130,  f: 28,   cat: 'erro' },
+  { name: 'Banana split (1 porção)',           kcal: 480, p: 8,    c: 70,   f: 18,   cat: 'doce' },
+  { name: 'Sorvete Häagen-Dazs (1 bola)',      kcal: 200, p: 3,    c: 18,   f: 13,   cat: 'doce' },
+  { name: 'Gelato artesanal (1 bola)',         kcal: 130, p: 3,    c: 18,   f: 5,    cat: 'doce' },
+  { name: 'Frozen yogurt c/ frutas (200g)',    kcal: 220, p: 7,    c: 38,   f: 4,    cat: 'doce' },
+  { name: 'Pudim de leite condensado fitness', kcal: 180, p: 12,   c: 22,   f: 4,    cat: 'doce' },
+  { name: 'Cheesecake limão fit (1 fatia)',    kcal: 200, p: 8,    c: 18,   f: 11,   cat: 'doce' },
+
+  // ===== Pratos low-carb =====
+  { name: 'Espaguete de abobrinha c/ frango',  kcal: 280, p: 30,   c: 14,   f: 12,   cat: 'prato' },
+  { name: 'Pizza low-carb (couve-flor base)',  kcal: 240, p: 14,   c: 12,   f: 14,   cat: 'prato' },
+  { name: 'Lasanha de berinjela (200g)',       kcal: 240, p: 11,   c: 18,   f: 14,   cat: 'prato' },
+  { name: 'Hambúrguer s/ pão c/ ovo + salada', kcal: 380, p: 32,   c: 8,    f: 24,   cat: 'prato' },
+  { name: 'Picadinho low-carb c/ couve-flor',  kcal: 320, p: 30,   c: 12,   f: 18,   cat: 'prato' },
+  { name: 'Crepe de abóbora c/ frango',        kcal: 280, p: 26,   c: 22,   f: 9,    cat: 'prato' },
+  { name: 'Wrap de alface c/ atum',            kcal: 220, p: 22,   c: 8,    f: 11,   cat: 'prato' },
+  { name: 'Tigela de quinoa c/ legumes',       kcal: 320, p: 12,   c: 45,   f: 8,    cat: 'prato' },
+
+  // ===== Kids meals / mais leves =====
+  { name: 'Macarrão ao molho de tomate (200g)',kcal: 240, p: 6,    c: 42,   f: 4,    cat: 'prato' },
+  { name: 'Pão c/ requeijão (1 fatia)',        kcal: 130, p: 4,    c: 16,   f: 5,    cat: 'snack' },
+  { name: 'Pão c/ manteiga (1 fatia)',         kcal: 120, p: 3,    c: 16,   f: 5,    cat: 'snack' },
+  { name: 'Achocolatado c/ leite (200ml)',     kcal: 190, p: 7,    c: 28,   f: 5,    cat: 'bebida' },
+  { name: 'Vitamina banana caseira (300ml)',   kcal: 220, p: 8,    c: 38,   f: 4.5,  cat: 'bebida' },
+  { name: 'Iogurte morango Danone (170g)',     kcal: 140, p: 6,    c: 22,   f: 3,    cat: 'doce' },
+  { name: 'Toddynho chocolate (200ml)',        kcal: 180, p: 7,    c: 27,   f: 5,    cat: 'bebida' },
+  { name: 'Bebida laranja Del Valle (200ml)',  kcal: 90,  p: 0,    c: 22,   f: 0,    cat: 'bebida' },
+
+  // ===== Café & sobremesas de cafeteria =====
+  { name: 'Brownie c/ cobertura (1 fatia)',    kcal: 320, p: 4,    c: 38,   f: 17,   cat: 'doce' },
+  { name: 'Macaron francês (1un)',             kcal: 90,  p: 1.5,  c: 12,   f: 4,    cat: 'doce' },
+  { name: 'Cannoli (1un)',                     kcal: 220, p: 5,    c: 22,   f: 12,   cat: 'doce' },
+  { name: 'Madeleine (1un)',                   kcal: 90,  p: 1.5,  c: 11,   f: 4,    cat: 'doce' },
+  { name: 'Carrot cake fatia',                 kcal: 330, p: 5,    c: 48,   f: 13,   cat: 'doce' },
+  { name: 'Red velvet (1 fatia)',              kcal: 380, p: 5,    c: 50,   f: 18,   cat: 'doce' },
+  { name: 'Tiramisu (1 fatia)',                kcal: 320, p: 6,    c: 28,   f: 20,   cat: 'doce' },
+  { name: 'Crème brûlée (1 porção)',           kcal: 360, p: 6,    c: 30,   f: 23,   cat: 'doce' },
+  { name: 'Profiterole c/ chocolate (1un)',    kcal: 200, p: 4,    c: 20,   f: 12,   cat: 'doce' },
+  { name: 'Pavlova c/ frutas (1 porção)',      kcal: 290, p: 5,    c: 38,   f: 13,   cat: 'doce' },
+
+  // ===== Bebidas tradicionais =====
+  { name: 'Mate gelado limão (300ml)',         kcal: 90,  p: 0,    c: 22,   f: 0,    cat: 'bebida' },
+  { name: 'Mate gelado pêssego (300ml)',       kcal: 110, p: 0,    c: 27,   f: 0,    cat: 'bebida' },
+  { name: 'Chá mate quente s/ açúcar (200ml)', kcal: 2,   p: 0,    c: 0,    f: 0,    cat: 'bebida' },
+  { name: 'Café preto adoçado (200ml)',        kcal: 60,  p: 0,    c: 14,   f: 0,    cat: 'bebida' },
+  { name: 'Cappuccino italiano (200ml)',       kcal: 80,  p: 5,    c: 7,    f: 4,    cat: 'bebida' },
+  { name: 'Café gelado caramelo (300ml)',      kcal: 220, p: 4,    c: 38,   f: 6,    cat: 'bebida' },
+  { name: 'Frapê de morango (300ml)',          kcal: 320, p: 5,    c: 50,   f: 11,   cat: 'bebida' },
+  { name: 'Milk-shake chocolate (300ml)',      kcal: 420, p: 8,    c: 60,   f: 16,   cat: 'bebida' },
+  { name: 'Milk-shake morango (300ml)',        kcal: 380, p: 7,    c: 55,   f: 14,   cat: 'bebida' },
+  { name: 'Refresco de tang (300ml)',          kcal: 50,  p: 0,    c: 13,   f: 0,    cat: 'bebida' },
 ];
 
 // Conquistas / 업적 — checadas após cada save de log/treino/etc.
@@ -3635,6 +3972,8 @@ function saveState() {
   // Espelha pra Firestore (debounced — não bloqueia UI)
   if (cloudReady() && window.QuestCloud.auth.currentUser) {
     scheduleCloudSave();
+    // Atualiza leaderboard global de leitura
+    syncReadingLeaderboard().catch(() => {});
   }
 }
 
@@ -4093,6 +4432,7 @@ function render() {
     workout:  viewWorkout,
     nutri:    viewNutrition,
     goals:    viewGoals,
+    reading:  viewReading,
     body:     viewBody,
     insights: viewInsights,
     config:   viewConfig,
@@ -5371,8 +5711,81 @@ function modalFoodPortion(foodName) {
 function viewBody() {
   const ms = state.bodyMeasurements.slice().sort((a, b) => (a.date < b.date ? -1 : 1));
   const last = ms[ms.length - 1];
+  const first = ms[0];
   const weights = ms.map((m) => m.weight);
   const avg7 = weights.length >= 2 ? (weights.slice(-7).reduce((a, b) => a + b, 0) / Math.min(7, weights.length)).toFixed(1) : '—';
+
+  // Helper: extrai série temporal de uma métrica
+  function seriesFor(key) {
+    return ms.filter((m) => m[key] && m[key] > 0).map((m) => ({ date: m.date, val: m[key] }));
+  }
+
+  // Variação entre primeira e última medida
+  function deltaFor(key) {
+    const series = seriesFor(key);
+    if (series.length < 2) return null;
+    const initial = series[0].val;
+    const current = series[series.length - 1].val;
+    const diff = current - initial;
+    const pct = (diff / initial) * 100;
+    return { initial, current, diff, pct };
+  }
+
+  // Gera SVG path para gráfico de linha mini
+  function linePath(values, w, h, padY = 6) {
+    if (values.length < 2) return '';
+    const min = Math.min(...values);
+    const max = Math.max(...values);
+    const range = max - min || 1;
+    const step = w / (values.length - 1);
+    return values.map((v, i) => {
+      const x = i * step;
+      const y = h - padY - ((v - min) / range) * (h - padY * 2);
+      return `${i === 0 ? 'M' : 'L'} ${x.toFixed(1)} ${y.toFixed(1)}`;
+    }).join(' ');
+  }
+
+  function trendCard(key, label, unit, color) {
+    const series = seriesFor(key);
+    if (!series.length) return null;
+    const values = series.map((s) => s.val);
+    const delta = deltaFor(key);
+    const path = linePath(values, 100, 30);
+    return `
+      <div class="q-card p-3">
+        <div class="flex items-center justify-between">
+          <div class="text-[10px] uppercase tracking-wider text-ink/55 dark:text-paper/55">${label}</div>
+          ${delta ? `<div class="text-[10px] font-bold ${delta.diff >= 0 ? 'text-mint' : 'text-pink'}">${delta.diff >= 0 ? '+' : ''}${delta.diff.toFixed(1)}${unit}</div>` : ''}
+        </div>
+        <div class="flex items-end justify-between mt-1">
+          <div class="text-xl font-extrabold" style="color:${color}">${values[values.length-1]}<span class="text-xs font-bold">${unit}</span></div>
+          ${delta ? `<div class="text-[9px] text-ink/45 dark:text-paper/45 mb-1">${delta.pct >= 0 ? '+' : ''}${delta.pct.toFixed(1)}%</div>` : ''}
+        </div>
+        ${path ? `
+          <svg viewBox="0 0 100 30" preserveAspectRatio="none" class="w-full mt-1" style="height:30px">
+            <path d="${path}" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>` : ''}
+      </div>`;
+  }
+
+  const trendCards = [
+    trendCard('weight', 'Peso',        'kg', '#B7B5FF'),
+    trendCard('waist',  'Cintura',     'cm', '#FF85A5'),
+    trendCard('chest',  'Peito',       'cm', '#7BB8FF'),
+    trendCard('arm',    'Braço',       'cm', '#A8E6CF'),
+    trendCard('hip',    'Quadril',     'cm', '#FFD8A8'),
+    trendCard('thigh',  'Coxa',        'cm', '#E84A1A'),
+    trendCard('calf',   'Panturrilha', 'cm', '#D6A93E'),
+    trendCard('neck',   'Pescoço',     'cm', '#9BD9D6'),
+    trendCard('bf',     '% gordura',   '%',  '#B8242E'),
+  ].filter(Boolean);
+
+  // Dashboard stats agregadas
+  const totalMeasures = ms.length;
+  const daysTracked = first ? Math.max(1, Math.ceil((new Date(last.date) - new Date(first.date)) / 86400000)) : 0;
+  const weightDelta = deltaFor('weight');
+  const waistDelta = deltaFor('waist');
+
 
   // Calcula próxima medida quinzenal (14 dias após a última)
   let nextDueLabel = 'Registre a primeira medida';
@@ -5433,6 +5846,68 @@ function viewBody() {
       </div>
     </div>
   </section>
+
+  ${totalMeasures >= 1 ? `
+  <!-- Dashboard agregado -->
+  <section class="px-4 mt-3">
+    <div class="grid grid-cols-3 gap-2">
+      <div class="q-card p-3">
+        <div class="text-[10px] uppercase tracking-wider text-ink/45 dark:text-paper/45">Medidas</div>
+        <div class="text-2xl font-extrabold text-lavender">${totalMeasures}</div>
+        <div class="text-[10px] text-ink/45 dark:text-paper/45">registros</div>
+      </div>
+      <div class="q-card p-3">
+        <div class="text-[10px] uppercase tracking-wider text-ink/45 dark:text-paper/45">Acompanhando</div>
+        <div class="text-2xl font-extrabold text-mint">${daysTracked}</div>
+        <div class="text-[10px] text-ink/45 dark:text-paper/45">dias</div>
+      </div>
+      <div class="q-card p-3">
+        <div class="text-[10px] uppercase tracking-wider text-ink/45 dark:text-paper/45">Δ Peso total</div>
+        <div class="text-2xl font-extrabold ${(weightDelta?.diff || 0) >= 0 ? 'text-mint' : 'text-pink'}">${weightDelta ? (weightDelta.diff >= 0 ? '+' : '') + weightDelta.diff.toFixed(1) : '—'}</div>
+        <div class="text-[10px] text-ink/45 dark:text-paper/45">kg</div>
+      </div>
+    </div>
+  </section>` : ''}
+
+  ${trendCards.length ? `
+  <!-- Tendências por medida -->
+  <section class="px-4 mt-3">
+    <div class="flex items-center justify-between mb-2">
+      <h2 class="font-extrabold">Tendências</h2>
+      <span class="text-[10px] text-ink/45 dark:text-paper/45">comparado à 1ª medida</span>
+    </div>
+    <div class="grid grid-cols-2 gap-2">
+      ${trendCards.join('')}
+    </div>
+  </section>` : ''}
+
+  ${ms.length >= 2 ? `
+  <!-- Insights automáticos -->
+  <section class="px-4 mt-3">
+    <div class="q-card p-3" style="border-left:3px solid ${(weightDelta?.diff || 0) >= 0 ? '#A8E6CF' : '#FFB7C5'}">
+      <div class="text-[10px] uppercase tracking-wider text-ink/45 dark:text-paper/45">💡 Insight</div>
+      <div class="text-sm mt-1 leading-snug">
+        ${(() => {
+          const insights = [];
+          if (weightDelta) {
+            const verb = weightDelta.diff > 0 ? 'ganhou' : 'perdeu';
+            insights.push(`Em ${daysTracked} dias você ${verb} <b>${Math.abs(weightDelta.diff).toFixed(1)}kg</b> (${weightDelta.pct >= 0 ? '+' : ''}${weightDelta.pct.toFixed(1)}%).`);
+          }
+          if (waistDelta && waistDelta.diff < -1) {
+            insights.push(`Cintura reduziu <b style="color:#A8E6CF">${Math.abs(waistDelta.diff).toFixed(1)}cm</b> — composição corporal melhorando.`);
+          } else if (waistDelta && waistDelta.diff > 1) {
+            insights.push(`Cintura aumentou ${waistDelta.diff.toFixed(1)}cm — fique de olho na ingestão calórica.`);
+          }
+          const armDelta = deltaFor('arm');
+          if (armDelta && armDelta.diff > 0.5) {
+            insights.push(`Braço cresceu <b style="color:#A8E6CF">+${armDelta.diff.toFixed(1)}cm</b> — hipertrofia rolando.`);
+          }
+          if (insights.length === 0) insights.push('Continue registrando — em 2-3 medidas dá pra ver tendência clara.');
+          return insights.join('<br>');
+        })()}
+      </div>
+    </div>
+  </section>` : ''}
 
   ${fieldsLast.length ? `
   <section class="px-4 mt-3">
@@ -5853,7 +6328,162 @@ function modalSleep() {
 let readingInt = null;
 let readingStart = 0;
 
+// ----- 6.7 Reading view (tab principal) --------------------
+
+function viewReading() {
+  const board = buildReadingLeaderboard();
+  const cloudGlobal = cloudReady() && !_globalLeaderboardFetched;
+  // Dispara o fetch global em background se cloud disponível (não bloqueia UI)
+  if (cloudGlobal) {
+    _globalLeaderboardFetched = true;
+    setTimeout(() => fetchGlobalReadingLeaderboard().then((rows) => {
+      _globalLeaderboardCache = rows;
+      // Re-render se ainda estiver na tab Leitura
+      if (currentTab === 'reading') render();
+    }), 0);
+  }
+
+  // Stats pessoais da leitura
+  const wkStart = weekStartISO();
+  const myWeekMin = (state.dailyLogs || [])
+    .filter((l) => l.date >= wkStart)
+    .reduce((s, l) => s + (l.reading?.minutes || 0), 0);
+  const myTotalMin = (state.dailyLogs || []).reduce((s, l) => s + (l.reading?.minutes || 0), 0);
+  const booksDone = (state.books || []).filter((b) => b.finishedAt).length;
+  const booksReading = (state.books || []).filter((b) => !b.finishedAt).length;
+
+  // Histórico últimos 14 dias (mini bar chart)
+  const last14 = [];
+  for (let i = 13; i >= 0; i--) {
+    const d = new Date(todayISO() + 'T00:00:00');
+    d.setDate(d.getDate() - i);
+    const iso = isoDate(d);
+    const log = (state.dailyLogs || []).find((l) => l.date === iso);
+    last14.push({ iso, min: log?.reading?.minutes || 0 });
+  }
+  const maxMin = Math.max(...last14.map((x) => x.min), 30);
+
+  const theme = getTheme(state);
+
+  return `
+  <header class="pt-7 pb-3 px-5 kombat-hero">
+    <div class="kombat-tagline text-xs">📖 SESSÃO DE LEITURA</div>
+    <h1 class="text-2xl font-extrabold mt-1">Leitura</h1>
+    <p class="text-sm text-ink/55 dark:text-paper/55">Timer, livros, leaderboard global.</p>
+  </header>
+
+  <section class="px-4 space-y-3">
+    <!-- Stats em 3 quadros -->
+    <div class="grid grid-cols-3 gap-2">
+      <div class="q-card p-3">
+        <div class="text-[10px] uppercase tracking-wider text-ink/45 dark:text-paper/45">Semana</div>
+        <div class="text-2xl font-extrabold text-lavender">${myWeekMin}</div>
+        <div class="text-[10px] text-ink/45 dark:text-paper/45">min</div>
+      </div>
+      <div class="q-card p-3">
+        <div class="text-[10px] uppercase tracking-wider text-ink/45 dark:text-paper/45">Total</div>
+        <div class="text-2xl font-extrabold text-mint">${myTotalMin}</div>
+        <div class="text-[10px] text-ink/45 dark:text-paper/45">min</div>
+      </div>
+      <div class="q-card p-3">
+        <div class="text-[10px] uppercase tracking-wider text-ink/45 dark:text-paper/45">Livros</div>
+        <div class="text-2xl font-extrabold text-pink">${booksDone}</div>
+        <div class="text-[10px] text-ink/45 dark:text-paper/45">${booksReading} em curso</div>
+      </div>
+    </div>
+
+    <!-- Timer -->
+    <div class="q-card p-4 text-center">
+      <div class="text-xs uppercase tracking-wider text-ink/45 dark:text-paper/45">Timer de leitura</div>
+      <div id="reading-timer-tab" class="text-4xl font-extrabold mt-1">15:00</div>
+      <div class="flex gap-2 mt-3">
+        <button id="r-start-tab" class="q-btn q-btn-primary flex-1">▶ Iniciar 15 min</button>
+        <button id="r-stop-tab"  class="q-btn q-btn-ghost flex-1">⏸ Parar</button>
+      </div>
+      <div class="flex gap-2 mt-2">
+        <button class="r-quick q-btn q-btn-ghost flex-1 text-[10px]" data-min="5">+5 min</button>
+        <button class="r-quick q-btn q-btn-ghost flex-1 text-[10px]" data-min="15">+15 min</button>
+        <button class="r-quick q-btn q-btn-ghost flex-1 text-[10px]" data-min="30">+30 min</button>
+        <button class="r-quick q-btn q-btn-ghost flex-1 text-[10px]" data-min="60">+60 min</button>
+      </div>
+    </div>
+
+    <!-- Histórico 14 dias -->
+    <div class="q-card p-3">
+      <div class="flex items-center justify-between mb-2">
+        <div class="text-xs uppercase tracking-wider text-ink/45 dark:text-paper/45">Últimos 14 dias</div>
+        <div class="text-[10px] text-ink/45 dark:text-paper/45">média ${Math.round(last14.reduce((s, x) => s + x.min, 0) / 14)}min/dia</div>
+      </div>
+      <div class="reading-bars">
+        ${last14.map((d) => {
+          const h = Math.max(3, Math.round((d.min / maxMin) * 50));
+          const isToday = d.iso === todayISO();
+          return `<div class="reading-bar-col">
+            <div class="reading-bar" style="height:${h}px; background:${isToday ? '#FFB7C5' : 'var(--lavender)'}"></div>
+            <div class="reading-bar-label">${d.iso.slice(8)}</div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+
+    <!-- Leaderboard -->
+    <div class="q-card p-3">
+      <div class="flex items-center justify-between mb-2">
+        <h3 class="font-bold text-sm">🏆 Leaderboard · semana</h3>
+        <span class="text-[10px] text-ink/45 dark:text-paper/45">você em <b style="color:var(--lavender)">${board.youRank}º</b></span>
+      </div>
+      <div class="space-y-1">
+        ${board.rows.slice(0, 12).map((r, i) => `
+          <div class="flex items-center gap-2 py-1 ${r.isYou ? 'bg-lavender/10 rounded' : ''}">
+            <span class="w-5 text-xs font-bold text-center ${i < 3 ? 'text-kgold' : 'text-ink/45 dark:text-paper/45'}">${i+1}</span>
+            <span class="w-7 h-7 rounded-full flex items-center justify-center font-bold text-xs"
+                  style="background:${r.color}25; color:${r.color}">${r.username.slice(0,1).toUpperCase()}</span>
+            <div class="flex-1 min-w-0">
+              <div class="text-sm font-semibold truncate ${r.isYou ? 'text-lavender' : ''}">${r.username}${r.isYou ? ' (você)' : r.isNpc ? ' · bot' : r.isGlobal ? ' · global' : ''}</div>
+              <div class="xp-track mt-0.5" style="height:3px"><div class="xp-fill" style="width:${r.pct}%"></div></div>
+            </div>
+            <span class="text-xs font-bold tabular-nums">${r.minutes}min</span>
+          </div>
+        `).join('')}
+      </div>
+      <p class="text-[10px] text-ink/45 dark:text-paper/45 mt-2 italic">
+        ${cloudReady() ? 'Inclui todos os usuários do app (cadastrados no Firebase) + 3 bots. Renova toda segunda.' : 'Inclui contas locais + 3 bots. Sem internet = leaderboard local.'}
+      </p>
+    </div>
+
+    <!-- Livros -->
+    <h2 class="font-extrabold text-lg mt-4">Livros em andamento</h2>
+    <div class="space-y-2">
+      ${state.books.map((b, i) => `
+        <div class="q-card p-3 flex items-center gap-3" data-book="${i}">
+          <div class="flex-1 min-w-0">
+            <div class="font-semibold truncate">${b.title}</div>
+            <div class="text-xs text-ink/55 dark:text-paper/55">página ${b.currentPage} / ${b.totalPages}${b.finishedAt ? ' · ✓ concluído' : ''}</div>
+            <div class="xp-track mt-2"><div class="xp-fill" style="width:${(b.currentPage/b.totalPages)*100}%"></div></div>
+          </div>
+          ${b.finishedAt ? '' : `<button class="q-btn q-btn-ghost px-2 py-1 text-xs page-up-tab" data-i="${i}">+10 pg</button>`}
+          <button class="q-btn q-btn-ghost px-2 py-1 text-xs book-remove" data-i="${i}" title="Remover">×</button>
+        </div>`).join('') || `<div class="q-card p-4 text-sm text-ink/55">Sem livros ainda. Adicione abaixo.</div>`}
+    </div>
+
+    <form id="book-form-tab" class="flex gap-2 mt-2">
+      <input class="q-input flex-1" name="title" placeholder="Título do novo livro" required />
+      <input class="q-input w-20" name="pages" type="number" placeholder="págs" required min="1" />
+      <button class="q-btn q-btn-primary">+</button>
+    </form>
+  </section>
+  `;
+}
+
+let _globalLeaderboardCache = null;
+let _globalLeaderboardFetched = false;
+
 function modalReading() {
+  // Mantém atalho via quick tile na home — abre a tab.
+  go('reading');
+}
+
+function _modalReadingLegacy() {
   const board = buildReadingLeaderboard();
   openModal(`
     <header class="flex items-center justify-between p-4 border-b border-ink/5 dark:border-paper/5">
@@ -5994,31 +6624,112 @@ function mulberry32(seed) {
   };
 }
 
+/** Busca leaderboard global do Firestore (collection 'leaderboardReading').
+ *  Cada usuário tem seu próprio doc que é escrito em saveState (cloud).
+ *  Retorna array [{ uid, username, minutes, color }] da semana atual. */
+async function fetchGlobalReadingLeaderboard() {
+  if (!cloudReady()) return [];
+  try {
+    const { collection, getDocs, query, where, orderBy, limit } = window.QuestCloud;
+    if (!collection || !getDocs) return []; // SDK partial — fallback
+    const colRef = collection(window.QuestCloud.db, 'leaderboardReading');
+    const wkStart = weekStartISO();
+    const q = query(colRef, where('weekStart', '==', wkStart), orderBy('minutes', 'desc'), limit(50));
+    const snap = await getDocs(q);
+    const rows = [];
+    snap.forEach((d) => {
+      const data = d.data();
+      rows.push({
+        uid: d.id,
+        username: data.username || 'Anônimo',
+        minutes: data.minutes || 0,
+        isYou: window.QuestCloud.auth.currentUser?.uid === d.id,
+        isNpc: false,
+        isGlobal: true,
+        color: '#7BB8FF',
+      });
+    });
+    return rows;
+  } catch (e) {
+    console.warn('fetchGlobalReadingLeaderboard failed:', e);
+    return [];
+  }
+}
+
+/** Escreve as estatísticas semanais de leitura do usuário atual em
+ *  /leaderboardReading/{uid} pra aparecer no leaderboard global. */
+async function syncReadingLeaderboard() {
+  if (!cloudReady() || !window.QuestCloud.auth.currentUser) return;
+  const u = window.QuestCloud.auth.currentUser;
+  const wkStart = weekStartISO();
+  const minutes = (state?.dailyLogs || [])
+    .filter((l) => l.date >= wkStart)
+    .reduce((s, l) => s + (l.reading?.minutes || 0), 0);
+  try {
+    const { collection, doc, setDoc } = window.QuestCloud;
+    const ref = doc(window.QuestCloud.db, 'leaderboardReading', u.uid);
+    await setDoc(ref, {
+      username: state?.user?.name || (u.email || '').split('@')[0],
+      weekStart: wkStart,
+      minutes,
+      updatedAt: Date.now(),
+    });
+  } catch (e) {
+    console.warn('syncReadingLeaderboard failed:', e);
+  }
+}
+
 /** Constrói o leaderboard semanal de leitura.
- *  Junta: você + outras contas locais + 3 NPCs. Cada um pontua "minutos" da
- *  semana atual. Retorna { rows: [...sorted], youRank }. */
+ *  Mescla: você + outras contas locais + cache global do Firestore + NPCs.
+ *  Retorna { rows: [...sorted], youRank }. */
 function buildReadingLeaderboard() {
   const wkStart = weekStartISO();
-  // Minutos da semana — minha conta + outras contas locais
   const accs = loadAccounts();
   const youId = currentAccount()?.id;
   const rows = [];
+  const seenIds = new Set();
 
-  for (const acc of accs) {
-    const key = stateKey(acc.id);
-    let minutes = 0;
-    try {
-      const raw = localStorage.getItem(key);
-      if (raw) {
-        const s = JSON.parse(raw);
-        minutes = (s.dailyLogs || []).filter((l) => l.date >= wkStart).reduce((sum, l) => sum + (l.reading?.minutes || 0), 0);
-      }
-    } catch {}
-    rows.push({ username: acc.username, minutes, isYou: acc.id === youId, isNpc: false, color: '#B7B5FF' });
+  // Se cloud, prioriza os dados globais do Firestore (todos os usuários)
+  if (cloudReady() && _globalLeaderboardCache?.length) {
+    for (const r of _globalLeaderboardCache) {
+      rows.push({ ...r });
+      seenIds.add(r.uid);
+    }
+  } else {
+    // Modo local: usa state das contas no aparelho
+    for (const acc of accs) {
+      const key = stateKey(acc.id);
+      let minutes = 0;
+      try {
+        const raw = localStorage.getItem(key);
+        if (raw) {
+          const s = JSON.parse(raw);
+          minutes = (s.dailyLogs || []).filter((l) => l.date >= wkStart).reduce((sum, l) => sum + (l.reading?.minutes || 0), 0);
+        }
+      } catch {}
+      rows.push({ username: acc.username, minutes, isYou: acc.id === youId, isNpc: false, color: '#B7B5FF' });
+      seenIds.add(acc.id);
+    }
   }
 
-  // Se não estou logado mas estou em modo legado, adiciono "convidado" usando state em memória
-  if (!youId && state) {
+  // Garante que VOCÊ está no leaderboard (mesmo antes do fetch global retornar)
+  const myUid = cloudReady() ? window.QuestCloud.auth.currentUser?.uid : youId;
+  if (myUid && !seenIds.has(myUid) && state) {
+    const minutes = (state.dailyLogs || [])
+      .filter((l) => l.date >= wkStart)
+      .reduce((s, l) => s + (l.reading?.minutes || 0), 0);
+    rows.push({
+      uid: myUid,
+      username: state.user?.name || 'Você',
+      minutes,
+      isYou: true,
+      isNpc: false,
+      color: '#B7B5FF',
+    });
+  }
+
+  // Modo convidado legado
+  if (!myUid && state) {
     const minutes = (state.dailyLogs || []).filter((l) => l.date >= wkStart).reduce((s, l) => s + (l.reading?.minutes || 0), 0);
     rows.push({ username: state.user?.name || 'Convidado', minutes, isYou: true, isNpc: false, color: '#B7B5FF' });
   }
@@ -6795,6 +7506,7 @@ function renderTabbar() {
     { key: 'workout',  icon: I.dumb,   label: 'Treino' },
     { key: 'nutri',    icon: I.bowl,   label: 'Nutri' },
     { key: 'goals',    icon: I.trophy, label: 'Metas' },
+    { key: 'reading',  icon: I.book,   label: 'Leitura' },
     { key: 'body',     icon: I.body,   label: 'Corpo' },
   ];
   document.getElementById('tabbar').innerHTML = `
@@ -6890,7 +7602,7 @@ function attachHandlers() {
     const k = b.dataset.kind;
     if (k === 'modal') {
       if (t === 'sleep')        modalSleep();
-      if (t === 'reading')      modalReading();
+      if (t === 'reading')      go('reading');  // virou tab principal
       if (t === 'rewards')      modalRewards();
       if (t === 'library')      modalLibrary();
       if (t === 'achievements') modalAchievements();
@@ -6899,6 +7611,70 @@ function attachHandlers() {
       if (t === 'compete')      modalCompete();
     } else go(t);
   }));
+
+  // --- viewReading handlers ---
+  (function attachReadingHandlers() {
+    const disp = document.getElementById('reading-timer-tab');
+    if (!disp) return;
+    let remaining = 15 * 60;
+    let intId = null;
+    let startedAt = 0;
+    function fmt(s) { return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`; }
+    function tick() {
+      remaining--;
+      disp.textContent = fmt(Math.max(0, remaining));
+      if (remaining <= 0) {
+        clearInterval(intId); intId = null;
+        vibrate([60,40,80]);
+        recordReadingMinutes(15);
+        toast('15 min completos 📖');
+        confetti(800);
+        render();
+      }
+    }
+    document.getElementById('r-start-tab').onclick = () => {
+      if (intId) return;
+      remaining = 15 * 60;
+      startedAt = Date.now();
+      intId = setInterval(tick, 1000);
+    };
+    document.getElementById('r-stop-tab').onclick = () => {
+      if (!intId) return;
+      clearInterval(intId); intId = null;
+      const elapsed = Math.round((Date.now() - startedAt) / 60000);
+      if (elapsed > 0) { recordReadingMinutes(elapsed); toast(`Sessão de ${elapsed} min`); }
+      render();
+    };
+    document.querySelectorAll('.r-quick').forEach((b) => b.onclick = () => {
+      const min = +b.dataset.min;
+      recordReadingMinutes(min);
+      toast(`+${min} min de leitura 📖`);
+      confetti(400);
+      render();
+    });
+    document.querySelectorAll('.page-up-tab').forEach((b) => b.onclick = () => {
+      const i = +b.dataset.i;
+      state.books[i].currentPage = Math.min(state.books[i].totalPages, state.books[i].currentPage + 10);
+      if (state.books[i].currentPage >= state.books[i].totalPages) {
+        state.books[i].finishedAt = todayISO();
+        toast(`📖 "${state.books[i].title}" concluído!`);
+        confetti(1500);
+      }
+      saveState(); render();
+    });
+    document.querySelectorAll('.book-remove').forEach((b) => b.onclick = () => {
+      const i = +b.dataset.i;
+      if (!confirm(`Remover "${state.books[i].title}" da lista?`)) return;
+      state.books.splice(i, 1);
+      saveState(); render();
+    });
+    document.getElementById('book-form-tab')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const f = e.target;
+      state.books.push({ title: f.title.value, totalPages: +f.pages.value || 200, currentPage: 0 });
+      saveState(); render();
+    });
+  })();
 
   // Handlers da aba "Metas" (viewGoals)
   document.querySelectorAll('.goal-toggle').forEach((b) => b.onclick = (e) => {

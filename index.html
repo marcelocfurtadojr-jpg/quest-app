@@ -105,7 +105,8 @@
     } from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js';
     import {
       initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
-      doc, getDoc, setDoc, deleteDoc
+      doc, getDoc, setDoc, deleteDoc,
+      collection, getDocs, query, where, orderBy, limit
     } from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js';
 
     const firebaseConfig = {
@@ -133,6 +134,7 @@
       onAuthStateChanged, signOut, updateProfile,
       deleteUser, EmailAuthProvider, reauthenticateWithCredential,
       doc, getDoc, setDoc, deleteDoc,
+      collection, getDocs, query, where, orderBy, limit,
     };
     window.dispatchEvent(new Event('quest-cloud-ready'));
   </script>
