@@ -6755,13 +6755,22 @@ function viewReading() {
       </div>
     </div>
 
-    <!-- Timer -->
+    <!-- Timer (conta UP, pausa e finaliza manualmente) -->
     <div class="q-card p-4 text-center">
-      <div class="text-xs uppercase tracking-wider text-ink/45 dark:text-paper/45">Timer de leitura</div>
-      <div id="reading-timer-tab" class="text-4xl font-extrabold mt-1">15:00</div>
+      <div class="flex items-center justify-between mb-1">
+        <div class="text-xs uppercase tracking-wider text-ink/45 dark:text-paper/45">Cronômetro de leitura</div>
+        ${myWeekMin > 0 || (state.dailyLogs.find((l) => l.date === todayISO())?.reading?.minutes || 0) > 0 ? `
+          <button id="r-edit-today" class="text-[10px] text-ink/45 dark:text-paper/45 underline">editar hoje</button>
+        ` : ''}
+      </div>
+      <div id="reading-timer-tab" class="text-4xl font-extrabold tabular-nums">00:00</div>
+      <div id="r-status" class="text-[10px] text-ink/45 dark:text-paper/45 mt-1 min-h-[1em]"></div>
       <div class="flex gap-2 mt-3">
-        <button id="r-start-tab" class="q-btn q-btn-primary flex-1">▶ Iniciar 15 min</button>
-        <button id="r-stop-tab"  class="q-btn q-btn-ghost flex-1">⏸ Parar</button>
+        <button id="r-start-tab"    class="q-btn q-btn-primary flex-1">▶ Iniciar</button>
+        <button id="r-pause-tab"    class="q-btn q-btn-ghost flex-1 hidden">⏸ Pausar</button>
+        <button id="r-resume-tab"   class="q-btn q-btn-primary flex-1 hidden">▶ Retomar</button>
+        <button id="r-finish-tab"   class="q-btn q-btn-finish flex-1 hidden">✓ Finalizar</button>
+        <button id="r-cancel-tab"   class="q-btn q-btn-ghost flex-1 hidden">✕ Cancelar</button>
       </div>
       <div class="flex gap-2 mt-2">
         <button class="r-quick q-btn q-btn-ghost flex-1 text-[10px]" data-min="5">+5 min</button>
@@ -7405,11 +7414,90 @@ function modalChoreo() {
 // Tab "Metas" — apenas referências visuais (com imagens reais). Os desafios
 // físicos (BODY_CHALLENGES) ficam no modalChallenge() acessível pela home.
 
+/** Análise heurística de realismo da meta visual.
+ *  Sem AI vision real — usa as medidas do usuário pra estimar quanto tempo
+ *  ele levaria pra alcançar o físico da meta com cut/bulk realista.
+ *  Pra análise visual real seria preciso backend com API de visão (custo). */
+function analyzeGoalRealism(key) {
+  const all = allGoals();
+  const g = all.find((x) => x.key === key);
+  const ms = state.bodyMeasurements || [];
+  const last = ms[ms.length - 1];
+
+  if (!last || !last.weight) {
+    openModal(`
+      <header class="flex items-center justify-between p-4 border-b border-ink/5 dark:border-paper/5">
+        <h2 class="font-extrabold text-lg">Análise de realismo</h2>
+        <button class="modal-close p-1"><span class="w-5 h-5">${I.close}</span></button>
+      </header>
+      <div class="p-4 space-y-3">
+        <p class="text-sm">Pra fazer essa análise, preciso primeiro das suas medidas atuais.</p>
+        <p class="text-xs text-ink/55 dark:text-paper/55">Vai em <b>Corpo → + registrar medidas</b> e adiciona pelo menos peso + cintura. Volta aqui depois.</p>
+      </div>`);
+    return;
+  }
+
+  // Heurística simples: dado peso atual e % gordura (se houver), estima
+  // tempo realista pra mudar composição corporal pra um "físico de meta".
+  const w   = last.weight;
+  const bf  = last.bf || null;
+  const waist = last.waist || null;
+  const focus = (g?.focus || '').toLowerCase();
+  const wantsCut  = /lean|magreza|cardio|defini|abdom|cintura|core/.test(focus);
+  const wantsBulk = /força|forca|massa|peito|dorsal|ombros|bíceps|braço/.test(focus);
+  // % gordura estimada se não tiver bf (sem precisão real)
+  const estBf = bf || (waist ? Math.max(8, Math.min(40, (waist / w) * 60)) : 22);
+
+  const lines = [];
+  if (wantsCut) {
+    const targetBf = focus.includes('lean') || focus.includes('defini') ? 12 : 15;
+    const diff = Math.max(0, estBf - targetBf);
+    const months = diff < 1 ? 0 : Math.ceil(diff / 0.7); // ~0.7% de gordura/mês saudável
+    lines.push(`Pra esse físico (estética magra/definida), você precisaria reduzir ~<b>${diff.toFixed(1)}%</b> de gordura corporal.`);
+    if (months === 0) lines.push(`Você já está em composição compatível. 🎯`);
+    else if (months <= 3) lines.push(`<b style="color:#A8E6CF">Realista</b>: ~${months} ${months === 1 ? 'mês' : 'meses'} com déficit calórico moderado + treino.`);
+    else if (months <= 8) lines.push(`<b style="color:#FFD8A8">Ambicioso</b>: ~${months} meses. Vai exigir consistência alta.`);
+    else lines.push(`<b style="color:#FFB7C5">Longo prazo</b>: ~${months} meses. Considera dividir em sub-metas de 3 meses.`);
+  } else if (wantsBulk) {
+    // Estima ganho de massa magra (~0.3-0.5kg/mês pra natural treinado, 0.7-1kg/mês pra iniciante)
+    const isBeginner = (state.workouts?.length || 0) < 30;
+    const monthlyGain = isBeginner ? 0.8 : 0.4;
+    const months = Math.ceil(5 / monthlyGain); // pra ganhar ~5kg de músculo
+    lines.push(`Hipertrofia natural: ~<b>${monthlyGain}kg de músculo/mês</b> (${isBeginner ? 'iniciante' : 'já com base'}).`);
+    lines.push(`<b style="color:#FFD8A8">Pra ganhar ~5kg de massa</b>: ${months} meses com superávit calórico + treino pesado 4×/sem.`);
+    lines.push(`Sem anabolizantes, fotos de 1-2 anos de treino consistente são realistas. Físicos extremos (>15kg de músculo seco) geralmente envolvem ciclos.`);
+  } else {
+    lines.push(`Pra avaliar, preciso saber se a meta é cortar gordura, ganhar massa ou ambos.`);
+    lines.push(`Edita a meta e ajusta o foco com palavras-chave (lean, peito, dorsal, definição...).`);
+  }
+  lines.push(`<hr class="my-2 border-ink/10 dark:border-paper/10">`);
+  lines.push(`<span class="text-[10px] italic">⚠ Análise heurística — usa só suas medidas (peso ${w}kg, ${bf ? bf + '%' : 'cintura ' + (waist || '—') + 'cm'}). Pra análise real da foto seria preciso AI de visão (Gemini/GPT-4V) num backend — fala se quiser que eu implemente.</span>`);
+
+  openModal(`
+    <header class="flex items-center justify-between p-4 border-b border-ink/5 dark:border-paper/5">
+      <div>
+        <h2 class="font-extrabold text-lg">✨ Análise — ${g?.name || 'meta'}</h2>
+        <p class="text-xs text-ink/55 dark:text-paper/55">Comparando com suas medidas atuais</p>
+      </div>
+      <button class="modal-close p-1"><span class="w-5 h-5">${I.close}</span></button>
+    </header>
+    <div class="p-4 space-y-2 text-sm leading-relaxed">
+      ${lines.map((l) => `<p>${l}</p>`).join('')}
+    </div>`);
+}
+
+function allGoals() {
+  // Combina metas builtin (GOALS) + custom do usuário (state.user.customGoals)
+  const custom = (state?.user?.customGoals || []).map((g) => ({ ...g, isCustom: true }));
+  return [...GOALS, ...custom];
+}
+
 function viewGoals() {
   if (!state.user.activeGoals) state.user.activeGoals = [];
   const activeKeys = new Set(state.user.activeGoals);
-  const activeGoals = GOALS.filter((g) => activeKeys.has(g.key));
-  const otherGoals = GOALS.filter((g) => !activeKeys.has(g.key));
+  const all = allGoals();
+  const activeGoals = all.filter((g) => activeKeys.has(g.key));
+  const otherGoals = all.filter((g) => !activeKeys.has(g.key));
 
   return `
   <header class="pt-7 pb-3 px-5 kombat-hero">
@@ -7429,11 +7517,12 @@ function viewGoals() {
   <section class="px-4 mb-6">
     <div class="kombat-divider">📸 GALERIA</div>
     <p class="text-xs text-ink/55 dark:text-paper/55 mb-3 leading-relaxed">
-      Toque ★ pra marcar como meta. ${activeGoals.length ? '' : 'Comece marcando 1–2 que ressoem.'}
+      Toque ★ pra marcar como meta. Toque no nome pra renomear. ${activeGoals.length ? '' : 'Comece marcando 1–2 que ressoem.'}
     </p>
     <div class="grid grid-cols-2 gap-3">
       ${otherGoals.map(g => goalCardHtml(g, false)).join('')}
     </div>
+    <button id="goal-add" class="q-btn q-btn-ghost w-full mt-3 text-sm">+ Nova meta</button>
   </section>
 
   <section class="px-4 mb-6">
@@ -7446,11 +7535,13 @@ function viewGoals() {
 
 function goalCardHtml(g, active) {
   const hasImage = !!state?.user?.goalImages?.[g.key];
-  // "Wins" semanais — quantas vezes você "venceu" essa meta esta semana
+  const isCustom = g.isCustom || g.key?.startsWith('cg_');
+  // Override de nome via state.user.goalNames[key] (caso user tenha renomeado meta builtin)
+  const displayName = state?.user?.goalNames?.[g.key] || g.name;
   const wkStart = weekStartISO();
   const wins = (state.user.goalWins || []).filter((w) => w.key === g.key && w.date >= wkStart);
   const winsToday = wins.filter((w) => w.date === todayISO()).length;
-  const target = 5; // meta semanal default
+  const target = 5;
   return `
     <div class="q-card overflow-hidden goal-card ${active ? 'is-active' : ''}" data-key="${g.key}">
       <label class="aspect-[3/4] block cursor-pointer relative group">
@@ -7461,7 +7552,10 @@ function goalCardHtml(g, active) {
         <input type="file" accept="image/*" class="hidden goal-img-input" data-key="${g.key}" />
       </label>
       <div class="p-3">
-        <div class="font-bold text-sm">${g.name}</div>
+        <div class="flex items-start gap-1">
+          <div class="font-bold text-sm flex-1 goal-name" data-key="${g.key}">${displayName}</div>
+          <button class="goal-rename text-[10px] text-ink/45 dark:text-paper/45 px-1" data-key="${g.key}" title="renomear">✏️</button>
+        </div>
         <div class="text-[10px] text-ink/50 dark:text-paper/50 mt-0.5">${g.focus}</div>
         <p class="text-xs text-ink/65 dark:text-paper/65 mt-2 leading-snug">${g.why}</p>
         ${active ? `
@@ -7474,12 +7568,14 @@ function goalCardHtml(g, active) {
             <button class="goal-win q-btn q-btn-finish w-full mt-2 py-1 text-xs" data-key="${g.key}">
               +1 win ${winsToday > 0 ? `· hoje: ${winsToday}` : 'hoje'}
             </button>
+            ${hasImage ? `<button class="goal-analyze q-btn q-btn-ghost w-full mt-1 py-1 text-[10px]" data-key="${g.key}">✨ Análise de realismo</button>` : ''}
           </div>
         ` : ''}
-        <button class="goal-toggle q-btn ${active ? 'q-btn-ghost' : 'q-btn-ghost'} w-full mt-2 py-1 text-[10px] text-ink/55 dark:text-paper/55" data-key="${g.key}">
+        <button class="goal-toggle q-btn q-btn-ghost w-full mt-2 py-1 text-[10px] text-ink/55 dark:text-paper/55" data-key="${g.key}">
           ${active ? '☆ desmarcar' : '☆ Marcar como meta'}
         </button>
         ${hasImage ? `<button class="goal-img-remove q-btn q-btn-ghost w-full mt-1 py-1 text-[10px] text-ink/55 dark:text-paper/55" data-key="${g.key}">remover foto</button>` : ''}
+        ${isCustom ? `<button class="goal-delete q-btn q-btn-ghost w-full mt-1 py-1 text-[10px] text-blood" data-key="${g.key}">🗑️ excluir meta</button>` : ''}
       </div>
     </div>`;
 }
@@ -8061,35 +8157,113 @@ function attachHandlers() {
   (function attachReadingHandlers() {
     const disp = document.getElementById('reading-timer-tab');
     if (!disp) return;
-    let remaining = 15 * 60;
+    const status = document.getElementById('r-status');
+    const startBtn  = document.getElementById('r-start-tab');
+    const pauseBtn  = document.getElementById('r-pause-tab');
+    const resumeBtn = document.getElementById('r-resume-tab');
+    const finishBtn = document.getElementById('r-finish-tab');
+    const cancelBtn = document.getElementById('r-cancel-tab');
+
+    let elapsedSec = 0;        // total acumulado (segundos)
     let intId = null;
-    let startedAt = 0;
-    function fmt(s) { return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`; }
+    let lastTickAt = 0;
+
+    function fmt(s) {
+      const m = Math.floor(s / 60);
+      const sec = s % 60;
+      return `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+    }
+    function paint() {
+      disp.textContent = fmt(elapsedSec);
+    }
     function tick() {
-      remaining--;
-      disp.textContent = fmt(Math.max(0, remaining));
-      if (remaining <= 0) {
-        clearInterval(intId); intId = null;
-        vibrate([60,40,80]);
-        recordReadingMinutes(15);
-        toast('15 min completos 📖');
-        confetti(800);
-        render();
+      const now = Date.now();
+      const delta = Math.floor((now - lastTickAt) / 1000);
+      if (delta > 0) {
+        elapsedSec += delta;
+        lastTickAt = now;
+        paint();
       }
     }
-    document.getElementById('r-start-tab').onclick = () => {
-      if (intId) return;
-      remaining = 15 * 60;
-      startedAt = Date.now();
-      intId = setInterval(tick, 1000);
+    function setUI(state) {
+      const show = (el, v) => el && el.classList.toggle('hidden', !v);
+      // states: idle | running | paused
+      show(startBtn,  state === 'idle');
+      show(pauseBtn,  state === 'running');
+      show(resumeBtn, state === 'paused');
+      show(finishBtn, state === 'paused' || state === 'running');
+      show(cancelBtn, state === 'paused' || state === 'running');
+      if (status) {
+        status.textContent =
+          state === 'running' ? '● Cronometrando…' :
+          state === 'paused'  ? '❚❚ Pausado'      :
+          '';
+      }
+    }
+    function startTick() {
+      lastTickAt = Date.now();
+      intId = setInterval(tick, 250);
+    }
+    function stopTick() {
+      if (intId) { clearInterval(intId); intId = null; }
+    }
+
+    startBtn.onclick = () => {
+      elapsedSec = 0; paint();
+      startTick();
+      setUI('running');
     };
-    document.getElementById('r-stop-tab').onclick = () => {
-      if (!intId) return;
-      clearInterval(intId); intId = null;
-      const elapsed = Math.round((Date.now() - startedAt) / 60000);
-      if (elapsed > 0) { recordReadingMinutes(elapsed); toast(`Sessão de ${elapsed} min`); }
+    pauseBtn.onclick = () => {
+      tick(); // garante última fração
+      stopTick();
+      setUI('paused');
+    };
+    resumeBtn.onclick = () => {
+      startTick();
+      setUI('running');
+    };
+    finishBtn.onclick = () => {
+      tick();
+      stopTick();
+      const minutes = Math.round(elapsedSec / 60);
+      if (minutes < 1) {
+        toast('Sessão menor que 1 min — não contabilizada');
+        elapsedSec = 0; paint(); setUI('idle');
+        return;
+      }
+      recordReadingMinutes(minutes);
+      vibrate([60,40,80]);
+      toast(`+${minutes} min de leitura 📖`);
+      confetti(700);
+      elapsedSec = 0; paint(); setUI('idle');
       render();
     };
+    cancelBtn.onclick = () => {
+      stopTick();
+      elapsedSec = 0; paint();
+      setUI('idle');
+      toast('Sessão descartada');
+    };
+
+    // Editar/zerar minutos lidos hoje
+    document.getElementById('r-edit-today')?.addEventListener('click', () => {
+      const log = state.dailyLogs.find((l) => l.date === todayISO());
+      const cur = log?.reading?.minutes || 0;
+      const novo = prompt(`Minutos lidos hoje (atual: ${cur}). Digite o novo valor (0 pra zerar):`, String(cur));
+      if (novo === null) return;
+      const n = Math.max(0, Math.floor(+novo) || 0);
+      if (log) {
+        log.reading = { minutes: n };
+        log.xp = computeDayXP(log);
+      } else if (n > 0) {
+        recordReadingMinutes(n);
+        return;
+      }
+      saveState();
+      toast(n === 0 ? 'Leitura de hoje zerada' : `Leitura de hoje: ${n} min`);
+      render();
+    });
+
     document.querySelectorAll('.r-quick').forEach((b) => b.onclick = () => {
       const min = +b.dataset.min;
       recordReadingMinutes(min);
@@ -8174,6 +8348,52 @@ function attachHandlers() {
     e.stopPropagation();
     if (state.user.goalImages) delete state.user.goalImages[b.dataset.key];
     saveState(); render();
+  });
+  // Renomear meta (builtin ou custom)
+  document.querySelectorAll('.goal-rename, .goal-name').forEach((b) => b.onclick = (e) => {
+    e.stopPropagation();
+    const k = b.dataset.key;
+    const all = allGoals();
+    const g = all.find((x) => x.key === k);
+    if (!g) return;
+    const cur = state.user.goalNames?.[k] || g.name;
+    const novo = prompt('Novo nome para a meta:', cur);
+    if (!novo || novo.trim() === cur) return;
+    state.user.goalNames = state.user.goalNames || {};
+    state.user.goalNames[k] = novo.trim();
+    saveState(); render();
+  });
+  // Adicionar nova meta custom
+  document.getElementById('goal-add')?.addEventListener('click', () => {
+    const name = prompt('Nome da nova meta:\n(ex: "Glúteo firme", "Mestre em xadrez", "Aprender violão")');
+    if (!name || name.trim().length < 2) return;
+    const focus = prompt('Foco / categoria curta:\n(ex: "glúteo + isquio", "estudo", "música")') || 'meta pessoal';
+    const why = prompt('Por que essa meta importa pra você?', 'Algo que quero conquistar.') || '';
+    const key = 'cg_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+    state.user.customGoals = state.user.customGoals || [];
+    state.user.customGoals.push({ key, name: name.trim(), focus: focus.trim(), why: why.trim() });
+    saveState();
+    toast(`Meta "${name.trim()}" criada`);
+    render();
+  });
+  // Excluir meta custom
+  document.querySelectorAll('.goal-delete').forEach((b) => b.onclick = (e) => {
+    e.stopPropagation();
+    const k = b.dataset.key;
+    const list = state.user.customGoals || [];
+    const g = list.find((x) => x.key === k);
+    if (!g) return;
+    if (!confirm(`Excluir meta "${g.name}" permanentemente?`)) return;
+    state.user.customGoals = list.filter((x) => x.key !== k);
+    if (state.user.activeGoals) state.user.activeGoals = state.user.activeGoals.filter((x) => x !== k);
+    if (state.user.goalImages) delete state.user.goalImages[k];
+    if (state.user.goalNames) delete state.user.goalNames[k];
+    saveState(); render();
+  });
+  // Análise de realismo da imagem da meta (heurística — sem AI real)
+  document.querySelectorAll('.goal-analyze').forEach((b) => b.onclick = (e) => {
+    e.stopPropagation();
+    analyzeGoalRealism(b.dataset.key);
   });
   document.getElementById('open-challenges')?.addEventListener('click', modalChallenge);
   document.getElementById('challenge-reroll')?.addEventListener('click', () => render());
