@@ -3954,11 +3954,19 @@ function calculateKcalGoal(user, currentWeightKg) {
   return Math.round(tdee);
 }
 
-/** Meta de proteína dinâmica baseada no peso (1.8g/kg). */
+/** Meta de proteína dinâmica baseada no peso.
+ *  - Homem ativo: 1.8 g/kg (faixa 1.6-2.2)
+ *  - Mulher ativa: 1.6 g/kg (faixa 1.4-2.0)
+ *  Fonte: ISSN position stand (Jäger et al., 2017) + Phillips & Van Loon.
+ *  Sem sexo definido → assume 1.7 g/kg (média conservadora). */
 function calculateProteinGoal(user, currentWeightKg) {
   const w = +currentWeightKg || +user?.weight || 0;
   if (!w) return null;
-  return Math.round(w * 1.8);
+  const sex = (user?.sex || '').toLowerCase();
+  const factor = sex === 'f' || sex === 'female' || sex === 'feminino' ? 1.6
+              : sex === 'm' || sex === 'male'   || sex === 'masculino' ? 1.8
+              : 1.7;
+  return Math.round(w * factor);
 }
 
 /** Helper: usa override manual se existir, senão calcula. Fallback global. */
@@ -7809,15 +7817,23 @@ function analyzeGoalRealism(key) {
   const w   = last.weight;
   const bf  = last.bf || null;
   const waist = last.waist || null;
+  const sex = (state.user?.sex || '').toLowerCase();
+  const isFem = sex === 'f' || sex === 'female' || sex === 'feminino';
   const focus = (g?.focus || '').toLowerCase();
   const wantsCut  = /lean|magreza|cardio|defini|abdom|cintura|core/.test(focus);
   const wantsBulk = /força|forca|massa|peito|dorsal|ombros|bíceps|braço/.test(focus);
-  // % gordura estimada se não tiver bf (sem precisão real)
-  const estBf = bf || (waist ? Math.max(8, Math.min(40, (waist / w) * 60)) : 22);
+  // % gordura estimada se não tiver bf — mulheres têm % naturalmente maior
+  const defaultBf = isFem ? 28 : 22;
+  const estBf = bf || (waist ? Math.max(8, Math.min(40, (waist / w) * (isFem ? 65 : 60))) : defaultBf);
 
   const lines = [];
   if (wantsCut) {
-    const targetBf = focus.includes('lean') || focus.includes('defini') ? 12 : 15;
+    // Alvos saudáveis diferentes por sexo:
+    // - Homens: 12% (lean/defined) / 15% (atlético)
+    // - Mulheres: 20% (lean) / 23% (atlético) — essencial fisiológico maior
+    const targetBf = isFem
+      ? (focus.includes('lean') || focus.includes('defini') ? 20 : 23)
+      : (focus.includes('lean') || focus.includes('defini') ? 12 : 15);
     const diff = Math.max(0, estBf - targetBf);
     const months = diff < 1 ? 0 : Math.ceil(diff / 0.7); // ~0.7% de gordura/mês saudável
     lines.push(`Pra esse físico (estética magra/definida), você precisaria reduzir ~<b>${diff.toFixed(1)}%</b> de gordura corporal.`);
@@ -7826,13 +7842,16 @@ function analyzeGoalRealism(key) {
     else if (months <= 8) lines.push(`<b style="color:#FFD8A8">Ambicioso</b>: ~${months} meses. Vai exigir consistência alta.`);
     else lines.push(`<b style="color:#FFB7C5">Longo prazo</b>: ~${months} meses. Considera dividir em sub-metas de 3 meses.`);
   } else if (wantsBulk) {
-    // Estima ganho de massa magra (~0.3-0.5kg/mês pra natural treinado, 0.7-1kg/mês pra iniciante)
+    // Hipertrofia natural — homens ganham ~2x mais rápido que mulheres em massa magra.
     const isBeginner = (state.workouts?.length || 0) < 30;
-    const monthlyGain = isBeginner ? 0.8 : 0.4;
-    const months = Math.ceil(5 / monthlyGain); // pra ganhar ~5kg de músculo
-    lines.push(`Hipertrofia natural: ~<b>${monthlyGain}kg de músculo/mês</b> (${isBeginner ? 'iniciante' : 'já com base'}).`);
-    lines.push(`<b style="color:#FFD8A8">Pra ganhar ~5kg de massa</b>: ${months} meses com superávit calórico + treino pesado 4×/sem.`);
-    lines.push(`Sem anabolizantes, fotos de 1-2 anos de treino consistente são realistas. Físicos extremos (>15kg de músculo seco) geralmente envolvem ciclos.`);
+    const monthlyGain = isFem
+      ? (isBeginner ? 0.4 : 0.2)
+      : (isBeginner ? 0.8 : 0.4);
+    const targetKg = isFem ? 3 : 5; // mulheres geralmente miram em ~3kg de músculo
+    const months = Math.ceil(targetKg / monthlyGain);
+    lines.push(`Hipertrofia natural ${isFem ? 'feminina' : 'masculina'}: ~<b>${monthlyGain}kg de músculo/mês</b> (${isBeginner ? 'iniciante' : 'já com base'}).`);
+    lines.push(`<b style="color:#FFD8A8">Pra ganhar ~${targetKg}kg de massa</b>: ${months} meses com superávit calórico + treino pesado 4×/sem.`);
+    lines.push(`Sem anabolizantes, fotos de 1-2 anos de treino consistente são realistas. ${isFem ? 'Mulheres têm menos testosterona — ganho de massa é mais lento mas saudável.' : 'Físicos extremos (>15kg de músculo seco) geralmente envolvem ciclos.'}`);
   } else {
     lines.push(`Pra avaliar, preciso saber se a meta é cortar gordura, ganhar massa ou ambos.`);
     lines.push(`Edita a meta e ajusta o foco com palavras-chave (lean, peito, dorsal, definição...).`);
@@ -8259,7 +8278,8 @@ function viewConfig() {
       <div class="block mt-4 pt-3 border-t border-ink/5 dark:border-paper/5">
         <div class="text-sm font-semibold mb-2">📏 Perfil físico</div>
         <p class="text-[10px] text-ink/55 dark:text-paper/55 mb-2 leading-relaxed">
-          Suas metas de calorias e proteína são calculadas a partir desses dados (Mifflin-St Jeor + fator de atividade). Deixar em branco usa valores genéricos.
+          Suas metas de calorias e proteína são calculadas a partir desses dados (Mifflin-St Jeor + fator de atividade).
+          BMR difere entre M (+5) e F (−161 kcal). Proteína: M usa 1.8g/kg, F usa 1.6g/kg. Deixar em branco usa valores médios.
         </p>
         <div class="grid grid-cols-3 gap-2">
           <label class="block">
