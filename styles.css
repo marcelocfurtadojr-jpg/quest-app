@@ -408,6 +408,79 @@ input[type=number] { -moz-appearance: textfield; }
 }
 .mk-close:hover { background: rgba(184,36,46,0.4); color: #FFF; }
 
+/* Lutador no overlay MK ----------------------------------- */
+.mk-fighter {
+  width: clamp(160px, 45vw, 280px);
+  height: auto;
+  margin-bottom: -.5rem;
+  filter: drop-shadow(0 8px 18px rgba(0,0,0,.7)) drop-shadow(0 0 14px rgba(232,74,26,.5));
+  animation: fighterEnter .6s cubic-bezier(.2,.95,.25,1.25);
+}
+.mk-fighter svg { width: 100%; height: auto; }
+@keyframes fighterEnter {
+  from { opacity: 0; transform: translateY(20px) scale(.85); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.mk-fighter-tag {
+  font-family: 'Russo One', sans-serif;
+  font-size: .7rem;
+  letter-spacing: 0.3em;
+  color: #FFE08F;
+  margin-top: .8rem;
+  text-transform: uppercase;
+  opacity: 0.85;
+  animation: mkFadeIn .8s ease-out .5s both;
+}
+
+/* Mascote dentro do card de atributo ---------------------- */
+.attr-fighter {
+  width: 100%;
+  aspect-ratio: 1 / 1.1;
+  display: flex; align-items: flex-end; justify-content: center;
+  position: relative;
+}
+.attr-fighter svg {
+  width: 90%;
+  height: 100%;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,.15));
+  transition: transform .25s ease;
+}
+.attr-fighter:hover svg { transform: translateY(-3px) scale(1.05); }
+
+/* Hero banner do dashboard com lutador rotativo ----------- */
+.fighter-banner {
+  position: relative;
+  background: linear-gradient(135deg, rgba(184,36,46,0.06) 0%, rgba(214,169,62,0.08) 100%);
+  border: 1px solid rgba(214,169,62,0.25);
+  border-radius: 18px;
+  padding: .9rem 1rem;
+  overflow: hidden;
+  display: flex; align-items: center; gap: 0.8rem;
+}
+.dark .fighter-banner {
+  background: linear-gradient(135deg, rgba(184,36,46,0.18) 0%, rgba(214,169,62,0.10) 100%);
+  border-color: rgba(214,169,62,0.4);
+}
+.fighter-banner-svg {
+  width: 80px; height: 100px;
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,.12));
+}
+.fighter-banner-text {
+  font-family: 'Russo One', sans-serif;
+  letter-spacing: 0.05em;
+}
+
+/* Food category "is-kombat" filtra com glow vermelho ------ */
+.food-cat-btn { cursor: pointer; transition: all .15s; }
+.food-cat-btn:hover { transform: translateY(-1px); }
+.food-cat-btn.is-kombat {
+  background: linear-gradient(135deg, #B8242E, #E84A1A);
+  color: #FFE89E;
+  border-color: #D6A93E;
+  font-family: 'Russo One', sans-serif;
+}
+
 /* Damage numbers flutuantes ao ganhar XP ------------------ */
 .dmg-num {
   position: fixed;

@@ -177,6 +177,124 @@ const FOOD_DB = [
   { name: 'Chá verde',                 kcal: 1,   p: 0,    c: 0,    f: 0,    cat: 'bebida',   ko: '녹차' },
   { name: 'Leite desnatado',           kcal: 34,  p: 3.4,  c: 5,    f: 0.1,  cat: 'bebida',   ko: '저지방 우유' },
   { name: 'Leite integral',            kcal: 61,  p: 3.2,  c: 4.8,  f: 3.3,  cat: 'bebida',   ko: '우유' },
+  { name: 'Café com leite (100ml)',    kcal: 60,  p: 3,    c: 7,    f: 2.5,  cat: 'bebida' },
+  { name: 'Cappuccino (200ml)',        kcal: 90,  p: 5,    c: 9,    f: 4,    cat: 'bebida' },
+  { name: 'Suco de laranja natural',   kcal: 45,  p: 0.7,  c: 10,   f: 0.2,  cat: 'bebida' },
+  { name: 'Refrigerante cola (lata 350ml)', kcal: 39, p: 0, c: 10,  f: 0,    cat: 'bebida' },
+  { name: 'Refrigerante zero',         kcal: 0,   p: 0,    c: 0,    f: 0,    cat: 'bebida' },
+  { name: 'Cerveja Pilsen',            kcal: 43,  p: 0.5,  c: 3.5,  f: 0,    cat: 'bebida' },
+  { name: 'Vinho tinto',               kcal: 85,  p: 0.1,  c: 2.6,  f: 0,    cat: 'bebida' },
+  { name: 'Soju coreano',              kcal: 110, p: 0,    c: 0,    f: 0,    cat: 'bebida',   ko: '소주' },
+  { name: 'Energético (Red Bull lata)',kcal: 45,  p: 0,    c: 11,   f: 0,    cat: 'bebida' },
+  { name: 'Whey + água (1 scoop 30g)', kcal: 120, p: 24,   c: 3,    f: 1.5,  cat: 'bebida' },
+
+  // ===== "Erros" comuns / Fast food =====
+  // (registrar mesmo quando não foi ideal — sem julgamento)
+  { name: 'Pizza muçarela (1 fatia ~120g)', kcal: 270, p: 11, c: 33, f: 11,  cat: 'erro' },
+  { name: 'Pizza calabresa (1 fatia)', kcal: 290, p: 12,   c: 32,   f: 13,   cat: 'erro' },
+  { name: 'Pizza portuguesa (1 fatia)',kcal: 310, p: 14,   c: 30,   f: 16,   cat: 'erro' },
+  { name: 'Hambúrguer pão+carne+queijo', kcal: 295, p: 17, c: 27,   f: 14,   cat: 'erro' },
+  { name: 'Big Mac (1 unidade)',       kcal: 540, p: 25,   c: 45,   f: 28,   cat: 'erro' },
+  { name: 'Whopper (1 unidade)',       kcal: 657, p: 28,   c: 49,   f: 40,   cat: 'erro' },
+  { name: 'X-Burger lanchonete (~250g)',kcal: 600,p: 28,   c: 45,   f: 32,   cat: 'erro' },
+  { name: 'X-Bacon (~280g)',           kcal: 720, p: 32,   c: 45,   f: 42,   cat: 'erro' },
+  { name: 'Batata frita média (100g)', kcal: 312, p: 3.4,  c: 41,   f: 15,   cat: 'erro' },
+  { name: 'Onion rings (100g)',        kcal: 411, p: 5,    c: 38,   f: 27,   cat: 'erro' },
+  { name: 'Nuggets de frango (6un)',   kcal: 280, p: 13,   c: 18,   f: 17,   cat: 'erro' },
+  { name: 'Hot-dog (1 unidade)',       kcal: 290, p: 11,   c: 24,   f: 17,   cat: 'erro' },
+  { name: 'Coxinha frita (1un ~80g)',  kcal: 250, p: 8,    c: 22,   f: 14,   cat: 'erro' },
+  { name: 'Pastel de carne (1un)',     kcal: 200, p: 8,    c: 18,   f: 11,   cat: 'erro' },
+  { name: 'Pão de queijo (1un ~25g)',  kcal: 80,  p: 2.2,  c: 8,    f: 4.5,  cat: 'erro' },
+  { name: 'Esfiha de carne (1un)',     kcal: 180, p: 8,    c: 22,   f: 6,    cat: 'erro' },
+  { name: 'Quibe frito (1un)',         kcal: 150, p: 7,    c: 15,   f: 7,    cat: 'erro' },
+  { name: 'Açaí com granola (300ml)',  kcal: 380, p: 4,    c: 65,   f: 10,   cat: 'erro' },
+  { name: 'Açaí completo (500ml)',     kcal: 620, p: 6,    c: 100,  f: 18,   cat: 'erro' },
+  { name: 'Sushi salmão (1un)',        kcal: 50,  p: 2,    c: 7,    f: 1.5,  cat: 'erro',     ko: '초밥' },
+  { name: 'Temaki salmão (1un)',       kcal: 290, p: 14,   c: 35,   f: 10,   cat: 'erro',     ko: '데마키' },
+  { name: 'Yakisoba frango (300g)',    kcal: 380, p: 18,   c: 55,   f: 9,    cat: 'erro',     ko: '야끼소바' },
+  { name: 'Ramyeon coreano (1 pacote)',kcal: 500, p: 11,   c: 78,   f: 17,   cat: 'erro',     ko: '라면' },
+  { name: 'Korean fried chicken (200g)',kcal: 480,p: 28,   c: 25,   f: 28,   cat: 'erro',     ko: '치킨' },
+  { name: 'Tteokbokki picante (1 porção)', kcal: 470, p: 9, c: 90,  f: 7,    cat: 'erro',     ko: '떡볶이' },
+
+  // ===== Doces e sobremesas =====
+  { name: 'Chocolate ao leite (30g)',  kcal: 158, p: 2.3,  c: 17,   f: 9,    cat: 'doce' },
+  { name: 'Chocolate amargo 70% (30g)',kcal: 170, p: 2.4,  c: 14,   f: 12,   cat: 'doce' },
+  { name: 'Brigadeiro (1un ~20g)',     kcal: 65,  p: 1.4,  c: 11,   f: 2,    cat: 'doce' },
+  { name: 'Bolo de chocolate (1 fatia)',kcal: 350,p: 5,    c: 50,   f: 15,   cat: 'doce' },
+  { name: 'Sorvete de creme (100g)',   kcal: 207, p: 3.5,  c: 24,   f: 11,   cat: 'doce' },
+  { name: 'Sorvete chocolate (100g)',  kcal: 216, p: 3.8,  c: 28,   f: 11,   cat: 'doce' },
+  { name: 'Doce de leite (1 col sopa)',kcal: 95,  p: 1.7,  c: 17,   f: 2,    cat: 'doce' },
+  { name: 'Pudim de leite (100g)',     kcal: 167, p: 5,    c: 26,   f: 5,    cat: 'doce' },
+  { name: 'Biscoito recheado (1un)',   kcal: 70,  p: 0.9,  c: 10,   f: 3,    cat: 'doce' },
+  { name: 'Cookie chocolate chip (1un)',kcal: 150,p: 2,    c: 20,   f: 7,    cat: 'doce' },
+  { name: 'Bombom Sonho de Valsa (1un)',kcal: 75, p: 0.9,  c: 9,    f: 4,    cat: 'doce' },
+  { name: 'Cheesecake (1 fatia ~100g)',kcal: 321, p: 6,    c: 26,   f: 22,   cat: 'doce' },
+  { name: 'Mel (1 col sopa)',          kcal: 64,  p: 0.1,  c: 17,   f: 0,    cat: 'doce' },
+  { name: 'Açúcar refinado (1 col sopa)', kcal: 60, p: 0,   c: 15,   f: 0,    cat: 'doce' },
+
+  // ===== Snacks e biscoitos =====
+  { name: 'Pão francês (1un ~50g)',    kcal: 150, p: 4,    c: 30,   f: 1.5,  cat: 'snack' },
+  { name: 'Pão de forma (1 fatia)',    kcal: 70,  p: 2,    c: 13,   f: 1,    cat: 'snack' },
+  { name: 'Biscoito água e sal (5un)', kcal: 110, p: 2,    c: 19,   f: 3,    cat: 'snack' },
+  { name: 'Biscoito polvilho (10un)',  kcal: 80,  p: 0.5,  c: 18,   f: 0,    cat: 'snack' },
+  { name: 'Batata Pringles (lata sm)', kcal: 535, p: 5,    c: 50,   f: 36,   cat: 'snack' },
+  { name: 'Doritos (100g)',            kcal: 498, p: 7,    c: 64,   f: 23,   cat: 'snack' },
+  { name: 'Pipoca microondas (100g)',  kcal: 480, p: 8,    c: 65,   f: 22,   cat: 'snack' },
+  { name: 'Pipoca natural (100g)',     kcal: 387, p: 12,   c: 78,   f: 5,    cat: 'snack' },
+  { name: 'Castanha-de-caju (30g)',    kcal: 165, p: 5,    c: 9,    f: 13,   cat: 'snack' },
+  { name: 'Mix de nuts (30g)',         kcal: 175, p: 5,    c: 7,    f: 15,   cat: 'snack' },
+  { name: 'Barra de cereal (1un)',     kcal: 90,  p: 1.5,  c: 16,   f: 2.5,  cat: 'snack' },
+  { name: 'Barra de proteína (1un)',   kcal: 220, p: 20,   c: 22,   f: 7,    cat: 'snack' },
+
+  // ===== Mais proteínas =====
+  { name: 'Sardinha em lata (em óleo)',kcal: 208, p: 25,   c: 0,    f: 12,   cat: 'proteina' },
+  { name: 'Atum em óleo',              kcal: 198, p: 29,   c: 0,    f: 8,    cat: 'proteina' },
+  { name: 'Coxa de frango s/ pele',    kcal: 152, p: 21,   c: 0,    f: 7,    cat: 'proteina' },
+  { name: 'Bacon (2 fatias ~20g)',     kcal: 81,  p: 6,    c: 0,    f: 6,    cat: 'proteina' },
+  { name: 'Linguiça toscana (100g)',   kcal: 270, p: 14,   c: 1,    f: 23,   cat: 'proteina' },
+  { name: 'Calabresa (100g)',          kcal: 305, p: 14,   c: 2,    f: 27,   cat: 'proteina' },
+  { name: 'Salame italiano (50g)',     kcal: 170, p: 13,   c: 0.5,  f: 13,   cat: 'proteina' },
+  { name: 'Presunto cozido (50g)',     kcal: 73,  p: 11,   c: 0.5,  f: 3,    cat: 'proteina' },
+  { name: 'Queijo muçarela (50g)',     kcal: 140, p: 11,   c: 1,    f: 10,   cat: 'proteina' },
+  { name: 'Queijo prato (50g)',        kcal: 180, p: 12,   c: 1,    f: 14,   cat: 'proteina' },
+  { name: 'Queijo coalho (50g)',       kcal: 160, p: 14,   c: 1,    f: 11,   cat: 'proteina' },
+  { name: 'Ricota (100g)',             kcal: 174, p: 11,   c: 3,    f: 13,   cat: 'proteina' },
+  { name: 'Iogurte natural integral',  kcal: 62,  p: 3.5,  c: 4.7,  f: 3.3,  cat: 'proteina' },
+  { name: 'Omelete 2 ovos',            kcal: 170, p: 12,   c: 1,    f: 13,   cat: 'proteina' },
+  { name: 'Ovo mexido (2 ovos)',       kcal: 195, p: 13,   c: 1.5,  f: 15,   cat: 'proteina' },
+  { name: 'Camarão grelhado',          kcal: 99,  p: 24,   c: 0.2,  f: 0.3,  cat: 'proteina' },
+
+  // ===== Mais carboidratos e leguminosas =====
+  { name: 'Grão-de-bico cozido',       kcal: 164, p: 9,    c: 27,   f: 2.6,  cat: 'carb' },
+  { name: 'Quinoa cozida',             kcal: 120, p: 4.4,  c: 21,   f: 1.9,  cat: 'carb' },
+  { name: 'Cuscuz nordestino',         kcal: 113, p: 3.5,  c: 24,   f: 0.5,  cat: 'carb' },
+  { name: 'Farofa (1 col sopa)',       kcal: 50,  p: 0.6,  c: 7,    f: 2,    cat: 'carb' },
+  { name: 'Polenta cozida',            kcal: 71,  p: 1.6,  c: 15,   f: 0.5,  cat: 'carb' },
+  { name: 'Inhame cozido',             kcal: 97,  p: 1.5,  c: 23,   f: 0.2,  cat: 'carb' },
+
+  // ===== Mais frutas =====
+  { name: 'Laranja',                   kcal: 47,  p: 0.9,  c: 12,   f: 0.1,  cat: 'fruta' },
+  { name: 'Pera',                      kcal: 57,  p: 0.4,  c: 15,   f: 0.1,  cat: 'fruta' },
+  { name: 'Melancia',                  kcal: 30,  p: 0.6,  c: 8,    f: 0.2,  cat: 'fruta' },
+  { name: 'Melão',                     kcal: 34,  p: 0.8,  c: 8,    f: 0.2,  cat: 'fruta' },
+  { name: 'Abacaxi',                   kcal: 50,  p: 0.5,  c: 13,   f: 0.1,  cat: 'fruta' },
+  { name: 'Uva',                       kcal: 69,  p: 0.7,  c: 18,   f: 0.2,  cat: 'fruta' },
+  { name: 'Kiwi',                      kcal: 61,  p: 1.1,  c: 15,   f: 0.5,  cat: 'fruta' },
+  { name: 'Pêssego',                   kcal: 39,  p: 0.9,  c: 10,   f: 0.3,  cat: 'fruta' },
+
+  // ===== Suplementos =====
+  { name: 'Creatina monoidratada (5g)',kcal: 0,   p: 0,    c: 0,    f: 0,    cat: 'supl' },
+  { name: 'BCAA (1 dose 10g)',         kcal: 40,  p: 10,   c: 0,    f: 0,    cat: 'supl' },
+  { name: 'Glutamina (5g)',            kcal: 20,  p: 5,    c: 0,    f: 0,    cat: 'supl' },
+  { name: 'Caseína (30g)',             kcal: 110, p: 24,   c: 4,    f: 1,    cat: 'supl' },
+  { name: 'Pré-treino (1 dose)',       kcal: 5,   p: 0,    c: 1,    f: 0,    cat: 'supl' },
+  { name: 'Multivitamínico (1 cápsula)', kcal: 0, p: 0,    c: 0,    f: 0,    cat: 'supl' },
+
+  // ===== Mais pratos coreanos =====
+  { name: 'Mandu / dumpling (5un)',    kcal: 350, p: 14,   c: 38,   f: 16,   cat: 'prato',    ko: '만두' },
+  { name: 'Kimchi jjigae (1 tigela)',  kcal: 245, p: 16,   c: 15,   f: 14,   cat: 'prato',    ko: '김치찌개' },
+  { name: 'Samgyeopsal (200g porco)',  kcal: 520, p: 28,   c: 0,    f: 45,   cat: 'prato',    ko: '삼겹살' },
+  { name: 'Kongguksu (sopa fria soja)',kcal: 380, p: 18,   c: 50,   f: 12,   cat: 'prato',    ko: '콩국수' },
 ];
 
 // Conquistas / 업적 — checadas após cada save de log/treino/etc.
@@ -316,19 +434,257 @@ const KOMBAT_EVENTS = {
   toasty:    { title: 'TOASTY!',             sub: 'Surpresa de combo' },
 };
 
-// 5 atributos / 능력치 — crescem por categoria de ação.
-// 힘 força, 지구력 resistência, 지혜 sabedoria, 절제 disciplina, 활력 vitalidade
+// Lutadores Mortal Kombat — SVGs estilizados (fan-art geométrica).
+// Cada lutador é mascote de um atributo + aparece em overlays + banner.
+// Construídos com formas geométricas pra identidade clara sem violar copyright.
+const FIGHTERS = {
+  // KANO — implante laser vermelho no olho direito, faca, peito tatuado, careca.
+  // Atributo: FORÇA. Overlay: BRUTALITY.
+  kano: { name: 'Kano', accent: '#B8242E', tagline: 'BRUTAL POWER', attr: 'forca', svg: `
+    <svg viewBox="0 0 200 250" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- cabeça careca -->
+      <ellipse cx="100" cy="55" rx="36" ry="42" fill="#D4A574" stroke="#1A1A2E" stroke-width="2.5"/>
+      <!-- sobrancelha esquerda -->
+      <path d="M70 48 L88 44" stroke="#1A1A2E" stroke-width="3.5" stroke-linecap="round"/>
+      <!-- olho esquerdo -->
+      <circle cx="82" cy="58" r="3" fill="#1A1A2E"/>
+      <!-- implante laser direito (placa metálica + olho vermelho brilhante) -->
+      <path d="M108 38 L138 42 L140 70 L110 72 Z" fill="#888" stroke="#1A1A2E" stroke-width="2"/>
+      <path d="M114 44 L130 46 L132 64 L116 66 Z" fill="#444"/>
+      <circle cx="123" cy="55" r="6" fill="#FF1818"/>
+      <circle cx="123" cy="55" r="2.5" fill="#FFE0E0"/>
+      <!-- linha vermelha lateral (laser scan) -->
+      <line x1="140" y1="55" x2="195" y2="55" stroke="#FF1818" stroke-width="1.5" opacity="0.5" stroke-dasharray="3 3"/>
+      <!-- barba/queixo -->
+      <path d="M76 78 Q100 92 124 78" stroke="#1A1A2E" stroke-width="2.5" fill="none"/>
+      <!-- pescoço grosso -->
+      <rect x="84" y="92" width="32" height="14" fill="#D4A574" stroke="#1A1A2E" stroke-width="2"/>
+      <!-- ombros largos + camiseta preta sem manga -->
+      <path d="M45 130 Q50 108 90 105 L110 105 Q150 108 155 130 L155 195 L45 195 Z" fill="#1A1A2E" stroke="#1A1A2E" stroke-width="2"/>
+      <!-- braços musculosos (bíceps) -->
+      <ellipse cx="42" cy="155" rx="18" ry="36" fill="#D4A574" stroke="#1A1A2E" stroke-width="2"/>
+      <ellipse cx="158" cy="155" rx="18" ry="36" fill="#D4A574" stroke="#1A1A2E" stroke-width="2"/>
+      <!-- veias bíceps -->
+      <path d="M38 145 Q44 155 38 165" stroke="#8B5A3C" stroke-width="1.5" fill="none"/>
+      <path d="M162 145 Q156 155 162 165" stroke="#8B5A3C" stroke-width="1.5" fill="none"/>
+      <!-- caveira no peito (tatuagem) -->
+      <circle cx="100" cy="140" r="10" fill="none" stroke="#B8242E" stroke-width="2"/>
+      <circle cx="96" cy="138" r="2" fill="#B8242E"/>
+      <circle cx="104" cy="138" r="2" fill="#B8242E"/>
+      <path d="M94 145 L98 147 L100 144 L102 147 L106 145" stroke="#B8242E" stroke-width="1.5" fill="none"/>
+      <!-- faca na mão direita (Kano blade) -->
+      <path d="M178 178 L196 168 L198 174 L182 184 Z" fill="#C0C0C0" stroke="#1A1A2E" stroke-width="1.5"/>
+      <rect x="172" y="180" width="10" height="14" rx="2" fill="#1A1A2E"/>
+    </svg>` },
+
+  // JOHNNY CAGE — óculos escuros, jaqueta verde com JC, smirk, dedinho apontando.
+  // Atributo: VITALIDADE (Hollywood vibes). Overlay: TOASTY.
+  cage: { name: 'Johnny Cage', accent: '#3FBF7F', tagline: 'HOLLYWOOD APPROVES', attr: 'vitalidade', svg: `
+    <svg viewBox="0 0 200 250" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- cabelo preto curto -->
+      <path d="M62 42 Q70 18 100 16 Q130 18 138 42 L136 60 L64 60 Z" fill="#2A2A2A" stroke="#1A1A2E" stroke-width="2"/>
+      <!-- rosto -->
+      <ellipse cx="100" cy="62" rx="34" ry="40" fill="#F0C8A0" stroke="#1A1A2E" stroke-width="2.5"/>
+      <!-- óculos escuros (cool sunglasses) -->
+      <rect x="68" y="54" width="28" height="14" rx="3" fill="#1A1A2E" stroke="#1A1A2E" stroke-width="2"/>
+      <rect x="104" y="54" width="28" height="14" rx="3" fill="#1A1A2E" stroke="#1A1A2E" stroke-width="2"/>
+      <line x1="96" y1="60" x2="104" y2="60" stroke="#1A1A2E" stroke-width="3"/>
+      <!-- reflexo nos óculos -->
+      <path d="M72 56 L92 56" stroke="#FFF" stroke-width="2" opacity="0.6"/>
+      <path d="M108 56 L128 56" stroke="#FFF" stroke-width="2" opacity="0.6"/>
+      <!-- sorriso confiante -->
+      <path d="M86 85 Q100 96 116 85" stroke="#1A1A2E" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <!-- queixo / sombra -->
+      <path d="M100 95 Q104 99 100 102" stroke="#1A1A2E" stroke-width="1" fill="none" opacity="0.4"/>
+      <!-- pescoço -->
+      <rect x="86" y="100" width="28" height="14" fill="#F0C8A0" stroke="#1A1A2E" stroke-width="2"/>
+      <!-- jaqueta verde + camiseta preta -->
+      <path d="M55 200 L55 130 Q60 115 88 110 L100 130 L112 110 Q140 115 145 130 L145 200 Z" fill="#3FBF7F" stroke="#1A1A2E" stroke-width="2"/>
+      <!-- gola da jaqueta -->
+      <path d="M82 110 L100 142 L118 110 L130 132 L120 200 M82 110 L70 132 L80 200" fill="#2A8C5A" stroke="#1A1A2E" stroke-width="1.5"/>
+      <!-- camiseta preta debaixo -->
+      <path d="M100 130 L88 140 L100 150 L112 140 Z" fill="#1A1A2E"/>
+      <!-- JC no peito (badge) -->
+      <circle cx="100" cy="170" r="13" fill="#FFE89E" stroke="#1A1A2E" stroke-width="2"/>
+      <text x="100" y="175" text-anchor="middle" font-family="Russo One, Impact, sans-serif" font-size="13" font-weight="800" fill="#1A1A2E">JC</text>
+      <!-- braços (jaqueta) -->
+      <path d="M55 130 L38 200 L52 205 L62 138 Z" fill="#3FBF7F" stroke="#1A1A2E" stroke-width="2"/>
+      <path d="M145 130 L162 200 L148 205 L138 138 Z" fill="#3FBF7F" stroke="#1A1A2E" stroke-width="2"/>
+      <!-- mão direita apontando (signature pose) -->
+      <circle cx="166" cy="206" r="9" fill="#F0C8A0" stroke="#1A1A2E" stroke-width="2"/>
+      <path d="M170 208 L188 196" stroke="#F0C8A0" stroke-width="6" stroke-linecap="round"/>
+      <path d="M170 208 L188 196" stroke="#1A1A2E" stroke-width="1.5" fill="none"/>
+    </svg>` },
+
+  // SCORPION — máscara amarela, bandana ninja, olhos brancos vazios, kunai.
+  // Atributo: nenhum direto. Overlay: FATALITY ("GET OVER HERE!").
+  scorpion: { name: 'Scorpion', accent: '#E8C56B', tagline: 'GET OVER HERE!', attr: null, svg: `
+    <svg viewBox="0 0 200 250" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- bandana ninja amarela com 2 pontas -->
+      <path d="M58 38 Q100 18 142 38 L150 28 L155 50 L142 56 Q100 50 58 56 L45 50 L50 28 Z" fill="#E8C56B" stroke="#1A1A2E" stroke-width="2.5"/>
+      <!-- bandana ponta tras balançando -->
+      <path d="M50 50 L20 70 L25 85 L52 65" fill="#E8C56B" stroke="#1A1A2E" stroke-width="2"/>
+      <!-- rosto/máscara amarela -->
+      <ellipse cx="100" cy="78" rx="36" ry="44" fill="#E8C56B" stroke="#1A1A2E" stroke-width="2.5"/>
+      <!-- máscara ninja inferior preta (cobre boca/nariz) -->
+      <path d="M68 84 Q100 78 132 84 L134 120 Q100 130 66 120 Z" fill="#1A1A2E" stroke="#1A1A2E" stroke-width="2"/>
+      <!-- detalhe da máscara (linhas) -->
+      <line x1="78" y1="100" x2="122" y2="100" stroke="#666" stroke-width="1.5"/>
+      <line x1="80" y1="112" x2="120" y2="112" stroke="#666" stroke-width="1.5"/>
+      <!-- olhos vazios brancos (Hanzo undead) -->
+      <ellipse cx="84" cy="68" rx="6" ry="4" fill="#FFFFFF" stroke="#1A1A2E" stroke-width="1.5"/>
+      <ellipse cx="116" cy="68" rx="6" ry="4" fill="#FFFFFF" stroke="#1A1A2E" stroke-width="1.5"/>
+      <!-- chamas saindo dos olhos -->
+      <path d="M82 60 Q84 50 86 58 Q88 50 86 60" fill="#E84A1A" stroke="#B8242E" stroke-width="1"/>
+      <path d="M114 60 Q116 50 118 58 Q120 50 118 60" fill="#E84A1A" stroke="#B8242E" stroke-width="1"/>
+      <!-- pescoço -->
+      <rect x="86" y="128" width="28" height="12" fill="#E8C56B" stroke="#1A1A2E" stroke-width="2"/>
+      <!-- traje amarelo torso -->
+      <path d="M55 200 L55 145 Q60 130 90 128 L110 128 Q140 130 145 145 L145 200 Z" fill="#E8C56B" stroke="#1A1A2E" stroke-width="2"/>
+      <!-- detalhes pretos faixa central -->
+      <rect x="92" y="140" width="16" height="60" fill="#1A1A2E"/>
+      <circle cx="100" cy="160" r="4" fill="#E8C56B"/>
+      <circle cx="100" cy="180" r="4" fill="#E8C56B"/>
+      <!-- braços -->
+      <path d="M55 145 L40 200 L54 205 L62 152 Z" fill="#E8C56B" stroke="#1A1A2E" stroke-width="2"/>
+      <path d="M145 145 L160 200 L146 205 L138 152 Z" fill="#E8C56B" stroke="#1A1A2E" stroke-width="2"/>
+      <!-- mão direita segurando kunai/spear -->
+      <circle cx="164" cy="210" r="8" fill="#1A1A2E"/>
+      <path d="M168 208 L196 200 L198 207 L170 215 Z" fill="#C0C0C0" stroke="#1A1A2E" stroke-width="1.5"/>
+      <!-- corrente do spear -->
+      <path d="M170 212 Q180 218 190 214" stroke="#888" stroke-width="2" fill="none" stroke-dasharray="3 2"/>
+    </svg>` },
+
+  // SUB-ZERO — máscara azul, capuz, gelo nas mãos.
+  // Atributo: DISCIPLINA. Overlay: nenhum direto (BRUTALITY já é Kano).
+  subzero: { name: 'Sub-Zero', accent: '#7BB8FF', tagline: 'FROZEN DISCIPLINE', attr: 'disciplina', svg: `
+    <svg viewBox="0 0 200 250" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- capuz azul -->
+      <path d="M55 60 Q60 22 100 18 Q140 22 145 60 L145 90 Q130 88 100 88 Q70 88 55 90 Z" fill="#3A7BC8" stroke="#1A1A2E" stroke-width="2.5"/>
+      <!-- rosto (parte exposta) -->
+      <ellipse cx="100" cy="68" rx="28" ry="32" fill="#E0D5C0" stroke="#1A1A2E" stroke-width="2"/>
+      <!-- máscara azul inferior -->
+      <path d="M75 76 Q100 70 125 76 L128 110 Q100 118 72 110 Z" fill="#5A9BE0" stroke="#1A1A2E" stroke-width="2"/>
+      <!-- olhos azul-gelo brilhantes -->
+      <ellipse cx="88" cy="62" rx="5" ry="3.5" fill="#A8E0FF" stroke="#1A1A2E" stroke-width="1.5"/>
+      <ellipse cx="112" cy="62" rx="5" ry="3.5" fill="#A8E0FF" stroke="#1A1A2E" stroke-width="1.5"/>
+      <!-- raio gelado lateral -->
+      <path d="M70 50 L60 40 M68 56 L52 52 M132 56 L148 52 M130 50 L140 40"
+            stroke="#A8E0FF" stroke-width="1.5" stroke-linecap="round"/>
+      <!-- pescoço -->
+      <rect x="88" y="116" width="24" height="12" fill="#E0D5C0" stroke="#1A1A2E" stroke-width="2"/>
+      <!-- torso azul + faixa preta -->
+      <path d="M58 200 L58 135 Q62 122 90 118 L110 118 Q138 122 142 135 L142 200 Z" fill="#3A7BC8" stroke="#1A1A2E" stroke-width="2"/>
+      <rect x="58" y="148" width="84" height="10" fill="#1A1A2E"/>
+      <!-- dragão Lin Kuei no peito -->
+      <circle cx="100" cy="175" r="11" fill="none" stroke="#A8E0FF" stroke-width="2"/>
+      <path d="M94 173 Q100 168 106 173 Q100 180 94 173" fill="#A8E0FF"/>
+      <!-- braços -->
+      <path d="M58 135 L42 200 L56 205 L66 142 Z" fill="#3A7BC8" stroke="#1A1A2E" stroke-width="2"/>
+      <path d="M142 135 L158 200 L144 205 L134 142 Z" fill="#3A7BC8" stroke="#1A1A2E" stroke-width="2"/>
+      <!-- mão direita com gelo cristalino brotando -->
+      <circle cx="162" cy="208" r="9" fill="#E0D5C0" stroke="#1A1A2E" stroke-width="2"/>
+      <path d="M168 200 L178 186 L182 200 L194 195 L186 210 L196 218 L180 218 L182 232 L170 222 Z"
+            fill="#A8E0FF" stroke="#7BB8FF" stroke-width="1.5"/>
+    </svg>` },
+
+  // RAIDEN — chapéu de palha cônico, raios saindo das mãos, manto branco.
+  // Atributo: SABEDORIA. Overlay: OUTSTANDING.
+  raiden: { name: 'Raiden', accent: '#FFE08F', tagline: 'THUNDER GOD', attr: 'sabedoria', svg: `
+    <svg viewBox="0 0 200 250" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- chapéu cônico (kasa) -->
+      <path d="M45 70 L100 14 L155 70 Z" fill="#C49B5C" stroke="#1A1A2E" stroke-width="2.5"/>
+      <ellipse cx="100" cy="70" rx="58" ry="10" fill="#A57B40" stroke="#1A1A2E" stroke-width="2"/>
+      <!-- linhas verticais do chapéu -->
+      <line x1="78" y1="50" x2="80" y2="68" stroke="#1A1A2E" stroke-width="1" opacity="0.4"/>
+      <line x1="100" y1="30" x2="100" y2="68" stroke="#1A1A2E" stroke-width="1" opacity="0.4"/>
+      <line x1="122" y1="50" x2="120" y2="68" stroke="#1A1A2E" stroke-width="1" opacity="0.4"/>
+      <!-- rosto sombreado pelo chapéu -->
+      <ellipse cx="100" cy="92" rx="28" ry="28" fill="#D4A574" stroke="#1A1A2E" stroke-width="2"/>
+      <path d="M72 80 Q100 96 128 80 L128 92 Q100 100 72 92 Z" fill="#1A1A2E" opacity="0.5"/>
+      <!-- olhos brilhantes brancos (Thunder God) -->
+      <ellipse cx="88" cy="92" rx="6" ry="3" fill="#FFFFFF"/>
+      <ellipse cx="112" cy="92" rx="6" ry="3" fill="#FFFFFF"/>
+      <!-- raios saindo dos olhos -->
+      <line x1="84" y1="88" x2="76" y2="82" stroke="#FFE08F" stroke-width="2" stroke-linecap="round"/>
+      <line x1="116" y1="88" x2="124" y2="82" stroke="#FFE08F" stroke-width="2" stroke-linecap="round"/>
+      <!-- boca/queixo -->
+      <path d="M88 110 Q100 116 112 110" stroke="#1A1A2E" stroke-width="2" fill="none"/>
+      <!-- manto branco -->
+      <path d="M50 200 L60 132 Q70 122 90 122 L110 122 Q130 122 140 132 L150 200 Z" fill="#F5F2E8" stroke="#1A1A2E" stroke-width="2"/>
+      <!-- detalhe do manto (cinto vermelho) -->
+      <rect x="56" y="162" width="88" height="8" fill="#B8242E" stroke="#1A1A2E" stroke-width="1.5"/>
+      <!-- raio no peito -->
+      <path d="M104 130 L92 152 L100 152 L94 170 L110 148 L102 148 Z" fill="#FFE08F" stroke="#1A1A2E" stroke-width="1.5"/>
+      <!-- braços com mãos eletrificadas -->
+      <path d="M60 132 L45 195 L58 200 L70 138 Z" fill="#F5F2E8" stroke="#1A1A2E" stroke-width="2"/>
+      <path d="M140 132 L155 195 L142 200 L130 138 Z" fill="#F5F2E8" stroke="#1A1A2E" stroke-width="2"/>
+      <!-- bolas de raios nas mãos -->
+      <circle cx="42" cy="205" r="14" fill="#FFE08F" opacity="0.4"/>
+      <circle cx="42" cy="205" r="9"  fill="#FFE08F"/>
+      <path d="M42 196 L40 202 L44 202 L40 210 L46 200 L42 200 Z" fill="#FFF" stroke="#1A1A2E" stroke-width="1"/>
+      <circle cx="158" cy="205" r="14" fill="#FFE08F" opacity="0.4"/>
+      <circle cx="158" cy="205" r="9"  fill="#FFE08F"/>
+      <path d="M158 196 L156 202 L160 202 L156 210 L162 200 L158 200 Z" fill="#FFF" stroke="#1A1A2E" stroke-width="1"/>
+    </svg>` },
+
+  // LIU KANG — faixa vermelha, peito nu, pose de bicicleta voadora.
+  // Atributo: RESISTÊNCIA. Overlay: FLAWLESS VICTORY.
+  liukang: { name: 'Liu Kang', accent: '#E84A1A', tagline: 'ENDURING FIRE', attr: 'resistencia', svg: `
+    <svg viewBox="0 0 200 250" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- cabelo preto curto -->
+      <path d="M70 30 Q100 12 130 30 L130 48 L70 48 Z" fill="#1A1A2E" stroke="#1A1A2E" stroke-width="2"/>
+      <!-- faixa vermelha na testa (signature headband) -->
+      <rect x="64" y="44" width="72" height="10" fill="#B8242E" stroke="#1A1A2E" stroke-width="2"/>
+      <!-- pontas da faixa balançando atras -->
+      <path d="M64 50 L40 65 L48 70 L66 56" fill="#B8242E" stroke="#1A1A2E" stroke-width="1.5"/>
+      <path d="M64 54 L42 78 L50 82 L66 60" fill="#B8242E" stroke="#1A1A2E" stroke-width="1.5"/>
+      <!-- rosto -->
+      <ellipse cx="100" cy="68" rx="32" ry="32" fill="#C49060" stroke="#1A1A2E" stroke-width="2.5"/>
+      <!-- sobrancelhas concentradas -->
+      <path d="M78 62 L92 60" stroke="#1A1A2E" stroke-width="3" stroke-linecap="round"/>
+      <path d="M122 62 L108 60" stroke="#1A1A2E" stroke-width="3" stroke-linecap="round"/>
+      <!-- olhos determinados -->
+      <ellipse cx="86" cy="70" rx="3" ry="2.5" fill="#1A1A2E"/>
+      <ellipse cx="114" cy="70" rx="3" ry="2.5" fill="#1A1A2E"/>
+      <!-- nariz/boca -->
+      <path d="M100 76 L98 84 L102 84 Z" fill="#1A1A2E" opacity="0.3"/>
+      <path d="M90 92 Q100 88 110 92" stroke="#1A1A2E" stroke-width="2" fill="none"/>
+      <!-- pescoço grosso -->
+      <rect x="86" y="98" width="28" height="12" fill="#C49060" stroke="#1A1A2E" stroke-width="2"/>
+      <!-- peito nu musculoso -->
+      <path d="M58 200 L62 130 Q70 115 100 115 Q130 115 138 130 L142 200 Z" fill="#C49060" stroke="#1A1A2E" stroke-width="2.5"/>
+      <!-- definição peitoral -->
+      <path d="M75 128 Q88 140 100 138 Q112 140 125 128" stroke="#1A1A2E" stroke-width="1.5" fill="none" opacity="0.5"/>
+      <line x1="100" y1="138" x2="100" y2="175" stroke="#1A1A2E" stroke-width="1.5" opacity="0.4"/>
+      <!-- 6-pack abs -->
+      <path d="M88 150 L88 175 M112 150 L112 175 M84 162 L116 162" stroke="#1A1A2E" stroke-width="1" opacity="0.4"/>
+      <!-- calça preta + cinto vermelho -->
+      <rect x="62" y="180" width="78" height="10" fill="#B8242E" stroke="#1A1A2E" stroke-width="1.5"/>
+      <path d="M62 190 L142 190 L138 230 L66 230 Z" fill="#1A1A2E"/>
+      <!-- braços musculosos em pose de soco -->
+      <path d="M62 130 L50 165 L40 160 L58 122 Z" fill="#C49060" stroke="#1A1A2E" stroke-width="2"/>
+      <path d="M138 130 L160 175 L168 168 L148 124 Z" fill="#C49060" stroke="#1A1A2E" stroke-width="2"/>
+      <!-- punho cerrado direito -->
+      <circle cx="170" cy="180" r="10" fill="#C49060" stroke="#1A1A2E" stroke-width="2"/>
+      <!-- bola de fogo na mão -->
+      <circle cx="170" cy="180" r="14" fill="#E84A1A" opacity="0.5"/>
+      <path d="M170 170 Q175 175 173 180 Q178 178 174 184 Q170 180 168 185 Q166 178 170 170" fill="#FFE08F"/>
+    </svg>` },
+};
+
+// 5 atributos — agora com lutador MK como mascote.
 const ATTRIBUTES = [
-  { key: 'forca',       name: 'Força',       ko: '힘',     color: '#FF7B9B', icon: '💪',
-    desc: 'Cresce com treinos pesados (compostos, séries baixas).' },
-  { key: 'resistencia', name: 'Resistência', ko: '지구력', color: '#5FC7A0', icon: '🏃',
-    desc: 'Cresce com cardio, passos e dança.' },
-  { key: 'sabedoria',   name: 'Sabedoria',   ko: '지혜',   color: '#7BB8FF', icon: '🧠',
-    desc: 'Cresce com leitura, estudo e foco.' },
-  { key: 'disciplina',  name: 'Disciplina',  ko: '절제',   color: '#C77BFF', icon: '⚔️',
-    desc: 'Cresce com proteína na meta + sono regular.' },
-  { key: 'vitalidade',  name: 'Vitalidade',  ko: '활력',   color: '#FFD341', icon: '✨',
-    desc: 'Cresce com streaks longos e quests completadas.' },
+  { key: 'forca',       name: 'Força',       color: '#B8242E', icon: '💪', fighter: 'kano',
+    desc: 'Cresce com treinos pesados (compostos, séries baixas). Mascote: Kano.' },
+  { key: 'resistencia', name: 'Resistência', color: '#E84A1A', icon: '🔥', fighter: 'liukang',
+    desc: 'Cresce com cardio, passos e dança. Mascote: Liu Kang.' },
+  { key: 'sabedoria',   name: 'Sabedoria',   color: '#FFE08F', icon: '⚡', fighter: 'raiden',
+    desc: 'Cresce com leitura, estudo e foco. Mascote: Raiden.' },
+  { key: 'disciplina',  name: 'Disciplina',  color: '#7BB8FF', icon: '❄️', fighter: 'subzero',
+    desc: 'Cresce com proteína na meta + sono regular. Mascote: Sub-Zero.' },
+  { key: 'vitalidade',  name: 'Vitalidade',  color: '#3FBF7F', icon: '🕶️', fighter: 'cage',
+    desc: 'Cresce com streaks e quests. Mascote: Johnny Cage.' },
 ];
 
 // Biblioteca de exercícios pré-cadastrados.
@@ -1032,24 +1388,39 @@ function confetti(durationMs = 1400) {
   }
 }
 
-/** Overlay tipo Mortal Kombat — "FATALITY!", "FLAWLESS VICTORY!", etc. */
+/** Mapeia tipo de overlay → lutador MK que aparece atrás do texto. */
+const OVERLAY_FIGHTER = {
+  flawless:   'liukang',  // dia perfeito = Liu Kang
+  fatality:   'scorpion', // "GET OVER HERE!"
+  brutality:  'kano',     // raw power
+  outstanding:'raiden',   // thunder god promo
+  finish:     'cage',     // Hollywood approves
+  toasty:     'cage',     // easter egg
+};
+
+/** Overlay tipo Mortal Kombat — "FATALITY!", "FLAWLESS VICTORY!", etc.
+ *  Mostra silhueta do lutador relacionado por trás do texto. */
 function kombatOverlay(kind = 'finish') {
   const ev = KOMBAT_EVENTS[kind] || KOMBAT_EVENTS.finish;
+  const fighterKey = OVERLAY_FIGHTER[kind];
+  const fighter = fighterKey && FIGHTERS[fighterKey];
   const overlay = document.createElement('div');
   overlay.className = 'mk-overlay';
   overlay.innerHTML = `
+    ${fighter ? `<div class="mk-fighter">${fighter.svg}</div>` : ''}
     <div class="mk-text">${ev.title}</div>
     <div class="mk-sub">${ev.sub}</div>
+    ${fighter ? `<div class="mk-fighter-tag">${fighter.name} · ${fighter.tagline}</div>` : ''}
     <button class="mk-close">PROSSEGUIR</button>
   `;
   document.body.appendChild(overlay);
   vibrate([60, 30, 100]);
   confetti(1500);
-  // Auto-close em 2.4s ou no clique
+  // Auto-close em ~3.2s ou no clique
   const close = () => overlay.remove();
   overlay.querySelector('.mk-close').onclick = close;
   overlay.onclick = (e) => { if (e.target === overlay) close(); };
-  setTimeout(close, 2800);
+  setTimeout(close, 3200);
 }
 
 /** Damage number flutuante — emerge perto do dedo do usuário ao ganhar XP. */
@@ -1204,27 +1575,44 @@ function viewDashboard() {
 
   <section class="px-4 mt-4">
     <div class="q-card p-3">
-      <div class="flex items-center justify-between mb-2">
-        <h3 class="font-kombat text-sm tracking-widest uppercase">Atributos</h3>
-        <span class="text-xs text-ink/45 dark:text-paper/45">stats de combate</span>
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="font-kombat text-sm tracking-widest uppercase">Atributos · Kombatants</h3>
+        <span class="text-xs text-ink/45 dark:text-paper/45">${ATTRIBUTES.reduce((s,a)=>s+(attrs[a.key]||0),0)} pts</span>
       </div>
       <div class="grid grid-cols-5 gap-1">
         ${ATTRIBUTES.map(a => {
           const val = attrs[a.key] || 0;
           const max = Math.max(...ATTRIBUTES.map(x => attrs[x.key] || 0), 10);
-          const h = Math.max(8, (val / max) * 56);
+          const pct = (val / max) * 100;
+          const fighter = FIGHTERS[a.fighter];
           return `
-          <div class="flex flex-col items-center gap-1">
-            <div class="flex flex-col-reverse items-center h-14 w-full">
-              <div class="w-7 rounded-md transition-all" style="height:${h}px; background:${a.color}; box-shadow: 0 0 8px ${a.color}55"></div>
-            </div>
-            <div class="text-base">${a.icon}</div>
-            <div class="text-[10px] font-bold" style="color:${a.color}">${val}</div>
-            <div class="text-[10px] text-ink/55 dark:text-paper/55">${a.name}</div>
-          </div>`;
+          <button class="flex flex-col items-center gap-0.5 attr-tile" data-attr="${a.key}" aria-label="${a.name}: ${val}">
+            <div class="attr-fighter h-16 w-full">${fighter ? fighter.svg : a.icon}</div>
+            <div class="w-full xp-track is-kombat" style="height:5px"><div class="xp-fill" style="width:${pct}%; background:${a.color}"></div></div>
+            <div class="text-[11px] font-bold mt-0.5" style="color:${a.color}">${val}</div>
+            <div class="text-[9px] text-ink/55 dark:text-paper/55 leading-tight text-center">${a.name}</div>
+          </button>`;
         }).join('')}
       </div>
     </div>
+  </section>
+
+  <section class="px-4 mt-3">
+    ${(() => {
+      // Banner com lutador rotativo do dia (alinhado com a quote)
+      const fkeys = Object.keys(FIGHTERS);
+      const fidx = Math.floor(new Date(todayISO()).getTime() / 86400000) % fkeys.length;
+      const f = FIGHTERS[fkeys[fidx]];
+      return `
+      <div class="fighter-banner">
+        <div class="fighter-banner-svg">${f.svg}</div>
+        <div class="flex-1 min-w-0">
+          <div class="text-[10px] uppercase tracking-widest text-ink/45 dark:text-paper/45">Kombatant of the day</div>
+          <div class="fighter-banner-text text-base" style="color:${f.accent}">${f.name}</div>
+          <div class="text-[10px] font-kombat tracking-widest text-ink/65 dark:text-paper/65">${f.tagline}</div>
+        </div>
+      </div>`;
+    })()}
   </section>
 
   <section class="px-4 mt-5">
@@ -1486,10 +1874,10 @@ function viewWorkout() {
   };
   return `
   <header class="pt-7 pb-3 px-5 kombat-hero">
-    <div class="absolute right-2 top-6 w-24 h-32 text-blood opacity-15 dark:opacity-25 pointer-events-none">${I.fighter}</div>
+    <div class="absolute right-1 top-4 w-32 h-44 opacity-90 pointer-events-none" style="filter:drop-shadow(0 4px 12px rgba(184,36,46,0.3))">${FIGHTERS.kano.svg}</div>
     <div class="kombat-tagline text-xs">⚔ TEST YOUR MIGHT ⚔</div>
     <h1 class="text-2xl font-extrabold mt-1">Treino</h1>
-    <p class="text-sm text-ink/55 dark:text-paper/55 max-w-[75%]">Escolha um split. Toque <b>(i)</b> em qualquer exercício pra técnica completa.</p>
+    <p class="text-sm text-ink/55 dark:text-paper/55 max-w-[60%]">Kano diz: <i>"Sem dor, sem glória."</i> Toque <b>(i)</b> em qualquer exercício pra técnica.</p>
     <button id="open-library" class="q-btn q-btn-ghost mt-3 text-sm">
       <span class="w-4 h-4">${I.brain}</span> Biblioteca completa
     </button>
@@ -1796,11 +2184,27 @@ function viewNutrition() {
   </section>
 
   <section class="px-4 mb-3">
-    <input id="food-search" class="q-input" placeholder="🔍 Buscar alimento (ex: frango, kimchi, ovo, 비빔밥)" />
+    <input id="food-search" class="q-input" placeholder="🔍 Buscar (ex: pizza, frango, kimchi, hambúrguer, whey)" />
+    <div class="flex gap-1.5 mt-2 overflow-x-auto pb-1" id="food-filters">
+      ${[
+        ['all',      '🍽 Tudo'],
+        ['proteina', '🥩 Proteína'],
+        ['carb',     '🍚 Carbo'],
+        ['veg',      '🥦 Vegetal'],
+        ['fruta',    '🍎 Fruta'],
+        ['gordura',  '🥑 Gordura'],
+        ['prato',    '🍱 Pratos'],
+        ['bebida',   '🥤 Bebidas'],
+        ['erro',     '🍕 Erros permitidos'],
+        ['doce',     '🍫 Doces'],
+        ['snack',    '🍿 Snacks'],
+        ['supl',     '💊 Suplementos'],
+      ].map(([k, l]) => `<button class="pill food-cat-btn ${k==='all'?'is-kombat':''} whitespace-nowrap text-xs" data-cat="${k}">${l}</button>`).join('')}
+    </div>
   </section>
 
   <section class="px-4 mb-4" id="food-results">
-    ${renderFoodList(FOOD_DB.slice(0, 12))}
+    ${renderFoodList(FOOD_DB.slice(0, 14))}
   </section>
 
   <section class="px-4 mb-4">
@@ -1843,12 +2247,21 @@ function categoryColor(c) {
        : c === 'carb'     ? 'is-sun'
        : c === 'veg'      ? 'is-mint'
        : c === 'fruta'    ? 'is-mint'
-       : c === 'gordura'  ? 'is-pink'
-       : c === 'prato'    ? ''
+       : c === 'gordura'  ? 'is-sun'
+       : c === 'prato'    ? 'is-mint'
+       : c === 'bebida'   ? ''
+       : c === 'erro'     ? 'is-kombat'   // junk food → vermelho/dourado MK (Kano-style)
+       : c === 'doce'     ? 'is-pink'
+       : c === 'snack'    ? 'is-sun'
+       : c === 'supl'     ? ''
        : 'is-mint';
 }
 function categoryLabel(c) {
-  return ({ proteina: 'proteína', carb: 'carbo', veg: 'vegetal', fruta: 'fruta', gordura: 'gordura', prato: 'prato', bebida: 'bebida' })[c] || c;
+  return ({
+    proteina: 'proteína', carb: 'carbo', veg: 'vegetal', fruta: 'fruta',
+    gordura: 'gordura', prato: 'prato', bebida: 'bebida',
+    erro: '⚠ erro permitido', doce: 'doce', snack: 'snack', supl: 'suplemento',
+  })[c] || c;
 }
 
 function modalFoodPortion(foodName) {
@@ -2633,14 +3046,21 @@ function attachHandlers() {
     } else go(t);
   }));
 
-  // Nutrição
-  document.getElementById('food-search')?.addEventListener('input', (e) => {
-    const q = e.target.value.toLowerCase().trim();
-    const filtered = q
-      ? FOOD_DB.filter(f => f.name.toLowerCase().includes(q) || (f.ko || '').includes(q) || f.cat.includes(q))
-      : FOOD_DB.slice(0, 12);
-    document.getElementById('food-results').innerHTML = renderFoodList(filtered);
+  // Nutrição — busca + filtro de categoria combinados
+  let _foodCat = 'all';
+  const refreshFoods = () => {
+    const q = (document.getElementById('food-search')?.value || '').toLowerCase().trim();
+    let pool = _foodCat === 'all' ? FOOD_DB : FOOD_DB.filter(f => f.cat === _foodCat);
+    if (q) pool = pool.filter(f => f.name.toLowerCase().includes(q) || (f.ko || '').includes(q));
+    const limit = q ? pool.length : Math.min(pool.length, 14);
+    document.getElementById('food-results').innerHTML = renderFoodList(pool.slice(0, q ? 50 : limit));
     bindFoodRows();
+  };
+  document.getElementById('food-search')?.addEventListener('input', refreshFoods);
+  document.querySelectorAll('.food-cat-btn').forEach((b) => b.onclick = () => {
+    _foodCat = b.dataset.cat;
+    document.querySelectorAll('.food-cat-btn').forEach((x) => x.classList.toggle('is-kombat', x === b));
+    refreshFoods();
   });
   bindFoodRows();
   document.querySelectorAll('.meal-rm').forEach(b => b.onclick = () => {
