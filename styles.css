@@ -891,7 +891,13 @@ input[type=number] { -moz-appearance: textfield; }
   align-items: end;
   min-height: 60px;
 }
-.reading-bar-col { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.reading-bar-col {
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  background: transparent; border: 0; padding: 0; cursor: pointer;
+  transition: transform .12s ease;
+}
+.reading-bar-col:hover { transform: translateY(-2px); }
+.reading-bar-col:active { transform: scale(0.95); }
 .reading-bar { width: 100%; border-radius: 3px 3px 0 0; min-height: 3px; transition: height .25s ease; }
 .reading-bar-label { font-size: 8px; color: rgba(26,26,46,0.4); }
 .dark .reading-bar-label { color: rgba(255,255,255,0.4); }

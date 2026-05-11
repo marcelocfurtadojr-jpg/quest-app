@@ -6738,11 +6738,14 @@ function viewReading() {
   <section class="px-4 space-y-3">
     <!-- Stats em 3 quadros -->
     <div class="grid grid-cols-3 gap-2">
-      <div class="q-card p-3">
-        <div class="text-[10px] uppercase tracking-wider text-ink/45 dark:text-paper/45">Semana</div>
+      <button class="q-card p-3 text-left ${myWeekMin > 0 ? 'cursor-pointer hover:opacity-80' : ''}" id="r-edit-week" ${myWeekMin > 0 ? '' : 'disabled'}>
+        <div class="flex items-center justify-between">
+          <span class="text-[10px] uppercase tracking-wider text-ink/45 dark:text-paper/45">Semana</span>
+          ${myWeekMin > 0 ? '<span class="text-[10px] text-ink/45 dark:text-paper/45">✏️</span>' : ''}
+        </div>
         <div class="text-2xl font-extrabold text-lavender">${myWeekMin}</div>
         <div class="text-[10px] text-ink/45 dark:text-paper/45">min</div>
-      </div>
+      </button>
       <div class="q-card p-3">
         <div class="text-[10px] uppercase tracking-wider text-ink/45 dark:text-paper/45">Total</div>
         <div class="text-2xl font-extrabold text-mint">${myTotalMin}</div>
@@ -6790,12 +6793,13 @@ function viewReading() {
         ${last14.map((d) => {
           const h = Math.max(3, Math.round((d.min / maxMin) * 50));
           const isToday = d.iso === todayISO();
-          return `<div class="reading-bar-col">
+          return `<button class="reading-bar-col reading-day-edit" data-date="${d.iso}" title="Editar ${d.iso} (${d.min}min)">
             <div class="reading-bar" style="height:${h}px; background:${isToday ? '#FFB7C5' : 'var(--lavender)'}"></div>
             <div class="reading-bar-label">${d.iso.slice(8)}</div>
-          </div>`;
+          </button>`;
         }).join('')}
       </div>
+      <div class="text-[10px] text-ink/45 dark:text-paper/45 mt-2 italic text-center">Toque numa barra pra editar</div>
     </div>
 
     <!-- Leaderboard -->
@@ -6827,13 +6831,14 @@ function viewReading() {
     <h2 class="font-extrabold text-lg mt-4">Livros em andamento</h2>
     <div class="space-y-2">
       ${state.books.map((b, i) => `
-        <div class="q-card p-3 flex items-center gap-3" data-book="${i}">
+        <div class="q-card p-3 flex items-center gap-2" data-book="${i}">
           <div class="flex-1 min-w-0">
             <div class="font-semibold truncate">${b.title}</div>
-            <div class="text-xs text-ink/55 dark:text-paper/55">página ${b.currentPage} / ${b.totalPages}${b.finishedAt ? ' · ✓ concluído' : ''}</div>
+            <div class="text-xs text-ink/55 dark:text-paper/55">página ${b.currentPage} / ${b.totalPages}${b.finishedAt ? ' · ✓ concluído ' + formatDateBR(b.finishedAt) : ''}</div>
             <div class="xp-track mt-2"><div class="xp-fill" style="width:${(b.currentPage/b.totalPages)*100}%"></div></div>
           </div>
-          ${b.finishedAt ? '' : `<button class="q-btn q-btn-ghost px-2 py-1 text-xs page-up-tab" data-i="${i}">+10 pg</button>`}
+          ${b.finishedAt ? '' : `<button class="q-btn q-btn-ghost px-2 py-1 text-xs page-up-tab" data-i="${i}" title="+10 páginas">+10</button>`}
+          <button class="q-btn q-btn-ghost px-2 py-1 text-xs book-edit" data-i="${i}" title="Editar livro">✏️</button>
           <button class="q-btn q-btn-ghost px-2 py-1 text-xs book-remove" data-i="${i}" title="Remover">×</button>
         </div>`).join('') || `<div class="q-card p-4 text-sm text-ink/55">Sem livros ainda. Adicione abaixo.</div>`}
     </div>
@@ -7220,6 +7225,72 @@ function modalCompete() {
       </p>
     </div>
   `);
+}
+
+/** Modal de edição completa de livro: nome, total, página atual, concluído. */
+function modalEditBook(idx) {
+  const book = state.books[idx];
+  if (!book) return;
+  openModal(`
+    <header class="flex items-center justify-between p-4 border-b border-ink/5 dark:border-paper/5">
+      <h2 class="font-extrabold text-lg">Editar livro</h2>
+      <button class="modal-close p-1"><span class="w-5 h-5">${I.close}</span></button>
+    </header>
+    <form id="book-edit-form" class="p-4 space-y-3">
+      <label class="block">
+        <span class="text-sm font-semibold">Título</span>
+        <input class="q-input mt-1 w-full" name="title" value="${(book.title || '').replace(/"/g, '&quot;')}" required />
+      </label>
+      <div class="grid grid-cols-2 gap-2">
+        <label class="block">
+          <span class="text-sm font-semibold">Página atual</span>
+          <input class="q-input mt-1 w-full" type="number" name="currentPage" min="0" value="${book.currentPage || 0}" required />
+        </label>
+        <label class="block">
+          <span class="text-sm font-semibold">Total de páginas</span>
+          <input class="q-input mt-1 w-full" type="number" name="totalPages" min="1" value="${book.totalPages || 1}" required />
+        </label>
+      </div>
+      <label class="flex items-center gap-2 text-sm cursor-pointer">
+        <input type="checkbox" name="finished" class="accent-mint" ${book.finishedAt ? 'checked' : ''} />
+        <span>✓ Marcar como concluído</span>
+      </label>
+      ${book.finishedAt ? `<div class="text-[10px] text-ink/55 dark:text-paper/55 italic">Concluído em ${formatDateBR(book.finishedAt)}</div>` : ''}
+      <div class="flex gap-2">
+        <button type="submit" class="q-btn q-btn-primary flex-1">Salvar</button>
+        <button type="button" id="book-delete" class="q-btn q-btn-danger text-sm px-3">🗑️</button>
+      </div>
+    </form>
+  `);
+  document.getElementById('book-edit-form').onsubmit = (e) => {
+    e.preventDefault();
+    const f = e.target;
+    const title = (f.title.value || '').trim();
+    if (!title) return;
+    const total = Math.max(1, +f.totalPages.value || 1);
+    const cur = Math.min(total, Math.max(0, +f.currentPage.value || 0));
+    book.title = title;
+    book.totalPages = total;
+    book.currentPage = cur;
+    if (f.finished.checked) {
+      if (!book.finishedAt) book.finishedAt = todayISO();
+      book.currentPage = total; // se marcou como concluído, leva pra última página
+    } else {
+      delete book.finishedAt;
+    }
+    saveState();
+    closeModal();
+    toast('Livro atualizado');
+    render();
+  };
+  document.getElementById('book-delete').onclick = () => {
+    if (!confirm(`Remover "${book.title}" da lista?`)) return;
+    state.books.splice(idx, 1);
+    saveState();
+    closeModal();
+    toast('Livro removido');
+    render();
+  };
 }
 
 function recordReadingMinutes(min) {
@@ -8279,6 +8350,67 @@ function attachHandlers() {
       confetti(400);
       render();
     });
+    // Editar livro: nome, totalPages, currentPage, status
+    document.querySelectorAll('.book-edit').forEach((b) => b.onclick = () => {
+      const i = +b.dataset.i;
+      const book = state.books[i];
+      if (!book) return;
+      modalEditBook(i);
+    });
+    // Editar minutos da semana inteira (zerar)
+    document.getElementById('r-edit-week')?.addEventListener('click', () => {
+      const wkStart = weekStartISO();
+      const weekLogs = state.dailyLogs.filter((l) => l.date >= wkStart && (l.reading?.minutes || 0) > 0);
+      if (!weekLogs.length) return;
+      const totalMin = weekLogs.reduce((s, l) => s + (l.reading?.minutes || 0), 0);
+      if (!confirm(`Zerar todos os ${totalMin} min lidos esta semana?\n\nIsso vai apagar a leitura de ${weekLogs.length} dia${weekLogs.length === 1 ? '' : 's'} e devolver o XP correspondente.`)) return;
+      let totalXpReverted = 0;
+      for (const log of weekLogs) {
+        const newLog = { ...log, reading: { minutes: 0 } };
+        newLog.xp = computeDayXP(newLog);
+        const diff = (newLog.xp || 0) - (log.xp || 0);
+        totalXpReverted += diff;
+        upsertDailyLog(newLog);
+      }
+      saveState();
+      toast(`Semana zerada (${totalXpReverted >= 0 ? '+' : ''}${totalXpReverted} XP)`);
+      render();
+    });
+    // Editar leitura de um dia específico via barra do histórico
+    document.querySelectorAll('.reading-day-edit').forEach((b) => b.onclick = () => {
+      const date = b.dataset.date;
+      const log = state.dailyLogs.find((l) => l.date === date);
+      const cur = log?.reading?.minutes || 0;
+      const label = formatDateBR(date);
+      const novo = prompt(`Leitura em ${label} (atual: ${cur}min). Digite o novo valor:`, String(cur));
+      if (novo === null) return;
+      const n = Math.max(0, Math.floor(+novo) || 0);
+      if (log) {
+        const newLog = { ...log, reading: { minutes: n } };
+        newLog.xp = computeDayXP(newLog);
+        const diff = (newLog.xp || 0) - (log.xp || 0);
+        upsertDailyLog(newLog);
+        saveState();
+        toast(`${label}: ${n} min${diff !== 0 ? ` (${diff >= 0 ? '+' : ''}${diff} XP)` : ''}`);
+        render();
+      } else if (n > 0) {
+        // Cria um log retroativo só pra leitura
+        const newLog = {
+          date,
+          training: { type: 'descanso', done: false },
+          protein: { grams: 0, hit: false },
+          sleep: { hours: 0 },
+          reading: { minutes: n },
+          steps: 0, buffs: [], notes: '', meals: [], xp: 0,
+        };
+        newLog.xp = computeDayXP(newLog);
+        upsertDailyLog(newLog);
+        saveState();
+        toast(`${label}: ${n} min`);
+        render();
+      }
+    });
+
     document.querySelectorAll('.page-up-tab').forEach((b) => b.onclick = () => {
       const i = +b.dataset.i;
       state.books[i].currentPage = Math.min(state.books[i].totalPages, state.books[i].currentPage + 10);
