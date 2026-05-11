@@ -869,8 +869,8 @@ function mascotSvg(themeKey, form = 'neutro') {
  *  Retorna 'magro' | 'musculoso' | 'gordo' | 'neutro'. */
 function computeMascotForm(logs) {
   if (!logs || !logs.length) return 'neutro';
-  const kcalGoal = state?.user?.kcalGoal || 2200;
-  const pGoal    = state?.user?.proteinGoal || (META?.protein || 145);
+  const kcalGoal = getKcalGoal();
+  const pGoal    = getProteinGoal();
   let kcalSum = 0, pSum = 0, juckMeals = 0, trainDays = 0;
   let totalMeals = 0;
   for (const l of logs) {
@@ -1116,10 +1116,12 @@ async function spotifyUpdateNowPlaying() {
 
 // ===== Notícias de Vôlei (kpop_anime only) ==================
 // Usa Google News RSS via rss2json (gratuito, sem API key — 10k req/dia).
+// Queries focam em RESULTADOS de jogos + TRANSFERÊNCIAS (mudanças de jogadores).
+// Forçamos hl/ceid para PT-BR ou EN-US pra evitar manchetes em outras línguas.
 const VOLLEY_FEEDS = {
-  brasil:  { label: '🇧🇷 Brasil · Superliga',  query: 'Superliga vôlei',                    hl: 'pt-BR', gl: 'BR', ceid: 'BR:pt' },
-  italia:  { label: '🇮🇹 Itália · SuperLega',  query: 'SuperLega pallavolo',                hl: 'it',    gl: 'IT', ceid: 'IT:it' },
-  japao:   { label: '🇯🇵 Japão · V.League',    query: 'V.League バレーボール',              hl: 'ja',    gl: 'JP', ceid: 'JP:ja' },
+  brasil:  { label: '🇧🇷 Brasil · Superliga', query: 'Superliga vôlei resultado OR transferência OR contratação', hl: 'pt-BR', gl: 'BR', ceid: 'BR:pt' },
+  italia:  { label: '🇮🇹 Itália · SuperLega', query: 'Italy SuperLega volleyball results OR transfer OR signing', hl: 'en-US', gl: 'US', ceid: 'US:en' },
+  japao:   { label: '🇯🇵 Japão · V.League',   query: 'Japan V.League volleyball results OR transfer OR signing', hl: 'en-US', gl: 'US', ceid: 'US:en' },
 };
 const VOLLEY_CACHE = {}; // { leagueKey: { ts, items } }
 
@@ -3916,11 +3918,64 @@ const BUFFS = [
 ];
 
 const META = {
-  protein: 145, // g
+  protein: 145, // g (fallback global se não der pra calcular)
   sleep:   7.5, // h
   reading: 15,  // min
   steps:   8000,
 };
+
+// ===== Cálculo dinâmico de meta calórica e proteína =========
+// BMR via Mifflin-St Jeor + fator de atividade (TDEE).
+// Proteína: 1.8g/kg de peso corporal (intermediário ativo/atlético).
+const ACTIVITY_FACTORS = {
+  sedentary: 1.2,   // pouco/nenhum exercício
+  light:     1.375, // exercício leve 1–3×/sem
+  moderate:  1.55,  // exercício 3–5×/sem
+  high:      1.725, // intenso 6–7×/sem
+  extreme:   1.9,   // atleta + trabalho físico
+};
+
+/** Calcula meta calórica diária (TDEE) baseada nos dados do usuário.
+ *  Retorna null se faltar info essencial (peso, altura, idade, sexo). */
+function calculateKcalGoal(user, currentWeightKg) {
+  const w = +currentWeightKg || +user?.weight || 0;
+  const h = +user?.height || 0;
+  const age = +user?.age || 0;
+  const sex = (user?.sex || '').toLowerCase();
+  if (!w || !h || !age || !sex) return null;
+  // BMR Mifflin-St Jeor
+  const base = 10 * w + 6.25 * h - 5 * age;
+  const bmr = sex === 'f' || sex === 'female' || sex === 'feminino' ? base - 161 : base + 5;
+  const af = ACTIVITY_FACTORS[user.activityLevel || 'moderate'] || 1.55;
+  let tdee = bmr * af;
+  // Ajuste por objetivo (cut/bulk) se definido
+  const adj = { cut: -400, light_cut: -250, maintain: 0, light_bulk: 250, bulk: 400 };
+  tdee += adj[user.calorieGoal || 'maintain'] || 0;
+  return Math.round(tdee);
+}
+
+/** Meta de proteína dinâmica baseada no peso (1.8g/kg). */
+function calculateProteinGoal(user, currentWeightKg) {
+  const w = +currentWeightKg || +user?.weight || 0;
+  if (!w) return null;
+  return Math.round(w * 1.8);
+}
+
+/** Helper: usa override manual se existir, senão calcula. Fallback global. */
+function getKcalGoal() {
+  if (state?.user?.kcalGoalOverride) return +state.user.kcalGoalOverride;
+  const lastMs = state?.bodyMeasurements?.[state.bodyMeasurements.length - 1];
+  const calc = calculateKcalGoal(state?.user, lastMs?.weight);
+  if (calc) return calc;
+  return state?.user?.kcalGoal || 2200;
+}
+function getProteinGoal() {
+  if (state?.user?.proteinGoalOverride) return +state.user.proteinGoalOverride;
+  const lastMs = state?.bodyMeasurements?.[state.bodyMeasurements.length - 1];
+  const calc = calculateProteinGoal(state?.user, lastMs?.weight);
+  if (calc) return calc;
+  return state?.user?.proteinGoal || META.protein;
+}
 
 // XP máximo possível em um dia (usado para cap de XP diário "limpo").
 const DAILY_XP_CAP = 7;
@@ -4526,7 +4581,7 @@ function seedSampleData() {
     const log = {
       date: iso,
       training: trained ? { type: types[i % types.length], done: true } : { type: 'descanso', done: false },
-      protein: { grams: proteinG, hit: proteinG >= META.protein },
+      protein: { grams: proteinG, hit: proteinG >= getProteinGoal() },
       sleep: { hours: sleepH },
       reading: { minutes: reading },
       steps,
@@ -4697,7 +4752,7 @@ function computeDayXP(log) {
   else if (log.training?.type === 'descanso') xp += 1;
   // Proteína bateu +2 ; chegou a 80% +1
   if (log.protein?.hit) xp += 2;
-  else if ((log.protein?.grams || 0) >= META.protein * 0.8) xp += 1;
+  else if ((log.protein?.grams || 0) >= getProteinGoal() * 0.8) xp += 1;
   // Sono ≥7h +1; ≥7.5h +2
   if ((log.sleep?.hours || 0) >= 7.5) xp += 2;
   else if ((log.sleep?.hours || 0) >= 7) xp += 1;
@@ -5334,7 +5389,7 @@ function modalDailyLog() {
       </fieldset>
 
       <fieldset>
-        <legend class="font-semibold mb-2">Proteína (g, meta ${META.protein})</legend>
+        <legend class="font-semibold mb-2">Proteína (g, meta ${getProteinGoal()})</legend>
         <input type="number" name="protein" min="0" max="400" value="${existing.protein?.grams||0}" class="q-input" />
       </fieldset>
 
@@ -5391,7 +5446,7 @@ function modalDailyLog() {
         type: status === 'descanso' ? 'descanso' : trainType,
         done: status === 'feito',
       },
-      protein: { grams: protein, hit: protein >= META.protein },
+      protein: { grams: protein, hit: protein >= getProteinGoal() },
       sleep: { hours: sleep },
       reading: { minutes: reading },
       steps,
@@ -6117,8 +6172,8 @@ function viewNutrition() {
     }),
     { kcal: 0, p: 0, c: 0, f: 0 }
   );
-  const kcalGoal = state.user.kcalGoal || 2200;
-  const pGoal    = state.user.proteinGoal || META.protein;
+  const kcalGoal = getKcalGoal();
+  const pGoal    = getProteinGoal();
   const kcalPct  = Math.min(100, (totals.kcal / kcalGoal) * 100);
   const pPct     = Math.min(100, (totals.p / pGoal) * 100);
 
@@ -6292,7 +6347,7 @@ function modalFoodPortion(foodName) {
     // Sincroniza proteína total no log
     const totalP = log.meals.reduce((a, m) => a + m.p, 0);
     const oldHit = log.protein?.hit;
-    log.protein = { grams: Math.round(totalP), hit: totalP >= META.protein };
+    log.protein = { grams: Math.round(totalP), hit: totalP >= getProteinGoal() };
     log.xp = computeDayXP(log);
     // Se bateu meta pela primeira vez, ganha XP/disciplina
     if (!oldHit && log.protein.hit) {
@@ -8199,6 +8254,77 @@ function viewConfig() {
         <span class="text-sm font-semibold">Lembretes de proteína (HH:MM separados por vírgula)</span>
         <input id="cfg-reminders" class="q-input mt-1" value="${state.user.reminders.proteinTimes.join(', ')}" />
       </label>
+
+      <!-- Perfil físico (afeta meta de kcal e proteína) -->
+      <div class="block mt-4 pt-3 border-t border-ink/5 dark:border-paper/5">
+        <div class="text-sm font-semibold mb-2">📏 Perfil físico</div>
+        <p class="text-[10px] text-ink/55 dark:text-paper/55 mb-2 leading-relaxed">
+          Suas metas de calorias e proteína são calculadas a partir desses dados (Mifflin-St Jeor + fator de atividade). Deixar em branco usa valores genéricos.
+        </p>
+        <div class="grid grid-cols-3 gap-2">
+          <label class="block">
+            <span class="text-xs font-semibold">Altura (cm)</span>
+            <input id="cfg-height" class="q-input mt-1" type="number" min="100" max="250" step="1" value="${state.user.height || ''}" placeholder="ex: 175" />
+          </label>
+          <label class="block">
+            <span class="text-xs font-semibold">Idade</span>
+            <input id="cfg-age" class="q-input mt-1" type="number" min="10" max="120" step="1" value="${state.user.age || ''}" placeholder="anos" />
+          </label>
+          <label class="block">
+            <span class="text-xs font-semibold">Sexo</span>
+            <select id="cfg-sex" class="q-input mt-1">
+              <option value="" ${!state.user.sex ? 'selected' : ''}>—</option>
+              <option value="m" ${state.user.sex === 'm' ? 'selected' : ''}>Masc</option>
+              <option value="f" ${state.user.sex === 'f' ? 'selected' : ''}>Fem</option>
+            </select>
+          </label>
+        </div>
+        <label class="block mt-2">
+          <span class="text-xs font-semibold">Nível de atividade</span>
+          <select id="cfg-activity" class="q-input mt-1">
+            <option value="sedentary" ${state.user.activityLevel === 'sedentary' ? 'selected' : ''}>Sedentário (sem exercício)</option>
+            <option value="light"     ${state.user.activityLevel === 'light' ? 'selected' : ''}>Leve (1–3×/sem)</option>
+            <option value="moderate"  ${(state.user.activityLevel || 'moderate') === 'moderate' ? 'selected' : ''}>Moderado (3–5×/sem)</option>
+            <option value="high"      ${state.user.activityLevel === 'high' ? 'selected' : ''}>Intenso (6–7×/sem)</option>
+            <option value="extreme"   ${state.user.activityLevel === 'extreme' ? 'selected' : ''}>Extremo (atleta + trabalho físico)</option>
+          </select>
+        </label>
+        <label class="block mt-2">
+          <span class="text-xs font-semibold">Objetivo calórico</span>
+          <select id="cfg-cal-goal" class="q-input mt-1">
+            <option value="cut"        ${state.user.calorieGoal === 'cut' ? 'selected' : ''}>Cut agressivo (−400 kcal)</option>
+            <option value="light_cut"  ${state.user.calorieGoal === 'light_cut' ? 'selected' : ''}>Cut leve (−250 kcal)</option>
+            <option value="maintain"   ${(state.user.calorieGoal || 'maintain') === 'maintain' ? 'selected' : ''}>Manutenção</option>
+            <option value="light_bulk" ${state.user.calorieGoal === 'light_bulk' ? 'selected' : ''}>Bulk leve (+250 kcal)</option>
+            <option value="bulk"       ${state.user.calorieGoal === 'bulk' ? 'selected' : ''}>Bulk agressivo (+400 kcal)</option>
+          </select>
+        </label>
+        ${(() => {
+          const calc = getKcalGoal();
+          const pCalc = getProteinGoal();
+          return `
+          <div class="mt-3 p-2 rounded q-card text-[11px] flex justify-between items-center">
+            <div>
+              <div class="text-ink/55 dark:text-paper/55">Meta calculada</div>
+              <div><b>${calc} kcal</b> · <b>${pCalc}g</b> proteína</div>
+            </div>
+            <button id="cfg-clear-override" class="text-[10px] text-ink/45 dark:text-paper/45 underline ${state.user.kcalGoalOverride || state.user.proteinGoalOverride ? '' : 'invisible'}">limpar override</button>
+          </div>
+          <details class="mt-1">
+            <summary class="text-[10px] text-ink/45 dark:text-paper/45 cursor-pointer">override manual</summary>
+            <div class="grid grid-cols-2 gap-2 mt-1">
+              <label class="block">
+                <span class="text-[10px] font-semibold">kcal manual</span>
+                <input id="cfg-kcal-override" class="q-input mt-1" type="number" min="800" max="6000" value="${state.user.kcalGoalOverride || ''}" placeholder="(calc)" />
+              </label>
+              <label class="block">
+                <span class="text-[10px] font-semibold">proteína manual</span>
+                <input id="cfg-protein-override" class="q-input mt-1" type="number" min="30" max="400" value="${state.user.proteinGoalOverride || ''}" placeholder="(calc)" />
+              </label>
+            </div>
+          </details>`;
+        })()}
+      </div>
       ${(state.user.theme || 'kpop_anime') === 'kpop_anime' ? `
         <label class="block mt-3">
           <span class="text-sm font-semibold">🎵 Spotify Client ID</span>
@@ -8430,7 +8556,7 @@ function attachHandlers() {
       toast(cur ? 'Sono desmarcado' : '✓ Sono 7h registrado');
     } else if (k === 'proteina') {
       const cur = !!log.protein?.hit;
-      log.protein = { grams: cur ? 0 : META.protein, hit: !cur };
+      log.protein = { grams: cur ? 0 : getProteinGoal(), hit: !cur };
       toast(cur ? 'Proteína desmarcada' : '✓ Meta de proteína batida');
     } else if (k === 'leitura') {
       const cur = (log.reading?.minutes || 0) >= 15;
@@ -8858,7 +8984,7 @@ function attachHandlers() {
     if (log && log.meals) {
       log.meals.splice(idx, 1);
       const totalP = log.meals.reduce((a, m) => a + m.p, 0);
-      log.protein = { grams: Math.round(totalP), hit: totalP >= META.protein };
+      log.protein = { grams: Math.round(totalP), hit: totalP >= getProteinGoal() };
       log.xp = computeDayXP(log);
       saveState(); render();
     }
@@ -8996,9 +9122,32 @@ function attachHandlers() {
     state.user.reminders.proteinTimes = document.getElementById('cfg-reminders').value.split(',').map(s=>s.trim()).filter(Boolean);
     const spotifyId = document.getElementById('cfg-spotify-id')?.value?.trim();
     if (spotifyId !== undefined) state.user.spotifyClientId = spotifyId;
+    // Perfil físico
+    const h   = +document.getElementById('cfg-height')?.value;
+    const age = +document.getElementById('cfg-age')?.value;
+    const sex = document.getElementById('cfg-sex')?.value;
+    const act = document.getElementById('cfg-activity')?.value;
+    const cgoal = document.getElementById('cfg-cal-goal')?.value;
+    if (h && h > 50 && h < 300) state.user.height = h; else if (document.getElementById('cfg-height')?.value === '') delete state.user.height;
+    if (age && age > 5 && age < 120) state.user.age = age; else if (document.getElementById('cfg-age')?.value === '') delete state.user.age;
+    if (sex === 'm' || sex === 'f') state.user.sex = sex; else delete state.user.sex;
+    if (act) state.user.activityLevel = act;
+    if (cgoal) state.user.calorieGoal = cgoal;
+    // Overrides manuais
+    const kOver = document.getElementById('cfg-kcal-override')?.value?.trim();
+    const pOver = document.getElementById('cfg-protein-override')?.value?.trim();
+    if (kOver) state.user.kcalGoalOverride = +kOver; else delete state.user.kcalGoalOverride;
+    if (pOver) state.user.proteinGoalOverride = +pOver; else delete state.user.proteinGoalOverride;
     const themePicked = document.querySelector('input[name="cfgTheme"]:checked')?.value;
     if (themePicked && THEMES[themePicked]) state.user.theme = themePicked;
     saveState(); toast('Configurações salvas'); render();
+  });
+  document.getElementById('cfg-clear-override')?.addEventListener('click', () => {
+    delete state.user.kcalGoalOverride;
+    delete state.user.proteinGoalOverride;
+    saveState();
+    toast('Override removido — usando cálculo automático');
+    render();
   });
   document.getElementById('cfg-logout')?.addEventListener('click', () => {
     if (!confirm('Sair da conta? Seus dados continuam salvos.')) return;
