@@ -930,6 +930,224 @@ function mascotState() {
   };
 }
 
+// ===== Spotify Now Playing (kpop_anime only) ================
+// PKCE OAuth flow — sem client secret. User precisa criar app no
+// developer.spotify.com e colar Client ID em Config.
+const SPOTIFY_REDIRECT_URI = window.location.origin + window.location.pathname;
+const SPOTIFY_SCOPES = 'user-read-currently-playing user-read-playback-state';
+
+async function _spotifyPkceChallenge(verifier) {
+  const data = new TextEncoder().encode(verifier);
+  const hash = await crypto.subtle.digest('SHA-256', data);
+  return btoa(String.fromCharCode(...new Uint8Array(hash)))
+    .replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+
+function _spotifyRandomVerifier(len = 64) {
+  const bytes = new Uint8Array(len);
+  crypto.getRandomValues(bytes);
+  return btoa(String.fromCharCode(...bytes))
+    .replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'').slice(0, len);
+}
+
+/** Inicia o login do Spotify (redireciona). */
+async function spotifyConnect() {
+  const clientId = state.user.spotifyClientId;
+  if (!clientId) {
+    alert('Antes de conectar, cole seu Spotify Client ID em Config → Spotify.');
+    return;
+  }
+  const verifier = _spotifyRandomVerifier();
+  localStorage.setItem('spotify.verifier', verifier);
+  const challenge = await _spotifyPkceChallenge(verifier);
+  const params = new URLSearchParams({
+    client_id: clientId,
+    response_type: 'code',
+    redirect_uri: SPOTIFY_REDIRECT_URI,
+    scope: SPOTIFY_SCOPES,
+    code_challenge_method: 'S256',
+    code_challenge: challenge,
+  });
+  window.location.href = `https://accounts.spotify.com/authorize?${params}`;
+}
+
+/** Troca o code (callback do redirect) por access_token + refresh_token. */
+async function spotifyHandleCallback() {
+  const url = new URL(window.location.href);
+  const code = url.searchParams.get('code');
+  if (!code) return false;
+  const verifier = localStorage.getItem('spotify.verifier');
+  const clientId = state?.user?.spotifyClientId;
+  if (!verifier || !clientId) { url.searchParams.delete('code'); window.history.replaceState({}, '', url.toString()); return false; }
+  try {
+    const body = new URLSearchParams({
+      grant_type: 'authorization_code',
+      code,
+      redirect_uri: SPOTIFY_REDIRECT_URI,
+      client_id: clientId,
+      code_verifier: verifier,
+    });
+    const res = await fetch('https://accounts.spotify.com/api/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body,
+    });
+    const data = await res.json();
+    if (!data.access_token) throw new Error(data.error_description || 'token exchange failed');
+    state.user.spotifyTokens = {
+      access:  data.access_token,
+      refresh: data.refresh_token,
+      expiresAt: Date.now() + (data.expires_in - 60) * 1000,
+    };
+    saveState();
+    // Limpa code da URL
+    url.searchParams.delete('code');
+    url.searchParams.delete('state');
+    window.history.replaceState({}, '', url.toString());
+    return true;
+  } catch (e) {
+    console.warn('spotify token exchange failed:', e);
+    return false;
+  }
+}
+
+async function spotifyRefresh() {
+  const tk = state?.user?.spotifyTokens;
+  const clientId = state?.user?.spotifyClientId;
+  if (!tk?.refresh || !clientId) return false;
+  try {
+    const body = new URLSearchParams({
+      grant_type: 'refresh_token',
+      refresh_token: tk.refresh,
+      client_id: clientId,
+    });
+    const res = await fetch('https://accounts.spotify.com/api/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body,
+    });
+    const data = await res.json();
+    if (!data.access_token) return false;
+    state.user.spotifyTokens = {
+      access: data.access_token,
+      refresh: data.refresh_token || tk.refresh,
+      expiresAt: Date.now() + (data.expires_in - 60) * 1000,
+    };
+    saveState();
+    return true;
+  } catch { return false; }
+}
+
+async function spotifyNowPlaying() {
+  const tk = state?.user?.spotifyTokens;
+  if (!tk?.access) return null;
+  if (Date.now() > tk.expiresAt) {
+    const ok = await spotifyRefresh();
+    if (!ok) return null;
+  }
+  try {
+    const res = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+      headers: { Authorization: 'Bearer ' + state.user.spotifyTokens.access },
+    });
+    if (res.status === 204 || res.status === 202) return { playing: false };
+    if (res.status === 401) {
+      await spotifyRefresh();
+      return spotifyNowPlaying();
+    }
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (!data || !data.item) return { playing: false };
+    return {
+      playing: !!data.is_playing,
+      title: data.item.name,
+      artist: (data.item.artists || []).map((a) => a.name).join(', '),
+      album: data.item.album?.name,
+      art: data.item.album?.images?.[0]?.url,
+      url: data.item.external_urls?.spotify,
+      progressMs: data.progress_ms,
+      durationMs: data.item.duration_ms,
+    };
+  } catch (e) {
+    console.warn('spotify now playing failed:', e);
+    return null;
+  }
+}
+
+function spotifyDisconnect() {
+  if (state?.user?.spotifyTokens) delete state.user.spotifyTokens;
+  saveState();
+}
+
+/** Atualiza o elemento #spotify-now com a faixa atual (se autenticado). */
+async function spotifyUpdateNowPlaying() {
+  const el = document.getElementById('spotify-now');
+  if (!el) return;
+  if (!state?.user?.spotifyTokens) return;
+  const data = await spotifyNowPlaying();
+  if (!data) {
+    el.innerHTML = `<div class="flex items-center justify-between gap-2">
+      <span class="text-[11px]">Spotify conectado · sem dados</span>
+      <button id="spotify-disconnect" class="text-[10px] text-ink/45 dark:text-paper/45 underline">desconectar</button>
+    </div>`;
+  } else if (!data.playing) {
+    el.innerHTML = `<div class="flex items-center justify-between gap-2">
+      <span class="text-[11px]">⏸ Nada tocando agora</span>
+      <button id="spotify-disconnect" class="text-[10px] text-ink/45 dark:text-paper/45 underline">desconectar</button>
+    </div>`;
+  } else {
+    const pct = Math.round((data.progressMs / data.durationMs) * 100);
+    el.innerHTML = `
+      <a href="${data.url}" target="_blank" rel="noopener" class="flex items-center gap-2 hover:opacity-80">
+        ${data.art ? `<img src="${data.art}" alt="" class="w-10 h-10 rounded shrink-0" />` : '<span class="text-xl">🎵</span>'}
+        <div class="flex-1 min-w-0">
+          <div class="text-xs font-semibold truncate text-ink dark:text-paper">${data.title}</div>
+          <div class="text-[10px] text-ink/55 dark:text-paper/55 truncate">${data.artist}</div>
+          <div class="xp-track mt-1" style="height:2px"><div class="xp-fill" style="width:${pct}%"></div></div>
+        </div>
+        <button id="spotify-disconnect" class="text-[10px] text-ink/45 dark:text-paper/45 underline" onclick="event.preventDefault(); event.stopPropagation();">×</button>
+      </a>`;
+  }
+  document.getElementById('spotify-disconnect')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    spotifyDisconnect();
+    render();
+  });
+}
+
+// ===== Notícias de Vôlei (kpop_anime only) ==================
+// Usa Google News RSS via rss2json (gratuito, sem API key — 10k req/dia).
+const VOLLEY_FEEDS = {
+  brasil:  { label: '🇧🇷 Brasil · Superliga',  query: 'Superliga vôlei',                    hl: 'pt-BR', gl: 'BR', ceid: 'BR:pt' },
+  italia:  { label: '🇮🇹 Itália · SuperLega',  query: 'SuperLega pallavolo',                hl: 'it',    gl: 'IT', ceid: 'IT:it' },
+  japao:   { label: '🇯🇵 Japão · V.League',    query: 'V.League バレーボール',              hl: 'ja',    gl: 'JP', ceid: 'JP:ja' },
+};
+const VOLLEY_CACHE = {}; // { leagueKey: { ts, items } }
+
+async function fetchVolleyNews(leagueKey, force = false) {
+  const f = VOLLEY_FEEDS[leagueKey];
+  if (!f) return [];
+  // Cache 30 min
+  const cached = VOLLEY_CACHE[leagueKey];
+  if (!force && cached && (Date.now() - cached.ts) < 30 * 60 * 1000) return cached.items;
+  const rssUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(f.query)}&hl=${f.hl}&gl=${f.gl}&ceid=${encodeURIComponent(f.ceid)}`;
+  const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
+  try {
+    const res = await fetch(apiUrl);
+    const data = await res.json();
+    const items = (data.items || []).slice(0, 6).map((it) => ({
+      title: it.title,
+      link: it.link,
+      pubDate: it.pubDate,
+      source: (it.title.match(/-\s*([^-]+)$/)?.[1] || '').trim(),
+    }));
+    VOLLEY_CACHE[leagueKey] = { ts: Date.now(), items };
+    return items;
+  } catch (e) {
+    console.warn('volley news fetch failed:', e);
+    return [];
+  }
+}
+
 // Banco de alimentos — macros por 100g.
 // Mistura proteína-foco (cut/hipertrofia) + culinária BR + alguns coreanos.
 // kcal / protein(g) / carbs(g) / fat(g) por 100g.
@@ -4892,6 +5110,28 @@ function viewDashboard() {
     })()}
   </section>
 
+  ${theme.showKombatant ? `
+  <!-- K-pop Lounge: Vôlei + Spotify -->
+  <section class="px-4 mt-3">
+    <div class="q-card p-3">
+      <div class="flex items-center justify-between mb-2">
+        <div class="text-xs uppercase tracking-wider text-ink/45 dark:text-paper/45">🏐 Vôlei · 🎵 Spotify</div>
+        <button id="kpop-lounge-refresh" class="text-[10px] text-lavender">🔄</button>
+      </div>
+      <!-- Spotify Now Playing -->
+      <div id="spotify-now" class="text-[11px] text-ink/55 dark:text-paper/55 mb-2">
+        ${state?.user?.spotifyTokens ? '🎵 carregando faixa atual…' : '<button id="spotify-connect" class="underline text-lavender">Conectar Spotify</button> pra ver o que tá tocando aqui'}
+      </div>
+      <!-- Tabs de liga -->
+      <div class="flex gap-1 mb-2">
+        ${Object.entries(VOLLEY_FEEDS).map(([k, f], i) =>
+          `<button class="volley-tab pill is-pill text-[10px] flex-1" data-league="${k}">${f.label.split(' · ')[0]}</button>`
+        ).join('')}
+      </div>
+      <div id="volley-feed" class="text-xs text-ink/55 dark:text-paper/55 italic">Toque numa liga pra carregar notícias…</div>
+    </div>
+  </section>` : ''}
+
   ${(() => {
     const dailies = (state.rewards.available || [])
       .map((r) => typeof r === 'string' ? { text: r, daily: false } : r)
@@ -7959,6 +8199,16 @@ function viewConfig() {
         <span class="text-sm font-semibold">Lembretes de proteína (HH:MM separados por vírgula)</span>
         <input id="cfg-reminders" class="q-input mt-1" value="${state.user.reminders.proteinTimes.join(', ')}" />
       </label>
+      ${(state.user.theme || 'kpop_anime') === 'kpop_anime' ? `
+        <label class="block mt-3">
+          <span class="text-sm font-semibold">🎵 Spotify Client ID</span>
+          <input id="cfg-spotify-id" class="q-input mt-1" placeholder="ex: 5d12...abc"
+                 value="${state.user.spotifyClientId || ''}" autocomplete="off" />
+          <span class="text-[10px] text-ink/55 dark:text-paper/55 leading-tight block mt-1">
+            Crie em <a href="https://developer.spotify.com/dashboard" target="_blank" rel="noopener" class="underline">developer.spotify.com</a> · Defina Redirect URI = <code class="text-[9px]">${window.location.origin + window.location.pathname}</code>
+          </span>
+        </label>
+      ` : ''}
       <div class="block mt-3">
         <div class="text-sm font-semibold mb-2">Estética</div>
         <div class="grid grid-cols-2 gap-2">
@@ -8090,6 +8340,35 @@ function closeModal() {
 function attachHandlers() {
   document.getElementById('open-log')?.addEventListener('click', () => { vibrate(15); modalDailyLog(); });
   document.getElementById('open-rewards-daily')?.addEventListener('click', () => { vibrate(8); modalRewards(); });
+
+  // ===== K-pop Lounge: Vôlei + Spotify =====
+  document.getElementById('spotify-connect')?.addEventListener('click', spotifyConnect);
+  document.querySelectorAll('.volley-tab').forEach((b) => b.onclick = async () => {
+    const league = b.dataset.league;
+    const feed = document.getElementById('volley-feed');
+    if (!feed) return;
+    document.querySelectorAll('.volley-tab').forEach((x) => x.classList.remove('is-active'));
+    b.classList.add('is-active');
+    feed.innerHTML = '<div class="text-xs">⏳ buscando…</div>';
+    const items = await fetchVolleyNews(league);
+    if (!items.length) {
+      feed.innerHTML = '<div class="text-xs italic">Sem notícias agora. Tenta de novo daqui a pouco.</div>';
+      return;
+    }
+    feed.innerHTML = items.map((it) => `
+      <a href="${it.link}" target="_blank" rel="noopener" class="block py-1.5 border-b border-ink/5 dark:border-paper/5 last:border-0 hover:opacity-80">
+        <div class="text-xs font-semibold leading-tight">${it.title.replace(/\s*-\s*[^-]+$/, '')}</div>
+        <div class="text-[10px] text-ink/45 dark:text-paper/45 mt-0.5">${it.source} · ${new Date(it.pubDate).toLocaleDateString('pt-BR')}</div>
+      </a>
+    `).join('');
+  });
+  document.getElementById('kpop-lounge-refresh')?.addEventListener('click', async () => {
+    Object.keys(VOLLEY_CACHE).forEach((k) => delete VOLLEY_CACHE[k]);
+    const active = document.querySelector('.volley-tab.is-active');
+    if (active) active.click();
+    spotifyUpdateNowPlaying();
+  });
+  spotifyUpdateNowPlaying();
 
   document.getElementById('toggle-dark')?.addEventListener('click', () => {
     state.user.darkMode = !state.user.darkMode;
@@ -8715,6 +8994,8 @@ function attachHandlers() {
     state.user.name  = document.getElementById('cfg-name').value || 'Jogador';
     state.user.goals = document.getElementById('cfg-goals').value;
     state.user.reminders.proteinTimes = document.getElementById('cfg-reminders').value.split(',').map(s=>s.trim()).filter(Boolean);
+    const spotifyId = document.getElementById('cfg-spotify-id')?.value?.trim();
+    if (spotifyId !== undefined) state.user.spotifyClientId = spotifyId;
     const themePicked = document.querySelector('input[name="cfgTheme"]:checked')?.value;
     if (themePicked && THEMES[themePicked]) state.user.theme = themePicked;
     saveState(); toast('Configurações salvas'); render();
@@ -8950,6 +9231,13 @@ function showAuthLoading() {
     </div>`;
 }
 
+async function _maybeHandleSpotifyCallback() {
+  // Roda antes do bootGameState pra capturar redirect Spotify OAuth.
+  if (window.location.search.includes('code=') && state?.user) {
+    await spotifyHandleCallback();
+  }
+}
+
 async function bootGameState() {
   // 1) Carrega cache local pra UI instantânea
   let local = loadState();
@@ -8982,8 +9270,17 @@ async function bootGameState() {
   ensureDailyQuests();
   ensureWeeklyQuest();
   checkWeeklyRollover();
+  await _maybeHandleSpotifyCallback();
   setTimeout(checkAchievements, 100);
   setTimeout(maybeNotifyMascot, 1500);
+  // Polling do Spotify Now Playing — só na home (kpop_anime) e a cada 20s
+  if (!window._spotifyPoll) {
+    window._spotifyPoll = setInterval(() => {
+      if (currentTab === 'home' && (state?.user?.theme || 'kpop_anime') === 'kpop_anime' && state?.user?.spotifyTokens) {
+        spotifyUpdateNowPlaying();
+      }
+    }, 20000);
+  }
   render();
 }
 
