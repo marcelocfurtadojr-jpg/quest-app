@@ -1,0 +1,280 @@
+/* ============================================================
+   QUEST — estilos custom (complementam o Tailwind)
+   ============================================================ */
+
+/* Reset / base ---------------------------------------------- */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html { -webkit-tap-highlight-color: transparent; }
+
+body {
+  font-feature-settings: 'cv11', 'ss01';
+  text-rendering: optimizeLegibility;
+  overscroll-behavior-y: contain;
+}
+
+/* Tipografia display (Noto Sans KR para títulos coreanos) ---- */
+.font-display { font-family: 'Noto Sans KR', Inter, system-ui, sans-serif; }
+
+/* Card "neumórfico" leve ------------------------------------- */
+.q-card {
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow:
+    0 2px 12px rgba(26,26,46,0.06),
+    0 1px 3px rgba(26,26,46,0.04);
+  border: 1px solid rgba(26,26,46,0.04);
+}
+.dark .q-card {
+  background: #182238;
+  border-color: rgba(255,255,255,0.06);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+}
+
+/* Inputs ---------------------------------------------------- */
+.q-input {
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  border-radius: 12px;
+  background: #F5F4EF;
+  border: 1px solid transparent;
+  color: inherit;
+  font-size: 1rem;
+  transition: border-color .15s, background .15s;
+}
+.q-input:focus {
+  outline: none;
+  border-color: #B7B5FF;
+  background: #ffffff;
+}
+.dark .q-input { background: #0F1729; border-color: rgba(255,255,255,0.06); }
+.dark .q-input:focus { background: #182238; border-color: #B7B5FF; }
+
+/* Botões ---------------------------------------------------- */
+.q-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: .4rem;
+  padding: 0.7rem 1.1rem;
+  border-radius: 14px;
+  font-weight: 600;
+  transition: transform .12s ease, box-shadow .15s ease, background .15s;
+  user-select: none;
+}
+.q-btn:active { transform: scale(.97); }
+.q-btn-primary {
+  background: linear-gradient(135deg, #B7B5FF, #FFB7C5);
+  color: #1A1A2E;
+  box-shadow: 0 6px 18px rgba(183,181,255,0.4);
+}
+.q-btn-primary:hover { box-shadow: 0 8px 22px rgba(183,181,255,0.55); }
+.q-btn-ghost {
+  background: rgba(26,26,46,0.04);
+  color: inherit;
+}
+.dark .q-btn-ghost { background: rgba(255,255,255,0.06); }
+.q-btn-danger {
+  background: #FFD3D6;
+  color: #8B1E2D;
+}
+
+/* Checkbox custom (quests) ---------------------------------- */
+.q-check {
+  width: 28px; height: 28px;
+  border-radius: 9px;
+  border: 2px solid rgba(26,26,46,0.18);
+  display: inline-flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: all .18s ease;
+  background: transparent;
+}
+.dark .q-check { border-color: rgba(255,255,255,0.25); }
+.q-check.is-checked {
+  background: #A8E6CF;
+  border-color: #A8E6CF;
+  animation: checkPop 380ms cubic-bezier(.2,.9,.3,1.4);
+}
+.q-check svg { opacity: 0; transform: scale(.5); transition: all .2s ease; }
+.q-check.is-checked svg { opacity: 1; transform: scale(1); color: #14543A; }
+
+@keyframes checkPop {
+  0%   { transform: scale(.7); }
+  60%  { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+/* Barra de XP ----------------------------------------------- */
+.xp-track {
+  position: relative;
+  height: 10px;
+  background: rgba(26,26,46,0.08);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.dark .xp-track { background: rgba(255,255,255,0.1); }
+.xp-fill {
+  position: absolute; inset: 0 auto 0 0;
+  background: linear-gradient(90deg, #B7B5FF 0%, #FFB7C5 50%, #A8E6CF 100%);
+  border-radius: 999px;
+  transition: width .8s cubic-bezier(.2,.9,.3,1);
+}
+
+/* Rank badge ------------------------------------------------- */
+.rank-badge {
+  width: 64px; height: 64px;
+  border-radius: 18px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 1.15rem;
+  letter-spacing: .05em;
+  position: relative;
+  box-shadow: 0 4px 14px rgba(26,26,46,0.15);
+}
+.rank-badge::after {
+  content: '';
+  position: absolute; inset: -2px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(255,255,255,.4), transparent 60%);
+  pointer-events: none;
+}
+
+/* Streak chip ----------------------------------------------- */
+.streak-chip {
+  display: inline-flex; align-items: center; gap: .35rem;
+  padding: .35rem .7rem;
+  border-radius: 999px;
+  background: rgba(255,183,197,0.18);
+  color: #7A2E3A;
+  font-weight: 600; font-size: .82rem;
+}
+.dark .streak-chip { background: rgba(255,183,197,0.18); color: #FFD3D9; }
+
+/* Toast / feedback ------------------------------------------ */
+.q-toast {
+  position: fixed; left: 50%; bottom: 90px;
+  transform: translateX(-50%);
+  background: #1A1A2E; color: #FBFAF7;
+  padding: .7rem 1.1rem;
+  border-radius: 999px;
+  font-weight: 600; font-size: .9rem;
+  box-shadow: 0 8px 24px rgba(0,0,0,.25);
+  animation: toastIn .25s ease-out, toastOut .25s ease-in 1.8s forwards;
+  pointer-events: auto;
+}
+@keyframes toastIn {
+  from { transform: translate(-50%, 12px); opacity: 0; }
+  to   { transform: translate(-50%, 0);    opacity: 1; }
+}
+@keyframes toastOut {
+  to { transform: translate(-50%, 12px); opacity: 0; }
+}
+
+/* Confetti ------------------------------------------------- */
+.confetti-piece {
+  position: fixed;
+  width: 8px; height: 12px;
+  top: -20px;
+  border-radius: 2px;
+  animation: confettiFall 1.6s cubic-bezier(.25,.85,.7,1) forwards;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+@keyframes confettiFall {
+  0%   { transform: translate3d(0,0,0) rotate(0deg); opacity: 1; }
+  100% { transform: translate3d(var(--dx), 90vh, 0) rotate(720deg); opacity: 0; }
+}
+
+/* Level-up overlay ----------------------------------------- */
+.levelup-overlay {
+  position: fixed; inset: 0;
+  background: radial-gradient(circle at center, rgba(15,23,41,0.75), rgba(15,23,41,0.95));
+  display: flex; align-items: center; justify-content: center;
+  z-index: 60;
+  animation: fadeIn .3s ease;
+}
+@keyframes fadeIn { from {opacity:0} to {opacity:1} }
+.levelup-card {
+  background: linear-gradient(160deg, #ffffff, #f3f1ff);
+  color: #1A1A2E;
+  padding: 2rem 2.4rem;
+  border-radius: 24px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,.4);
+  animation: popIn .5s cubic-bezier(.2,.9,.3,1.4);
+}
+.dark .levelup-card { background: linear-gradient(160deg, #1A2238, #261D38); color: #FBFAF7; }
+@keyframes popIn { from {transform:scale(.7); opacity:0} to {transform:scale(1); opacity:1} }
+
+/* Tabbar item ---------------------------------------------- */
+.tab-item {
+  flex: 1;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  padding: .35rem .25rem .15rem;
+  border-radius: 12px;
+  color: rgba(26,26,46,0.55);
+  font-size: .72rem; font-weight: 600;
+  transition: color .15s, background .15s, transform .12s;
+}
+.dark .tab-item { color: rgba(255,255,255,.55); }
+.tab-item.is-active {
+  color: #1A1A2E;
+  background: rgba(183,181,255,0.18);
+}
+.dark .tab-item.is-active { color: #FBFAF7; background: rgba(183,181,255,0.22); }
+.tab-item:active { transform: scale(.94); }
+.tab-item svg { width: 22px; height: 22px; }
+
+/* Tabela de pesos / histórico ------------------------------ */
+.q-grid {
+  display: grid;
+  grid-template-columns: 1fr 56px 56px 64px;
+  gap: 6px;
+  align-items: center;
+  font-size: .85rem;
+}
+.q-grid > * { padding: 4px 2px; }
+.q-grid input { text-align: center; }
+
+/* Pill ------------------------------------------------------ */
+.pill {
+  display: inline-flex; align-items: center; gap: .25rem;
+  padding: .2rem .55rem;
+  border-radius: 999px;
+  background: rgba(183,181,255,0.18);
+  color: #4A4683;
+  font-size: .72rem; font-weight: 600;
+}
+.dark .pill { color: #DAD8FF; }
+.pill.is-mint { background: rgba(168,230,207,0.25); color: #2F6E55; }
+.dark .pill.is-mint { color: #B7F2D8; }
+.pill.is-pink { background: rgba(255,183,197,0.25); color: #8B2E3F; }
+.dark .pill.is-pink { color: #FFD3D9; }
+.pill.is-sun  { background: rgba(255,216,168,0.30); color: #8B5A1E; }
+.dark .pill.is-sun  { color: #FFD9A8; }
+
+/* Scrollbar slim ------------------------------------------- */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-thumb { background: rgba(26,26,46,.2); border-radius: 999px; }
+
+/* Esconde número spinners ---------------------------------- */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+input[type=number] { -moz-appearance: textfield; }
+
+/* Safe area iOS -------------------------------------------- */
+@supports (padding: max(0px)) {
+  #tabbar { padding-bottom: max(0.75rem, env(safe-area-inset-bottom)); }
+}
+
+/* Progressão visual cards (treino) ------------------------- */
+.prog-up   { color: #2F8C5D; }
+.prog-flat { color: #B58A1E; }
+.prog-down { color: #B8424F; }
+
+/* Sparkline / micro charts --------------------------------- */
+.spark { height: 36px; width: 100%; }
+
+/* Esconde elementos visualmente mas mantém para leitor ----- */
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
