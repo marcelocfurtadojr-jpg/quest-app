@@ -145,7 +145,12 @@ body {
   background: rgba(255,183,197,0.18);
   color: #7A2E3A;
   font-weight: 600; font-size: .82rem;
+  border: 1px solid transparent;
+  cursor: default;
 }
+.streak-chip.is-clickable { cursor: pointer; transition: transform .12s ease, border-color .12s ease; }
+.streak-chip.is-clickable:hover { border-color: rgba(255,183,197,0.5); transform: translateY(-1px); }
+.streak-chip.is-clickable:active { transform: scale(0.97); }
 .dark .streak-chip { background: rgba(255,183,197,0.18); color: #FFD3D9; }
 
 /* Toast / feedback ------------------------------------------ */
@@ -831,6 +836,37 @@ input[type=number] { -moz-appearance: textfield; }
   line-height: 1;
   display: block;
 }
+
+/* Weekly quest stepper ------------------------------------- */
+.wq-stepper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.wq-step {
+  flex: 1 1 auto;
+  min-width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(183,181,255,0.12);
+  border: 1px solid rgba(183,181,255,0.3);
+  color: rgba(26,26,46,0.55);
+  font-weight: 700;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all .15s ease;
+}
+.wq-step:hover { border-color: var(--lavender, #B7B5FF); transform: translateY(-1px); }
+.wq-step.is-done {
+  background: linear-gradient(135deg, rgba(168,230,207,0.5), rgba(168,230,207,0.25));
+  border-color: #A8E6CF;
+  color: #2E7D5A;
+}
+.dark .wq-step { color: rgba(255,255,255,0.6); }
+.dark .wq-step.is-done { color: #A8E6CF; }
 
 /* Reading bars (14 dias) ----------------------------------- */
 .reading-bars {

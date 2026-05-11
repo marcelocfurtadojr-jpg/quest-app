@@ -100,29 +100,30 @@ const DEFAULT_QUEST_POOL = [
   { id: 'q47', text: 'Falar com alguém que não fala há um tempo',   xp: 1, tag: 'mente' },
 ];
 
-// Pool de weekly quests — 20 desafios maiores que valem mais XP (주간 미션).
+// Pool de weekly quests. Cada quest tem `target` = quantos "checks" precisa
+// pra completar (renderizado como stepper na UI).
 const DEFAULT_WEEKLY_POOL = [
-  { id: 'w01', text: 'Bater 145g de proteína em 5 dias',            xp:  8 },
-  { id: 'w02', text: '4 treinos completados',                       xp: 10 },
-  { id: 'w03', text: 'Dormir >7h em 5 noites',                      xp:  8 },
-  { id: 'w04', text: '3 sessões de leitura de 15min',               xp:  6 },
-  { id: 'w05', text: '8k passos em 5 dias',                         xp:  6 },
-  { id: 'w06', text: 'Cozinhar 3 refeições caseiras com proteína',  xp:  7 },
-  { id: 'w07', text: 'Sem açúcar processado em 4 dias',             xp: 10 },
-  { id: 'w08', text: 'Estudar coreano em 5 dias diferentes',        xp:  8, kpopOnly: true },
-  { id: 'w09', text: 'Bater PR em 1 exercício composto',            xp: 12 },
-  { id: 'w10', text: '1 sessão de dança K-pop completa (45min+)',   xp:  8, kpopOnly: true },
-  { id: 'w11', text: '5 dias sem celular após 22h',                 xp: 10 },
-  { id: 'w12', text: 'Tomar sol 10min em 5 dias',                   xp:  6 },
-  { id: 'w13', text: 'Finalizar 1 livro / 1 capítulo importante',   xp:  8 },
-  { id: 'w14', text: 'Meditar 5 min em 5 dias',                     xp:  6 },
-  { id: 'w15', text: 'Banho frio em 4 dias',                        xp:  9 },
-  { id: 'w16', text: 'Comer fermentado (kimchi/iogurte) 5x',        xp:  7, kpopOnly: true },
-  { id: 'w16b', text: 'Comer alimento fermentado 5x',               xp:  7 },
-  { id: 'w17', text: 'Sequência perfeita: 7 dias com log completo', xp: 14 },
-  { id: 'w18', text: 'Visitar restaurante coreano / cozinhar prato', xp: 6, kpopOnly: true },
-  { id: 'w19', text: 'Aprender 1 coreografia inteira (1 música)',   xp: 12 },
-  { id: 'w20', text: 'Tirar foto progresso (frontal + lateral)',    xp:  5 },
+  { id: 'w01', text: 'Bater 145g de proteína em 5 dias',            xp:  8, target: 5 },
+  { id: 'w02', text: '4 treinos completados',                       xp: 10, target: 4 },
+  { id: 'w03', text: 'Dormir >7h em 5 noites',                      xp:  8, target: 5 },
+  { id: 'w04', text: '3 sessões de leitura de 15min',               xp:  6, target: 3 },
+  { id: 'w05', text: '8k passos em 5 dias',                         xp:  6, target: 5 },
+  { id: 'w06', text: 'Cozinhar 3 refeições caseiras com proteína',  xp:  7, target: 3 },
+  { id: 'w07', text: 'Sem açúcar processado em 4 dias',             xp: 10, target: 4 },
+  { id: 'w08', text: 'Estudar coreano em 5 dias diferentes',        xp:  8, target: 5, kpopOnly: true },
+  { id: 'w09', text: 'Bater PR em 1 exercício composto',            xp: 12, target: 1 },
+  { id: 'w10', text: '1 sessão de dança K-pop completa (45min+)',   xp:  8, target: 1, kpopOnly: true },
+  { id: 'w11', text: '5 dias sem celular após 22h',                 xp: 10, target: 5 },
+  { id: 'w12', text: 'Tomar sol 10min em 5 dias',                   xp:  6, target: 5 },
+  { id: 'w13', text: 'Finalizar 1 livro / 1 capítulo importante',   xp:  8, target: 1 },
+  { id: 'w14', text: 'Meditar 5 min em 5 dias',                     xp:  6, target: 5 },
+  { id: 'w15', text: 'Banho frio em 4 dias',                        xp:  9, target: 4 },
+  { id: 'w16', text: 'Comer fermentado (kimchi/iogurte) 5x',        xp:  7, target: 5, kpopOnly: true },
+  { id: 'w16b', text: 'Comer alimento fermentado 5x',               xp:  7, target: 5 },
+  { id: 'w17', text: 'Sequência perfeita: 7 dias com log completo', xp: 14, target: 7 },
+  { id: 'w18', text: 'Visitar restaurante coreano / cozinhar prato', xp: 6, target: 1, kpopOnly: true },
+  { id: 'w19', text: 'Aprender 1 coreografia inteira (1 música)',   xp: 12, target: 1 },
+  { id: 'w20', text: 'Tirar foto progresso (frontal + lateral)',    xp:  5, target: 2 },
 ];
 
 // ===== Temas / estéticas ====================================
@@ -177,12 +178,12 @@ const THEMES = {
       { id: 't1_dr2',  text: 'Cozinhar comida coreana caseira',          xp: 2, tag: 'nutri',  ko: '한식' },
     ],
     weeklyQuests: [
-      { id: 'tw1_1', text: 'Aprender 1 coreografia inteira (1 música)',   xp: 12 },
-      { id: 'tw1_2', text: 'Estudar coreano em 5 dias diferentes',         xp:  8 },
-      { id: 'tw1_3', text: 'Finalizar 1 temporada de anime ou K-drama',    xp: 10 },
-      { id: 'tw1_4', text: 'Subir 1 elo no jogo competitivo (ranked)',     xp: 12 },
-      { id: 'tw1_5', text: 'Ler 1 volume de mangá inteiro',                xp:  8 },
-      { id: 'tw1_6', text: 'Cozinhar 1 prato coreano caseiro',             xp:  6 },
+      { id: 'tw1_1', text: 'Aprender 1 coreografia inteira (1 música)',   xp: 12, target: 1 },
+      { id: 'tw1_2', text: 'Estudar coreano em 5 dias diferentes',         xp:  8, target: 5 },
+      { id: 'tw1_3', text: 'Finalizar 1 temporada de anime ou K-drama',    xp: 10, target: 1 },
+      { id: 'tw1_4', text: 'Subir 1 elo no jogo competitivo (ranked)',     xp: 12, target: 1 },
+      { id: 'tw1_5', text: 'Ler 1 volume de mangá inteiro',                xp:  8, target: 1 },
+      { id: 'tw1_6', text: 'Cozinhar 1 prato coreano caseiro',             xp:  6, target: 1 },
     ],
     rewards: [
       '1 partida ranked de LoL',
@@ -292,19 +293,19 @@ const THEMES = {
       { id: 't2_tt25', text: 'Coletar algo da natureza (folha, pedra)',    xp: 1, tag: 'mente' },
     ],
     weeklyQuests: [
-      { id: 'tw2_1', text: 'Check-in das 5 emoções em 5 dias',            xp: 10 },
-      { id: 'tw2_2', text: 'Diário de bordo em 4 dias diferentes',         xp: 9 },
-      { id: 'tw2_3', text: 'Validar a Tristeza em 3 momentos da semana',   xp: 8 },
-      { id: 'tw2_4', text: 'Pedir ajuda a alguém (Medo controlado)',       xp: 10 },
-      { id: 'tw2_5', text: '3 conversas sem celular nas refeições',        xp: 8 },
-      { id: 'tw2_6', text: 'Sessão de terapia ou journaling longa (1h)',   xp: 10 },
-      { id: 'tw2_7', text: 'Rever 3 lembranças-núcleo positivas',          xp: 7 },
+      { id: 'tw2_1', text: 'Check-in das 5 emoções em 5 dias',            xp: 10, target: 5 },
+      { id: 'tw2_2', text: 'Diário de bordo em 4 dias diferentes',         xp: 9, target: 4 },
+      { id: 'tw2_3', text: 'Validar a Tristeza em 3 momentos da semana',   xp: 8, target: 3 },
+      { id: 'tw2_4', text: 'Pedir ajuda a alguém (Medo controlado)',       xp: 10, target: 1 },
+      { id: 'tw2_5', text: '3 conversas sem celular nas refeições',        xp: 8, target: 3 },
+      { id: 'tw2_6', text: 'Sessão de terapia ou journaling longa (1h)',   xp: 10, target: 1 },
+      { id: 'tw2_7', text: 'Rever 3 lembranças-núcleo positivas',          xp: 7, target: 3 },
       // === Totoro / Ghibli ===
-      { id: 'tw2_8', text: 'Assistir 2 filmes do Studio Ghibli',           xp: 10 },
-      { id: 'tw2_9', text: 'Caminhada na natureza 3x na semana',           xp: 11 },
-      { id: 'tw2_10',text: 'Regar / cuidar de planta 7 dias seguidos',     xp: 10 },
-      { id: 'tw2_11',text: '3 cochilos do Totoro (soneca 20min)',          xp:  8 },
-      { id: 'tw2_12',text: 'Cozinhar 3 refeições simples e caseiras',      xp: 10 },
+      { id: 'tw2_8', text: 'Assistir 2 filmes do Studio Ghibli',           xp: 10, target: 2 },
+      { id: 'tw2_9', text: 'Caminhada na natureza 3x na semana',           xp: 11, target: 3 },
+      { id: 'tw2_10',text: 'Regar / cuidar de planta 7 dias seguidos',     xp: 10, target: 7 },
+      { id: 'tw2_11',text: '3 cochilos do Totoro (soneca 20min)',          xp:  8, target: 3 },
+      { id: 'tw2_12',text: 'Cozinhar 3 refeições simples e caseiras',      xp: 10, target: 3 },
     ],
     rewards: [
       'Filme da Pixar (revisita uma alegria-núcleo)',
@@ -436,13 +437,13 @@ const THEMES = {
       { id: 't3_fm40', text: 'Postar OOTD/looks em rede sem editar muito', xp: 1, tag: 'lazer' },
     ],
     weeklyQuests: [
-      { id: 'tw3_1', text: 'Usar 5 looks distintos com mesmas 7 peças',    xp: 10 },
-      { id: 'tw3_2', text: 'Organizar 1 categoria inteira do guarda-roupa', xp: 9 },
-      { id: 'tw3_3', text: 'Ler 1 livro/edição completa de moda',          xp: 10 },
-      { id: 'tw3_4', text: 'Identificar e listar 10 peças "core" do estilo', xp: 8 },
-      { id: 'tw3_5', text: '7 dias sem comprar — só usar o que já tem',     xp: 12 },
-      { id: 'tw3_6', text: 'Documentar progresso do estilo (5 fotos OOTD)', xp: 8 },
-      { id: 'tw3_7', text: 'Concluir 1 curso/aula curta de moda online',    xp: 10 },
+      { id: 'tw3_1', text: 'Usar 5 looks distintos com mesmas 7 peças',    xp: 10, target: 5 },
+      { id: 'tw3_2', text: 'Organizar 1 categoria inteira do guarda-roupa', xp: 9, target: 1 },
+      { id: 'tw3_3', text: 'Ler 1 livro/edição completa de moda',          xp: 10, target: 1 },
+      { id: 'tw3_4', text: 'Identificar e listar 10 peças "core" do estilo', xp: 8, target: 10 },
+      { id: 'tw3_5', text: '7 dias sem comprar — só usar o que já tem',     xp: 12, target: 7 },
+      { id: 'tw3_6', text: 'Documentar progresso do estilo (5 fotos OOTD)', xp: 8, target: 5 },
+      { id: 'tw3_7', text: 'Concluir 1 curso/aula curta de moda online',    xp: 10, target: 1 },
     ],
     rewards: [
       'Ir a uma loja só pra ver coleção (sem comprar)',
@@ -571,14 +572,14 @@ const THEMES = {
       { id: 't4_ft44', text: 'Stretch de gamer: pulso/cervical 5 min',        xp: 1, tag: 'mente' },
     ],
     weeklyQuests: [
-      { id: 'tw4_1', text: 'Subir 1 div de LoL (ou manter promo)',            xp: 12 },
-      { id: 'tw4_2', text: 'Jogar futebol/futsal 2x na semana',               xp: 10 },
-      { id: 'tw4_3', text: 'Maestria 4→5 em 1 champ',                          xp: 10 },
-      { id: 'tw4_4', text: 'Assistir 3 jogos do seu time/liga',               xp: 8 },
-      { id: 'tw4_5', text: 'VOD review próprio em 3 dias diferentes',         xp: 9 },
-      { id: 'tw4_6', text: 'Acompanhar tabela do campeonato a semana toda',    xp: 7 },
-      { id: 'tw4_7', text: 'Sem tilt: 0 partidas raivosas durante 5 dias',     xp: 10 },
-      { id: 'tw4_8', text: 'Treinar matchup desconfortável 3x',               xp: 9 },
+      { id: 'tw4_1', text: 'Subir 1 div de LoL (ou manter promo)',            xp: 12, target: 1 },
+      { id: 'tw4_2', text: 'Jogar futebol/futsal 2x na semana',               xp: 10, target: 2 },
+      { id: 'tw4_3', text: 'Maestria 4→5 em 1 champ',                          xp: 10, target: 1 },
+      { id: 'tw4_4', text: 'Assistir 3 jogos do seu time/liga',               xp: 8, target: 3 },
+      { id: 'tw4_5', text: 'VOD review próprio em 3 dias diferentes',         xp: 9, target: 3 },
+      { id: 'tw4_6', text: 'Acompanhar tabela do campeonato a semana toda',    xp: 7, target: 7 },
+      { id: 'tw4_7', text: 'Sem tilt: 0 partidas raivosas durante 5 dias',     xp: 10, target: 5 },
+      { id: 'tw4_8', text: 'Treinar matchup desconfortável 3x',               xp: 9, target: 3 },
     ],
     rewards: [
       '1 partida ranked de LoL',
@@ -3916,6 +3917,29 @@ function migrateState(s) {
     });
   }
 
+  // Garante que weekly quest atual tenha target. Procura no pool default +
+  // pools temáticos pelo id antes de cair no default 1.
+  function findTargetById(id) {
+    const inDefault = DEFAULT_WEEKLY_POOL.find((q) => q.id === id);
+    if (inDefault?.target != null) return inDefault.target;
+    for (const t of Object.values(THEMES)) {
+      const m = (t.weeklyQuests || []).find((q) => q.id === id);
+      if (m?.target != null) return m.target;
+    }
+    return 1;
+  }
+  // Sempre alinha o target ao definido no pool (migração agressiva — sobrescreve
+  // valores defaults de 1 atribuídos por migrações antigas).
+  if (s.quests?.weeklyCurrent?.item) {
+    const real = findTargetById(s.quests.weeklyCurrent.item.id);
+    s.quests.weeklyCurrent.item.target = real;
+  }
+  if (Array.isArray(s.quests?.weeklyPool)) {
+    s.quests.weeklyPool.forEach((q) => {
+      if (q) q.target = findTargetById(q.id);
+    });
+  }
+
   s.rewards = s.rewards || { available: [], unlocked: [], redeemed: [] };
   s.rewards.available = s.rewards.available || [];
   const newRewards = [
@@ -4521,10 +4545,10 @@ function viewDashboard() {
 
   <section class="px-4 mt-4">
     <div class="flex flex-wrap gap-2 items-center">
-      ${streakChip('🔥', 'Treino', s.treino)}
-      ${streakChip('🌙', 'Sono',   s.sono)}
-      ${streakChip('🥩', 'Proteína', s.proteina)}
-      ${streakChip('📖', 'Leitura', s.leitura)}
+      ${streakChip('🔥', 'Treino', s.treino, 'treino')}
+      ${streakChip('🌙', 'Sono',   s.sono,   'sono')}
+      ${streakChip('🥩', 'Proteína', s.proteina, 'proteina')}
+      ${streakChip('📖', 'Leitura', s.leitura, 'leitura')}
       ${mult > 1 ? `<span class="pill is-sun text-xs">⚡ Combo ×${mult.toFixed(1)}</span>` : ''}
     </div>
   </section>
@@ -4622,27 +4646,43 @@ function viewDashboard() {
     </div>
   </section>
 
-  ${wq.item ? `
-  <section class="px-4 mt-5">
-    <div class="q-card p-4">
-      <div class="flex items-center justify-between">
-        <div>
-          <div class="font-display text-xs uppercase tracking-widest text-ink/40 dark:text-paper/40">${theme.showKombatant ? '주간 미션' : 'DESAFIO SEMANAL'}</div>
-          <div class="font-bold mt-0.5">Weekly quest</div>
+  ${wq.item ? (() => {
+    const target = wq.item.target || 1;
+    const progress = Math.min(target, wq.progress || 0);
+    const pct = wq.completed ? 100 : Math.round((progress / target) * 100);
+    const stepperHtml = target > 1 ? `
+      <div class="wq-stepper mt-3" data-target="${target}">
+        ${Array.from({length: target}, (_, i) => `
+          <button class="wq-step ${i < progress ? 'is-done' : ''}" data-idx="${i}"
+                  aria-label="${i < progress ? 'desmarcar' : 'marcar'} passo ${i+1}">
+            ${i < progress ? '✓' : i+1}
+          </button>
+        `).join('')}
+      </div>` : '';
+    return `
+    <section class="px-4 mt-5">
+      <div class="q-card p-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <div class="font-display text-xs uppercase tracking-widest text-ink/40 dark:text-paper/40">${theme.showKombatant ? '주간 미션' : 'DESAFIO SEMANAL'}</div>
+            <div class="font-bold mt-0.5">Weekly quest</div>
+          </div>
+          <div class="pill is-pink">+${wq.item.xp} XP</div>
         </div>
-        <div class="pill is-pink">+${wq.item.xp} XP</div>
+        <div class="mt-2 text-sm">${wq.item.text}</div>
+        <div class="xp-track mt-3"><div class="xp-fill" style="width:${pct}%"></div></div>
+        ${stepperHtml}
+        <div class="flex items-center justify-between mt-2">
+          <span class="text-xs text-ink/50 dark:text-paper/50">
+            ${wq.completed ? '✓ Completa' : `${progress}/${target} · ${pct}%`}
+          </span>
+          <button id="wq-toggle" class="text-xs text-lavender font-semibold">
+            ${wq.completed ? 'desmarcar' : (target > 1 ? 'marcar tudo como completa' : 'marcar como completa')}
+          </button>
+        </div>
       </div>
-      <div class="mt-2 text-sm">${wq.item.text}</div>
-      <div class="xp-track mt-3"><div class="xp-fill" style="width:${wq.completed ? 100 : Math.min(100, wq.progress * 25)}%"></div></div>
-      <div class="flex items-center justify-between mt-2">
-        <span class="text-xs text-ink/50 dark:text-paper/50">${wq.completed ? 'Completa ✓' : 'Em andamento'}</span>
-        <button id="wq-toggle" class="text-xs text-lavender font-semibold">
-          ${wq.completed ? 'desmarcar' : 'marcar como completa'}
-        </button>
-      </div>
-    </div>
-  </section>
-  ` : ''}
+    </section>`;
+  })() : ''}
 
   <section class="px-4 mt-6">
     <button id="open-log" class="q-btn q-btn-finish w-full py-4 text-base">
@@ -4676,9 +4716,11 @@ function viewDashboard() {
   `;
 }
 
-function streakChip(emoji, label, count) {
-  if (count <= 0) return `<span class="streak-chip opacity-50">${emoji} ${label} 0</span>`;
-  return `<span class="streak-chip">${emoji} ${label} <b>${count}d</b></span>`;
+function streakChip(emoji, label, count, dataKey) {
+  const dataAttr = dataKey ? ` data-quick="${dataKey}"` : '';
+  const cls = dataKey ? 'streak-chip is-clickable' : 'streak-chip';
+  if (count <= 0) return `<button class="${cls} opacity-50"${dataAttr}>${emoji} ${label} 0</button>`;
+  return `<button class="${cls}"${dataAttr}>${emoji} ${label} <b>${count}d</b></button>`;
 }
 
 function quickTile(key, label, icon, kind = 'tab') {
@@ -7083,6 +7125,11 @@ function viewGoals() {
 
 function goalCardHtml(g, active) {
   const hasImage = !!state?.user?.goalImages?.[g.key];
+  // "Wins" semanais — quantas vezes você "venceu" essa meta esta semana
+  const wkStart = weekStartISO();
+  const wins = (state.user.goalWins || []).filter((w) => w.key === g.key && w.date >= wkStart);
+  const winsToday = wins.filter((w) => w.date === todayISO()).length;
+  const target = 5; // meta semanal default
   return `
     <div class="q-card overflow-hidden goal-card ${active ? 'is-active' : ''}" data-key="${g.key}">
       <label class="aspect-[3/4] block cursor-pointer relative group">
@@ -7096,8 +7143,20 @@ function goalCardHtml(g, active) {
         <div class="font-bold text-sm">${g.name}</div>
         <div class="text-[10px] text-ink/50 dark:text-paper/50 mt-0.5">${g.focus}</div>
         <p class="text-xs text-ink/65 dark:text-paper/65 mt-2 leading-snug">${g.why}</p>
-        <button class="goal-toggle q-btn ${active ? 'q-btn-finish' : 'q-btn-ghost'} w-full mt-2 py-1 text-xs" data-key="${g.key}">
-          ${active ? '★ Objetivo ativo' : '☆ Marcar como meta'}
+        ${active ? `
+          <div class="mt-2 pt-2 border-t border-ink/5 dark:border-paper/5">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] uppercase tracking-wider text-ink/45 dark:text-paper/45">Wins · semana</span>
+              <span class="text-xs font-bold ${wins.length >= target ? 'text-mint' : 'text-lavender'}">${wins.length}/${target}</span>
+            </div>
+            <div class="xp-track mt-1" style="height:4px"><div class="xp-fill" style="width:${Math.min(100, (wins.length/target)*100)}%"></div></div>
+            <button class="goal-win q-btn q-btn-finish w-full mt-2 py-1 text-xs" data-key="${g.key}">
+              +1 win ${winsToday > 0 ? `· hoje: ${winsToday}` : 'hoje'}
+            </button>
+          </div>
+        ` : ''}
+        <button class="goal-toggle q-btn ${active ? 'q-btn-ghost' : 'q-btn-ghost'} w-full mt-2 py-1 text-[10px] text-ink/55 dark:text-paper/55" data-key="${g.key}">
+          ${active ? '☆ desmarcar' : '☆ Marcar como meta'}
         </button>
         ${hasImage ? `<button class="goal-img-remove q-btn q-btn-ghost w-full mt-1 py-1 text-[10px] text-ink/55 dark:text-paper/55" data-key="${g.key}">remover foto</button>` : ''}
       </div>
@@ -7583,16 +7642,81 @@ function attachHandlers() {
     });
   });
 
+  // Streak chips clicáveis = quick toggle do dia
+  document.querySelectorAll('.streak-chip.is-clickable').forEach((b) => b.onclick = () => {
+    const k = b.dataset.quick;
+    if (!k) return;
+    let log = state.dailyLogs.find((l) => l.date === todayISO());
+    if (!log) {
+      log = { date: todayISO(), training:{type:'descanso',done:false}, protein:{grams:0,hit:false},
+              sleep:{hours:0}, reading:{minutes:0}, steps:0, buffs:[], notes:'', meals:[], xp:0 };
+      state.dailyLogs.push(log);
+    }
+    if (k === 'treino') {
+      const cur = !!log.training?.done;
+      log.training = { type: log.training?.type || 'Treino livre', done: !cur };
+      toast(cur ? 'Treino desmarcado' : '✓ Treino registrado');
+    } else if (k === 'sono') {
+      const cur = (log.sleep?.hours || 0) >= 7;
+      log.sleep = { hours: cur ? 0 : 7 };
+      toast(cur ? 'Sono desmarcado' : '✓ Sono 7h registrado');
+    } else if (k === 'proteina') {
+      const cur = !!log.protein?.hit;
+      log.protein = { grams: cur ? 0 : META.protein, hit: !cur };
+      toast(cur ? 'Proteína desmarcada' : '✓ Meta de proteína batida');
+    } else if (k === 'leitura') {
+      const cur = (log.reading?.minutes || 0) >= 15;
+      log.reading = { minutes: cur ? 0 : 15 };
+      toast(cur ? 'Leitura desmarcada' : '+15 min de leitura');
+    }
+    log.xp = computeDayXP(log);
+    upsertDailyLog(log);
+    vibrate(8);
+    render();
+  });
+
   document.getElementById('wq-toggle')?.addEventListener('click', () => {
     const wq = state.quests.weeklyCurrent;
+    const target = wq.item?.target || 1;
+    const wasCompleted = wq.completed;
     wq.completed = !wq.completed;
+    wq.progress = wq.completed ? target : 0;
     let change = { changed: false };
     if (wq.completed) {
       change = addQuestXP(wq.item.xp);
-      kombatOverlay('fatality'); // weekly = FATALITY
+      kombatOverlay('fatality');
     } else {
       change = addQuestXP(-wq.item.xp);
     }
+    saveState(); render();
+    if (change.changed) setTimeout(() => levelUpOverlay(change.from, change.to, change.promoted), 2900);
+  });
+
+  // Stepper de passos individuais do weekly quest
+  document.querySelectorAll('.wq-step').forEach((btn) => btn.onclick = () => {
+    const wq = state.quests.weeklyCurrent;
+    if (!wq.item) return;
+    const idx = +btn.dataset.idx;
+    const target = wq.item.target || 1;
+    const cur = wq.progress || 0;
+    // Clicar num passo done desfaz tudo dali pra frente; clicar num pendente avança até ele inclusive
+    let next;
+    if (idx < cur) {
+      next = idx; // desmarca este e os seguintes
+    } else {
+      next = idx + 1; // marca até aqui
+    }
+    const wasCompleted = wq.completed;
+    wq.progress = next;
+    wq.completed = next >= target;
+    let change = { changed: false };
+    if (!wasCompleted && wq.completed) {
+      change = addQuestXP(wq.item.xp);
+      kombatOverlay('fatality');
+    } else if (wasCompleted && !wq.completed) {
+      change = addQuestXP(-wq.item.xp);
+    }
+    vibrate(8);
     saveState(); render();
     if (change.changed) setTimeout(() => levelUpOverlay(change.from, change.to, change.promoted), 2900);
   });
@@ -7685,6 +7809,31 @@ function attachHandlers() {
     if (i >= 0) arr.splice(i, 1);
     else arr.push(k);
     saveState(); render();
+  });
+  // Wins semanais por meta
+  document.querySelectorAll('.goal-win').forEach((b) => b.onclick = (e) => {
+    e.stopPropagation();
+    const k = b.dataset.key;
+    state.user.goalWins = state.user.goalWins || [];
+    state.user.goalWins.push({ key: k, date: todayISO(), ts: Date.now() });
+    // Limita: máx 3 wins por meta/dia (evita spam)
+    const todayWins = state.user.goalWins.filter((w) => w.key === k && w.date === todayISO());
+    if (todayWins.length > 3) {
+      toast('Máximo 3 wins por meta/dia');
+      state.user.goalWins.pop();
+      return;
+    }
+    // Bonus XP por win (1 XP cada, atributo correlato)
+    const attrMap = { bracos:'forca', forca:'forca', peitoral:'forca', dorsal:'forca', ombros:'forca',
+                      abdomen:'disciplina', cardio:'resistencia', calistenia:'resistencia', definicao:'disciplina' };
+    addAttributeXP(attrMap[k] || 'vitalidade', 1);
+    const change = gainXP(1, { attr: attrMap[k] || 'vitalidade' });
+    saveState();
+    vibrate(8);
+    toast(`✓ +1 win em ${k}`);
+    confetti(300);
+    render();
+    if (change.changed) levelUpOverlay(change.from, change.to, change.promoted);
   });
   // Upload de foto por meta (resize p/ 700px de largura, JPEG 0.82 — economiza localStorage)
   document.querySelectorAll('.goal-img-input').forEach((inp) => inp.onchange = async (e) => {
