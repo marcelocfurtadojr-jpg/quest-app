@@ -673,6 +673,40 @@ const FIGHTERS = {
     </svg>` },
 };
 
+/** Extensões que o fighterHtml() tenta em ordem antes de desistir. */
+const FIGHTER_EXTS = ['webp', 'png', 'jpg', 'jpeg', 'gif'];
+
+/** Tenta a próxima extensão na cadeia; remove a <img> se esgotar. */
+window.tryNextFighterExt = function (img) {
+  const attempt = (+img.dataset.attempt || 0) + 1;
+  if (attempt >= FIGHTER_EXTS.length) { img.remove(); return; }
+  img.dataset.attempt = attempt;
+  img.src = `icons/fighters/${img.dataset.fkey}.${FIGHTER_EXTS[attempt]}`;
+};
+
+/** Renderiza um lutador com 2 camadas:
+ *  - SVG estilizado embutido (sempre presente, é o fallback)
+ *  - <img> opcional tentando `icons/fighters/<key>.{webp,png,jpg,...}` em cascata
+ *  Quando alguma das extensões carrega com sucesso, a imagem sobrepõe o SVG
+ *  com fade-in. Se nenhuma existir, fica só o SVG. As imagens NÃO entram
+ *  no repositório (estão no .gitignore). */
+function fighterHtml(key, { className = '' } = {}) {
+  const f = FIGHTERS[key];
+  if (!f) return '';
+  return `
+    <div class="fighter-wrap ${className}" data-key="${key}">
+      <div class="fighter-svg">${f.svg}</div>
+      <img src="icons/fighters/${key}.${FIGHTER_EXTS[0]}"
+           alt="${f.name}"
+           class="fighter-img"
+           loading="lazy"
+           data-fkey="${key}"
+           data-attempt="0"
+           onload="this.classList.add('loaded')"
+           onerror="tryNextFighterExt(this)" />
+    </div>`;
+}
+
 // 5 atributos — agora com lutador MK como mascote.
 const ATTRIBUTES = [
   { key: 'forca',       name: 'Força',       color: '#B8242E', icon: '💪', fighter: 'kano',
@@ -1407,7 +1441,7 @@ function kombatOverlay(kind = 'finish') {
   const overlay = document.createElement('div');
   overlay.className = 'mk-overlay';
   overlay.innerHTML = `
-    ${fighter ? `<div class="mk-fighter">${fighter.svg}</div>` : ''}
+    ${fighter ? `<div class="mk-fighter">${fighterHtml(fighterKey)}</div>` : ''}
     <div class="mk-text">${ev.title}</div>
     <div class="mk-sub">${ev.sub}</div>
     ${fighter ? `<div class="mk-fighter-tag">${fighter.name} · ${fighter.tagline}</div>` : ''}
@@ -1587,7 +1621,7 @@ function viewDashboard() {
           const fighter = FIGHTERS[a.fighter];
           return `
           <button class="flex flex-col items-center gap-0.5 attr-tile" data-attr="${a.key}" aria-label="${a.name}: ${val}">
-            <div class="attr-fighter h-16 w-full">${fighter ? fighter.svg : a.icon}</div>
+            <div class="attr-fighter h-16 w-full">${a.fighter ? fighterHtml(a.fighter) : a.icon}</div>
             <div class="w-full xp-track is-kombat" style="height:5px"><div class="xp-fill" style="width:${pct}%; background:${a.color}"></div></div>
             <div class="text-[11px] font-bold mt-0.5" style="color:${a.color}">${val}</div>
             <div class="text-[9px] text-ink/55 dark:text-paper/55 leading-tight text-center">${a.name}</div>
@@ -1602,10 +1636,11 @@ function viewDashboard() {
       // Banner com lutador rotativo do dia (alinhado com a quote)
       const fkeys = Object.keys(FIGHTERS);
       const fidx = Math.floor(new Date(todayISO()).getTime() / 86400000) % fkeys.length;
-      const f = FIGHTERS[fkeys[fidx]];
+      const fkey = fkeys[fidx];
+      const f = FIGHTERS[fkey];
       return `
       <div class="fighter-banner">
-        <div class="fighter-banner-svg">${f.svg}</div>
+        <div class="fighter-banner-svg">${fighterHtml(fkey)}</div>
         <div class="flex-1 min-w-0">
           <div class="text-[10px] uppercase tracking-widest text-ink/45 dark:text-paper/45">Kombatant of the day</div>
           <div class="fighter-banner-text text-base" style="color:${f.accent}">${f.name}</div>
@@ -1874,7 +1909,7 @@ function viewWorkout() {
   };
   return `
   <header class="pt-7 pb-3 px-5 kombat-hero">
-    <div class="absolute right-1 top-4 w-32 h-44 opacity-90 pointer-events-none" style="filter:drop-shadow(0 4px 12px rgba(184,36,46,0.3))">${FIGHTERS.kano.svg}</div>
+    <div class="absolute right-1 top-4 w-32 h-44 opacity-90 pointer-events-none" style="filter:drop-shadow(0 4px 12px rgba(184,36,46,0.3))">${fighterHtml('kano')}</div>
     <div class="kombat-tagline text-xs">⚔ TEST YOUR MIGHT ⚔</div>
     <h1 class="text-2xl font-extrabold mt-1">Treino</h1>
     <p class="text-sm text-ink/55 dark:text-paper/55 max-w-[60%]">Kano diz: <i>"Sem dor, sem glória."</i> Toque <b>(i)</b> em qualquer exercício pra técnica.</p>

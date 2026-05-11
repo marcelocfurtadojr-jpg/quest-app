@@ -408,15 +408,41 @@ input[type=number] { -moz-appearance: textfield; }
 }
 .mk-close:hover { background: rgba(184,36,46,0.4); color: #FFF; }
 
+/* Wrapper de lutador — SVG fica como base; PNG (se existir
+   em icons/fighters/<key>.png) sobrepõe com fade-in.
+   Se o PNG falhar, o <img> é removido por onerror e fica só o SVG. */
+.fighter-wrap {
+  position: relative;
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+}
+.fighter-wrap .fighter-svg {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+}
+.fighter-wrap .fighter-svg svg {
+  width: 100%; height: 100%;
+  max-width: 100%; max-height: 100%;
+  display: block;
+}
+.fighter-wrap .fighter-img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: contain;
+  opacity: 0;
+  transition: opacity .35s ease;
+  pointer-events: none;
+}
+.fighter-wrap .fighter-img.loaded { opacity: 1; }
+
 /* Lutador no overlay MK ----------------------------------- */
 .mk-fighter {
   width: clamp(160px, 45vw, 280px);
-  height: auto;
+  height: clamp(200px, 56vw, 350px);
   margin-bottom: -.5rem;
   filter: drop-shadow(0 8px 18px rgba(0,0,0,.7)) drop-shadow(0 0 14px rgba(232,74,26,.5));
   animation: fighterEnter .6s cubic-bezier(.2,.95,.25,1.25);
 }
-.mk-fighter svg { width: 100%; height: auto; }
 @keyframes fighterEnter {
   from { opacity: 0; transform: translateY(20px) scale(.85); }
   to   { opacity: 1; transform: translateY(0) scale(1); }

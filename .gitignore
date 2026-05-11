@@ -4,3 +4,12 @@ Thumbs.db
 *.log
 node_modules/
 .vscode/
+
+# Imagens de lutadores fornecidas pelo usuário (mantidas APENAS locais,
+# para evitar distribuir material copyright no repositório público).
+# O app carrega elas se existirem; senão, usa os SVGs estilizados embutidos.
+icons/fighters/*.png
+icons/fighters/*.jpg
+icons/fighters/*.jpeg
+icons/fighters/*.webp
+icons/fighters/*.gif
