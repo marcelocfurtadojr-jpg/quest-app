@@ -3948,8 +3948,14 @@ function calculateKcalGoal(user, currentWeightKg) {
   const bmr = sex === 'f' || sex === 'female' || sex === 'feminino' ? base - 161 : base + 5;
   const af = ACTIVITY_FACTORS[user.activityLevel || 'moderate'] || 1.55;
   let tdee = bmr * af;
-  // Ajuste por objetivo (cut/bulk) se definido
-  const adj = { cut: -400, light_cut: -250, maintain: 0, light_bulk: 250, bulk: 400 };
+  // Ajuste por objetivo (cut/bulk) se definido — 7 níveis (escala simétrica)
+  const adj = {
+    aggressive_cut: -500, moderate_cut: -350, light_cut: -200,
+    maintain: 0,
+    light_bulk: 200, moderate_bulk: 350, aggressive_bulk: 500,
+    // Aliases antigos (compat com states salvos antes)
+    cut: -500, bulk: 500,
+  };
   tdee += adj[user.calorieGoal || 'maintain'] || 0;
   return Math.round(tdee);
 }
@@ -8312,11 +8318,13 @@ function viewConfig() {
         <label class="block mt-2">
           <span class="text-xs font-semibold">Objetivo calórico</span>
           <select id="cfg-cal-goal" class="q-input mt-1">
-            <option value="cut"        ${state.user.calorieGoal === 'cut' ? 'selected' : ''}>Cut agressivo (−400 kcal)</option>
-            <option value="light_cut"  ${state.user.calorieGoal === 'light_cut' ? 'selected' : ''}>Cut leve (−250 kcal)</option>
-            <option value="maintain"   ${(state.user.calorieGoal || 'maintain') === 'maintain' ? 'selected' : ''}>Manutenção</option>
-            <option value="light_bulk" ${state.user.calorieGoal === 'light_bulk' ? 'selected' : ''}>Bulk leve (+250 kcal)</option>
-            <option value="bulk"       ${state.user.calorieGoal === 'bulk' ? 'selected' : ''}>Bulk agressivo (+400 kcal)</option>
+            <option value="aggressive_cut"  ${state.user.calorieGoal === 'aggressive_cut' || state.user.calorieGoal === 'cut'  ? 'selected' : ''}>Cut agressivo (−500 kcal)</option>
+            <option value="moderate_cut"    ${state.user.calorieGoal === 'moderate_cut'   ? 'selected' : ''}>Cut moderado (−350 kcal)</option>
+            <option value="light_cut"       ${state.user.calorieGoal === 'light_cut'      ? 'selected' : ''}>Cut leve (−200 kcal)</option>
+            <option value="maintain"        ${(state.user.calorieGoal || 'maintain') === 'maintain' ? 'selected' : ''}>Manutenção</option>
+            <option value="light_bulk"      ${state.user.calorieGoal === 'light_bulk'     ? 'selected' : ''}>Bulk leve (+200 kcal)</option>
+            <option value="moderate_bulk"   ${state.user.calorieGoal === 'moderate_bulk'  ? 'selected' : ''}>Bulk moderado (+350 kcal)</option>
+            <option value="aggressive_bulk" ${state.user.calorieGoal === 'aggressive_bulk' || state.user.calorieGoal === 'bulk' ? 'selected' : ''}>Bulk agressivo (+500 kcal)</option>
           </select>
         </label>
         ${(() => {
