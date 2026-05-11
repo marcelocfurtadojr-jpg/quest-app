@@ -95,6 +95,46 @@
   <div id="fx" class="fixed inset-0 pointer-events-none z-50"></div>
   <div id="modal-root" class="fixed inset-0 z-50 hidden"></div>
 
+  <!-- Firebase: Auth + Firestore (SDK modular v10 via CDN) -->
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js';
+    import {
+      getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
+      onAuthStateChanged, signOut, updateProfile
+    } from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js';
+    import {
+      initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
+      doc, getDoc, setDoc
+    } from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyASZf6rAKXL2EgUGhIQlbA_R0m_5YLkyGU",
+      authDomain: "finitess.firebaseapp.com",
+      projectId: "finitess",
+      storageBucket: "finitess.firebasestorage.app",
+      messagingSenderId: "883913187931",
+      appId: "1:883913187931:web:7967f6fe5afdb842f4957e",
+      measurementId: "G-K3XRG7GVEH"
+    };
+
+    const fbApp = initializeApp(firebaseConfig);
+    const auth = getAuth(fbApp);
+    // Firestore com cache persistente (offline-first)
+    const db = initializeFirestore(fbApp, {
+      localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }),
+    });
+
+    // Expõe pra o app.js
+    window.QuestCloud = {
+      available: true,
+      auth, db,
+      createUserWithEmailAndPassword, signInWithEmailAndPassword,
+      onAuthStateChanged, signOut, updateProfile,
+      doc, getDoc, setDoc,
+    };
+    window.dispatchEvent(new Event('quest-cloud-ready'));
+  </script>
+
   <script src="app.js" type="module"></script>
   <script>
     // Registro do service worker (PWA)

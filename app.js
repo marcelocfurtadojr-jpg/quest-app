@@ -1989,6 +1989,215 @@ function resizeImageToDataUrl(file, maxW = 700, quality = 0.82) {
   });
 }
 
+// ===== 1c. CLOUD (Firebase) =================================
+// Quando Firebase está disponível (window.QuestCloud), o app usa Auth + Firestore
+// pra sincronizar contas e state entre dispositivos. Caso contrário, cai no modo
+// local (multi-conta no mesmo aparelho).
+// Fotos e dataURLs (state.photos, state.user.goalImages) NÃO sincronizam:
+// estouram o limite de 1MB do Firestore. Ficam apenas em localStorage.
+
+function cloudReady() { return !!window.QuestCloud; }
+
+function waitForCloud(timeout = 1500) {
+  if (cloudReady()) return Promise.resolve(true);
+  return new Promise((resolve) => {
+    const t = setTimeout(() => resolve(false), timeout);
+    window.addEventListener('quest-cloud-ready', () => {
+      clearTimeout(t);
+      resolve(true);
+    }, { once: true });
+  });
+}
+
+/** Remove campos pesados (fotos) antes de sincronizar com Firestore. */
+function stripHeavyForCloud(s) {
+  const copy = JSON.parse(JSON.stringify(s));
+  copy.photos = [];
+  if (copy.user) copy.user.goalImages = {};
+  return copy;
+}
+
+/** Mescla state vindo do Firestore com fotos locais (que não sincronizam). */
+function mergeWithLocalMedia(cloudState, localState) {
+  if (!cloudState) return localState;
+  if (!localState) return cloudState;
+  cloudState.photos = localState.photos || [];
+  cloudState.user = cloudState.user || {};
+  cloudState.user.goalImages = localState.user?.goalImages || {};
+  return cloudState;
+}
+
+let _cloudSaveTimer = null;
+let _cloudSaveLastError = null;
+/** Agenda salvamento no Firestore — debounce 800ms (evita writes excessivos). */
+function scheduleCloudSave() {
+  if (!cloudReady()) return;
+  const user = window.QuestCloud.auth.currentUser;
+  if (!user || !state) return;
+  if (_cloudSaveTimer) clearTimeout(_cloudSaveTimer);
+  _cloudSaveTimer = setTimeout(async () => {
+    try {
+      const ref = window.QuestCloud.doc(window.QuestCloud.db, 'users', user.uid);
+      await window.QuestCloud.setDoc(ref, {
+        state: stripHeavyForCloud(state),
+        updatedAt: Date.now(),
+      }, { merge: true });
+      _cloudSaveLastError = null;
+    } catch (e) {
+      _cloudSaveLastError = e.message || String(e);
+      console.warn('cloud save failed:', e);
+    }
+  }, 800);
+}
+
+/** Carrega state do Firestore (com cache offline do SDK). */
+async function loadCloudState(uid) {
+  try {
+    const ref = window.QuestCloud.doc(window.QuestCloud.db, 'users', uid);
+    const snap = await window.QuestCloud.getDoc(ref);
+    if (!snap.exists()) return null;
+    return snap.data().state || null;
+  } catch (e) {
+    console.warn('cloud load failed:', e);
+    return null;
+  }
+}
+
+/** Lista candidatos de state legado/local pra migrar pra nuvem.
+ *  Retorna [{key, label, summary}]. Pula a chave da conta cloud atual. */
+function listLocalDataCandidates() {
+  const out = [];
+  const cloudUid = cloudReady() && window.QuestCloud.auth.currentUser?.uid;
+  const cloudKey = cloudUid ? stateKey(cloudUid) : null;
+  // 1) state legado em quest.state.v1 (sem account id)
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const s = JSON.parse(raw);
+      out.push({
+        key: STORAGE_KEY,
+        label: 'Modo convidado (sem conta)',
+        summary: summarizeState(s),
+      });
+    }
+  } catch {}
+  // 2) Contas locais com state
+  for (const a of loadAccounts()) {
+    const k = stateKey(a.id);
+    if (k === cloudKey) continue;
+    try {
+      const raw = localStorage.getItem(k);
+      if (!raw) continue;
+      out.push({
+        key: k,
+        label: `Conta local: ${a.username}`,
+        summary: summarizeState(JSON.parse(raw)),
+        accountId: a.id,
+      });
+    } catch {}
+  }
+  // 3) Outras chaves quest.state.v1.* não-associadas a contas
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (!k || !k.startsWith(STORAGE_KEY + '.') || k === cloudKey) continue;
+    if (out.find((x) => x.key === k)) continue;
+    try {
+      const s = JSON.parse(localStorage.getItem(k));
+      out.push({
+        key: k,
+        label: `Dados órfãos (${k.slice(STORAGE_KEY.length + 1, STORAGE_KEY.length + 9)}…)`,
+        summary: summarizeState(s),
+      });
+    } catch {}
+  }
+  return out;
+}
+
+function summarizeState(s) {
+  if (!s) return 'vazio';
+  const rank = s.user?.rankXP ?? 0;
+  const logs = s.dailyLogs?.length ?? 0;
+  const wos  = s.workouts?.length ?? 0;
+  const meas = s.bodyMeasurements?.length ?? 0;
+  return `${rank} XP · ${logs} dias · ${wos} treinos · ${meas} medidas`;
+}
+
+function hasLocalDataAvailable() {
+  return listLocalDataCandidates().length > 0;
+}
+
+/** Mostra modal com candidatos pra migrar pra nuvem. */
+function modalMigrateToCloud() {
+  if (!cloudReady() || !window.QuestCloud.auth.currentUser) {
+    toast('Entre numa conta na nuvem primeiro');
+    return;
+  }
+  const candidates = listLocalDataCandidates();
+  openModal(`
+    <header class="flex items-center justify-between p-4 border-b border-ink/5 dark:border-paper/5">
+      <div>
+        <h2 class="font-extrabold text-lg">Migrar para a nuvem</h2>
+        <p class="text-xs text-ink/55 dark:text-paper/55">Escolha qual conjunto de dados locais subir pra sua conta atual.</p>
+      </div>
+      <button class="modal-close p-1"><span class="w-5 h-5">${I.close}</span></button>
+    </header>
+    <div class="p-4 space-y-3 overflow-y-auto" style="max-height:75vh">
+      ${candidates.length === 0 ? `<div class="text-sm text-ink/55 dark:text-paper/55">Nenhum dado local encontrado.</div>` :
+        candidates.map((c) => `
+          <div class="q-card p-3">
+            <div class="font-bold text-sm">${c.label}</div>
+            <div class="text-[11px] text-ink/55 dark:text-paper/55 mt-0.5">${c.summary}</div>
+            <div class="flex gap-2 mt-2">
+              <button class="q-btn q-btn-primary text-xs flex-1 migrate-pick" data-key="${c.key}">Usar estes dados</button>
+              <button class="q-btn q-btn-ghost text-xs migrate-delete" data-key="${c.key}" title="Apagar do aparelho">🗑️</button>
+            </div>
+          </div>
+        `).join('')}
+      <p class="text-[10px] text-ink/45 dark:text-paper/45 italic mt-2">
+        ⚠ "Usar estes dados" substitui o state atual da sua conta na nuvem pelos dados escolhidos.
+        Fotos locais continuam só neste aparelho.
+      </p>
+    </div>
+  `);
+
+  document.querySelectorAll('.migrate-pick').forEach((b) => b.onclick = async () => {
+    const k = b.dataset.key;
+    if (!confirm('Substituir os dados da conta atual pelos dados deste perfil local? A conta atual perde o state atual da nuvem.')) return;
+    try {
+      const raw = localStorage.getItem(k);
+      if (!raw) throw new Error('Dados locais não encontrados.');
+      const newState = JSON.parse(raw);
+      migrateState(newState);
+      // Mescla fotos locais que estiverem na chave da conta cloud atual (não perder)
+      const cloudUid = window.QuestCloud.auth.currentUser.uid;
+      const cloudKey = stateKey(cloudUid);
+      let currentCloud = null;
+      try { currentCloud = JSON.parse(localStorage.getItem(cloudKey) || 'null'); } catch {}
+      if (currentCloud) {
+        newState.photos = (newState.photos?.length ? newState.photos : currentCloud.photos) || [];
+        newState.user = newState.user || {};
+        if (!newState.user.goalImages || !Object.keys(newState.user.goalImages).length) {
+          newState.user.goalImages = currentCloud.user?.goalImages || {};
+        }
+      }
+      state = newState;
+      saveState(); // grava local + dispara upload pra Firestore
+      // Remove a fonte local migrada (evita ambiguidade)
+      localStorage.removeItem(k);
+      toast('Dados migrados pra nuvem ✓');
+      closeModal();
+      render();
+    } catch (e) {
+      alert(e.message || 'Erro ao migrar.');
+    }
+  });
+  document.querySelectorAll('.migrate-delete').forEach((b) => b.onclick = () => {
+    if (!confirm('Apagar definitivamente esses dados locais? Não dá pra desfazer.')) return;
+    localStorage.removeItem(b.dataset.key);
+    modalMigrateToCloud();
+  });
+}
+
 async function sha256(text) {
   const buf = new TextEncoder().encode(text);
   const hash = await crypto.subtle.digest('SHA-256', buf);
@@ -2010,6 +2219,15 @@ function setSession(id) {
   else    localStorage.removeItem(SESSION_KEY);
 }
 function currentAccount() {
+  if (cloudReady()) {
+    const u = window.QuestCloud.auth.currentUser;
+    if (!u) return null;
+    return {
+      id: u.uid,
+      username: u.displayName || (u.email || '').split('@')[0],
+      email: u.email || '',
+    };
+  }
   const id = getSession();
   if (!id) return null;
   return loadAccounts().find((a) => a.id === id) || null;
@@ -2020,8 +2238,24 @@ function stateKey(accountId) {
 
 async function createAccount({ username, password }) {
   username = (username || '').trim();
-  if (username.length < 2) throw new Error('Usuário precisa ter ao menos 2 letras.');
   if ((password || '').length < 4) throw new Error('Senha precisa ter ao menos 4 caracteres.');
+
+  // Modo cloud: usa Firebase Auth (username deve ser email)
+  if (cloudReady()) {
+    if (!username.includes('@')) throw new Error('Use um email válido como identificador.');
+    try {
+      const cred = await window.QuestCloud.createUserWithEmailAndPassword(window.QuestCloud.auth, username, password);
+      // Display name: prefixo do email
+      const display = username.split('@')[0];
+      try { await window.QuestCloud.updateProfile(cred.user, { displayName: display }); } catch {}
+      return cred.user.uid;
+    } catch (e) {
+      throw new Error(firebaseAuthMsg(e));
+    }
+  }
+
+  // Modo local (fallback)
+  if (username.length < 2) throw new Error('Usuário precisa ter ao menos 2 letras.');
   const accs = loadAccounts();
   if (accs.some((a) => a.username.toLowerCase() === username.toLowerCase())) {
     throw new Error('Esse usuário já existe.');
@@ -2034,8 +2268,18 @@ async function createAccount({ username, password }) {
 }
 
 async function loginAccount({ username, password }) {
+  username = (username || '').trim();
+  if (cloudReady()) {
+    if (!username.includes('@')) throw new Error('Use um email válido como identificador.');
+    try {
+      const cred = await window.QuestCloud.signInWithEmailAndPassword(window.QuestCloud.auth, username, password);
+      return cred.user.uid;
+    } catch (e) {
+      throw new Error(firebaseAuthMsg(e));
+    }
+  }
   const accs = loadAccounts();
-  const acc = accs.find((a) => a.username.toLowerCase() === (username || '').trim().toLowerCase());
+  const acc = accs.find((a) => a.username.toLowerCase() === username.toLowerCase());
   if (!acc) throw new Error('Usuário não encontrado.');
   const hash = await sha256(password + '·quest-salt·' + acc.id);
   if (hash !== acc.passwordHash) throw new Error('Senha incorreta.');
@@ -2043,9 +2287,26 @@ async function loginAccount({ username, password }) {
 }
 
 function logoutAccount() {
+  if (cloudReady()) {
+    window.QuestCloud.signOut(window.QuestCloud.auth).catch(() => {});
+  }
   setSession(null);
   state = null;
   showAuthScreen();
+}
+
+/** Traduz códigos de erro do Firebase Auth pra PT. */
+function firebaseAuthMsg(e) {
+  const c = e.code || '';
+  if (c === 'auth/email-already-in-use') return 'Esse email já tem conta. Tente entrar.';
+  if (c === 'auth/invalid-email')        return 'Email inválido.';
+  if (c === 'auth/weak-password')        return 'Senha muito fraca (mínimo 6 caracteres).';
+  if (c === 'auth/user-not-found')       return 'Usuário não encontrado.';
+  if (c === 'auth/wrong-password')       return 'Senha incorreta.';
+  if (c === 'auth/invalid-credential')   return 'Email ou senha incorretos.';
+  if (c === 'auth/too-many-requests')    return 'Muitas tentativas. Espere um pouco.';
+  if (c === 'auth/network-request-failed') return 'Sem conexão. Tente de novo.';
+  return e.message || 'Erro de autenticação.';
 }
 
 // ===== 2. STATE ==============================================
@@ -2195,6 +2456,10 @@ function saveState() {
     console.error('Falha gravando localStorage:', e);
     toast('⚠️ Sem espaço para salvar localmente');
   }
+  // Espelha pra Firestore (debounced — não bloqueia UI)
+  if (cloudReady() && window.QuestCloud.auth.currentUser) {
+    scheduleCloudSave();
+  }
 }
 
 /** Popula dados de exemplo dos últimos 14 dias para tela "preenchida". */
@@ -2261,7 +2526,13 @@ function seedSampleData() {
 // ===== 3. UTILS ==============================================
 
 function isoDate(d = new Date()) {
-  return d.toISOString().slice(0, 10);
+  // Usa data LOCAL, não UTC. toISOString() volta UTC e pode pular 1 dia
+  // dependendo do fuso (em UTC+X de manhã vira dia anterior; em UTC-X de
+  // noite vira dia seguinte). Sempre queremos a data no fuso do usuário.
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
 }
 function todayISO() { return isoDate(new Date()); }
 
@@ -5201,9 +5472,23 @@ function viewConfig() {
       <div class="flex-1 min-w-0">
         <div class="text-xs uppercase tracking-wider text-ink/45 dark:text-paper/45">Conta</div>
         <div class="font-bold truncate">${acc.username}</div>
+        ${cloudReady() ? '<div class="text-[10px] text-mint">☁ sincronizando</div>' : ''}
       </div>
       <button id="cfg-logout" class="q-btn q-btn-ghost text-xs">Sair</button>
-    </div>` : `
+    </div>
+    ${cloudReady() && hasLocalDataAvailable() ? `
+    <div class="q-card p-4" style="border-left:3px solid #D6A93E">
+      <div class="text-xs uppercase tracking-wider text-kgold">⚠ Dados locais detectados</div>
+      <div class="font-bold mt-0.5">Migrar dados antigos pra esta conta</div>
+      <p class="text-xs text-ink/55 dark:text-paper/55 mt-1 leading-relaxed">
+        Detectamos rank/treinos/medidas guardados localmente neste aparelho.
+        Importe pra essa conta na nuvem — assim aparece no celular e no PC.
+      </p>
+      <button id="cfg-migrate-cloud" class="q-btn q-btn-primary w-full mt-3 text-sm">
+        ↑ Migrar dados locais para a nuvem
+      </button>
+    </div>` : ''}
+    ` : `
     <div class="q-card p-4">
       <div class="text-xs uppercase tracking-wider text-ink/45 dark:text-paper/45">Modo convidado</div>
       <div class="font-bold mt-0.5">Sem conta — dados ficam no aparelho</div>
@@ -5637,6 +5922,7 @@ function attachHandlers() {
     if (!confirm('Sair da conta? Seus dados continuam salvos.')) return;
     logoutAccount();
   });
+  document.getElementById('cfg-migrate-cloud')?.addEventListener('click', modalMigrateToCloud);
   document.getElementById('cfg-login')?.addEventListener('click', () => {
     state = null;
     showAuthScreen('login');
@@ -5812,22 +6098,63 @@ function checkWeeklyRollover() {
   saveState();
 }
 
-function init() {
-  // Sempre exige login. Sem sessão válida → tela de auth.
-  const session  = getSession();
+async function init() {
+  // Espera o módulo Firebase carregar (max 1.5s; depois cai pra modo local).
+  await waitForCloud();
+
+  if (cloudReady()) {
+    // Modo cloud: o estado de auth do Firebase rege a tela.
+    showAuthLoading();
+    window.QuestCloud.onAuthStateChanged(window.QuestCloud.auth, async (user) => {
+      if (!user) { showAuthScreen(); return; }
+      await bootGameState();
+    });
+    return;
+  }
+
+  // Modo local (fallback).
+  const session = getSession();
   if (!session) { showAuthScreen(); return; }
   const acc = loadAccounts().find((a) => a.id === session);
   if (!acc) { setSession(null); showAuthScreen(); return; }
   bootGameState();
 }
 
-function bootGameState() {
-  state = loadState();
-  if (!state) {
-    state = makeEmptyState();
-    const acc = currentAccount();
-    if (acc) state.user.name = acc.username;
+function showAuthLoading() {
+  document.getElementById('tabbar').innerHTML = '';
+  document.getElementById('app').innerHTML = `
+    <div class="px-5 pt-16 text-center">
+      <div class="kombat-tagline text-xs">⚔ QUEST ⚔</div>
+      <div class="text-sm text-ink/55 dark:text-paper/55 mt-4">Conectando…</div>
+    </div>`;
+}
+
+async function bootGameState() {
+  // 1) Carrega cache local pra UI instantânea
+  let local = loadState();
+  // 2) Se tiver Firebase, busca o state da nuvem e mescla com fotos locais
+  if (cloudReady() && window.QuestCloud.auth.currentUser) {
+    const cloud = await loadCloudState(window.QuestCloud.auth.currentUser.uid);
+    if (cloud) {
+      state = mergeWithLocalMedia(cloud, local);
+    } else if (local) {
+      state = local;
+    } else {
+      state = makeEmptyState();
+      const acc = currentAccount();
+      if (acc) state.user.name = acc.username;
+    }
+    // Migra: state local pré-existente sem nuvem → faz upload inicial
+    migrateState(state);
     saveState();
+  } else {
+    state = local;
+    if (!state) {
+      state = makeEmptyState();
+      const acc = currentAccount();
+      if (acc) state.user.name = acc.username;
+      saveState();
+    }
   }
   if (state.user.darkMode) document.documentElement.classList.add('dark');
   applyTheme();
@@ -5848,23 +6175,27 @@ function applyTheme() {
 function showAuthScreen(mode = 'login') {
   document.getElementById('tabbar').innerHTML = '';
   const app = document.getElementById('app');
+  const cloud = cloudReady();
   app.innerHTML = `
     <div class="px-5 pt-12 pb-8">
       <div class="kombat-tagline text-xs">⚔ QUEST ⚔</div>
       <h1 class="text-3xl font-extrabold mt-1">${mode === 'register' ? 'Criar conta' : 'Entrar'}</h1>
       <p class="text-sm text-ink/55 dark:text-paper/55 mt-1">
-        ${mode === 'register' ? 'Escolha um usuário e uma senha. Seus dados ficam só neste dispositivo.' : 'Use seu usuário e senha. Sem conta? Cadastre-se abaixo.'}
+        ${mode === 'register'
+          ? (cloud ? 'Use um email e senha. Sua conta sincroniza entre celular e PC.' : 'Escolha um usuário e uma senha. Seus dados ficam só neste dispositivo.')
+          : (cloud ? 'Entre com email e senha. Sem conta? Cadastre-se abaixo.' : 'Use seu usuário e senha. Sem conta? Cadastre-se abaixo.')}
       </p>
+      ${cloud ? '<div class="text-[10px] text-mint mt-1">☁ sincronização ativa</div>' : '<div class="text-[10px] text-ink/45 dark:text-paper/45 mt-1">⚠ modo offline (sem sincronização)</div>'}
     </div>
     <div class="px-5 space-y-3">
       <form id="auth-form" class="q-card p-4 space-y-3">
         <label class="block">
-          <div class="text-xs uppercase tracking-wider text-ink/45 dark:text-paper/45">Usuário</div>
-          <input class="q-input w-full mt-1" name="username" autocomplete="username" placeholder="ex: ueg, jogador1" required minlength="2" />
+          <div class="text-xs uppercase tracking-wider text-ink/45 dark:text-paper/45">${cloud ? 'Email' : 'Usuário'}</div>
+          <input class="q-input w-full mt-1" name="username" type="${cloud ? 'email' : 'text'}" autocomplete="${cloud ? 'email' : 'username'}" placeholder="${cloud ? 'voce@exemplo.com' : 'ex: ueg, jogador1'}" required ${cloud ? '' : 'minlength="2"'} />
         </label>
         <label class="block">
           <div class="text-xs uppercase tracking-wider text-ink/45 dark:text-paper/45">Senha</div>
-          <input class="q-input w-full mt-1" type="password" name="password" autocomplete="${mode === 'register' ? 'new-password' : 'current-password'}" placeholder="mínimo 4 caracteres" required minlength="4" />
+          <input class="q-input w-full mt-1" type="password" name="password" autocomplete="${mode === 'register' ? 'new-password' : 'current-password'}" placeholder="${cloud ? 'mínimo 6 caracteres' : 'mínimo 4 caracteres'}" required minlength="${cloud ? 6 : 4}" />
         </label>
         ${mode === 'register' ? `
           <label class="block">
@@ -5895,7 +6226,7 @@ function showAuthScreen(mode = 'login') {
         ${mode === 'register' ? 'Já tenho conta — entrar' : 'Não tenho conta — cadastrar'}
       </button>
 
-      ${loadAccounts().length > 0 && mode === 'login' ? `
+      ${!cloud && loadAccounts().length > 0 && mode === 'login' ? `
         <div class="q-card p-3">
           <div class="text-xs uppercase tracking-wider text-ink/45 dark:text-paper/45 mb-2">Contas neste dispositivo</div>
           <div class="space-y-1">
@@ -5920,29 +6251,25 @@ function showAuthScreen(mode = 'login') {
     try {
       if (mode === 'register') {
         if (data.password !== data.password2) throw new Error('Senhas não conferem.');
-        const wasFirstAccount = loadAccounts().length === 0;
+        const wasFirstAccount = cloudReady() ? false : loadAccounts().length === 0;
         const legacy = wasFirstAccount ? localStorage.getItem(STORAGE_KEY) : null;
         const id = await createAccount({ username: data.username, password: data.password });
-        setSession(id);
+        if (!cloudReady()) setSession(id);
         const chosenTheme = THEMES[data.theme] ? data.theme : 'kpop_anime';
+        // Prepara state inicial
+        let initial;
         if (legacy) {
-          // Importa state legado para a conta nova (não perde dados pré-login).
           try {
-            const imported = JSON.parse(legacy);
-            imported.user = imported.user || {};
-            imported.user.name  = data.username;
-            imported.user.theme = chosenTheme;
-            localStorage.setItem(stateKey(id), JSON.stringify(imported));
-            localStorage.removeItem(STORAGE_KEY);
-          } catch {
-            // fallback abaixo
-          }
+            initial = JSON.parse(legacy);
+            initial.user = initial.user || {};
+            initial.user.name  = data.username.includes('@') ? data.username.split('@')[0] : data.username;
+            initial.user.theme = chosenTheme;
+          } catch { initial = null; }
         }
-        // Se não importou legado, cria state fresco do tema
-        if (!localStorage.getItem(stateKey(id))) {
-          const initial = makeEmptyState();
+        if (!initial) {
+          initial = makeEmptyState();
           initial.user.theme = chosenTheme;
-          initial.user.name  = data.username;
+          initial.user.name  = data.username.includes('@') ? data.username.split('@')[0] : data.username;
           const themeQuests = THEMES[chosenTheme].quests || [];
           initial.quests.pool = [...DEFAULT_QUEST_POOL, ...themeQuests];
           const themeRewards = THEMES[chosenTheme].rewards || [];
@@ -5954,13 +6281,23 @@ function showAuthScreen(mode = 'login') {
               'Comprar lightstick novo',
             ];
           }
-          try { localStorage.setItem(stateKey(id), JSON.stringify(initial)); } catch {}
         }
+        try { localStorage.setItem(stateKey(id), JSON.stringify(initial)); } catch {}
+        if (legacy) localStorage.removeItem(STORAGE_KEY);
+        // Em modo cloud, o onAuthStateChanged chama bootGameState
+        if (!cloudReady()) bootGameState();
       } else {
-        const id = await loginAccount({ username: data.username, password: data.password });
-        setSession(id);
+        await loginAccount({ username: data.username, password: data.password });
+        if (!cloudReady()) {
+          // setSession já foi feito por loginAccount no path local
+          // Mas precisa explicitar:
+          const accs = loadAccounts();
+          const a = accs.find(x => x.username.toLowerCase() === data.username.trim().toLowerCase());
+          if (a) setSession(a.id);
+          bootGameState();
+        }
+        // Em modo cloud, onAuthStateChanged dispara
       }
-      bootGameState();
     } catch (ex) {
       err.textContent = ex.message || 'Erro inesperado.';
     }
