@@ -3423,6 +3423,54 @@ function logoutAccount() {
   showAuthScreen();
 }
 
+/** Apaga a conta atual permanentemente:
+ *  - cloud: deleta doc Firestore + deleta usuário do Auth (com re-auth se necessário)
+ *  - local: remove conta da lista + state + session
+ *  Em ambos os modos, limpa o cache localStorage da conta. */
+async function deleteCurrentAccount({ password } = {}) {
+  // Modo cloud
+  if (cloudReady() && window.QuestCloud.auth.currentUser) {
+    const user = window.QuestCloud.auth.currentUser;
+    // 1) Apaga doc do Firestore primeiro
+    try {
+      const ref = window.QuestCloud.doc(window.QuestCloud.db, 'users', user.uid);
+      await window.QuestCloud.deleteDoc(ref);
+    } catch (e) {
+      console.warn('Falha apagando doc Firestore:', e);
+    }
+    // 2) Apaga usuário do Auth (pode exigir re-auth se sessão antiga)
+    try {
+      await window.QuestCloud.deleteUser(user);
+    } catch (e) {
+      if (e.code === 'auth/requires-recent-login') {
+        if (!password) throw new Error('Senha obrigatória pra confirmar a exclusão.');
+        const cred = window.QuestCloud.EmailAuthProvider.credential(user.email, password);
+        await window.QuestCloud.reauthenticateWithCredential(user, cred);
+        await window.QuestCloud.deleteUser(user);
+      } else {
+        throw new Error(firebaseAuthMsg(e));
+      }
+    }
+    // 3) Limpa cache local da conta
+    try { localStorage.removeItem(stateKey(user.uid)); } catch {}
+    state = null;
+    return;
+  }
+
+  // Modo local
+  const id = getSession();
+  if (id) {
+    const accs = loadAccounts().filter((a) => a.id !== id);
+    saveAccounts(accs);
+    try { localStorage.removeItem(stateKey(id)); } catch {}
+    setSession(null);
+  } else {
+    // Modo convidado legado
+    try { localStorage.removeItem(STORAGE_KEY); } catch {}
+  }
+  state = null;
+}
+
 /** Traduz códigos de erro do Firebase Auth pra PT. */
 function firebaseAuthMsg(e) {
   const c = e.code || '';
@@ -6702,6 +6750,18 @@ function viewConfig() {
       </p>
     </div>
 
+    ${acc ? `
+    <div class="q-card p-4" style="border:1px solid rgba(184,36,46,0.3)">
+      <h3 class="font-bold mb-1 text-blood">⚠ Zona de perigo</h3>
+      <p class="text-xs text-ink/55 dark:text-paper/55 leading-relaxed">
+        Excluir a conta apaga <b>permanentemente</b>: rank, XP, treinos, medidas,
+        livros, conquistas, fotos locais. ${cloudReady() ? 'A conta no Firebase também é removida (não dá pra desfazer).' : ''}
+      </p>
+      <button id="cfg-delete" class="q-btn q-btn-danger w-full mt-3 text-sm">
+        🗑️ Excluir minha conta
+      </button>
+    </div>` : ''}
+
     <div class="q-card p-4">
       <h3 class="font-bold mb-2">Sistema de rank</h3>
       <div class="space-y-1 text-sm">
@@ -7056,6 +7116,26 @@ function attachHandlers() {
   document.getElementById('cfg-logout')?.addEventListener('click', () => {
     if (!confirm('Sair da conta? Seus dados continuam salvos.')) return;
     logoutAccount();
+  });
+  document.getElementById('cfg-delete')?.addEventListener('click', async () => {
+    const acc = currentAccount();
+    if (!acc) return;
+    const label = acc.email || acc.username;
+    if (!confirm(`Excluir conta "${label}" PERMANENTEMENTE?\n\nIsso apaga rank, XP, treinos, medidas, livros, conquistas. Não dá pra desfazer.`)) return;
+    if (!confirm('Última confirmação: tem certeza absoluta?')) return;
+    let password = null;
+    if (cloudReady()) {
+      password = prompt('Digite sua senha pra confirmar a exclusão:');
+      if (!password) return;
+    }
+    try {
+      await deleteCurrentAccount({ password });
+      alert('Conta excluída.');
+      // No cloud, onAuthStateChanged dispara showAuthScreen; no local, chama manual
+      if (!cloudReady()) showAuthScreen();
+    } catch (e) {
+      alert(e.message || 'Falha ao excluir a conta.');
+    }
   });
   document.getElementById('cfg-migrate-cloud')?.addEventListener('click', modalMigrateToCloud);
   document.getElementById('cfg-login')?.addEventListener('click', () => {

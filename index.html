@@ -100,11 +100,12 @@
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js';
     import {
       getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
-      onAuthStateChanged, signOut, updateProfile
+      onAuthStateChanged, signOut, updateProfile,
+      deleteUser, EmailAuthProvider, reauthenticateWithCredential
     } from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js';
     import {
       initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
-      doc, getDoc, setDoc
+      doc, getDoc, setDoc, deleteDoc
     } from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js';
 
     const firebaseConfig = {
@@ -130,7 +131,8 @@
       auth, db,
       createUserWithEmailAndPassword, signInWithEmailAndPassword,
       onAuthStateChanged, signOut, updateProfile,
-      doc, getDoc, setDoc,
+      deleteUser, EmailAuthProvider, reauthenticateWithCredential,
+      doc, getDoc, setDoc, deleteDoc,
     };
     window.dispatchEvent(new Event('quest-cloud-ready'));
   </script>
