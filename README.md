@@ -191,13 +191,43 @@ Promoção/rebaixamento mostra overlay animado com confete (e vibração no mobi
 | Tela        | Recursos principais |
 |-------------|---------------------|
 | Início      | rank + barra XP; 3 daily quests; weekly quest; streaks (treino/sono/proteína/leitura); botão "Registrar dia"; atalhos rápidos |
-| Treino      | 6 tipos pré-configurados (Upper A/B, Lower A/B, Dança, Outro); séries × reps × carga; técnicas (rest-pause, drop, myo, AMRAP); timer de descanso 60/90/120/180s; indicador de progressão (↑/→/↓); histórico das 5 últimas sessões por exercício |
-| Corpo       | gráfico sparkline de peso + média 7d; medidas (cintura/peito/braço); upload de fotos progresso (front/side); comparador lado-a-lado |
-| Insights    | correlações simples (ex: sono ≥7h → adesão de treino); foco da semana baseado no ponto mais fraco; histórico de ranks |
+| Treino      | **11 splits** (Upper A/B, Lower A/B, Push, Pull, Core/Abs, Cardio HIIT, Calistenia, Dança K-pop, Outro) com legendas KR; **~50 exercícios** detalhados (técnica, erros comuns, dica + 화이팅); séries × reps × carga; técnicas (rest-pause, drop, myo, AMRAP); timer 60/90/120/180s; progressão ↑/→/↓; histórico das 5 últimas sessões; botão **(i)** abre técnica completa |
+| Biblioteca  | navegue todos os exercícios por categoria, com nome PT + KR (벤치 프레스, 데드리프트 etc.), busca e detalhamento completo |
+| Nutrição    | **banco de 60+ alimentos** com kcal/macros por 100g (peito de frango → 비빔밥 → 김치); busca rápida; cálculo automático por porção com presets 50/100/150/200g; meta de kcal e proteína editáveis; refeições do dia |
+| Corpo       | sparkline de peso + média 7d; medidas (cintura/peito/braço); upload fotos progresso; comparador lado-a-lado |
+| Conquistas  | **20 achievements** com nomes coreanos (첫걸음, 단백질 마스터, 챌린저 etc.); XP bônus ao desbloquear; barra de progresso |
+| Insights    | correlações (sono ≥7h → adesão de treino); foco da semana baseado no ponto mais fraco; histórico de ranks |
 | Sono        | "apagando luz" / "acordei" calcula duração automaticamente; gráfico das últimas 7 noites |
-| Leitura     | timer pomodoro 15min; livros em andamento com barra de progresso; marca conclusão |
-| Recompensas | recompensas customizáveis; histórico de resgates; skins desbloqueadas |
-| Config      | nome, objetivos, lembretes de proteína; editor do pool de quests; export/import JSON; reset |
+| Leitura     | timer pomodoro 15min; livros em andamento com barra de progresso |
+| Recompensas | customizáveis; histórico; skins desbloqueadas por 3 semanas Platina+ |
+| Config      | nome, objetivos, lembretes de proteína; editor do pool de quests; tabela completa de ranks; export/import JSON; reset |
+
+## Sistema de atributos (능력치)
+
+5 stats que crescem por categoria de ação:
+
+| Stat | KR | Cor | Cresce com |
+|------|----|-----|------------|
+| Força | 힘 | rosa | treinos pesados |
+| Resistência | 지구력 | mint | cardio, passos, dança |
+| Sabedoria | 지혜 | azul | leitura, estudo, foco |
+| Disciplina | 절제 | roxo | proteína na meta + sono |
+| Vitalidade | 활력 | dourado | streaks + quests completadas |
+
+Exibidos como barras verticais no dashboard (ko: 능력치).
+
+## Combo multiplier
+
+Streaks ativos aplicam multiplicador ao XP ganho:
+
+| Streak | Multiplier |
+|--------|-----------|
+| 3 dias  | ×1.1 |
+| 7 dias  | ×1.2 |
+| 14 dias | ×1.3 |
+| 30 dias | ×1.5 |
+
+(aparece no header do dashboard como "⚡ Combo ×1.2")
 
 ## Estética
 

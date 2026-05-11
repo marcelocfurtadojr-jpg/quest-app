@@ -36,66 +36,553 @@ const RANKS = [
 // → Diamante (470 rankXP) exige ~47 XP/semana = semana sólida.
 const RANK_DECAY = 0.10;
 
-// Pool padrão de daily quests. O usuário pode editar (Configurações).
+// Pool de daily quests — 35 opções com sabor coreano (일일 미션).
+// XP varia conforme dificuldade. Tag determina o ícone/cor.
 const DEFAULT_QUEST_POOL = [
-  { id: 'q01', text: 'Beber 2L de água',            xp: 1, tag: 'saúde' },
-  { id: 'q02', text: '10min de mobilidade/ombros',  xp: 1, tag: 'treino' },
-  { id: 'q03', text: 'Caminhar 30min ao ar livre',  xp: 1, tag: 'cardio' },
-  { id: 'q04', text: 'Ouvir 1 música em coreano',   xp: 1, tag: 'foco' },
-  { id: 'q05', text: 'Bater 145g de proteína',      xp: 2, tag: 'nutri' },
-  { id: 'q06', text: 'Dormir antes de 23:30',       xp: 2, tag: 'sono' },
-  { id: 'q07', text: 'Sem celular 30min antes de dormir', xp: 2, tag: 'sono' },
-  { id: 'q08', text: 'Ler 15 min',                  xp: 1, tag: 'foco' },
-  { id: 'q09', text: 'Exposição ao sol 10 min',     xp: 1, tag: 'saúde' },
-  { id: 'q10', text: 'Treino conforme planejado',   xp: 2, tag: 'treino' },
-  { id: 'q11', text: 'Alongamento pós-treino 5 min', xp: 1, tag: 'treino' },
-  { id: 'q12', text: 'Meditar 5 min',               xp: 1, tag: 'mente' },
+  // Saúde básica
+  { id: 'q01', text: 'Beber 2L de água',                            xp: 1, tag: 'saúde',  ko: '물 2L' },
+  { id: 'q02', text: 'Exposição ao sol 10 min',                     xp: 1, tag: 'saúde',  ko: '햇볕 쬐기' },
+  { id: 'q03', text: 'Vitamina D 5000 UI',                          xp: 1, tag: 'saúde',  ko: '비타민' },
+  { id: 'q04', text: 'Suco verde / chá matcha pela manhã',          xp: 1, tag: 'saúde',  ko: '녹차' },
+  // Treino
+  { id: 'q05', text: 'Treino conforme planejado',                   xp: 2, tag: 'treino', ko: '운동' },
+  { id: 'q06', text: '10min mobilidade de ombros',                  xp: 1, tag: 'treino', ko: '어깨 스트레칭' },
+  { id: 'q07', text: 'Alongamento pós-treino 5 min',                xp: 1, tag: 'treino', ko: '스트레칭' },
+  { id: 'q08', text: 'AMRAP de pull-ups (registrar máx)',           xp: 2, tag: 'treino', ko: '턱걸이' },
+  { id: 'q09', text: 'Foam roller 5 min na cadeia posterior',       xp: 1, tag: 'treino', ko: '폼롤러' },
+  // Cardio
+  { id: 'q10', text: 'Caminhar 30min ao ar livre',                  xp: 1, tag: 'cardio', ko: '산책' },
+  { id: 'q11', text: '8.000 passos no dia',                         xp: 2, tag: 'cardio', ko: '8천 보' },
+  { id: 'q12', text: 'Subir escada em vez de elevador (3x)',        xp: 1, tag: 'cardio', ko: '계단' },
+  { id: 'q13', text: 'Bicicleta/HIIT 20min',                        xp: 2, tag: 'cardio', ko: 'HIIT' },
+  // Nutrição
+  { id: 'q14', text: 'Bater 145g de proteína',                      xp: 2, tag: 'nutri',  ko: '단백질' },
+  { id: 'q15', text: 'Comer 2 porções de vegetais',                 xp: 1, tag: 'nutri',  ko: '야채' },
+  { id: 'q16', text: 'Sem açúcar processado hoje',                  xp: 2, tag: 'nutri',  ko: '설탕 노' },
+  { id: 'q17', text: 'Refeição com kimchi/fermentado',              xp: 1, tag: 'nutri',  ko: '김치' },
+  { id: 'q18', text: 'Bibimbap ou tigela proteica caseira',         xp: 2, tag: 'nutri',  ko: '비빔밥' },
+  { id: 'q19', text: 'Não pular o café da manhã',                   xp: 1, tag: 'nutri',  ko: '아침' },
+  // Sono
+  { id: 'q20', text: 'Dormir antes de 23:30',                       xp: 2, tag: 'sono',   ko: '일찍 자기' },
+  { id: 'q21', text: 'Sem celular 30 min antes de dormir',          xp: 2, tag: 'sono',   ko: '핸드폰 멀리' },
+  { id: 'q22', text: 'Cortar cafeína após 14h',                     xp: 1, tag: 'sono',   ko: '커피 차단' },
+  { id: 'q23', text: 'Janela escurecida ao deitar',                 xp: 1, tag: 'sono',   ko: '암막' },
+  // Foco/leitura
+  { id: 'q24', text: 'Ler 15 min',                                  xp: 1, tag: 'foco',   ko: '독서' },
+  { id: 'q25', text: 'Ler 30 min (sessão profunda)',                xp: 2, tag: 'foco',   ko: '깊은 독서' },
+  { id: 'q26', text: 'Estudar coreano 15 min (Hangul/vocab)',       xp: 2, tag: 'foco',   ko: '한국어' },
+  { id: 'q27', text: 'Escrever 3 coisas pelas quais é grato',       xp: 1, tag: 'foco',   ko: '감사 일기' },
+  { id: 'q28', text: '25 min Pomodoro sem distração',               xp: 2, tag: 'foco',   ko: '뽀모도로' },
+  // Mente
+  { id: 'q29', text: 'Meditar 5 min',                               xp: 1, tag: 'mente',  ko: '명상' },
+  { id: 'q30', text: 'Respiração 4-7-8 (3 ciclos)',                 xp: 1, tag: 'mente',  ko: '호흡' },
+  { id: 'q31', text: 'Banho frio 60s no fim',                       xp: 2, tag: 'mente',  ko: '냉수 샤워' },
+  // Cultura K
+  { id: 'q32', text: 'Ouvir 1 música em coreano',                   xp: 1, tag: 'k-pop',  ko: 'K-pop' },
+  { id: 'q33', text: 'Assistir vídeo dança K-pop e tentar 1 move',  xp: 1, tag: 'k-pop',  ko: '안무' },
+  { id: 'q34', text: 'Variety K (Knowing Bros, RM) 1 episódio',     xp: 1, tag: 'k-pop',  ko: '예능' },
+  { id: 'q35', text: 'Escrever post-it com palavra coreana nova',   xp: 1, tag: 'k-pop',  ko: '단어' },
 ];
 
+// Pool de weekly quests — 20 desafios maiores que valem mais XP (주간 미션).
 const DEFAULT_WEEKLY_POOL = [
-  { id: 'w01', text: 'Bater 145g de proteína 5x na semana', xp: 8 },
-  { id: 'w02', text: '4 treinos completados',               xp: 10 },
-  { id: 'w03', text: 'Dormir >7h em 5 dias',                xp: 8 },
-  { id: 'w04', text: '3 sessões de leitura de 15min',       xp: 6 },
-  { id: 'w05', text: 'Bater 8k passos em 5 dias',           xp: 6 },
+  { id: 'w01', text: 'Bater 145g de proteína em 5 dias',            xp:  8 },
+  { id: 'w02', text: '4 treinos completados',                       xp: 10 },
+  { id: 'w03', text: 'Dormir >7h em 5 noites',                      xp:  8 },
+  { id: 'w04', text: '3 sessões de leitura de 15min',               xp:  6 },
+  { id: 'w05', text: '8k passos em 5 dias',                         xp:  6 },
+  { id: 'w06', text: 'Cozinhar 3 refeições caseiras com proteína',  xp:  7 },
+  { id: 'w07', text: 'Sem açúcar processado em 4 dias',             xp: 10 },
+  { id: 'w08', text: 'Estudar coreano em 5 dias diferentes',        xp:  8 },
+  { id: 'w09', text: 'Bater PR em 1 exercício composto',            xp: 12 },
+  { id: 'w10', text: '1 sessão de dança K-pop completa (45min+)',   xp:  8 },
+  { id: 'w11', text: '5 dias sem celular após 22h',                 xp: 10 },
+  { id: 'w12', text: 'Tomar sol 10min em 5 dias',                   xp:  6 },
+  { id: 'w13', text: 'Finalizar 1 livro / 1 capítulo importante',   xp:  8 },
+  { id: 'w14', text: 'Meditar 5 min em 5 dias',                     xp:  6 },
+  { id: 'w15', text: 'Banho frio em 4 dias',                        xp:  9 },
+  { id: 'w16', text: 'Comer fermentado (kimchi/iogurte) 5x',        xp:  7 },
+  { id: 'w17', text: 'Sequência perfeita: 7 dias com log completo', xp: 14 },
+  { id: 'w18', text: 'Visitar restaurante coreano / cozinhar prato', xp: 6 },
+  { id: 'w19', text: 'Aprender 1 coreografia inteira (1 música)',   xp: 12 },
+  { id: 'w20', text: 'Tirar foto progresso (frontal + lateral)',    xp:  5 },
 ];
 
-// Biblioteca de exercícios pré-cadastrados (foco em peito + dorsais).
+// Banco de alimentos — macros por 100g.
+// Mistura proteína-foco (cut/hipertrofia) + culinária BR + alguns coreanos.
+// kcal / protein(g) / carbs(g) / fat(g) por 100g.
+const FOOD_DB = [
+  // ===== Proteínas =====
+  { name: 'Peito de frango grelhado',  kcal: 165, p: 31,   c: 0,    f: 3.6,  cat: 'proteina', ko: '닭가슴살' },
+  { name: 'Sobrecoxa de frango s/pele',kcal: 177, p: 24,   c: 0,    f: 8,    cat: 'proteina', ko: '닭다리살' },
+  { name: 'Patinho moído cru',         kcal: 137, p: 21,   c: 0,    f: 5.6,  cat: 'proteina', ko: '소고기' },
+  { name: 'Patinho moído grelhado',    kcal: 197, p: 27,   c: 0,    f: 9.5,  cat: 'proteina', ko: '소고기 구이' },
+  { name: 'Contra-filé grelhado',      kcal: 232, p: 28,   c: 0,    f: 13,   cat: 'proteina', ko: '등심' },
+  { name: 'Lombo suíno assado',        kcal: 173, p: 26,   c: 0,    f: 7,    cat: 'proteina', ko: '돼지고기' },
+  { name: 'Ovo inteiro',               kcal: 155, p: 13,   c: 1.1,  f: 11,   cat: 'proteina', ko: '계란' },
+  { name: 'Clara de ovo',              kcal: 52,  p: 11,   c: 0.7,  f: 0.2,  cat: 'proteina', ko: '흰자' },
+  { name: 'Atum em água',              kcal: 116, p: 26,   c: 0,    f: 0.8,  cat: 'proteina', ko: '참치' },
+  { name: 'Salmão grelhado',           kcal: 208, p: 22,   c: 0,    f: 13,   cat: 'proteina', ko: '연어' },
+  { name: 'Tilápia grelhada',          kcal: 128, p: 26,   c: 0,    f: 2.7,  cat: 'proteina', ko: '틸라피아' },
+  { name: 'Whey protein (1 scoop 30g)',kcal: 120, p: 24,   c: 3,    f: 1.5,  cat: 'proteina', ko: '웨이' },
+  { name: 'Iogurte grego natural',     kcal: 59,  p: 10,   c: 3.6,  f: 0.4,  cat: 'proteina', ko: '그릭요거트' },
+  { name: 'Cottage',                   kcal: 98,  p: 11,   c: 3.4,  f: 4.3,  cat: 'proteina', ko: '코티지' },
+  { name: 'Tofu firme',                kcal: 144, p: 17,   c: 3,    f: 9,    cat: 'proteina', ko: '두부' },
+  // ===== Carboidratos =====
+  { name: 'Arroz branco cozido',       kcal: 130, p: 2.7,  c: 28,   f: 0.3,  cat: 'carb',     ko: '쌀밥' },
+  { name: 'Arroz integral cozido',     kcal: 112, p: 2.6,  c: 24,   f: 0.9,  cat: 'carb',     ko: '현미' },
+  { name: 'Batata-doce assada',        kcal: 90,  p: 2,    c: 21,   f: 0.1,  cat: 'carb',     ko: '고구마' },
+  { name: 'Batata inglesa cozida',     kcal: 87,  p: 1.9,  c: 20,   f: 0.1,  cat: 'carb',     ko: '감자' },
+  { name: 'Aveia em flocos',           kcal: 389, p: 17,   c: 66,   f: 7,    cat: 'carb',     ko: '오트밀' },
+  { name: 'Pão integral',              kcal: 247, p: 13,   c: 41,   f: 3.4,  cat: 'carb',     ko: '통밀빵' },
+  { name: 'Macarrão integral cozido',  kcal: 124, p: 5,    c: 26,   f: 0.5,  cat: 'carb',     ko: '파스타' },
+  { name: 'Mandioca cozida',           kcal: 125, p: 0.6,  c: 30,   f: 0.3,  cat: 'carb',     ko: '카사바' },
+  { name: 'Feijão preto cozido',       kcal: 132, p: 8.9,  c: 24,   f: 0.5,  cat: 'carb',     ko: '검정콩' },
+  { name: 'Lentilha cozida',           kcal: 116, p: 9,    c: 20,   f: 0.4,  cat: 'carb',     ko: '렌틸' },
+  { name: 'Tapioca',                   kcal: 95,  p: 0.5,  c: 22,   f: 0.1,  cat: 'carb',     ko: '타피오카' },
+  // ===== Vegetais =====
+  { name: 'Brócolis cozido',           kcal: 35,  p: 2.4,  c: 7,    f: 0.4,  cat: 'veg',      ko: '브로콜리' },
+  { name: 'Couve refogada',            kcal: 28,  p: 1.9,  c: 5,    f: 0.4,  cat: 'veg',      ko: '케일' },
+  { name: 'Espinafre cru',             kcal: 23,  p: 2.9,  c: 3.6,  f: 0.4,  cat: 'veg',      ko: '시금치' },
+  { name: 'Cenoura crua',              kcal: 41,  p: 0.9,  c: 10,   f: 0.2,  cat: 'veg',      ko: '당근' },
+  { name: 'Tomate',                    kcal: 18,  p: 0.9,  c: 3.9,  f: 0.2,  cat: 'veg',      ko: '토마토' },
+  { name: 'Alface',                    kcal: 15,  p: 1.4,  c: 2.9,  f: 0.2,  cat: 'veg',      ko: '상추' },
+  { name: 'Pepino',                    kcal: 16,  p: 0.7,  c: 3.6,  f: 0.1,  cat: 'veg',      ko: '오이' },
+  { name: 'Abobrinha refogada',        kcal: 20,  p: 1.2,  c: 4,    f: 0.3,  cat: 'veg',      ko: '애호박' },
+  { name: 'Kimchi',                    kcal: 23,  p: 1.6,  c: 4,    f: 0.5,  cat: 'veg',      ko: '김치' },
+  { name: 'Pimentão',                  kcal: 31,  p: 1,    c: 6,    f: 0.3,  cat: 'veg',      ko: '피망' },
+  // ===== Frutas =====
+  { name: 'Banana',                    kcal: 89,  p: 1.1,  c: 23,   f: 0.3,  cat: 'fruta',    ko: '바나나' },
+  { name: 'Maçã',                      kcal: 52,  p: 0.3,  c: 14,   f: 0.2,  cat: 'fruta',    ko: '사과' },
+  { name: 'Mamão',                     kcal: 43,  p: 0.5,  c: 11,   f: 0.3,  cat: 'fruta',    ko: '파파야' },
+  { name: 'Morango',                   kcal: 32,  p: 0.7,  c: 7.7,  f: 0.3,  cat: 'fruta',    ko: '딸기' },
+  { name: 'Abacate',                   kcal: 160, p: 2,    c: 9,    f: 15,   cat: 'fruta',    ko: '아보카도' },
+  { name: 'Manga',                     kcal: 60,  p: 0.8,  c: 15,   f: 0.4,  cat: 'fruta',    ko: '망고' },
+  { name: 'Mirtilo',                   kcal: 57,  p: 0.7,  c: 14,   f: 0.3,  cat: 'fruta',    ko: '블루베리' },
+  // ===== Gorduras boas =====
+  { name: 'Azeite extravirgem',        kcal: 884, p: 0,    c: 0,    f: 100,  cat: 'gordura',  ko: '올리브 오일' },
+  { name: 'Castanha-do-pará',          kcal: 656, p: 14,   c: 12,   f: 66,   cat: 'gordura',  ko: '브라질너트' },
+  { name: 'Amêndoas',                  kcal: 579, p: 21,   c: 22,   f: 50,   cat: 'gordura',  ko: '아몬드' },
+  { name: 'Pasta de amendoim',         kcal: 588, p: 25,   c: 20,   f: 50,   cat: 'gordura',  ko: '땅콩버터' },
+  { name: 'Manteiga',                  kcal: 717, p: 0.9,  c: 0.1,  f: 81,   cat: 'gordura',  ko: '버터' },
+  // ===== Pratos coreanos prontos (porção média estimada) =====
+  { name: 'Bibimbap (1 tigela ~500g)', kcal: 560, p: 25,   c: 75,   f: 16,   cat: 'prato',    ko: '비빔밥' },
+  { name: 'Kimbap (1 rolo ~250g)',     kcal: 480, p: 14,   c: 78,   f: 12,   cat: 'prato',    ko: '김밥' },
+  { name: 'Tteokbokki (1 porção)',     kcal: 470, p: 9,    c: 90,   f: 7,    cat: 'prato',    ko: '떡볶이' },
+  { name: 'Bulgogi (200g)',            kcal: 360, p: 30,   c: 8,    f: 22,   cat: 'prato',    ko: '불고기' },
+  { name: 'Doenjang jjigae (300g)',    kcal: 180, p: 14,   c: 12,   f: 9,    cat: 'prato',    ko: '된장찌개' },
+  { name: 'Japchae (1 porção)',        kcal: 420, p: 11,   c: 60,   f: 14,   cat: 'prato',    ko: '잡채' },
+  // ===== Bebidas =====
+  { name: 'Café preto sem açúcar',     kcal: 2,   p: 0.3,  c: 0,    f: 0,    cat: 'bebida',   ko: '커피' },
+  { name: 'Chá verde',                 kcal: 1,   p: 0,    c: 0,    f: 0,    cat: 'bebida',   ko: '녹차' },
+  { name: 'Leite desnatado',           kcal: 34,  p: 3.4,  c: 5,    f: 0.1,  cat: 'bebida',   ko: '저지방 우유' },
+  { name: 'Leite integral',            kcal: 61,  p: 3.2,  c: 4.8,  f: 3.3,  cat: 'bebida',   ko: '우유' },
+];
+
+// Conquistas / 업적 — checadas após cada save de log/treino/etc.
+// id, name, ko, description, condition(state) → boolean, xp bônus, ícone.
+const ACHIEVEMENTS = [
+  { id: 'first_log',   name: 'Primeira luz',         ko: '첫걸음',  icon: '🌅', xp:  5,
+    desc: 'Registrou o primeiro dia. A jornada começou.',
+    cond: (s) => s.dailyLogs.length >= 1 },
+  { id: 'streak3',     name: 'Trinca',               ko: '3일',     icon: '🔥', xp: 10,
+    desc: '3 dias seguidos com log diário.',
+    cond: (s) => s.dailyLogs.length >= 3 && getMaxLogStreak(s) >= 3 },
+  { id: 'streak7',     name: 'Semana completa',      ko: '완주',    icon: '💎', xp: 20,
+    desc: '7 dias seguidos com log diário.',
+    cond: (s) => getMaxLogStreak(s) >= 7 },
+  { id: 'streak30',    name: 'Mês de aço',           ko: '강철 한달', icon: '⚔️', xp: 80,
+    desc: '30 dias seguidos. Disciplina virou identidade.',
+    cond: (s) => getMaxLogStreak(s) >= 30 },
+  { id: 'protein5',    name: 'Bater a meta',         ko: '단백질 마스터', icon: '🥩', xp: 15,
+    desc: '5 dias com proteína na meta.',
+    cond: (s) => s.dailyLogs.filter(l => l.protein?.hit).length >= 5 },
+  { id: 'protein30',   name: 'Massacre da proteína', ko: '단백질 30일', icon: '🥩', xp: 50,
+    desc: '30 dias com proteína na meta.',
+    cond: (s) => s.dailyLogs.filter(l => l.protein?.hit).length >= 30 },
+  { id: 'workout10',   name: 'Iniciado dos pesos',   ko: '입문',    icon: '🏋️', xp: 15,
+    desc: 'Completou 10 treinos.',
+    cond: (s) => s.workouts.length >= 10 },
+  { id: 'workout50',   name: 'Veterano',             ko: '베테랑',  icon: '🥋', xp: 40,
+    desc: 'Completou 50 treinos.',
+    cond: (s) => s.workouts.length >= 50 },
+  { id: 'sleep7d',     name: 'Bom de cama',          ko: '잠꾸러기', icon: '🌙', xp: 12,
+    desc: '7 noites com ≥7h de sono.',
+    cond: (s) => s.dailyLogs.filter(l => (l.sleep?.hours||0) >= 7).length >= 7 },
+  { id: 'reading7',    name: 'Leitor matinal',       ko: '독서가',  icon: '📚', xp: 10,
+    desc: '7 dias com leitura ≥15min.',
+    cond: (s) => s.dailyLogs.filter(l => (l.reading?.minutes||0) >= 15).length >= 7 },
+  { id: 'reading_book',name: 'Livro finalizado',     ko: '책 완독', icon: '📖', xp: 20,
+    desc: 'Terminou um livro inteiro.',
+    cond: (s) => s.books.some(b => b.finishedAt) },
+  { id: 'steps_10k',   name: 'Andante',              ko: '걷기왕',  icon: '👟', xp:  8,
+    desc: 'Bateu 10.000 passos num dia.',
+    cond: (s) => s.dailyLogs.some(l => (l.steps||0) >= 10000) },
+  { id: 'reach_gold',  name: 'Ouro alcançado',       ko: '골드',    icon: '🏆', xp: 25,
+    desc: 'Chegou ao rank Ouro.',
+    cond: (s) => RANKS.findIndex(r => r.key === s.user.currentRank) >= 3 },
+  { id: 'reach_plat',  name: 'Sangue de Platina',    ko: '플레티넘', icon: '💠', xp: 40,
+    desc: 'Chegou ao rank Platina.',
+    cond: (s) => RANKS.findIndex(r => r.key === s.user.currentRank) >= 4 },
+  { id: 'reach_dia',   name: 'Olho de Diamante',     ko: '다이아',  icon: '💎', xp: 60,
+    desc: 'Chegou ao rank Diamante.',
+    cond: (s) => RANKS.findIndex(r => r.key === s.user.currentRank) >= 6 },
+  { id: 'reach_master',name: 'Mestre dos hábitos',   ko: '마스터',  icon: '⚜️', xp: 100,
+    desc: 'Chegou ao rank Mestre.',
+    cond: (s) => RANKS.findIndex(r => r.key === s.user.currentRank) >= 7 },
+  { id: 'reach_chall', name: 'Challenger 👑',         ko: '챌린저',  icon: '👑', xp: 200,
+    desc: 'Chegou ao topo: Challenger.',
+    cond: (s) => s.user.currentRank === 'challenger' },
+  { id: 'quest_50',    name: 'Caçador de quests',    ko: '미션 헌터', icon: '🎯', xp: 20,
+    desc: '50 daily quests completadas.',
+    cond: (s) => (s.user.questsCompleted || 0) >= 50 },
+  { id: 'photo_pair',  name: 'Antes & depois',       ko: '비포 애프터', icon: '📸', xp: 10,
+    desc: 'Tirou pelo menos 2 fotos progresso.',
+    cond: (s) => s.photos.length >= 2 },
+  { id: 'pr',          name: 'Personal Record',      ko: 'PR 기록', icon: '⚡', xp: 15,
+    desc: 'Aumentou carga em algum exercício.',
+    cond: (s) => hasPR(s) },
+];
+
+// Helpers usados por ACHIEVEMENTS (definidos antes para evitar TDZ no array).
+function getMaxLogStreak(s) {
+  if (!s.dailyLogs.length) return 0;
+  const days = new Set(s.dailyLogs.map(l => l.date));
+  let best = 0;
+  for (const d of days) {
+    let cur = 1;
+    const dt = new Date(d);
+    while (true) {
+      dt.setDate(dt.getDate() - 1);
+      if (days.has(isoDate(dt))) cur++; else break;
+    }
+    if (cur > best) best = cur;
+  }
+  return best;
+}
+function hasPR(s) {
+  // Existe algum exercício onde a sessão mais nova tem peso > sessão anterior
+  const byEx = new Map();
+  for (const w of s.workouts) {
+    for (const ex of w.exercises) {
+      const top = Math.max(...ex.sets.map(set => +set.weight || 0));
+      if (!byEx.has(ex.name)) byEx.set(ex.name, []);
+      byEx.get(ex.name).push({ date: w.date, top });
+    }
+  }
+  for (const [, sessions] of byEx) {
+    sessions.sort((a, b) => a.date < b.date ? 1 : -1);
+    if (sessions.length >= 2 && sessions[0].top > sessions[1].top) return true;
+  }
+  return false;
+}
+
+// Frases coreanas motivacionais — rotaciona no dashboard, 1 por dia.
+// Mistura ditados clássicos, expressões k-pop e frases de fitness coreano.
+const KOREAN_QUOTES = [
+  { ko: '천 리 길도 한 걸음부터', pt: 'Mil milhas começam com um passo' },
+  { ko: '화이팅!',                  pt: 'Força! / Vai com tudo!' },
+  { ko: '하루하루 강해진다',         pt: 'Mais forte a cada dia' },
+  { ko: '꿈꾸는 자만이 이긴다',       pt: 'Só quem sonha vence' },
+  { ko: '오늘의 나는 어제의 나보다 강하다', pt: 'Hoje sou mais forte que ontem' },
+  { ko: '천천히, 그러나 멈추지 마라', pt: 'Devagar, mas sem parar' },
+  { ko: '실패는 성공의 어머니',       pt: 'O fracasso é mãe do sucesso' },
+  { ko: '운동은 약이다',              pt: 'Exercício é remédio' },
+  { ko: '한계는 머릿속에 있다',       pt: 'O limite está na cabeça' },
+  { ko: '땀은 거짓말 하지 않는다',     pt: 'O suor não mente' },
+  { ko: '포기하지 마',                pt: 'Não desista' },
+  { ko: '오늘도 수고했어',            pt: 'Bom trabalho hoje também' },
+  { ko: '시작이 반이다',              pt: 'Começar já é metade' },
+  { ko: '꾸준함이 답이다',            pt: 'Consistência é a resposta' },
+  { ko: '괜찮아, 잘 하고 있어',       pt: 'Tá tudo bem, você tá indo bem' },
+  { ko: '한 번 더!',                  pt: 'Mais uma vez!' },
+  { ko: '근육은 거짓말 하지 않는다',   pt: 'Os músculos não mentem' },
+  { ko: '오늘이 가장 젊은 날',         pt: 'Hoje é o dia mais jovem que você terá' },
+  { ko: '나는 나의 영웅이다',          pt: 'Eu sou o meu próprio herói' },
+  { ko: '쉬어도 괜찮아',               pt: 'Tudo bem descansar também' },
+];
+
+// 5 atributos / 능력치 — crescem por categoria de ação.
+// 힘 força, 지구력 resistência, 지혜 sabedoria, 절제 disciplina, 활력 vitalidade
+const ATTRIBUTES = [
+  { key: 'forca',       name: 'Força',       ko: '힘',     color: '#FF7B9B', icon: '💪',
+    desc: 'Cresce com treinos pesados (compostos, séries baixas).' },
+  { key: 'resistencia', name: 'Resistência', ko: '지구력', color: '#5FC7A0', icon: '🏃',
+    desc: 'Cresce com cardio, passos e dança.' },
+  { key: 'sabedoria',   name: 'Sabedoria',   ko: '지혜',   color: '#7BB8FF', icon: '🧠',
+    desc: 'Cresce com leitura, estudo e foco.' },
+  { key: 'disciplina',  name: 'Disciplina',  ko: '절제',   color: '#C77BFF', icon: '⚔️',
+    desc: 'Cresce com proteína na meta + sono regular.' },
+  { key: 'vitalidade',  name: 'Vitalidade',  ko: '활력',   color: '#FFD341', icon: '✨',
+    desc: 'Cresce com streaks longos e quests completadas.' },
+];
+
+// Biblioteca de exercícios pré-cadastrados.
+// Cada exercício carrega technique, mistakes e tip para destravar conhecimento
+// de movimento — funciona como mini-manual integrado.
+// 운동 = treino. 모든 동작에는 이유가 있다 (todo movimento tem razão).
 const EXERCISE_LIBRARY = {
   'Upper A': [
-    { name: 'Supino reto barra',          target: '3×5–8',  notes: 'foco peito' },
-    { name: 'Remada curvada',             target: '3×6–10', notes: 'dorsal grossura' },
-    { name: 'Desenvolvimento militar',    target: '3×6–10', notes: 'ombros' },
-    { name: 'Pull-up / barra fixa',       target: '3×AMRAP', notes: 'dorsal largura' },
-    { name: 'Rosca direta',               target: '2×8–12', notes: 'bíceps' },
-    { name: 'Tríceps testa',              target: '2×8–12', notes: 'tríceps' },
+    { name: 'Supino reto barra', target: '3×5–8', muscles: 'peitoral, tríceps, deltóide anterior', ko: '벤치 프레스',
+      description: 'Movimento-rei do peito. Construtor de massa torácica e força horizontal.',
+      technique: 'Retraia escápulas (junte omoplatas), arco lombar leve, pés firmes no chão. Desça controlado até tocar o mamilo, explode pra cima sem trancar cotovelo.',
+      mistakes: 'Cotovelos a 90° (lesão de ombro) — mantenha ~75°. Descer rápido. Levantar a bunda do banco. Não tocar o peito.',
+      tip: 'Pense em "afastar o chão de você", não em "empurrar a barra". 화이팅!' },
+    { name: 'Remada curvada barra', target: '3×6–10', muscles: 'dorsal, romboides, trapézio médio', ko: '바벨 로우',
+      description: 'Espessura do dorsal e back-thickness. Antagonista direto do supino.',
+      technique: 'Joelhos semi-flex, tronco ~45°, barra na altura dos joelhos. Puxe até a base do umbigo, apertando escápulas no topo. Desça controlado.',
+      mistakes: 'Tronco subindo a cada rep (vira hip hinge). Cotovelos abertos demais (vira trapézio). Pegada curta demais.',
+      tip: 'Empurre o peito pra frente enquanto puxa o cotovelo pra trás. Imagine partir uma noz entre as escápulas.' },
+    { name: 'Desenvolvimento militar', target: '3×6–10', muscles: 'deltóide anterior, tríceps, trapézio', ko: '오버헤드 프레스',
+      description: 'Pressão vertical — constrói ombros e core ao mesmo tempo.',
+      technique: 'Barra na frente, na altura das clavículas. Glúteos e core travados. Suba a barra em linha reta vertical, retraindo a cabeça pra trás na passagem.',
+      mistakes: 'Hiperestender lombar (fica supino em pé). Empurrar pra frente em vez de pra cima. Não travar core.',
+      tip: 'Imagine sua cabeça atravessando uma janela quando a barra passa pela linha do queixo.' },
+    { name: 'Pull-up / barra fixa', target: '3×AMRAP', muscles: 'dorsal, bíceps, antebraço', ko: '턱걸이',
+      description: 'O rei da largura de dorsal. Sem máquina substitui de verdade.',
+      technique: 'Pegada pronada, largura ombros + 10cm. Suba até queixo passar a barra, escápula retraída e peito empurrando pra frente.',
+      mistakes: 'Subir só com bíceps (sem ativar dorsal). Balançar (kipping desnecessário). Não passar o queixo.',
+      tip: 'Inicie cada rep "puxando o cotovelo pra baixo no bolso de trás". Se não consegue: negativas + assistida elástica.' },
+    { name: 'Rosca direta barra', target: '2×8–12', muscles: 'bíceps braquial', ko: '바벨 컬',
+      description: 'Hipertrofia clássica de bíceps.',
+      technique: 'Cotovelos colados ao corpo, pulso neutro. Suba sem balançar tronco, aperta no topo, desce em 2-3 segundos.',
+      mistakes: 'Balanço de quadril (cheating). Cotovelos indo pra frente. Não controlar a fase excêntrica.',
+      tip: 'Encoste as costas numa parede — se a parede sente movimento, você está chuteando.' },
+    { name: 'Tríceps testa', target: '2×8–12', muscles: 'tríceps (cabeça longa)', ko: '라잉 트라이셉스',
+      description: 'Alongamento de tríceps em pico — ótimo pra hipertrofia.',
+      technique: 'Deitado, barra acima da testa. Só o antebraço se move; cotovelos travados apontando pro teto. Desce até quase encostar na testa.',
+      mistakes: 'Cotovelos abrindo (vira pullover). Movimentar ombro. Carga excessiva.',
+      tip: 'Use barra W ou halteres se a barra reta incomodar o cotovelo.' },
   ],
   'Upper B': [
-    { name: 'Supino inclinado halteres',  target: '4×8–12', notes: 'peito alto' },
-    { name: 'Pulldown pegada neutra',     target: '4×8–12', notes: 'dorsal' },
-    { name: 'Crucifixo polia baixa',      target: '3×10–15', notes: 'peito interno' },
-    { name: 'Remada cavalinho',           target: '3×8–12', notes: 'dorsal grossura' },
-    { name: 'Elevação lateral',           target: '3×12–15', notes: 'deltóide médio' },
-    { name: 'Face pull',                  target: '3×15',    notes: 'postura/posterior' },
+    { name: 'Supino inclinado halteres', target: '4×8–12', muscles: 'peito superior (clavicular), deltóide ant.', ko: '인클라인 덤벨',
+      description: 'Mira o peito alto — região esteticamente decisiva pra ficar "preenchido".',
+      technique: 'Banco 30–45°. Halteres na altura do peito, cotovelos a ~75°. Desce profundo, sente alongamento, sobe sem encostar halteres no topo.',
+      mistakes: 'Inclinação >45° (vira ombro). Cotovelos travados. Encostar halteres no topo (mata tensão).',
+      tip: 'Halteres > barra aqui — amplitude maior e cada lado trabalha independente.' },
+    { name: 'Pulldown pegada neutra', target: '4×8–12', muscles: 'dorsal (largura), bíceps', ko: '랫 풀다운',
+      description: 'Substituto/complemento do pull-up. Pegada neutra é mais "ombro-amigável".',
+      technique: 'Senta com coxa travada, barra na largura dos ombros, leve inclinação de tronco (~15°). Puxa até a clavícula. Aperta dorsal no fim.',
+      mistakes: 'Puxar com bíceps. Deitar demais (vira remada). Soltar peso na subida (tensão zero).',
+      tip: 'Empurre o peito pra cima durante a fase concêntrica.' },
+    { name: 'Crucifixo polia baixa', target: '3×10–15', muscles: 'peitoral (linha central), deltóide ant.', ko: '케이블 플라이',
+      description: 'Cross body de polia — feedback contínuo no peito interno e linha central.',
+      technique: 'Em pé entre 2 polias, leve passada à frente. Cotovelos semi-flex fixos. Tracione com a mão, juntando até cruzar levemente as mãos no centro.',
+      mistakes: 'Esticar cotovelo na descida (vira tríceps). Carga excessiva (perde isolamento).',
+      tip: 'Aperte uma laranja imaginária entre as mãos no topo, mantém 1 segundo.' },
+    { name: 'Remada cavalinho', target: '3×8–12', muscles: 'dorsal médio, romboides', ko: '시티드 로우',
+      description: 'Espessura de dorsal e meio-trapézio. Mais seguro que remada livre.',
+      technique: 'Peito apoiado, pegada neutra, puxa até o umbigo. Escápula retrai antes do braço se mover.',
+      mistakes: 'Cotovelo subindo (vira trapézio). Tronco se movendo (sem apoio = remada livre).',
+      tip: 'Pense "cotovelo pro bolso de trás", não "puxar o peso".' },
+    { name: 'Elevação lateral', target: '3×12–15', muscles: 'deltóide médio (largura de ombro)', ko: '사이드 레터럴',
+      description: 'O exercício mais importante pra ombro largo / aparência de V.',
+      technique: 'Halteres leves, leve inclinação pra frente, cotovelo guiando o movimento. Sobe até linha do ombro, sem subir com trapézio.',
+      mistakes: 'Carga pesada demais (vira balanço). Polegar pra cima (vira deltóide anterior). Trapézio subindo.',
+      tip: 'Imagine que está derramando uma jarra de café — pulso ligeiramente abaixado no topo.' },
+    { name: 'Face pull', target: '3×15', muscles: 'deltóide posterior, romboides, manguito', ko: '페이스 풀',
+      description: 'Antídoto da postura cifótica. Faz no fim de todo treino de upper.',
+      technique: 'Polia alta, corda. Puxe até as mãos chegarem nas orelhas, cotovelos altos, rotação externa no fim.',
+      mistakes: 'Carga pesada (perde forma). Cotovelo abaixo da altura do ombro (vira remada alta).',
+      tip: 'Faz parecer uma "abertura de cortina" na cabeça.' },
   ],
   'Lower A': [
-    { name: 'Agachamento livre',          target: '4×5–8',  notes: 'força total' },
-    { name: 'Stiff',                      target: '3×8–10', notes: 'posterior' },
-    { name: 'Leg press',                  target: '3×10–12', notes: 'quadríceps' },
-    { name: 'Mesa flexora',               target: '3×10–12', notes: 'isquiossural' },
-    { name: 'Panturrilha em pé',          target: '4×12–15', notes: '' },
-    { name: 'Abdominal infra',            target: '3×15',    notes: 'core' },
+    { name: 'Agachamento livre', target: '4×5–8', muscles: 'quadríceps, glúteo, posterior, core', ko: '스쿼트',
+      description: 'O rei dos exercícios. Força global, hipertrofia de perna inteira, core travado.',
+      technique: 'Barra no trapézio (high-bar), pés largura dos ombros, ponta levemente pra fora. Senta entre as pernas, joelho na linha do pé, profundidade até paralelo.',
+      mistakes: 'Joelho colapsando pra dentro (valgo). Calcanhar levantando. Lombar arredondada ("butt wink").',
+      tip: 'Antes de descer, "rosqueie" os pés no chão pra fora — ativa glúteo e estabiliza joelho.' },
+    { name: 'Stiff (RDL)', target: '3×8–10', muscles: 'isquiotibiais, glúteo, lombar', ko: '루마니안 데드리프트',
+      description: 'Posterior de coxa e glúteo via hip hinge. Treina cadeia posterior.',
+      technique: 'Joelhos quase travados, barra colada à perna. Empurra quadril pra trás, desce barra até meio da canela, sente alongamento de isquio, sobe.',
+      mistakes: 'Agachar (vira squat). Barra distante da perna. Lombar arredondando.',
+      tip: 'Pense em "fechar uma porta com a bunda" — quadril vai pra trás, não pra baixo.' },
+    { name: 'Leg press 45°', target: '3×10–12', muscles: 'quadríceps, glúteo', ko: '레그 프레스',
+      description: 'Volume de perna sem fadigar core. Bom finalizador de quad.',
+      technique: 'Pés meio do apoio, largura dos ombros. Desce até joelho ~90°. Não solte a coluna do banco.',
+      mistakes: 'Solto a coluna (lombar arredonda). Trancar joelho no topo. Pés muito baixos (joelho passa do pé).',
+      tip: 'Pés mais altos = mais glúteo/posterior; mais baixos = mais quad.' },
+    { name: 'Mesa flexora', target: '3×10–12', muscles: 'isquiotibiais', ko: '레그 컬',
+      description: 'Isolamento de posterior — completa o trabalho do stiff.',
+      technique: 'Quadril apoiado, joelhos fora do banco. Puxa calcanhar até quase tocar o glúteo. Aperta no pico.',
+      mistakes: 'Levantar quadril (cheat). Voltar rápido (perde excêntrica).',
+      tip: 'Conte 3 segundos na fase de volta — excêntrica é onde isquio cresce.' },
+    { name: 'Panturrilha em pé', target: '4×12–15', muscles: 'gastrocnêmio', ko: '카프 레이즈',
+      description: 'Joelho estendido = foca gastrocnêmio (a "cabeça" da panturrilha).',
+      technique: 'Antepé na borda, calcanhar abaixo da linha do degrau. Sobe forte, segura 1s no topo, desce profundo.',
+      mistakes: 'Amplitude curta. Carga sem controle (mola elástica).',
+      tip: 'Faça 1 série dropset por treino — panturrilha responde a volume alto.' },
+    { name: 'Abdominal infra (elevação pernas)', target: '3×15', muscles: 'reto abdominal inferior', ko: '리버스 크런치',
+      description: 'Foca a parte baixa do abdômen, área teimosa.',
+      technique: 'Deitado, pernas semi-flex. Sobe pernas e leva joelho ao peito, retraindo pelve. Não joga as pernas.',
+      mistakes: 'Usar inércia. Lombar levantando.',
+      tip: 'Pense "enrolar a pelve" em vez de "subir as pernas".' },
   ],
   'Lower B': [
-    { name: 'Hip thrust',                 target: '4×6–10', notes: 'glúteo' },
-    { name: 'Afundo passada',             target: '3×10/perna', notes: 'unilateral' },
-    { name: 'Cadeira extensora',          target: '3×10–15', notes: 'quad iso' },
-    { name: 'Cadeira flexora',            target: '3×10–15', notes: 'isquio iso' },
-    { name: 'Panturrilha sentado',        target: '4×15',    notes: 'sóleo' },
-    { name: 'Prancha',                    target: '3×45s',   notes: 'core iso' },
+    { name: 'Hip thrust', target: '4×6–10', muscles: 'glúteo máximo, isquio', ko: '힙 쓰러스트',
+      description: 'O exercício mais eficiente para glúteo. Carga alta direto no maior músculo do corpo.',
+      technique: 'Escápula no banco, barra sobre quadril (com pad). Pés na largura dos ombros, ponta levemente pra fora. Sobe até alinhar tronco-coxa, aperta glúteo 1s no topo.',
+      mistakes: 'Hiperestender lombar. Pés muito longe (vira isquio). Não pausar no topo.',
+      tip: 'Olhar fixo num ponto à frente (não pro teto) mantém pescoço seguro.' },
+    { name: 'Afundo passada', target: '3×10/perna', muscles: 'quadríceps, glúteo, estabilizadores', ko: '런지',
+      description: 'Unilateral — corrige assimetrias e treina estabilidade.',
+      technique: 'Passada longa, desce até joelho de trás quase tocar. Joelho da frente alinhado com o pé. Empurre com calcanhar.',
+      mistakes: 'Passada curta (vira quad isolado). Joelho da frente passando muito do pé.',
+      tip: 'Mais passada longa = mais glúteo; mais curta = mais quad.' },
+    { name: 'Cadeira extensora', target: '3×10–15', muscles: 'quadríceps (isolado)', ko: '레그 익스텐션',
+      description: 'Isolamento puro de quad. Bom pré-fadiga ou finalizador.',
+      technique: 'Almofada na canela, encaixa joelho com o eixo. Estende até quase travar, aperta no topo, desce em 3s.',
+      mistakes: 'Travar joelho com chute. Carga excessiva.',
+      tip: 'Aponte ponta do pé um pouco pra fora pra recrutar vasto medial (gota acima do joelho).' },
+    { name: 'Cadeira flexora', target: '3×10–15', muscles: 'isquiotibiais (sentado)', ko: '시티드 컬',
+      description: 'Variação sentada — mais alongamento e mais ativação que a mesa flexora.',
+      technique: 'Quadril fixo, almofada na panturrilha. Flexiona joelho ao máximo, segura 1s, controla a volta.',
+      mistakes: 'Levantar quadril. Voltar com inércia.',
+      tip: 'Aponte os pés pra dentro (inversão) — recruta mais a cabeça medial.' },
+    { name: 'Panturrilha sentado', target: '4×15', muscles: 'sóleo', ko: '시티드 카프',
+      description: 'Joelho flexionado = sóleo (panturrilha "interna"). Complementa em pé.',
+      technique: 'Joelho 90°, pad na coxa. Sobe forte, desce profundo. Amplitude completa.',
+      mistakes: 'Amplitude curta. Carga sem controle.',
+      tip: 'Sóleo é resistente — use reps altas (15–25).' },
+    { name: 'Prancha', target: '3×45s', muscles: 'core profundo, glúteo', ko: '플랭크',
+      description: 'Anti-extensão lombar. Treina core a manter coluna neutra.',
+      technique: 'Cotovelos sob ombros, corpo reto, glúteo apertado, queixo neutro. Respiração ativa.',
+      mistakes: 'Bumbum levantado. Lombar caindo. Cabeça pendurada.',
+      tip: 'Se 45s ficar fácil, vá pra prancha lateral ou com perna alternada.' },
   ],
-  'Dança':   [{ name: 'Sessão dança K-pop', target: '30–45min', notes: 'cardio + alegria' }],
-  'Outro':   [],
+  'Push': [
+    { name: 'Supino inclinado barra', target: '4×6–10', muscles: 'peito superior, deltóide, tríceps', ko: '인클라인 바벨',
+      description: 'Push pesado focado no peito alto. Excelente para construir massa torácica visível.',
+      technique: 'Banco 30°. Pegada fechada (ombro+5cm). Desce na linha das clavículas, sobe sem trancar.',
+      mistakes: 'Inclinação >45° (vira ombro). Descer no esterno (vira supino reto).',
+      tip: 'Manda 4×6 pesado + 1×AMRAP no fim — receita de hipertrofia.' },
+    { name: 'Desenvolvimento halteres', target: '3×8–12', muscles: 'deltóide anterior+médio, tríceps', ko: '덤벨 숄더 프레스',
+      description: 'Ombro com mais amplitude e equilíbrio bilateral.',
+      technique: 'Sentado com apoio, halteres na altura das orelhas, palma virada pra frente. Sobe até quase tocar halteres no topo.',
+      mistakes: 'Travar cotovelos. Hiperestender lombar.',
+      tip: 'Variação "pegada neutra" (palmas se olhando) é mais amigável pra ombros sensíveis.' },
+    { name: 'Crucifixo banco inclinado', target: '3×10–15', muscles: 'peitoral (alongamento)', ko: '플라이',
+      description: 'Alongamento intenso de peito, recrutamento por amplitude.',
+      technique: 'Banco 30°, halteres acima do peito, cotovelos semi-flex fixos. Abre como abraçando barril, desce até sentir alongamento.',
+      mistakes: 'Esticar cotovelo (vira supino). Descer baixo demais (estressa ombro).',
+      tip: 'Pausa 1s no ponto mais aberto pra catalisar hipertrofia.' },
+    { name: 'Tríceps corda', target: '3×12–15', muscles: 'tríceps (todas cabeças)', ko: '트라이셉스 푸쉬다운',
+      description: 'Volume e bombeamento de tríceps. Excelente final de push.',
+      technique: 'Polia alta com corda. Cotovelos colados ao corpo. Estende e abre a corda no fim do movimento.',
+      mistakes: 'Cotovelos saindo pra frente (vira ombro). Não abrir a corda no final.',
+      tip: 'Termina com 1 série drop: 12 reps → tira 30%, mais 12 → mais 30%, mais 12. Pump absurdo.' },
+    { name: 'Elevação frontal', target: '3×12', muscles: 'deltóide anterior', ko: '프론트 레이즈',
+      description: 'Foco isolado em deltóide anterior. Use só se ombro anterior estiver fraco.',
+      technique: 'Halteres na frente das coxas. Sobe até linha do ombro, alternado ou junto. Controle na descida.',
+      mistakes: 'Subir acima do ombro (vira trapézio). Balanço.',
+      tip: 'Se já faz muito supino, pode pular — o anterior já é bem estimulado.' },
+  ],
+  'Pull': [
+    { name: 'Levantamento terra (Deadlift)', target: '4×3–5', muscles: 'cadeia posterior inteira', ko: '데드리프트',
+      description: 'O exercício mais completo de força — recruta praticamente o corpo todo.',
+      technique: 'Barra sobre meio do pé, mãos fora dos joelhos. Tronco neutro, peito alto. Empurra o chão com os pés enquanto puxa a barra colada ao corpo.',
+      mistakes: 'Lombar arredondando (causa #1 de lesão). Barra distante da canela. Hiperestender no topo.',
+      tip: 'Faz só 1x por semana. Pesa muito no SNC — não combine com squat pesado no mesmo dia.' },
+    { name: 'Barra fixa pegada supinada', target: '3×AMRAP', muscles: 'bíceps, dorsal inferior', ko: '친업',
+      description: 'Variação que dá mais bíceps que pull-up tradicional.',
+      technique: 'Pegada supinada largura dos ombros. Sobe até queixo passar a barra. Desça controlado.',
+      mistakes: 'Sub-amplitude. Balanço.',
+      tip: 'Se barra fixa é difícil, faz 5 negativas (suba ajudado, desça em 5s) — destrava a força em ~4 semanas.' },
+    { name: 'Remada unilateral halter', target: '3×8–12/lado', muscles: 'dorsal, romboides', ko: '원암 덤벨 로우',
+      description: 'Mais amplitude que a remada barra, sem fadiga lombar.',
+      technique: 'Joelho e mão no banco, costas planas. Puxa o halter até a costela inferior, cotovelo perto do corpo.',
+      mistakes: 'Rotação de tronco (puxa com costas). Ombro caindo no fim.',
+      tip: 'Imagine "guardando o cotovelo no bolso de trás".' },
+    { name: 'Pulldown pegada fechada', target: '3×10–12', muscles: 'dorsal inferior, bíceps', ko: '클로즈 그립',
+      description: 'Pega o dorsal de baixo e dá largura central.',
+      technique: 'Pegada fechada (mãos quase se tocando), supinada ou neutra. Puxa até clavícula com leve inclinação de tronco.',
+      mistakes: 'Puxar com bíceps. Inclinar tronco demais.',
+      tip: 'Use quando o pulldown tradicional virou trapézio — fecha pegada e foca dorsal.' },
+    { name: 'Rosca martelo', target: '3×10–12', muscles: 'bíceps braquial + braquiorradial', ko: '해머 컬',
+      description: 'Hipertrofia de bíceps + antebraço. Faz braço parecer mais grosso.',
+      technique: 'Pegada neutra (polegares pra cima). Cotovelo fixo, sobe controlado, aperta no topo.',
+      mistakes: 'Balanço de quadril. Cotovelo indo pra frente.',
+      tip: 'Alterne reto + martelo na mesma série em superset.' },
+  ],
+  'Core/Abs': [
+    { name: 'Prancha frontal', target: '3×60s', muscles: 'core profundo', ko: '플랭크',
+      description: 'Estabilidade anti-extensão. Base de tudo.',
+      technique: 'Antebraço apoiado, corpo reto, glúteo travado.',
+      mistakes: 'Bumbum alto. Lombar caindo. Travar respiração.',
+      tip: 'Se 60s é fácil: prancha lateral 30s/lado ou prancha pés elevados.' },
+    { name: 'Roda abdominal (Ab wheel)', target: '3×8–12', muscles: 'reto abdominal, oblíquos', ko: '에브 휠',
+      description: 'Anti-extensão dinâmico. Um dos exercícios mais difíceis de core.',
+      technique: 'Joelhos no chão, roda à frente. Estende lentamente, mantendo lombar neutra. Volta com força do abdômen.',
+      mistakes: 'Estender demais e cair (lombar arqueada). Cabeça pra trás.',
+      tip: 'Comece com amplitude pequena, vai aumentando ao longo das semanas.' },
+    { name: 'Hanging leg raise', target: '3×10–15', muscles: 'reto abdominal inferior + flexor', ko: '행잉 레그 레이즈',
+      description: 'Reto inferior + flexor de quadril. Difícil mas absurdamente eficaz.',
+      technique: 'Pendurado na barra, sem balanço. Sobe pernas retas (ou semi-flex) até linha do quadril.',
+      mistakes: 'Balanço. Não retrair pelve no topo.',
+      tip: 'Se reto for difícil, começa com joelho flex. Em 4 semanas evolui pra reto.' },
+    { name: 'Cable woodchopper', target: '3×12/lado', muscles: 'oblíquos, core rotacional', ko: '우드 찹',
+      description: 'Treina rotação — funcional pra esportes e dança.',
+      technique: 'Polia alta de um lado, segura com 2 mãos, gira o tronco pra baixo no lado oposto.',
+      mistakes: 'Girar só braço (sem ativar core).',
+      tip: 'Vai mais devagar do que parece — controle vence carga.' },
+  ],
+  'Cardio HIIT': [
+    { name: 'Sprint 30s × 12 (1:1)', target: '12 rounds', muscles: 'sistema cardio + perna', ko: '스프린트',
+      description: 'HIIT clássico. Queima gordura mantendo massa muscular.',
+      technique: 'Esteira ou ar livre. 30s intenso (≥85% FCmax) + 30s caminhada. Repete 12x.',
+      mistakes: 'Não recuperar entre rounds. Forçar quando lesão está pedindo descanso.',
+      tip: 'Faz no fim do treino de upper, nunca antes — drena energia.' },
+    { name: 'Burpees', target: '5×10 reps', muscles: 'corpo inteiro', ko: '버피',
+      description: 'O exercício mais democrático do mundo. Sem equipamento. Brutal.',
+      technique: 'Agacha, lança pernas pra trás (prancha), faz 1 flexão, volta, salta com mãos pra cima.',
+      mistakes: 'Lombar caindo na prancha. Não saltar no fim.',
+      tip: 'Quando sentir TDAH explodir e não conseguir focar: 30 burpees, depois tenta de novo.' },
+    { name: 'Pular corda', target: '5×3min', muscles: 'panturrilha, ombro, cardio', ko: '줄넘기',
+      description: 'Cardio com baixo impacto + coordenação. Pode fazer em qualquer lugar.',
+      technique: 'Pulos baixos, pés juntos, pulso girando (não braço inteiro).',
+      mistakes: 'Pulos altos demais (gasta energia à toa).',
+      tip: 'Boxeadores fazem 15min direto — começa com 3min × 5 e vai subindo.' },
+    { name: 'Mountain climbers', target: '4×40s', muscles: 'core + cardio', ko: '마운틴 클라이머',
+      description: 'Cardio sem sair do lugar. Combina ativação de core + frequência cardíaca.',
+      technique: 'Prancha alta. Joelhos vêm rápido até o peito alternados. Mantém quadril estável.',
+      mistakes: 'Bumbum subindo. Joelho não chegando no peito.',
+      tip: 'Põe 4 séries de 40s entre outros exercícios — vira finalizador HIIT.' },
+  ],
+  'Calistenia': [
+    { name: 'Flexão de braço', target: '4×AMRAP', muscles: 'peito, tríceps, ombro', ko: '푸쉬업',
+      description: 'Movimento fundacional de empurrar. Faz em qualquer lugar.',
+      technique: 'Mãos largura dos ombros, corpo reto da cabeça aos calcanhares, desce até peito quase encostar no chão.',
+      mistakes: 'Bumbum alto/baixo. Cotovelo aberto a 90°.',
+      tip: 'Variação diamond (mãos juntas) foca tríceps; pés elevados foca peito alto.' },
+    { name: 'Dip em barras paralelas', target: '3×8–12', muscles: 'peito inferior, tríceps', ko: '딥스',
+      description: 'O melhor exercício de calistenia pra peito + tríceps simultâneo.',
+      technique: 'Inclinado levemente pra frente (foco peito) ou ereto (foco tríceps). Desce até 90° ou mais, sobe forte.',
+      mistakes: 'Descer muito (estressa ombro). Cotovelo abrindo.',
+      tip: 'Se for fácil, adiciona cinto com carga. Se difícil, usa banda elástica de assistência.' },
+    { name: 'Pistol squat', target: '3×5/perna', muscles: 'quadríceps, glúteo, estabilizador', ko: '피스톨 스쿼트',
+      description: 'Agachamento numa perna só. Marco de mobilidade + força.',
+      technique: 'Uma perna estendida à frente, outra agacha lentamente. Mantém calcanhar no chão.',
+      mistakes: 'Calcanhar levanta. Lombar arredonda.',
+      tip: 'Se difícil, faz com apoio em corrimão. Evolui em 6-8 semanas.' },
+    { name: 'L-sit', target: '3×15–30s', muscles: 'core, flexor quadril, ombro', ko: '엘 싯',
+      description: 'Movimento avançado de estática — abdômen + flexor + ombro.',
+      technique: 'Sentado no chão ou paralelas, levanta corpo só com braços, pernas em L à frente.',
+      mistakes: 'Pernas dobradas (versão progressão). Ombros encolhidos.',
+      tip: 'Começa com joelhos flex (tuck L-sit), evolui pra perna reta em ~8 semanas.' },
+  ],
+  'Dança K-pop': [
+    { name: 'Sessão de dança completa', target: '30–45min', muscles: 'corpo inteiro, cardio, coordenação', ko: '케이팝 댄스',
+      description: 'Combina cardio + coordenação + alegria. Excelente para TDAH (foco numa coisa visual e ritmada).',
+      technique: 'Aquecimento 5min, sessão principal aprendendo/repetindo 25min, cooldown 5min.',
+      mistakes: 'Pular aquecimento (joelho não agradece). Forçar movimento sem alongamento.',
+      tip: 'NewJeans, Stray Kids, IVE têm coreografias acessíveis. 1theK Dance e KPOP Step são bons canais.' },
+    { name: 'Aprender coreografia nova', target: '30min', muscles: 'memória motora + cardio', ko: '안무 배우기',
+      description: 'Foco em aprender uma coreografia nova do começo ao fim. Ótimo desafio cognitivo.',
+      technique: 'Vídeo em câmera lenta primeiro (0.5x), domina 8 contagens por vez, depois aumenta velocidade.',
+      mistakes: 'Tentar a velocidade real direto — frustra.',
+      tip: 'Grava em vídeo pra ver onde está errando. 화이팅 ☆' },
+  ],
+  'Outro': [],
 };
 
 // Buffs/debuffs disponíveis no log diário (multi-select).
@@ -138,6 +625,11 @@ function makeEmptyState() {
       darkMode: false,
       reminders: { proteinTimes: ['12:30', '19:30'] },
       onboarded: false,
+      kcalGoal: 2200,
+      proteinGoal: 145,
+      attributes: { forca: 0, resistencia: 0, sabedoria: 0, disciplina: 0, vitalidade: 0 },
+      achievementsUnlocked: [],
+      questsCompleted: 0,
     },
     dailyLogs: [],          // [{date, training, protein, sleep, reading, steps, buffs, notes, xp}]
     workouts: [],           // [{date, type, exercises:[{name, sets:[{reps,weight,technique}]}]}]
@@ -184,7 +676,7 @@ function saveState() {
 /** Popula dados de exemplo dos últimos 14 dias para tela "preenchida". */
 function seedSampleData() {
   const today = new Date();
-  const types = ['Upper A', 'Lower A', 'Upper B', 'Lower B', 'Dança'];
+  const types = ['Upper A', 'Lower A', 'Upper B', 'Lower B', 'Push', 'Pull', 'Dança K-pop'];
   // Inclui hoje (i=0) para o estado inicial não ficar "Ferro 0 XP".
   for (let i = 13; i >= 0; i--) {
     const d = new Date(today); d.setDate(d.getDate() - i);
@@ -270,18 +762,85 @@ function rankFromXP(xp) {
   return r;
 }
 
-/** Aplica ganho/perda de XP — atualiza totalXP e rankXP, e detecta promoção. */
-function gainXP(amount) {
+/** Aplica ganho/perda de XP — atualiza totalXP e rankXP, detecta promoção e
+ *  dispara verificação de achievements. Se houver streak ativo, aplica multiplier. */
+function gainXP(amount, opts = {}) {
   const before = rankFromXP(state.user.rankXP);
-  state.user.totalXP = (state.user.totalXP || 0) + amount;
-  state.user.rankXP  = Math.max(0, (state.user.rankXP || 0) + amount);
+  const mult = (amount > 0 && !opts.noMult) ? comboMultiplier() : 1;
+  const finalAmt = Math.round(amount * mult);
+  state.user.totalXP = (state.user.totalXP || 0) + finalAmt;
+  state.user.rankXP  = Math.max(0, (state.user.rankXP || 0) + finalAmt);
   const after = rankFromXP(state.user.rankXP);
   state.user.currentRank = after.key;
+
+  // Distribui aos atributos se contexto fornecido
+  if (opts.attr && finalAmt > 0) addAttributeXP(opts.attr, Math.max(1, Math.round(finalAmt * 0.5)));
+
+  // Achievements e skin checks
+  setTimeout(() => checkAchievements(), 50);
+
   if (before.key !== after.key) {
     const promoted = RANKS.indexOf(after) > RANKS.indexOf(before);
-    return { changed: true, from: before, to: after, promoted };
+    return { changed: true, from: before, to: after, promoted, finalAmt, mult };
   }
-  return { changed: false };
+  return { changed: false, finalAmt, mult };
+}
+
+/** Multiplicador de XP por sequência: 3 dias = 1.1x, 7 = 1.2x, 14 = 1.3x, 30 = 1.5x. */
+function comboMultiplier() {
+  const s = streaks();
+  const best = Math.max(s.treino, s.sono, s.proteina, s.leitura);
+  if (best >= 30) return 1.5;
+  if (best >= 14) return 1.3;
+  if (best >= 7)  return 1.2;
+  if (best >= 3)  return 1.1;
+  return 1;
+}
+
+function addAttributeXP(key, amount) {
+  if (!state.user.attributes) state.user.attributes = { forca: 0, resistencia: 0, sabedoria: 0, disciplina: 0, vitalidade: 0 };
+  state.user.attributes[key] = (state.user.attributes[key] || 0) + amount;
+}
+
+/** Verifica todas as conquistas; emite toast + confete pra cada nova desbloqueada. */
+function checkAchievements() {
+  if (!state.user.achievementsUnlocked) state.user.achievementsUnlocked = [];
+  const newly = [];
+  for (const a of ACHIEVEMENTS) {
+    if (state.user.achievementsUnlocked.includes(a.id)) continue;
+    try {
+      if (a.cond(state)) {
+        state.user.achievementsUnlocked.push(a.id);
+        newly.push(a);
+      }
+    } catch (e) { /* condição mal-formada — ignora */ }
+  }
+  if (newly.length) {
+    // Credita o XP imediatamente pra refletir no render
+    for (const a of newly) {
+      state.user.totalXP = (state.user.totalXP || 0) + a.xp;
+      state.user.rankXP  = (state.user.rankXP  || 0) + a.xp;
+    }
+    state.user.currentRank = rankFromXP(state.user.rankXP).key;
+    saveState();
+    // Toasts sequenciais (visual reward)
+    newly.forEach((a, i) => {
+      setTimeout(() => {
+        toast(`${a.icon} ${a.name} desbloqueada! +${a.xp} XP`);
+        confetti(800);
+        vibrate(40);
+      }, i * 1500);
+    });
+    // Re-render uma vez no fim pra refletir XP/rank
+    setTimeout(() => render(), 50);
+  }
+}
+
+/** Retorna a frase coreana do dia (determinística — muda 1x por dia). */
+function dailyKoreanQuote() {
+  const d = new Date(todayISO()).getTime();
+  const idx = Math.floor(d / 86400000) % KOREAN_QUOTES.length;
+  return KOREAN_QUOTES[idx];
 }
 
 /** Calcula XP do dia a partir de um log diário. Cap em DAILY_XP_CAP. */
@@ -403,6 +962,10 @@ const I = {
   chev:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>`,
   close:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`,
   bell:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>`,
+  bowl:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11h18a8 8 0 0 1-16 0z"/><path d="M2 11h20"/><path d="M9 5c0-1 1-2 2-2s2 1 2 2-1 2-1 3"/><path d="M15 5c0-1 1-2 2-2"/></svg>`,
+  award:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.5 17 22l-5-3-5 3 1.5-8.5"/></svg>`,
+  brain:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-1.04Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-1.04Z"/></svg>`,
+  info:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`,
 };
 
 // ===== 5. FX (efeitos visuais e hápticos) ====================
@@ -471,6 +1034,7 @@ function render() {
   const views = {
     home:     viewDashboard,
     workout:  viewWorkout,
+    nutri:    viewNutrition,
     body:     viewBody,
     insights: viewInsights,
     config:   viewConfig,
@@ -478,7 +1042,6 @@ function render() {
   app().innerHTML = (views[currentTab] || viewDashboard)();
   renderTabbar();
   attachHandlers();
-  // animação de entrada
   app().firstElementChild?.classList.add('animate-fade-up');
 }
 
@@ -506,9 +1069,13 @@ function viewDashboard() {
   const s = streaks();
   const da = state.quests.dailyAssigned;
   const wq = state.quests.weeklyCurrent;
+  const quote = dailyKoreanQuote();
+  const mult = comboMultiplier();
+  const attrs = state.user.attributes || { forca:0, resistencia:0, sabedoria:0, disciplina:0, vitalidade:0 };
+  const unlockedCount = (state.user.achievementsUnlocked || []).length;
 
   return `
-  <header class="pt-7 pb-5 px-5">
+  <header class="pt-7 pb-3 px-5">
     <div class="flex items-center justify-between">
       <div>
         <div class="font-display text-xs uppercase tracking-widest text-ink/40 dark:text-paper/40">${g.ko}</div>
@@ -517,6 +1084,10 @@ function viewDashboard() {
       <button id="toggle-dark" class="q-btn q-btn-ghost px-3 py-2" aria-label="modo escuro">
         ${state.user.darkMode ? '☀️' : '🌙'}
       </button>
+    </div>
+    <div class="mt-3 pl-3 border-l-2 border-pink/60 dark:border-pink/50">
+      <div class="font-display text-base text-ink/80 dark:text-paper/80">${quote.ko}</div>
+      <div class="text-xs italic text-ink/55 dark:text-paper/55">"${quote.pt}"</div>
     </div>
   </header>
 
@@ -543,11 +1114,37 @@ function viewDashboard() {
   </section>
 
   <section class="px-4 mt-4">
-    <div class="flex flex-wrap gap-2">
+    <div class="flex flex-wrap gap-2 items-center">
       ${streakChip('🔥', 'Treino', s.treino)}
       ${streakChip('🌙', 'Sono',   s.sono)}
       ${streakChip('🥩', 'Proteína', s.proteina)}
       ${streakChip('📖', 'Leitura', s.leitura)}
+      ${mult > 1 ? `<span class="pill is-sun text-xs">⚡ Combo ×${mult.toFixed(1)}</span>` : ''}
+    </div>
+  </section>
+
+  <section class="px-4 mt-4">
+    <div class="q-card p-3">
+      <div class="flex items-center justify-between mb-2">
+        <h3 class="font-extrabold text-sm flex items-center gap-2">
+          능력치 <span class="font-normal text-xs text-ink/50 dark:text-paper/50">atributos</span>
+        </h3>
+      </div>
+      <div class="grid grid-cols-5 gap-1">
+        ${ATTRIBUTES.map(a => {
+          const val = attrs[a.key] || 0;
+          const max = Math.max(...ATTRIBUTES.map(x => attrs[x.key] || 0), 10);
+          const h = Math.max(8, (val / max) * 56);
+          return `
+          <div class="flex flex-col items-center gap-1">
+            <div class="flex flex-col-reverse items-center h-14 w-full">
+              <div class="w-7 rounded-md transition-all" style="height:${h}px; background:${a.color}"></div>
+            </div>
+            <div class="text-[10px] font-bold" style="color:${a.color}">${val}</div>
+            <div class="font-display text-[10px] text-ink/55 dark:text-paper/55">${a.ko}</div>
+          </div>`;
+        }).join('')}
+      </div>
     </div>
   </section>
 
@@ -607,15 +1204,20 @@ function viewDashboard() {
   <section class="px-4 mt-6">
     <div class="flex items-center justify-between mb-2">
       <h2 class="font-extrabold text-lg">Acessos rápidos</h2>
+      <span class="font-display text-xs text-ink/40 dark:text-paper/40">빠른 메뉴</span>
     </div>
     <div class="grid grid-cols-2 gap-3">
-      ${quickTile('workout',  'Treino',      I.dumb)}
-      ${quickTile('body',     'Corpo',       I.body)}
-      ${quickTile('sleep',    'Sono',        I.moon, 'modal')}
-      ${quickTile('reading',  'Leitura',     I.book, 'modal')}
-      ${quickTile('rewards',  'Recompensas', I.gift, 'modal')}
-      ${quickTile('insights', 'Insights',    I.spark)}
+      ${quickTile('sleep',    'Sono',        I.moon,  'modal')}
+      ${quickTile('reading',  'Leitura',     I.book,  'modal')}
+      ${quickTile('rewards',  'Recompensas', I.gift,  'modal')}
+      ${quickTile('library',  'Biblioteca',  I.brain, 'modal')}
+      ${quickTile('achievements', `Conquistas · ${unlockedCount}`, I.award, 'modal')}
+      ${quickTile('config',   'Config',      I.cog)}
     </div>
+  </section>
+
+  <section class="px-4 mt-6 pb-2 text-center">
+    <div class="font-display text-xs text-ink/35 dark:text-paper/35">화이팅! · 오늘도 수고했어 · 한 번 더!</div>
   </section>
   `;
 }
@@ -669,7 +1271,7 @@ function modalDailyLog() {
             </label>`).join('')}
         </div>
         <select name="train-type" class="q-input">
-          ${['Upper A','Upper B','Lower A','Lower B','Dança','Outro'].map(t =>
+          ${Object.keys(EXERCISE_LIBRARY).map(t =>
             `<option value="${t}" ${existing.training?.type===t?'selected':''}>${t}</option>`).join('')}
         </select>
       </fieldset>
@@ -755,31 +1357,53 @@ function modalDailyLog() {
   });
 }
 
-/** Substitui (ou cria) o log de um dia e aplica o delta de XP no rankXP/totalXP. */
+/** Substitui (ou cria) o log de um dia e aplica o delta de XP no rankXP/totalXP.
+ *  XP é distribuído entre os atributos conforme o tipo da ação no log. */
 function upsertDailyLog(log) {
   const idx = state.dailyLogs.findIndex((l) => l.date === log.date);
   const oldXP = idx >= 0 ? (state.dailyLogs[idx].xp || 0) : 0;
   if (idx >= 0) state.dailyLogs[idx] = log;
   else state.dailyLogs.push(log);
   const delta = (log.xp || 0) - oldXP;
-  return gainXP(delta);
+  const change = gainXP(delta);
+  if (delta > 0) {
+    // Distribuição manual de atributos baseada nas dimensões do log
+    if (log.training?.done) addAttributeXP('forca', 2);
+    if ((log.steps||0) >= META.steps) addAttributeXP('resistencia', 2);
+    if ((log.reading?.minutes||0) >= META.reading) addAttributeXP('sabedoria', 2);
+    if (log.protein?.hit) addAttributeXP('disciplina', 1);
+    if ((log.sleep?.hours||0) >= 7) addAttributeXP('disciplina', 1);
+  }
+  return change;
 }
 
 // ----- 6.3 Workout view -------------------------------------
 
 function viewWorkout() {
-  const types = ['Upper A', 'Upper B', 'Lower A', 'Lower B', 'Dança', 'Outro'];
+  const types = Object.keys(EXERCISE_LIBRARY); // todos os tipos com exercícios cadastrados
+  const labels = {
+    'Upper A': '벤치 데이', 'Upper B': '인클라인 데이',
+    'Lower A': '스쿼트 데이', 'Lower B': '힙 데이',
+    'Push': '푸시', 'Pull': '풀',
+    'Core/Abs': '코어', 'Cardio HIIT': '카디오',
+    'Calistenia': '맨몸', 'Dança K-pop': '댄스', 'Outro': '기타',
+  };
   return `
   <header class="pt-7 pb-3 px-5">
+    <div class="font-display text-xs uppercase tracking-widest text-ink/40 dark:text-paper/40">운동</div>
     <h1 class="text-2xl font-extrabold">Treino</h1>
-    <p class="text-sm text-ink/55 dark:text-paper/55">Registre séries e veja progressão.</p>
+    <p class="text-sm text-ink/55 dark:text-paper/55">Escolha um split. Toque (i) em qualquer exercício pra ver técnica completa.</p>
+    <button id="open-library" class="q-btn q-btn-ghost mt-3 text-sm">
+      <span class="w-4 h-4">${I.brain}</span> Biblioteca de exercícios
+    </button>
   </header>
   <section class="px-4 space-y-3">
     <div class="grid grid-cols-2 gap-2">
       ${types.map(t => `
         <button class="q-card p-3 text-left workout-start" data-type="${t}">
-          <div class="text-xs uppercase tracking-wider text-ink/45 dark:text-paper/45">workout</div>
+          <div class="font-display text-xs text-ink/45 dark:text-paper/45">${labels[t] || ''}</div>
           <div class="font-bold">${t}</div>
+          <div class="text-xs text-ink/45 dark:text-paper/45 mt-0.5">${(EXERCISE_LIBRARY[t]||[]).length} exercícios</div>
         </button>`).join('')}
     </div>
   </section>
@@ -845,10 +1469,14 @@ function modalWorkoutSession(type, dateISO = null) {
         return `
         <div class="q-card p-3" data-ex-idx="${exIdx}">
           <div class="flex items-start justify-between gap-2">
-            <div class="min-w-0">
-              <div class="font-bold">${ex.name}</div>
-              <div class="text-xs text-ink/50 dark:text-paper/50">${targetInfo?.target || ''} ${targetInfo?.notes ? '· ' + targetInfo.notes : ''}</div>
+            <div class="min-w-0 flex-1">
+              <div class="font-bold flex items-center gap-2">
+                <span>${ex.name}</span>
+                ${targetInfo?.ko ? `<span class="font-display text-xs text-ink/45 dark:text-paper/45">${targetInfo.ko}</span>` : ''}
+              </div>
+              <div class="text-xs text-ink/50 dark:text-paper/50">${targetInfo?.target || ''} ${targetInfo?.muscles ? '· ' + targetInfo.muscles : ''}</div>
             </div>
+            ${targetInfo?.technique ? `<button class="ex-info text-lavender w-5 h-5 flex-shrink-0" data-ex-name="${encodeURIComponent(ex.name)}" aria-label="info">${I.info}</button>` : ''}
             <div class="text-xs font-bold ${progClass}">${progLabel}</div>
           </div>
           <div class="q-grid mt-3 font-semibold text-xs text-ink/55 dark:text-paper/55">
@@ -880,6 +1508,36 @@ function modalWorkoutSession(type, dateISO = null) {
       <button class="q-btn q-btn-primary w-full py-3" id="save-workout">Salvar treino</button>
     </div>
   `);
+
+  // Info popover por exercício --------------------------------------
+  document.querySelectorAll('.ex-info').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const name = decodeURIComponent(btn.dataset.exName);
+      const ex = Object.values(EXERCISE_LIBRARY).flat().find(x => x.name === name);
+      if (!ex) return;
+      const pop = document.createElement('div');
+      pop.className = 'fixed inset-0 z-50 flex items-end justify-center bg-ink/40 backdrop-blur-sm p-3';
+      pop.innerHTML = `
+        <div class="max-w-md w-full bg-paper dark:bg-navy rounded-2xl p-4 shadow-pop animate-pop-in">
+          <div class="flex items-center justify-between mb-2">
+            <div>
+              <div class="font-bold">${ex.name}</div>
+              ${ex.ko ? `<div class="font-display text-xs text-ink/45 dark:text-paper/45">${ex.ko}</div>` : ''}
+            </div>
+            <button class="pop-close text-2xl">×</button>
+          </div>
+          <div class="space-y-2 text-sm">
+            <p class="text-ink/75 dark:text-paper/75">${ex.description}</p>
+            <div><b class="text-lavender">Técnica:</b> ${ex.technique}</div>
+            <div><b class="text-pink">Erros comuns:</b> ${ex.mistakes}</div>
+            <div><b class="text-mint">💡 Dica:</b> ${ex.tip}</div>
+          </div>
+        </div>`;
+      document.body.appendChild(pop);
+      pop.onclick = (ev) => { if (ev.target === pop || ev.target.classList.contains('pop-close')) pop.remove(); };
+    });
+  });
 
   // Timer de descanso ------------------------------------------------
   let timerInt = null;
@@ -963,6 +1621,199 @@ function lastSessionsFor(exName, n) {
     .map((w) => ({ date: w.date, type: w.type, sets: (w.exercises.find((e) => e.name === exName) || { sets: [] }).sets }))
     .filter((x) => x.sets.length)
     .slice(0, n);
+}
+
+// ----- 6.3b Nutrition view (식단) --------------------------
+
+function viewNutrition() {
+  const today = todayISO();
+  let log = state.dailyLogs.find((l) => l.date === today);
+  if (!log) {
+    log = {
+      date: today,
+      training: { type: 'descanso', done: false },
+      protein: { grams: 0, hit: false },
+      sleep: { hours: 0 }, reading: { minutes: 0 },
+      steps: 0, buffs: [], notes: '', meals: [], xp: 0,
+    };
+    state.dailyLogs.push(log);
+    saveState();
+  }
+  if (!log.meals) log.meals = [];
+  const totals = log.meals.reduce(
+    (a, m) => ({
+      kcal: a.kcal + m.kcal, p: a.p + m.p, c: a.c + m.c, f: a.f + m.f,
+    }),
+    { kcal: 0, p: 0, c: 0, f: 0 }
+  );
+  const kcalGoal = state.user.kcalGoal || 2200;
+  const pGoal    = state.user.proteinGoal || META.protein;
+  const kcalPct  = Math.min(100, (totals.kcal / kcalGoal) * 100);
+  const pPct     = Math.min(100, (totals.p / pGoal) * 100);
+
+  return `
+  <header class="pt-7 pb-3 px-5">
+    <div class="font-display text-xs uppercase tracking-widest text-ink/40 dark:text-paper/40">식단 · NUTRIÇÃO</div>
+    <h1 class="text-2xl font-extrabold">Nutrição hoje</h1>
+    <p class="text-sm text-ink/55 dark:text-paper/55">Toque em um alimento pra adicionar.</p>
+  </header>
+
+  <section class="px-4 mb-4">
+    <div class="q-card p-4">
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <div class="text-xs uppercase tracking-wider text-ink/45 dark:text-paper/45">Calorias</div>
+          <div class="text-2xl font-extrabold">${Math.round(totals.kcal)} <span class="text-sm">/ ${kcalGoal}</span></div>
+          <div class="xp-track mt-1"><div class="xp-fill" style="width:${kcalPct}%"></div></div>
+        </div>
+        <div>
+          <div class="text-xs uppercase tracking-wider text-ink/45 dark:text-paper/45">Proteína</div>
+          <div class="text-2xl font-extrabold ${totals.p>=pGoal?'text-mint':''}">${Math.round(totals.p)}g <span class="text-sm">/ ${pGoal}g</span></div>
+          <div class="xp-track mt-1"><div class="xp-fill" style="width:${pPct}%"></div></div>
+        </div>
+      </div>
+      <div class="grid grid-cols-3 gap-2 mt-3 text-center text-xs">
+        <div class="pill is-sun">P ${Math.round(totals.p)}g</div>
+        <div class="pill">C ${Math.round(totals.c)}g</div>
+        <div class="pill is-pink">G ${Math.round(totals.f)}g</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="px-4 mb-3">
+    <input id="food-search" class="q-input" placeholder="🔍 Buscar alimento (ex: frango, kimchi, ovo, 비빔밥)" />
+  </section>
+
+  <section class="px-4 mb-4" id="food-results">
+    ${renderFoodList(FOOD_DB.slice(0, 12))}
+  </section>
+
+  <section class="px-4 mb-4">
+    <h2 class="font-extrabold mb-2 flex items-center gap-2">
+      Refeições de hoje
+      <span class="font-display text-xs text-ink/40 dark:text-paper/40">오늘의 식사</span>
+    </h2>
+    <div class="q-card divide-y divide-ink/5 dark:divide-paper/5">
+      ${log.meals.length ? log.meals.slice().reverse().map((m, idx) => `
+        <div class="p-3 flex items-center gap-3 text-sm">
+          <div class="flex-1 min-w-0">
+            <div class="font-semibold truncate">${m.name}</div>
+            <div class="text-xs text-ink/50 dark:text-paper/50">${m.grams}g · ${Math.round(m.kcal)} kcal · P ${m.p.toFixed(1)}g · C ${m.c.toFixed(1)}g · G ${m.f.toFixed(1)}g</div>
+          </div>
+          <button class="meal-rm text-pink font-bold" data-idx="${log.meals.length - 1 - idx}">×</button>
+        </div>`).join('') : `<div class="p-4 text-sm text-ink/55 dark:text-paper/55">Nada registrado ainda. Adicione abaixo.</div>`}
+    </div>
+  </section>
+  `;
+}
+
+function renderFoodList(foods) {
+  if (!foods.length) return `<div class="q-card p-4 text-sm text-ink/55 dark:text-paper/55">Nenhum alimento encontrado.</div>`;
+  return `<div class="q-card divide-y divide-ink/5 dark:divide-paper/5">
+    ${foods.map((f, i) => `
+      <button class="food-row w-full p-3 flex items-center gap-3 text-left" data-name="${encodeURIComponent(f.name)}">
+        <div class="flex-1 min-w-0">
+          <div class="font-semibold flex items-center gap-2">
+            <span class="truncate">${f.name}</span>
+            ${f.ko ? `<span class="font-display text-xs text-ink/40 dark:text-paper/40">${f.ko}</span>` : ''}
+          </div>
+          <div class="text-xs text-ink/50 dark:text-paper/50">
+            ${f.kcal}kcal · P${f.p}g · C${f.c}g · G${f.f}g <span class="opacity-50">/100g</span>
+          </div>
+        </div>
+        <span class="pill ${categoryColor(f.cat)}">${categoryLabel(f.cat)}</span>
+      </button>
+    `).join('')}
+  </div>`;
+}
+function categoryColor(c) {
+  return c === 'proteina' ? 'is-pink'
+       : c === 'carb'     ? 'is-sun'
+       : c === 'veg'      ? 'is-mint'
+       : c === 'fruta'    ? 'is-mint'
+       : c === 'gordura'  ? 'is-pink'
+       : c === 'prato'    ? ''
+       : 'is-mint';
+}
+function categoryLabel(c) {
+  return ({ proteina: 'proteína', carb: 'carbo', veg: 'vegetal', fruta: 'fruta', gordura: 'gordura', prato: 'prato', bebida: 'bebida' })[c] || c;
+}
+
+function modalFoodPortion(foodName) {
+  const f = FOOD_DB.find((x) => x.name === foodName);
+  if (!f) return;
+  // Sugestões de porções comuns
+  const presets = f.cat === 'prato' ? [100, 250, 500] : [50, 100, 150, 200];
+  openModal(`
+    <header class="flex items-center justify-between p-4 border-b border-ink/5 dark:border-paper/5">
+      <div>
+        <h2 class="font-extrabold text-lg">${f.name}</h2>
+        ${f.ko ? `<div class="font-display text-xs text-ink/45 dark:text-paper/45">${f.ko}</div>` : ''}
+      </div>
+      <button class="modal-close p-1"><span class="w-5 h-5">${I.close}</span></button>
+    </header>
+    <div class="p-4 space-y-4">
+      <div class="text-xs text-ink/55 dark:text-paper/55">Por 100g: ${f.kcal}kcal · P${f.p}g · C${f.c}g · G${f.f}g</div>
+
+      <div>
+        <label class="block text-sm font-semibold mb-1">Quantidade (g)</label>
+        <input id="portion-input" class="q-input text-lg" type="number" min="1" max="2000" value="100" />
+        <div class="flex gap-2 mt-2 flex-wrap">
+          ${presets.map(p => `<button class="pill preset-btn" data-g="${p}">${p}g</button>`).join('')}
+        </div>
+      </div>
+
+      <div id="portion-summary" class="q-card p-3 text-center">
+        <div class="text-3xl font-extrabold" id="ps-kcal">${f.kcal} kcal</div>
+        <div class="text-sm text-ink/55 dark:text-paper/55 mt-1">
+          P <b id="ps-p">${f.p}</b>g · C <b id="ps-c">${f.c}</b>g · G <b id="ps-f">${f.f}</b>g
+        </div>
+      </div>
+
+      <button id="add-meal" class="q-btn q-btn-primary w-full py-3">Adicionar refeição</button>
+    </div>
+  `);
+
+  const input = document.getElementById('portion-input');
+  const update = () => {
+    const g = +input.value || 0;
+    document.getElementById('ps-kcal').textContent = `${Math.round(f.kcal * g / 100)} kcal`;
+    document.getElementById('ps-p').textContent = (f.p * g / 100).toFixed(1);
+    document.getElementById('ps-c').textContent = (f.c * g / 100).toFixed(1);
+    document.getElementById('ps-f').textContent = (f.f * g / 100).toFixed(1);
+  };
+  input.addEventListener('input', update);
+  document.querySelectorAll('.preset-btn').forEach(b => b.onclick = () => {
+    input.value = b.dataset.g; update();
+  });
+
+  document.getElementById('add-meal').onclick = () => {
+    const g = +input.value || 0;
+    if (g <= 0) { toast('Quantidade inválida'); return; }
+    const log = state.dailyLogs.find((l) => l.date === todayISO());
+    if (!log.meals) log.meals = [];
+    log.meals.push({
+      name: f.name, ko: f.ko || '', grams: g, cat: f.cat,
+      kcal: f.kcal * g / 100, p: f.p * g / 100, c: f.c * g / 100, f: f.f * g / 100,
+    });
+    // Sincroniza proteína total no log
+    const totalP = log.meals.reduce((a, m) => a + m.p, 0);
+    const oldHit = log.protein?.hit;
+    log.protein = { grams: Math.round(totalP), hit: totalP >= META.protein };
+    log.xp = computeDayXP(log);
+    // Se bateu meta pela primeira vez, ganha XP/disciplina
+    if (!oldHit && log.protein.hit) {
+      addAttributeXP('disciplina', 3);
+      confetti(1000);
+      toast(`🥩 Meta de proteína batida! +bônus`);
+    }
+    saveState();
+    checkAchievements();
+    closeModal();
+    toast(`+ ${f.name} adicionado`);
+    vibrate(10);
+    render();
+  };
 }
 
 // ----- 6.4 Body view ---------------------------------------
@@ -1335,6 +2186,97 @@ function recordReadingMinutes(min) {
   upsertDailyLog(log);
 }
 
+// ----- 6.7b Exercise Library / Achievements modals ---------
+
+function modalLibrary() {
+  const types = Object.keys(EXERCISE_LIBRARY).filter(t => EXERCISE_LIBRARY[t].length);
+  openModal(`
+    <header class="flex items-center justify-between p-4 border-b border-ink/5 dark:border-paper/5">
+      <div>
+        <div class="font-display text-xs uppercase tracking-widest text-ink/40 dark:text-paper/40">운동 도서관</div>
+        <h2 class="font-extrabold text-lg">Biblioteca de exercícios</h2>
+      </div>
+      <button class="modal-close p-1"><span class="w-5 h-5">${I.close}</span></button>
+    </header>
+    <div class="p-4 overflow-y-auto" style="max-height:75vh">
+      <input id="lib-search" class="q-input mb-3" placeholder="🔍 buscar exercício…" />
+      <div id="lib-content">
+        ${types.map(t => `
+          <div class="mb-4">
+            <h3 class="font-extrabold text-sm mb-2 flex items-center gap-2">
+              ${t}
+              <span class="pill text-[10px]">${EXERCISE_LIBRARY[t].length}</span>
+            </h3>
+            <div class="space-y-2">
+              ${EXERCISE_LIBRARY[t].map((ex, i) => `
+                <details class="q-card p-3 lib-ex" data-name="${ex.name.toLowerCase()}">
+                  <summary class="cursor-pointer flex items-center justify-between gap-2">
+                    <div class="min-w-0">
+                      <div class="font-bold flex items-center gap-2">
+                        <span class="truncate">${ex.name}</span>
+                        ${ex.ko ? `<span class="font-display text-xs text-ink/45 dark:text-paper/45">${ex.ko}</span>` : ''}
+                      </div>
+                      <div class="text-xs text-ink/50 dark:text-paper/50 mt-0.5">${ex.target || ''} · ${ex.muscles || ''}</div>
+                    </div>
+                    <span class="w-4 h-4 opacity-40">${I.info}</span>
+                  </summary>
+                  <div class="mt-3 space-y-2 text-sm">
+                    ${ex.description ? `<p class="text-ink/75 dark:text-paper/75">${ex.description}</p>` : ''}
+                    ${ex.technique ? `<div><b class="text-lavender">Técnica:</b> <span class="text-ink/75 dark:text-paper/75">${ex.technique}</span></div>` : ''}
+                    ${ex.mistakes ? `<div><b class="text-pink">Erros comuns:</b> <span class="text-ink/75 dark:text-paper/75">${ex.mistakes}</span></div>` : ''}
+                    ${ex.tip ? `<div><b class="text-mint">💡 Dica:</b> <span class="text-ink/75 dark:text-paper/75">${ex.tip}</span></div>` : ''}
+                  </div>
+                </details>
+              `).join('')}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `);
+  document.getElementById('lib-search').addEventListener('input', (e) => {
+    const q = e.target.value.toLowerCase().trim();
+    document.querySelectorAll('.lib-ex').forEach(el => {
+      el.style.display = el.dataset.name.includes(q) ? '' : 'none';
+    });
+  });
+}
+
+function modalAchievements() {
+  const unlocked = state.user.achievementsUnlocked || [];
+  const total = ACHIEVEMENTS.length;
+  const pct = Math.round((unlocked.length / total) * 100);
+  openModal(`
+    <header class="flex items-center justify-between p-4 border-b border-ink/5 dark:border-paper/5">
+      <div>
+        <div class="font-display text-xs uppercase tracking-widest text-ink/40 dark:text-paper/40">업적</div>
+        <h2 class="font-extrabold text-lg">Conquistas <span class="text-sm font-normal text-ink/55 dark:text-paper/55">${unlocked.length}/${total}</span></h2>
+      </div>
+      <button class="modal-close p-1"><span class="w-5 h-5">${I.close}</span></button>
+    </header>
+    <div class="p-4 overflow-y-auto" style="max-height:75vh">
+      <div class="xp-track mb-4"><div class="xp-fill" style="width:${pct}%"></div></div>
+      <div class="space-y-2">
+        ${ACHIEVEMENTS.map(a => {
+          const ok = unlocked.includes(a.id);
+          return `
+          <div class="q-card p-3 flex items-center gap-3 ${ok ? '' : 'opacity-55'}">
+            <div class="text-3xl">${ok ? a.icon : '🔒'}</div>
+            <div class="flex-1 min-w-0">
+              <div class="font-bold flex items-center gap-2">
+                <span>${a.name}</span>
+                <span class="font-display text-xs text-ink/45 dark:text-paper/45">${a.ko}</span>
+              </div>
+              <div class="text-xs text-ink/55 dark:text-paper/55">${a.desc}</div>
+            </div>
+            <div class="pill ${ok ? 'is-mint' : ''}">+${a.xp}</div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+  `);
+}
+
 // ----- 6.8 Rewards modal -----------------------------------
 
 function modalRewards() {
@@ -1478,9 +2420,9 @@ function renderTabbar() {
   const items = [
     { key: 'home',     icon: I.home,  label: 'Início' },
     { key: 'workout',  icon: I.dumb,  label: 'Treino' },
+    { key: 'nutri',    icon: I.bowl,  label: 'Nutri' },
     { key: 'body',     icon: I.body,  label: 'Corpo' },
     { key: 'insights', icon: I.spark, label: 'Insights' },
-    { key: 'config',   icon: I.cog,   label: 'Config' },
   ];
   document.getElementById('tabbar').innerHTML = `
     <div class="flex gap-1">
@@ -1534,16 +2476,16 @@ function attachHandlers() {
       const qid = row.dataset.quest;
       const done = state.quests.dailyAssigned.completed.includes(qid);
       let change = { changed: false };
+      const q = state.quests.dailyAssigned.items.find((x) => x.id === qid);
       if (done) {
         state.quests.dailyAssigned.completed = state.quests.dailyAssigned.completed.filter((x) => x !== qid);
-        const q = state.quests.dailyAssigned.items.find((x) => x.id === qid);
-        change = addQuestXP(-(q?.xp || 1));
+        change = addQuestXP(-(q?.xp || 1), q?.tag);
       } else {
         state.quests.dailyAssigned.completed.push(qid);
         confetti(500); vibrate(15);
-        const q = state.quests.dailyAssigned.items.find((x) => x.id === qid);
-        toast(`+${q?.xp || 1} XP — quest completa`);
-        change = addQuestXP(q?.xp || 1);
+        change = addQuestXP(q?.xp || 1, q?.tag);
+        const mult = change.mult > 1 ? ` (combo ×${change.mult.toFixed(1)})` : '';
+        toast(`+${change.finalAmt} XP${mult}`);
       }
       saveState(); render();
       if (change.changed) levelUpOverlay(change.from, change.to, change.promoted);
@@ -1568,12 +2510,37 @@ function attachHandlers() {
     const t = b.dataset.target;
     const k = b.dataset.kind;
     if (k === 'modal') {
-      if (t === 'sleep')   modalSleep();
-      if (t === 'reading') modalReading();
-      if (t === 'rewards') modalRewards();
+      if (t === 'sleep')        modalSleep();
+      if (t === 'reading')      modalReading();
+      if (t === 'rewards')      modalRewards();
+      if (t === 'library')      modalLibrary();
+      if (t === 'achievements') modalAchievements();
     } else go(t);
   }));
 
+  // Nutrição
+  document.getElementById('food-search')?.addEventListener('input', (e) => {
+    const q = e.target.value.toLowerCase().trim();
+    const filtered = q
+      ? FOOD_DB.filter(f => f.name.toLowerCase().includes(q) || (f.ko || '').includes(q) || f.cat.includes(q))
+      : FOOD_DB.slice(0, 12);
+    document.getElementById('food-results').innerHTML = renderFoodList(filtered);
+    bindFoodRows();
+  });
+  bindFoodRows();
+  document.querySelectorAll('.meal-rm').forEach(b => b.onclick = () => {
+    const idx = +b.dataset.idx;
+    const log = state.dailyLogs.find((l) => l.date === todayISO());
+    if (log && log.meals) {
+      log.meals.splice(idx, 1);
+      const totalP = log.meals.reduce((a, m) => a + m.p, 0);
+      log.protein = { grams: Math.round(totalP), hit: totalP >= META.protein };
+      log.xp = computeDayXP(log);
+      saveState(); render();
+    }
+  });
+
+  document.getElementById('open-library')?.addEventListener('click', modalLibrary);
   document.querySelectorAll('.workout-start').forEach((b) => b.onclick = () => modalWorkoutSession(b.dataset.type));
   document.querySelectorAll('.workout-view').forEach((b) => b.onclick = () => {
     const w = state.workouts.find(x => x.date === b.dataset.date);
@@ -1663,8 +2630,9 @@ function attachHandlers() {
   });
 }
 
-/** XP de quests (daily/weekly) — não passa pelo cap diário do log. */
-function addQuestXP(amount) {
+/** XP de quests (daily/weekly) — não passa pelo cap diário do log,
+ *  e cada quest soma +1 ao contador total (achievement caçador). */
+function addQuestXP(amount, tag) {
   const today = todayISO();
   let log = state.dailyLogs.find((l) => l.date === today);
   if (!log) {
@@ -1674,13 +2642,28 @@ function addQuestXP(amount) {
       protein: { grams: 0, hit: false },
       sleep: { hours: 0 },
       reading: { minutes: 0 },
-      steps: 0, buffs: [], notes: '',
+      steps: 0, buffs: [], notes: '', meals: [],
       xp: 0,
     };
     state.dailyLogs.push(log);
   }
   log.xp = (log.xp || 0) + amount;
-  return gainXP(amount);
+  if (amount > 0) state.user.questsCompleted = (state.user.questsCompleted || 0) + 1;
+  // Mapeia tag → atributo (vitalidade é o default das quests gerais)
+  const attrMap = {
+    treino: 'forca', cardio: 'resistencia', foco: 'sabedoria',
+    nutri: 'disciplina', sono: 'disciplina', saúde: 'vitalidade',
+    mente: 'vitalidade', 'k-pop': 'vitalidade',
+  };
+  const attr = attrMap[tag] || 'vitalidade';
+  return gainXP(amount, { attr });
+}
+
+function bindFoodRows() {
+  document.querySelectorAll('.food-row').forEach((b) => b.onclick = () => {
+    const name = decodeURIComponent(b.dataset.name);
+    modalFoodPortion(name);
+  });
 }
 
 // ===== Helpers de formatação =================================
@@ -1757,6 +2740,7 @@ function init() {
   ensureDailyQuests();
   ensureWeeklyQuest();
   checkWeeklyRollover();
+  setTimeout(checkAchievements, 100);
   render();
 }
 
