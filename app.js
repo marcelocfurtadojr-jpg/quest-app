@@ -7234,6 +7234,7 @@ function recordReadingMinutes(min) {
   log.reading = { minutes: (log.reading?.minutes || 0) + min };
   log.xp = computeDayXP(log);
   upsertDailyLog(log);
+  saveState(); // garante persistência local + sync Firestore
 }
 
 // ----- 6.7b Exercise Library / Achievements modals ---------
@@ -8245,7 +8246,8 @@ function attachHandlers() {
       toast('Sessão descartada');
     };
 
-    // Editar/zerar minutos lidos hoje
+    // Editar/zerar minutos lidos hoje — usa upsertDailyLog pra recalcular
+    // o rankXP via delta (ex: zerar volta o XP que foi ganho)
     document.getElementById('r-edit-today')?.addEventListener('click', () => {
       const log = state.dailyLogs.find((l) => l.date === todayISO());
       const cur = log?.reading?.minutes || 0;
@@ -8253,15 +8255,21 @@ function attachHandlers() {
       if (novo === null) return;
       const n = Math.max(0, Math.floor(+novo) || 0);
       if (log) {
-        log.reading = { minutes: n };
-        log.xp = computeDayXP(log);
+        const newLog = { ...log, reading: { minutes: n } };
+        newLog.xp = computeDayXP(newLog);
+        const change = upsertDailyLog(newLog);
+        saveState();
+        const diff = (newLog.xp || 0) - (log.xp || 0);
+        toast(n === 0
+          ? `Leitura zerada${diff < 0 ? ` (${diff} XP)` : ''}`
+          : `Leitura de hoje: ${n} min${diff !== 0 ? ` (${diff >= 0 ? '+' : ''}${diff} XP)` : ''}`);
+        render();
+        if (change?.changed) levelUpOverlay(change.from, change.to, change.promoted);
       } else if (n > 0) {
         recordReadingMinutes(n);
-        return;
+        toast(`Leitura de hoje: ${n} min`);
+        render();
       }
-      saveState();
-      toast(n === 0 ? 'Leitura de hoje zerada' : `Leitura de hoje: ${n} min`);
-      render();
     });
 
     document.querySelectorAll('.r-quick').forEach((b) => b.onclick = () => {
