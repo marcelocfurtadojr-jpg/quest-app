@@ -70,18 +70,31 @@ const DEFAULT_QUEST_POOL = [
   // Foco/leitura
   { id: 'q24', text: 'Ler 15 min',                                  xp: 1, tag: 'foco',   ko: '독서' },
   { id: 'q25', text: 'Ler 30 min (sessão profunda)',                xp: 2, tag: 'foco',   ko: '깊은 독서' },
-  { id: 'q26', text: 'Estudar coreano 15 min (Hangul/vocab)',       xp: 2, tag: 'foco',   ko: '한국어' },
+  { id: 'q26', text: 'Estudar coreano 15 min (Hangul/vocab)',       xp: 2, tag: 'foco',   ko: '한국어', kpopOnly: true },
   { id: 'q27', text: 'Escrever 3 coisas pelas quais é grato',       xp: 1, tag: 'foco',   ko: '감사 일기' },
   { id: 'q28', text: '25 min Pomodoro sem distração',               xp: 2, tag: 'foco',   ko: '뽀모도로' },
   // Mente
   { id: 'q29', text: 'Meditar 5 min',                               xp: 1, tag: 'mente',  ko: '명상' },
   { id: 'q30', text: 'Respiração 4-7-8 (3 ciclos)',                 xp: 1, tag: 'mente',  ko: '호흡' },
   { id: 'q31', text: 'Banho frio 60s no fim',                       xp: 2, tag: 'mente',  ko: '냉수 샤워' },
-  // Cultura K
-  { id: 'q32', text: 'Ouvir 1 música em coreano',                   xp: 1, tag: 'k-pop',  ko: 'K-pop' },
-  { id: 'q33', text: 'Assistir vídeo dança K-pop e tentar 1 move',  xp: 1, tag: 'k-pop',  ko: '안무' },
-  { id: 'q34', text: 'Variety K (Knowing Bros, RM) 1 episódio',     xp: 1, tag: 'k-pop',  ko: '예능' },
-  { id: 'q35', text: 'Escrever post-it com palavra coreana nova',   xp: 1, tag: 'k-pop',  ko: '단어' },
+  // Cultura K — só aparecem se o tema for kpop_anime
+  { id: 'q32', text: 'Ouvir 1 música em coreano',                   xp: 1, tag: 'k-pop',  ko: 'K-pop', kpopOnly: true },
+  { id: 'q33', text: 'Assistir vídeo dança K-pop e tentar 1 move',  xp: 1, tag: 'k-pop',  ko: '안무',  kpopOnly: true },
+  { id: 'q34', text: 'Variety K (Knowing Bros, RM) 1 episódio',     xp: 1, tag: 'k-pop',  ko: '예능', kpopOnly: true },
+  { id: 'q35', text: 'Escrever post-it com palavra coreana nova',   xp: 1, tag: 'k-pop',  ko: '단어', kpopOnly: true },
+  // === Novas: lazer & rotina lúdica ===
+  { id: 'q36', text: 'Assistir 1 episódio de anime',                xp: 1, tag: 'mente',  ko: '애니메이션', kpopOnly: true },
+  { id: 'q37', text: 'Ler 1 artigo de notícia/jornal',              xp: 1, tag: 'foco',   ko: '뉴스' },
+  { id: 'q38', text: 'Ouvir podcast por 30 min',                    xp: 2, tag: 'foco',   ko: '팟캐스트' },
+  { id: 'q39', text: 'Estudar 30 min uma habilidade nova',          xp: 2, tag: 'foco',   ko: '학습' },
+  { id: 'q40', text: 'Cozinhar uma receita nova',                   xp: 2, tag: 'nutri',  ko: '요리' },
+  { id: 'q41', text: 'Journaling 10 min (escrever no diário)',      xp: 1, tag: 'mente',  ko: '일기' },
+  { id: 'q42', text: 'Dia sem redes sociais até 19h',               xp: 2, tag: 'foco' },
+  { id: 'q43', text: 'Comer só comida real (sem ultraprocessado)',  xp: 2, tag: 'nutri' },
+  { id: 'q44', text: 'Limpar/organizar 1 cantinho da casa',         xp: 1, tag: 'mente' },
+  { id: 'q45', text: 'Contrast shower (frio no fim do banho)',      xp: 1, tag: 'saúde' },
+  { id: 'q46', text: 'Caminhada 10 min após o almoço',              xp: 1, tag: 'cardio' },
+  { id: 'q47', text: 'Falar com alguém que não fala há um tempo',   xp: 1, tag: 'mente' },
 ];
 
 // Pool de weekly quests — 20 desafios maiores que valem mais XP (주간 미션).
@@ -107,6 +120,307 @@ const DEFAULT_WEEKLY_POOL = [
   { id: 'w19', text: 'Aprender 1 coreografia inteira (1 música)',   xp: 12 },
   { id: 'w20', text: 'Tirar foto progresso (frontal + lateral)',    xp:  5 },
 ];
+
+// ===== Temas / estéticas ====================================
+// 4 temas. Cada um traz suas próprias quests temáticas, rewards, taglines,
+// quote e accent color. Os pools universais (saúde, treino, nutrição) ficam
+// no DEFAULT_QUEST_POOL e são compartilhados — os THEMES adicionam o sabor.
+const THEMES = {
+  kpop_anime: {
+    name: 'K-pop / Animes / Jogos',
+    short: 'K-POP × ANIME × GAMES',
+    sub: 'taglines coreanas, animes, gameplays, MK overlays.',
+    accent: '#FFB7C5',     // pink
+    accent2: '#B7B5FF',    // lavender
+    quote: { primary: '실패는 성공의 어머니', secondary: '"O fracasso é mãe do sucesso"' },
+    quotes: [
+      { primary: '실패는 성공의 어머니',     secondary: '"O fracasso é mãe do sucesso"' },
+      { primary: '천 리 길도 한 걸음부터', secondary: '"Mil milhas começam com um passo"' },
+      { primary: '오늘의 나는 어제보다 강하다', secondary: '"Hoje sou mais forte que ontem"' },
+      { primary: '시작이 반이다',            secondary: '"Começar já é metade"' },
+      { primary: 'TEST YOUR MIGHT.',        secondary: '"Hoje você é seu adversário." — MK' },
+      { primary: 'YOUR SOUL IS MINE.',      secondary: '"Seu progresso é seu — ninguém tira." — Shang Tsung' },
+      { primary: 'GET OVER HERE!',          secondary: '"Levanta. Hoje é dia de luta." — Scorpion' },
+      { primary: '꾸준함이 답이다',          secondary: '"Consistência é a resposta"' },
+    ],
+    greeting: { primary: '안녕하세요', secondary: '' },
+    tags: { home: '⚔ KOMBAT IS LIFE ⚔', workout: '⚔ TEST YOUR MIGHT ⚔', nutri: '🔥 FUEL FOR BATTLE 🔥', insights: '⚡ BATTLE REPORT ⚡', goals: '🎯 VISION · GOALS', dance: '🎵 DANCE ARENA 🎵' },
+    labels: {
+      finishBtn: 'FINISH IT!',
+      arsenal:   '⚔ ARSENAL ⚔',
+      footer:    '— MORTAL KOMBAT NEVER ENDS —',
+      register:  'Registrar dia',
+      logCta:    'Registrar dia',
+    },
+    showKombatant: true,
+    quests: [
+      { id: 't1_kp1',  text: 'Ouvir 1 música em coreano',                xp: 1, tag: 'k-pop',  ko: 'K-pop' },
+      { id: 't1_kp2',  text: 'Aprender 1 move de coreografia K-pop',     xp: 1, tag: 'k-pop',  ko: '안무' },
+      { id: 't1_kp3',  text: 'Variety K (Knowing Bros, RM) 1 episódio',  xp: 1, tag: 'k-pop',  ko: '예능' },
+      { id: 't1_kp4',  text: 'Aprender 1 palavra coreana nova',          xp: 1, tag: 'k-pop',  ko: '단어' },
+      { id: 't1_kp5',  text: 'Estudar coreano 15 min (Hangul/vocab)',    xp: 2, tag: 'k-pop',  ko: '한국어' },
+      { id: 't1_kp6',  text: 'Cantar 1 música K-pop completa',           xp: 1, tag: 'k-pop',  ko: '노래' },
+      { id: 't1_an1',  text: 'Assistir 1 episódio de anime',             xp: 1, tag: 'lazer',  ko: '애니메이션' },
+      { id: 't1_an2',  text: 'Maratonar 3 eps do anime atual',           xp: 2, tag: 'lazer',  ko: '몰아보기' },
+      { id: 't1_an3',  text: 'Ler 1 capítulo de mangá',                  xp: 1, tag: 'lazer',  ko: '만화' },
+      { id: 't1_an4',  text: 'Pesquisar OST de anime e ouvir 3 faixas',  xp: 1, tag: 'lazer' },
+      { id: 't1_an5',  text: 'Re-watch favorito de anime (30 min)',      xp: 1, tag: 'lazer' },
+      { id: 't1_gm1',  text: '1 partida ranked de jogo competitivo',     xp: 2, tag: 'jogos',  ko: '게임' },
+      { id: 't1_gm2',  text: '30 min de gameplay focado (sem celular)',  xp: 1, tag: 'jogos',  ko: '플레이' },
+      { id: 't1_gm3',  text: 'Pesquisar combo/build novo no jogo atual', xp: 1, tag: 'jogos' },
+      { id: 't1_gm4',  text: 'Sessão de speedrun ou desafio in-game',    xp: 2, tag: 'jogos' },
+      { id: 't1_dr1',  text: '1 episódio de K-drama',                    xp: 1, tag: 'lazer',  ko: '드라마' },
+      { id: 't1_dr2',  text: 'Cozinhar comida coreana caseira',          xp: 2, tag: 'nutri',  ko: '한식' },
+    ],
+    rewards: [
+      '1 partida ranked de LoL',
+      '2 partidas casual (normal/ARAM)',
+      '1 episódio de anime',
+      'Maratona 3 eps do anime atual',
+      'Capítulo de mangá',
+      '1 episódio de K-drama',
+      'Tarde de gameplay sem culpa',
+      'Concerto K-pop no YouTube',
+    ],
+    challenges: [
+      { id: 'ka01', name: 'Episódio + alongamento', focus: 'lazer · cultura', xp: 2, icon: '📺',
+        sets: 'Assistir 1 episódio de anime ou K-drama enquanto faz alongamento estático.',
+        tip: 'Resolve cultura + mobilidade no mesmo bloco.' },
+      { id: 'ka02', name: 'Praticar coreografia 15min', focus: 'lazer · dança', xp: 3, icon: '💃',
+        sets: '15 min praticando uma coreografia K-pop até o chorus sair limpo.',
+        tip: 'Dança = cardio escondido. Repete o pedaço difícil 5x.' },
+      { id: 'ka03', name: 'Sessão de gameplay focada', focus: 'lazer · jogos', xp: 2, icon: '🎮',
+        sets: '1h jogando com foco — sem second screen, sem celular. Treina concentração.',
+        tip: 'Marca um objetivo (ranked, missão, build) antes de começar.' },
+    ],
+  },
+
+  inside_out: {
+    name: 'Divertidamente',
+    short: 'INSIDE OUT · EMOÇÕES',
+    sub: 'Alegria, Tristeza, Raiva, Medo, Nojinho, Ansiedade. Foco em check-in emocional.',
+    accent: '#FFD93D',
+    accent2: '#7BB8FF',
+    quote: { primary: 'Toda emoção tem seu lugar.', secondary: '— Riley, sua mente é um time' },
+    quotes: [
+      { primary: 'Toda emoção tem seu lugar.',                        secondary: '— Riley, sua mente é um time' },
+      { primary: 'Chorar ajuda a desacelerar, e a focar no que importa.', secondary: '— Tristeza' },
+      { primary: 'Vai dar tudo certo. Acho.',                          secondary: '— Alegria' },
+      { primary: 'A raiva também ama você.',                           secondary: '— Lembrança-núcleo' },
+      { primary: 'Tem hora pra cada emoção. Hoje é dia de qual?',      secondary: '' },
+      { primary: 'Sem Tristeza, a Alegria não significa nada.',        secondary: '' },
+      { primary: 'Memórias-núcleo se formam quando você presta atenção.', secondary: '' },
+      { primary: 'Coragem é agir com Medo dentro de você, não sem ele.', secondary: '' },
+    ],
+    greeting: { primary: 'Headquarters online', secondary: '' },
+    tags: { home: '💛 HEADQUARTERS 💛', workout: '💪 BORA, ALEGRIA NA FORÇA', nutri: '🍇 LEMBRANÇAS-NÚCLEO', insights: '🧠 MEMÓRIAS DO DIA', goals: '🌈 ILHAS DA PERSONALIDADE', dance: '🎵 SALA DE SONHOS 🎵' },
+    labels: {
+      finishBtn: 'Finalizar o dia',
+      arsenal:   '🧠 PAINEL DA MENTE',
+      footer:    '',
+      register:  'Salvar lembranças do dia',
+      logCta:    'Salvar lembranças do dia',
+    },
+    showKombatant: false,
+    quests: [
+      { id: 't2_em1',  text: 'Nomear a emoção dominante do dia',          xp: 1, tag: 'mente' },
+      { id: 't2_em2',  text: '3 coisas pelas quais é grato (Alegria)',    xp: 1, tag: 'mente' },
+      { id: 't2_em3',  text: 'Identificar 1 gatilho de Raiva e respirar', xp: 2, tag: 'mente' },
+      { id: 't2_em4',  text: 'Validar a Tristeza por 5 min, sem fugir',   xp: 2, tag: 'mente' },
+      { id: 't2_em5',  text: 'Fazer algo que dá Medo (pequeno passo)',    xp: 2, tag: 'mente' },
+      { id: 't2_em6',  text: 'Limite com a Ansiedade — checklist do dia', xp: 2, tag: 'mente' },
+      { id: 't2_em7',  text: 'Detectar 1 viés do Nojinho (preconceito)',  xp: 1, tag: 'mente' },
+      { id: 't2_em8',  text: 'Ligar pra alguém que importa',              xp: 2, tag: 'mente' },
+      { id: 't2_em9',  text: 'Escrever 1 lembrança-núcleo positiva',      xp: 1, tag: 'mente' },
+      { id: 't2_em10', text: 'Identificar uma "Ilha" da personalidade hoje', xp: 1, tag: 'mente' },
+      { id: 't2_em11', text: 'Diário de bordo: 5 min escrevendo o dia',   xp: 1, tag: 'mente' },
+      { id: 't2_em12', text: 'Abraçar / acariciar alguém querido 30s',    xp: 1, tag: 'mente' },
+      { id: 't2_em13', text: 'Ouvir música que combina com a emoção atual', xp: 1, tag: 'mente' },
+      { id: 't2_em14', text: 'Pedir desculpa por algo pendente',          xp: 2, tag: 'mente' },
+      { id: 't2_em15', text: 'Brincar como criança 10 min (sem propósito)', xp: 1, tag: 'mente' },
+      { id: 't2_em16', text: 'Notar 5 coisas bonitas no caminho',         xp: 1, tag: 'mente' },
+      { id: 't2_em17', text: 'Falar consigo no espelho com gentileza',    xp: 1, tag: 'mente' },
+      { id: 't2_em18', text: 'Identificar 1 pensamento ansioso e questionar',xp: 2, tag: 'mente' },
+      { id: 't2_em19', text: 'Assistir um filme da Pixar/Disney',         xp: 1, tag: 'lazer' },
+      { id: 't2_em20', text: 'Rever fotos antigas (lembrança-núcleo)',    xp: 1, tag: 'mente' },
+    ],
+    rewards: [
+      'Filme da Pixar (revisita uma alegria-núcleo)',
+      'Sessão de música nostálgica',
+      'Episódio leve de série confortável',
+      'Diário de gratidão por 10 min',
+      'Soneca de 20 min sem culpa',
+      'Carinho com seu pet ou planta por 15 min',
+      'Sessão de desenho/escrita livre',
+    ],
+    challenges: [
+      { id: 'io01', name: 'Check-in das 5 emoções', focus: 'mente · auto-conhecimento', xp: 3, icon: '🌈',
+        sets: 'Liste rapidamente como Alegria, Tristeza, Raiva, Medo e Nojinho estão no nível 0–10.',
+        tip: 'Sem julgamento — só medição. Padrões aparecem ao repetir.' },
+      { id: 'io02', name: 'Sentar com a Tristeza', focus: 'mente · processamento', xp: 4, icon: '💙',
+        sets: '10 min em silêncio com uma emoção difícil. Respira, observa, não foge.',
+        tip: 'Tristeza compartilhada é processada. Pode chorar — é função, não falha.' },
+      { id: 'io03', name: 'Risada genuína do dia', focus: 'mente · alegria', xp: 2, icon: '😄',
+        sets: 'Encontre algo que faça você rir de verdade (vídeo, podcast, foto). Mande pra alguém.',
+        tip: 'Rir libera endorfina e ativa "lembrança-núcleo" boa.' },
+      { id: 'io04', name: 'Carta para o "eu de antes"', focus: 'mente · auto-compaixão', xp: 3, icon: '✉️',
+        sets: 'Escreva 5 frases para o você de 1 ano atrás. O que dizer? O que mudou?',
+        tip: 'Auto-compaixão é a Alegria abraçando a Tristeza.' },
+    ],
+  },
+
+  fashion: {
+    name: 'Moda & Estilo',
+    short: 'FRONT ROW',
+    sub: 'Curadoria, look do dia, estilo pessoal. Luxo minimalista.',
+    accent: '#0F0F0F',
+    accent2: '#D6A93E',
+    quote: { primary: 'Estilo é dizer quem você é sem palavras.', secondary: '— Rachel Zoe' },
+    quotes: [
+      { primary: 'Estilo é dizer quem você é sem palavras.',           secondary: '— Rachel Zoe' },
+      { primary: 'Fashion fades, only style remains.',                 secondary: '— Yves Saint Laurent' },
+      { primary: 'Antes de sair, tire um acessório.',                  secondary: '— Coco Chanel' },
+      { primary: 'Vista-se mal e lembrarão da roupa. Vista-se bem e lembrarão da mulher/homem.', secondary: '— Coco Chanel' },
+      { primary: 'Roupa é arquitetura: tudo é proporção.',             secondary: '— Coco Chanel' },
+      { primary: 'Elegância é recusa.',                                secondary: '— Coco Chanel' },
+      { primary: 'Eu não desenho roupas. Eu desenho sonhos.',          secondary: '— Ralph Lauren' },
+      { primary: 'Moda passa, estilo fica.',                           secondary: '' },
+    ],
+    greeting: { primary: 'Welcome to the runway', secondary: '' },
+    tags: { home: '◆ FRONT ROW ◆', workout: '◆ POWER POSE ◆', nutri: '◆ HEALTHY FROM WITHIN ◆', insights: '◆ STYLE REPORT ◆', goals: '◆ SILHOUETTE GOALS ◆', dance: '◆ EDITORIAL POSE ◆' },
+    labels: {
+      finishBtn: 'Wrap the day',
+      arsenal:   '◆ WARDROBE ◆',
+      footer:    '',
+      register:  'Encerrar look do dia',
+      logCta:    'Encerrar look do dia',
+    },
+    showKombatant: false,
+    quests: [
+      { id: 't3_fm1',  text: 'Montar look do dia com 3 peças coerentes',   xp: 1, tag: 'estilo' },
+      { id: 't3_fm2',  text: 'Acertar a cartela de cores do outfit',       xp: 1, tag: 'estilo' },
+      { id: 't3_fm3',  text: 'Polir e cuidar de 1 par de sapatos',         xp: 1, tag: 'estilo' },
+      { id: 't3_fm4',  text: 'Desencalhar 1 peça do guarda-roupa (usar)',  xp: 2, tag: 'estilo' },
+      { id: 't3_fm5',  text: 'Mood-board: salvar 5 referências de looks',  xp: 1, tag: 'estilo' },
+      { id: 't3_fm6',  text: 'Estudar 1 designer (Margiela, McQueen...)',  xp: 2, tag: 'estilo' },
+      { id: 't3_fm7',  text: 'Ler editorial de moda (Vogue, BoF, Dazed)',  xp: 1, tag: 'foco' },
+      { id: 't3_fm8',  text: 'Avaliar 3 peças: ficar, doar, ajustar',      xp: 2, tag: 'estilo' },
+      { id: 't3_fm9',  text: 'Postura imponente — 5 min de power pose',    xp: 1, tag: 'mente' },
+      { id: 't3_fm10', text: 'Ouvir podcast de moda 30 min',               xp: 2, tag: 'foco' },
+      { id: 't3_fm11', text: 'Provar 1 combinação que nunca tentou',       xp: 2, tag: 'estilo' },
+      { id: 't3_fm12', text: 'Engraxar / escovar 1 acessório de couro',    xp: 1, tag: 'estilo' },
+      { id: 't3_fm13', text: 'Estudar uma cartela de cores (Pantone)',     xp: 1, tag: 'estilo' },
+      { id: 't3_fm14', text: 'Assistir 1 desfile (Vogue Runway, FF Channel)', xp: 1, tag: 'lazer' },
+      { id: 't3_fm15', text: 'Lavar/cuidar de 1 peça delicada à mão',      xp: 1, tag: 'estilo' },
+      { id: 't3_fm16', text: 'Inventariar 1 categoria do closet (todas as camisas)', xp: 2, tag: 'estilo' },
+      { id: 't3_fm17', text: 'Identificar sua paleta sazonal',             xp: 2, tag: 'estilo' },
+      { id: 't3_fm18', text: 'Documentário/biografia de designer (1 ep)',  xp: 2, tag: 'lazer' },
+      { id: 't3_fm19', text: 'Estudar 1 tecido (algodão pima, lã merino…)', xp: 1, tag: 'foco' },
+      { id: 't3_fm20', text: 'Tirar foto OOTD com luz natural',            xp: 1, tag: 'estilo' },
+    ],
+    rewards: [
+      'Ir a uma loja só pra ver coleção (sem comprar)',
+      'Vogue Runway por 30 min',
+      'Episódio de Next in Fashion / Drag Race',
+      'Documentário de moda (Dior, McQueen, Halston)',
+      'Sessão de organização de guarda-roupa',
+      'Comprar 1 peça curinga planejada',
+      'Tarde em sebo de revistas de moda',
+    ],
+    challenges: [
+      { id: 'fa01', name: 'Capsule 7-em-7', focus: 'estilo · curadoria', xp: 4, icon: '👔',
+        sets: 'Defina 7 peças e monte 7 looks distintos pra semana, usando só elas.',
+        tip: 'Treina senso de combinação — vê o real essencial do guarda-roupa.' },
+      { id: 'fa02', name: 'Edição do closet (15 min)', focus: 'estilo · curadoria', xp: 3, icon: '🧺',
+        sets: 'Escolha 1 categoria (camisetas, calças) e separe 3 piles: ficar, ajustar, doar.',
+        tip: 'Se não usou em 12 meses, é estoque emocional. Solta.' },
+      { id: 'fa03', name: 'Estudo de silhueta', focus: 'estilo · técnica', xp: 3, icon: '📐',
+        sets: 'Identifique sua silhueta (V, retângulo, ampulheta...) e liste 5 peças que valorizam.',
+        tip: 'Roupa é arquitetura — proporção importa mais que tendência.' },
+      { id: 'fa04', name: 'Look reverso', focus: 'estilo · criatividade', xp: 3, icon: '🔄',
+        sets: 'Monte um look usando peças que você NUNCA combinaria. Tira foto pra comparar.',
+        tip: 'Quebra de padrão treina o olho. Pode dar errado — é parte do jogo.' },
+    ],
+  },
+
+  futebol_lol: {
+    name: 'Futebol & League of Legends',
+    short: 'PITCH × RIFT',
+    sub: 'Tática, jogo, esporte. Foco em competitividade e disciplina.',
+    accent: '#1E5E2A',
+    accent2: '#E84A1A',
+    quote: { primary: 'A bola é redonda — e o Rift também.', secondary: '"Disciplina vence talento que não se esforça."' },
+    quotes: [
+      { primary: 'A bola é redonda — e o Rift também.',               secondary: '"Disciplina vence talento que não se esforça."' },
+      { primary: 'Vencer é hábito. Perder também é.',                 secondary: '— Vince Lombardi' },
+      { primary: 'Demoras 10 mil horas pra ficar bom em qualquer coisa.', secondary: '— Anders Ericsson' },
+      { primary: 'O básico bem feito ganha jogo.',                    secondary: '' },
+      { primary: 'Macro joga o jogo. Micro ganha a teamfight.',       secondary: '— LoL' },
+      { primary: 'Treino duro, jogo fácil.',                          secondary: '' },
+      { primary: 'O placar não mente — o esforço sim.',               secondary: '' },
+      { primary: 'GG, EZ — só quando o placar fechar.',               secondary: '— LoL' },
+    ],
+    greeting: { primary: 'GG, vamos pro próximo jogo', secondary: '' },
+    tags: { home: '⚽ KICKOFF ⚽', workout: '⚽ WARM-UP DRILL', nutri: '⚽ PRE-MATCH FUEL', insights: '⚽ POST-MATCH ANALYSIS', goals: '⚽ TEMPORADA GOALS', dance: '⚽ CELEBRATION DANCE' },
+    labels: {
+      finishBtn: 'APITO FINAL',
+      arsenal:   '⚽ VESTIÁRIO ⚽',
+      footer:    '',
+      register:  'Encerrar partida do dia',
+      logCta:    'Encerrar partida do dia',
+    },
+    showKombatant: false,
+    quests: [
+      { id: 't4_ft1',  text: 'Assistir 1 jogo de futebol (qualquer liga)',    xp: 1, tag: 'lazer' },
+      { id: 't4_ft2',  text: 'Embaixadinhas — 50 sem cair',                   xp: 2, tag: 'treino' },
+      { id: 't4_ft3',  text: 'Corrida intervalada 20 min (sprint football)',  xp: 2, tag: 'cardio' },
+      { id: 't4_ft4',  text: 'Ler análise tática 1 partida',                  xp: 1, tag: 'foco' },
+      { id: 't4_ft5',  text: '1 partida ranked de LoL com foco',              xp: 2, tag: 'jogos' },
+      { id: 't4_ft6',  text: '1 ARAM/Normal Match de LoL',                    xp: 1, tag: 'jogos' },
+      { id: 't4_ft7',  text: 'Assistir 1 partida pro de LoL (LCK/LEC/CBLOL)', xp: 1, tag: 'lazer' },
+      { id: 't4_ft8',  text: 'Estudar champ pool — 1 build novo',             xp: 1, tag: 'jogos' },
+      { id: 't4_ft9',  text: 'VOD review da última partida (15min)',          xp: 2, tag: 'foco' },
+      { id: 't4_ft10', text: 'Bater bola na pelada/futsal',                   xp: 2, tag: 'cardio' },
+      { id: 't4_ft11', text: 'Treinar passe contra a parede 50x',             xp: 1, tag: 'treino' },
+      { id: 't4_ft12', text: 'Last-hit practice tool 15 min (LoL)',           xp: 1, tag: 'jogos' },
+      { id: 't4_ft13', text: 'Ouvir podcast de futebol/esports 30 min',       xp: 1, tag: 'foco' },
+      { id: 't4_ft14', text: 'Estudar 1 jogador (Messi, Faker, ManéHéro...)', xp: 1, tag: 'foco' },
+      { id: 't4_ft15', text: 'Cabeceio repetido 30x (vela ou pêndulo)',       xp: 1, tag: 'treino' },
+      { id: 't4_ft16', text: 'Drill de finalização 10 min',                   xp: 2, tag: 'treino' },
+      { id: 't4_ft17', text: 'Analisar replay próprio 15 min (LoL/futebol)',  xp: 2, tag: 'foco' },
+      { id: 't4_ft18', text: 'Coop com amigos: 2 partidas',                   xp: 1, tag: 'jogos' },
+      { id: 't4_ft19', text: 'Pesquisar patch notes ou tabela do campeonato', xp: 1, tag: 'foco' },
+      { id: 't4_ft20', text: 'Jogar fora ao ar livre 30 min (qq esporte)',    xp: 2, tag: 'cardio' },
+    ],
+    rewards: [
+      '1 partida ranked de LoL',
+      '2 partidas de ARAM/Normal',
+      'Maratona ProView/VOD de pro',
+      'Jogo completo de futebol na TV',
+      'Partida com os amigos no fim de semana',
+      'Comprar skin nova quando bater promoção',
+      'FIFA / EA FC por 1h',
+    ],
+    challenges: [
+      { id: 'fl01', name: 'Warmup de jogador', focus: 'cardio · preparação', xp: 3, icon: '⚽',
+        sets: '10 min de aquecimento dinâmico (skipping, mobilidade, sprint curto). Estilo profissional.',
+        tip: 'Eleva FC, prepara articulação. Atletas profissionais não pulam.' },
+      { id: 'fl02', name: 'Cooldown pós-jogo', focus: 'mobilidade · recuperação', xp: 2, icon: '🧊',
+        sets: '15 min alongamento + foam roller após partida (de bola ou de LoL longa).',
+        tip: 'Ergonomia de gamer também precisa — pescoço, punho, ombro.' },
+      { id: 'fl03', name: 'Champion mastery focus', focus: 'jogos · estudo', xp: 4, icon: '🧠',
+        sets: '30 min em 1 champ só, com objetivo claro (combo, build, matchup). Anota 1 lição.',
+        tip: 'Profundidade > variedade. Pro player conhece 3 champs muito bem.' },
+      { id: 'fl04', name: 'Tactic study session', focus: 'futebol · análise', xp: 4, icon: '📋',
+        sets: '20 min de análise tática (livro, vídeo de TacticalManager, podcast tático).',
+        tip: 'Saber ler o jogo melhora seu próprio futsal/pelada.' },
+    ],
+  },
+};
+
+function getTheme(state) {
+  return THEMES[state?.user?.theme] || THEMES.kpop_anime;
+}
 
 // Banco de alimentos — macros por 100g.
 // Mistura proteína-foco (cut/hipertrofia) + culinária BR + alguns coreanos.
@@ -295,6 +609,391 @@ const FOOD_DB = [
   { name: 'Kimchi jjigae (1 tigela)',  kcal: 245, p: 16,   c: 15,   f: 14,   cat: 'prato',    ko: '김치찌개' },
   { name: 'Samgyeopsal (200g porco)',  kcal: 520, p: 28,   c: 0,    f: 45,   cat: 'prato',    ko: '삼겹살' },
   { name: 'Kongguksu (sopa fria soja)',kcal: 380, p: 18,   c: 50,   f: 12,   cat: 'prato',    ko: '콩국수' },
+
+  // ===== Mais proteínas =====
+  { name: 'Whey isolado (1 scoop)',        kcal: 110, p: 27,   c: 1,    f: 0.5,  cat: 'proteina' },
+  { name: 'Albumina (1 dose 10g)',         kcal: 38,  p: 8.4,  c: 0,    f: 0.3,  cat: 'proteina' },
+  { name: 'Polvo grelhado',                kcal: 164, p: 30,   c: 4,    f: 2,    cat: 'proteina' },
+  { name: 'Bife de fígado',                kcal: 175, p: 27,   c: 4,    f: 5,    cat: 'proteina' },
+  { name: 'Almôndega bovina (4un)',        kcal: 245, p: 18,   c: 6,    f: 16,   cat: 'proteina' },
+  { name: 'Iogurte natural light',         kcal: 41,  p: 4,    c: 5,    f: 0.5,  cat: 'proteina' },
+  { name: 'Leite vegetal aveia',           kcal: 47,  p: 1,    c: 8,    f: 1.5,  cat: 'bebida' },
+  { name: 'Leite vegetal amêndoas',        kcal: 17,  p: 0.6,  c: 0.6,  f: 1.4,  cat: 'bebida' },
+  { name: 'Tofu mexido (scrambled)',       kcal: 144, p: 17,   c: 3,    f: 9,    cat: 'proteina',  ko: '두부 스크램블' },
+  { name: 'Salmão sashimi (sem arroz)',    kcal: 208, p: 22,   c: 0,    f: 13,   cat: 'proteina',  ko: '사시미' },
+
+  // ===== Mais vegetais e legumes =====
+  { name: 'Beterraba cozida',              kcal: 43,  p: 1.6,  c: 10,   f: 0.2,  cat: 'veg' },
+  { name: 'Couve-flor cozida',             kcal: 23,  p: 1.8,  c: 4.1,  f: 0.5,  cat: 'veg' },
+  { name: 'Berinjela grelhada',            kcal: 25,  p: 1,    c: 6,    f: 0.2,  cat: 'veg' },
+  { name: 'Abóbora cozida',                kcal: 26,  p: 1,    c: 6.5,  f: 0.1,  cat: 'veg' },
+  { name: 'Chuchu cozido',                 kcal: 22,  p: 0.8,  c: 5,    f: 0.1,  cat: 'veg' },
+  { name: 'Vagem cozida',                  kcal: 35,  p: 1.8,  c: 8,    f: 0.2,  cat: 'veg' },
+  { name: 'Cogumelos (champignon)',        kcal: 22,  p: 3.1,  c: 3.3,  f: 0.3,  cat: 'veg' },
+  { name: 'Quiabo refogado',               kcal: 33,  p: 1.9,  c: 7,    f: 0.2,  cat: 'veg' },
+
+  // ===== Refeições prontas / pratos completos =====
+  { name: 'Salada caesar com frango (1 prato)', kcal: 470, p: 32, c: 18, f: 28,   cat: 'prato' },
+  { name: 'Salada de atum (1 prato)',      kcal: 280, p: 26,   c: 8,    f: 16,   cat: 'prato' },
+  { name: 'Lasanha bolonhesa (1 fatia ~200g)', kcal: 360, p: 18, c: 32, f: 18,   cat: 'prato' },
+  { name: 'Estrogonofe de frango (300g)',  kcal: 450, p: 30,   c: 18,   f: 28,   cat: 'prato' },
+  { name: 'Risoto de cogumelos (300g)',    kcal: 380, p: 9,    c: 60,   f: 11,   cat: 'prato' },
+  { name: 'Caldo de osso (bone broth 200ml)', kcal: 40, p: 8,   c: 1,    f: 0.5,  cat: 'bebida' },
+  { name: 'Sopa de legumes (1 tigela)',    kcal: 120, p: 5,    c: 20,   f: 2,    cat: 'prato' },
+  { name: 'Sopa creme de abóbora (300ml)', kcal: 180, p: 4,    c: 28,   f: 6,    cat: 'prato' },
+  { name: 'Crepioca com queijo e ovo',     kcal: 260, p: 19,   c: 18,   f: 13,   cat: 'prato' },
+  { name: 'Falafel (3 unidades)',          kcal: 200, p: 7,    c: 18,   f: 12,   cat: 'prato' },
+  { name: 'Hummus (3 col sopa)',           kcal: 110, p: 4,    c: 9,    f: 6,    cat: 'snack' },
+  { name: 'Aveia overnight (1 pote)',      kcal: 320, p: 14,   c: 48,   f: 8,    cat: 'snack' },
+  { name: 'Mingau de aveia com banana',    kcal: 270, p: 9,    c: 50,   f: 4,    cat: 'snack' },
+  { name: 'Smoothie banana + whey',        kcal: 270, p: 28,   c: 30,   f: 4,    cat: 'bebida' },
+  { name: 'Vitamina banana + leite',       kcal: 220, p: 8,    c: 38,   f: 4.5,  cat: 'bebida' },
+
+  // ===== Pão e snacks extras =====
+  { name: 'Pão de hambúrguer (1un)',       kcal: 220, p: 7,    c: 38,   f: 4,    cat: 'snack' },
+  { name: 'Wrap integral (1un)',           kcal: 195, p: 6,    c: 32,   f: 5,    cat: 'snack' },
+  { name: 'Granola sem açúcar (40g)',      kcal: 160, p: 5,    c: 22,   f: 6,    cat: 'snack' },
+
+  // ===== Expansão: Proteínas (cortes nobres + processados + variados) =====
+  { name: 'Picanha grelhada',              kcal: 290, p: 26,   c: 0,    f: 21,   cat: 'proteina' },
+  { name: 'Maminha grelhada',              kcal: 200, p: 27,   c: 0,    f: 10,   cat: 'proteina' },
+  { name: 'Alcatra grelhada',              kcal: 219, p: 28,   c: 0,    f: 12,   cat: 'proteina' },
+  { name: 'Costela bovina assada',         kcal: 330, p: 22,   c: 0,    f: 27,   cat: 'proteina' },
+  { name: 'Acém / músculo cozido',         kcal: 191, p: 30,   c: 0,    f: 8,    cat: 'proteina' },
+  { name: 'Carne seca dessalgada',         kcal: 200, p: 33,   c: 0,    f: 7,    cat: 'proteina' },
+  { name: 'Hambúrguer caseiro 150g (só carne)', kcal: 270, p: 27, c: 0, f: 18,   cat: 'proteina' },
+  { name: 'Filé mignon grelhado',          kcal: 200, p: 30,   c: 0,    f: 9,    cat: 'proteina' },
+  { name: 'Coração de frango',             kcal: 153, p: 26,   c: 0.7,  f: 5,    cat: 'proteina' },
+  { name: 'Moela de frango',               kcal: 94,  p: 17,   c: 0,    f: 2.5,  cat: 'proteina' },
+  { name: 'Sobrecoxa de frango c/ pele',   kcal: 211, p: 22,   c: 0,    f: 13,   cat: 'proteina' },
+  { name: 'Peito de peru defumado (50g)',  kcal: 50,  p: 9,    c: 1,    f: 1,    cat: 'proteina' },
+  { name: 'Mortadela (50g)',               kcal: 155, p: 7,    c: 1.5,  f: 13,   cat: 'proteina' },
+  { name: 'Salsicha (1un ~50g)',           kcal: 145, p: 6,    c: 2,    f: 13,   cat: 'proteina' },
+  { name: 'Pernil suíno assado',           kcal: 207, p: 28,   c: 0,    f: 10,   cat: 'proteina' },
+  { name: 'Costelinha suína',              kcal: 296, p: 22,   c: 0,    f: 23,   cat: 'proteina' },
+  { name: 'Cordeiro grelhado',             kcal: 258, p: 26,   c: 0,    f: 17,   cat: 'proteina' },
+  { name: 'Pato assado',                   kcal: 337, p: 19,   c: 0,    f: 28,   cat: 'proteina' },
+  { name: 'Coelho grelhado',               kcal: 173, p: 33,   c: 0,    f: 3.5,  cat: 'proteina' },
+  { name: 'Bife de panela',                kcal: 240, p: 28,   c: 2,    f: 13,   cat: 'proteina' },
+  { name: 'Strogonoff de carne (300g)',    kcal: 470, p: 32,   c: 12,   f: 32,   cat: 'proteina' },
+  { name: 'Frango xadrez (300g)',          kcal: 380, p: 28,   c: 22,   f: 18,   cat: 'proteina' },
+
+  // ===== Expansão: Peixes e frutos do mar =====
+  { name: 'Bacalhau cozido',               kcal: 105, p: 23,   c: 0,    f: 0.9,  cat: 'proteina' },
+  { name: 'Pescada grelhada',              kcal: 90,  p: 19,   c: 0,    f: 1.3,  cat: 'proteina' },
+  { name: 'Robalo grelhado',               kcal: 124, p: 23,   c: 0,    f: 2.8,  cat: 'proteina' },
+  { name: 'Linguado grelhado',             kcal: 91,  p: 19,   c: 0,    f: 1.2,  cat: 'proteina' },
+  { name: 'Truta grelhada',                kcal: 148, p: 21,   c: 0,    f: 6.6,  cat: 'proteina' },
+  { name: 'Lula grelhada',                 kcal: 100, p: 16,   c: 3,    f: 1.4,  cat: 'proteina' },
+  { name: 'Mexilhão cozido',               kcal: 86,  p: 12,   c: 4,    f: 2.2,  cat: 'proteina' },
+  { name: 'Caranguejo cozido',             kcal: 87,  p: 18,   c: 0,    f: 1.1,  cat: 'proteina' },
+  { name: 'Lagosta cozida',                kcal: 89,  p: 19,   c: 0,    f: 0.9,  cat: 'proteina' },
+  { name: 'Ostras frescas (6un)',          kcal: 50,  p: 6,    c: 3,    f: 1.5,  cat: 'proteina' },
+  { name: 'Sardinha fresca grelhada',      kcal: 208, p: 25,   c: 0,    f: 12,   cat: 'proteina' },
+  { name: 'Cavala grelhada',               kcal: 305, p: 19,   c: 0,    f: 25,   cat: 'proteina' },
+  { name: 'Anchova grelhada',              kcal: 131, p: 20,   c: 0,    f: 4.8,  cat: 'proteina' },
+  { name: 'Camarão empanado (100g)',       kcal: 240, p: 18,   c: 18,   f: 12,   cat: 'erro' },
+
+  // ===== Expansão: Carboidratos / cereais =====
+  { name: 'Arroz parbolizado cozido',      kcal: 127, p: 2.6,  c: 27,   f: 0.5,  cat: 'carb' },
+  { name: 'Arroz japonês (gohan) cozido',  kcal: 130, p: 2.7,  c: 28,   f: 0.3,  cat: 'carb',     ko: '쌀밥' },
+  { name: 'Arroz com feijão (mistura)',    kcal: 126, p: 4.5,  c: 24,   f: 0.6,  cat: 'carb' },
+  { name: 'Macarrão à bolonhesa (300g)',   kcal: 420, p: 22,   c: 50,   f: 14,   cat: 'prato' },
+  { name: 'Macarrão alho e óleo (300g)',   kcal: 470, p: 11,   c: 70,   f: 14,   cat: 'prato' },
+  { name: 'Espaguete branco cozido',       kcal: 158, p: 5.8,  c: 31,   f: 0.9,  cat: 'carb' },
+  { name: 'Nhoque batata (200g)',          kcal: 270, p: 6,    c: 56,   f: 1,    cat: 'carb' },
+  { name: 'Pirão',                         kcal: 130, p: 4,    c: 24,   f: 1,    cat: 'carb' },
+  { name: 'Cará cozido',                   kcal: 108, p: 1.5,  c: 26,   f: 0.2,  cat: 'carb' },
+  { name: 'Trigo para quibe cru',          kcal: 342, p: 12,   c: 76,   f: 1.5,  cat: 'carb' },
+  { name: 'Cevadinha cozida',              kcal: 123, p: 2.3,  c: 28,   f: 0.4,  cat: 'carb' },
+  { name: 'Centeio integral (50g)',        kcal: 168, p: 5,    c: 35,   f: 1.5,  cat: 'carb' },
+  { name: 'Cuscuz marroquino cozido',      kcal: 112, p: 3.8,  c: 23,   f: 0.2,  cat: 'carb' },
+  { name: 'Polenta frita',                 kcal: 145, p: 2,    c: 22,   f: 5,    cat: 'erro' },
+  { name: 'Tapioca recheada queijo+ovo',   kcal: 270, p: 16,   c: 26,   f: 12,   cat: 'prato' },
+  { name: 'Beiju grande de tapioca',       kcal: 200, p: 1,    c: 48,   f: 0.3,  cat: 'carb' },
+  { name: 'Banana da terra frita',         kcal: 180, p: 1.2,  c: 32,   f: 6,    cat: 'erro' },
+  { name: 'Pão de batata (1un)',           kcal: 200, p: 5,    c: 35,   f: 5,    cat: 'snack' },
+  { name: 'Pão sírio (1un)',               kcal: 165, p: 5.5,  c: 33,   f: 1.5,  cat: 'snack' },
+  { name: 'Pão ciabatta (1un)',            kcal: 250, p: 9,    c: 50,   f: 1.5,  cat: 'snack' },
+  { name: 'Pão de centeio (1 fatia)',      kcal: 60,  p: 2,    c: 12,   f: 0.7,  cat: 'snack' },
+  { name: 'Croissant simples (1un)',       kcal: 230, p: 5,    c: 26,   f: 12,   cat: 'erro' },
+  { name: 'Croissant de chocolate (1un)',  kcal: 310, p: 6,    c: 32,   f: 18,   cat: 'erro' },
+  { name: 'Donut glaçado (1un)',           kcal: 270, p: 4,    c: 31,   f: 14,   cat: 'erro' },
+  { name: 'Bagel simples (1un)',           kcal: 245, p: 9,    c: 48,   f: 1.5,  cat: 'snack' },
+  { name: 'Panqueca americana (1un)',      kcal: 175, p: 4,    c: 22,   f: 8,    cat: 'erro' },
+  { name: 'Waffle (1un)',                  kcal: 220, p: 5,    c: 25,   f: 11,   cat: 'erro' },
+
+  // ===== Expansão: Vegetais =====
+  { name: 'Rúcula crua',                   kcal: 25,  p: 2.6,  c: 3.7,  f: 0.7,  cat: 'veg' },
+  { name: 'Agrião cru',                    kcal: 11,  p: 2.3,  c: 1.3,  f: 0.1,  cat: 'veg' },
+  { name: 'Repolho roxo',                  kcal: 31,  p: 1.4,  c: 7,    f: 0.2,  cat: 'veg' },
+  { name: 'Repolho verde',                 kcal: 25,  p: 1.3,  c: 5.8,  f: 0.1,  cat: 'veg' },
+  { name: 'Acelga cozida',                 kcal: 20,  p: 1.9,  c: 4,    f: 0.1,  cat: 'veg' },
+  { name: 'Aspargos cozidos',              kcal: 22,  p: 2.4,  c: 4,    f: 0.2,  cat: 'veg' },
+  { name: 'Aipo cru',                      kcal: 16,  p: 0.7,  c: 3,    f: 0.2,  cat: 'veg' },
+  { name: 'Cogumelo shiitake',             kcal: 34,  p: 2.2,  c: 7,    f: 0.5,  cat: 'veg',      ko: '표고버섯' },
+  { name: 'Cogumelo shimeji',              kcal: 26,  p: 2.7,  c: 4.6,  f: 0.3,  cat: 'veg' },
+  { name: 'Brotos de feijão (moyashi)',    kcal: 30,  p: 3,    c: 6,    f: 0.2,  cat: 'veg',      ko: '숙주나물' },
+  { name: 'Algas nori (5g)',               kcal: 12,  p: 2,    c: 1.5,  f: 0.2,  cat: 'veg',      ko: '김' },
+  { name: 'Algas wakame (50g)',            kcal: 23,  p: 1.5,  c: 4.5,  f: 0.3,  cat: 'veg',      ko: '미역' },
+  { name: 'Picles de pepino (50g)',        kcal: 6,   p: 0.3,  c: 1.2,  f: 0,    cat: 'veg' },
+  { name: 'Azeitona verde (10un)',         kcal: 50,  p: 0.4,  c: 1.5,  f: 5,    cat: 'gordura' },
+  { name: 'Azeitona preta (10un)',         kcal: 60,  p: 0.5,  c: 2,    f: 6,    cat: 'gordura' },
+  { name: 'Palmito em conserva (100g)',    kcal: 26,  p: 2.6,  c: 4.6,  f: 0.2,  cat: 'veg' },
+  { name: 'Milho cozido (1 espiga)',       kcal: 90,  p: 3.4,  c: 19,   f: 1.4,  cat: 'carb' },
+  { name: 'Milho em lata (100g)',          kcal: 80,  p: 2.8,  c: 17,   f: 1,    cat: 'carb' },
+  { name: 'Ervilha em lata (100g)',        kcal: 78,  p: 5,    c: 14,   f: 0.4,  cat: 'carb' },
+  { name: 'Cebola crua',                   kcal: 40,  p: 1.1,  c: 9,    f: 0.1,  cat: 'veg' },
+  { name: 'Cebola roxa',                   kcal: 42,  p: 1.2,  c: 10,   f: 0.1,  cat: 'veg' },
+  { name: 'Alho cru (1 dente ~5g)',        kcal: 7,   p: 0.3,  c: 1.5,  f: 0,    cat: 'veg' },
+  { name: 'Gengibre cru',                  kcal: 80,  p: 1.8,  c: 18,   f: 0.8,  cat: 'veg' },
+  { name: 'Pimenta dedo-de-moça',          kcal: 40,  p: 1.9,  c: 9,    f: 0.4,  cat: 'veg' },
+  { name: 'Rabanete',                      kcal: 16,  p: 0.7,  c: 3.4,  f: 0.1,  cat: 'veg' },
+  { name: 'Nabo cozido',                   kcal: 22,  p: 0.7,  c: 5,    f: 0.1,  cat: 'veg' },
+
+  // ===== Expansão: Frutas =====
+  { name: 'Tangerina/mexerica',            kcal: 53,  p: 0.8,  c: 13,   f: 0.3,  cat: 'fruta' },
+  { name: 'Limão (suco)',                  kcal: 22,  p: 0.4,  c: 7,    f: 0.2,  cat: 'fruta' },
+  { name: 'Maracujá (polpa)',              kcal: 97,  p: 2.2,  c: 23,   f: 0.7,  cat: 'fruta' },
+  { name: 'Goiaba',                        kcal: 68,  p: 2.6,  c: 14,   f: 1,    cat: 'fruta' },
+  { name: 'Caqui',                         kcal: 70,  p: 0.6,  c: 19,   f: 0.2,  cat: 'fruta' },
+  { name: 'Carambola',                     kcal: 31,  p: 1,    c: 7,    f: 0.3,  cat: 'fruta' },
+  { name: 'Cereja',                        kcal: 50,  p: 1,    c: 12,   f: 0.3,  cat: 'fruta' },
+  { name: 'Ameixa fresca',                 kcal: 46,  p: 0.7,  c: 11,   f: 0.3,  cat: 'fruta' },
+  { name: 'Ameixa seca (5un)',             kcal: 120, p: 1.1,  c: 32,   f: 0.2,  cat: 'fruta' },
+  { name: 'Uva-passa (30g)',               kcal: 90,  p: 0.9,  c: 24,   f: 0.1,  cat: 'fruta' },
+  { name: 'Tâmara (5un ~40g)',             kcal: 110, p: 1,    c: 30,   f: 0.1,  cat: 'fruta' },
+  { name: 'Damasco seco (5un)',            kcal: 60,  p: 1.5,  c: 15,   f: 0.1,  cat: 'fruta' },
+  { name: 'Figo fresco (1un)',             kcal: 37,  p: 0.4,  c: 10,   f: 0.2,  cat: 'fruta' },
+  { name: 'Figo seco (3un)',               kcal: 90,  p: 1,    c: 24,   f: 0.4,  cat: 'fruta' },
+  { name: 'Coco fresco (50g)',             kcal: 175, p: 1.7,  c: 7.5,  f: 17,   cat: 'gordura' },
+  { name: 'Açaí puro polpa (100g)',        kcal: 58,  p: 0.8,  c: 6.2,  f: 3.9,  cat: 'fruta' },
+  { name: 'Pitaia (dragon fruit)',         kcal: 60,  p: 1.2,  c: 13,   f: 0.4,  cat: 'fruta' },
+  { name: 'Romã (sementes 100g)',          kcal: 83,  p: 1.7,  c: 19,   f: 1.2,  cat: 'fruta' },
+  { name: 'Lichia',                        kcal: 66,  p: 0.8,  c: 17,   f: 0.4,  cat: 'fruta',    ko: '리치' },
+  { name: 'Cupuaçu (polpa 100g)',          kcal: 49,  p: 1.2,  c: 12,   f: 0.6,  cat: 'fruta' },
+  { name: 'Açaí na tigela puro (300g)',    kcal: 175, p: 2.4,  c: 19,   f: 12,   cat: 'fruta' },
+  { name: 'Caju (fruta)',                  kcal: 43,  p: 0.7,  c: 11,   f: 0.2,  cat: 'fruta' },
+  { name: 'Framboesa',                     kcal: 52,  p: 1.2,  c: 12,   f: 0.7,  cat: 'fruta' },
+  { name: 'Amora',                         kcal: 43,  p: 1.4,  c: 10,   f: 0.5,  cat: 'fruta' },
+  { name: 'Jaca (gomo ~50g)',              kcal: 47,  p: 0.7,  c: 12,   f: 0.2,  cat: 'fruta' },
+
+  // ===== Expansão: Gorduras / oleaginosas =====
+  { name: 'Óleo de coco (1 col sopa)',     kcal: 120, p: 0,    c: 0,    f: 14,   cat: 'gordura' },
+  { name: 'Óleo de soja (1 col sopa)',     kcal: 120, p: 0,    c: 0,    f: 14,   cat: 'gordura' },
+  { name: 'Manteiga ghee (1 col sopa)',    kcal: 112, p: 0,    c: 0,    f: 13,   cat: 'gordura' },
+  { name: 'Banha de porco (1 col sopa)',   kcal: 115, p: 0,    c: 0,    f: 13,   cat: 'gordura' },
+  { name: 'Maionese (1 col sopa)',         kcal: 90,  p: 0.1,  c: 0.5,  f: 10,   cat: 'gordura' },
+  { name: 'Maionese light (1 col sopa)',   kcal: 35,  p: 0.1,  c: 1.5,  f: 3,    cat: 'gordura' },
+  { name: 'Nozes (30g)',                   kcal: 200, p: 4.6,  c: 4,    f: 20,   cat: 'gordura' },
+  { name: 'Avelãs (30g)',                  kcal: 190, p: 4.5,  c: 5,    f: 18,   cat: 'gordura' },
+  { name: 'Macadâmia (30g)',               kcal: 220, p: 2.3,  c: 4,    f: 23,   cat: 'gordura' },
+  { name: 'Pinhão cozido (100g)',          kcal: 175, p: 3.4,  c: 35,   f: 1.4,  cat: 'carb' },
+  { name: 'Pistache (30g)',                kcal: 170, p: 6,    c: 8,    f: 14,   cat: 'gordura' },
+  { name: 'Semente de chia (1 col sopa)',  kcal: 70,  p: 2.5,  c: 6,    f: 4.5,  cat: 'gordura' },
+  { name: 'Semente de linhaça (1 col sopa)', kcal: 60, p: 2,   c: 3,    f: 4.5,  cat: 'gordura' },
+  { name: 'Semente de girassol (30g)',     kcal: 175, p: 6,    c: 6,    f: 15,   cat: 'gordura' },
+  { name: 'Semente de abóbora (30g)',      kcal: 165, p: 9,    c: 5,    f: 14,   cat: 'gordura' },
+  { name: 'Tahine (1 col sopa)',           kcal: 90,  p: 2.7,  c: 3,    f: 8,    cat: 'gordura' },
+
+  // ===== Expansão: Laticínios =====
+  { name: 'Queijo cottage light (100g)',   kcal: 72,  p: 12,   c: 3,    f: 1.4,  cat: 'proteina' },
+  { name: 'Queijo minas frescal (50g)',    kcal: 120, p: 9,    c: 1.5,  f: 9,    cat: 'proteina' },
+  { name: 'Queijo minas padrão (50g)',     kcal: 130, p: 11,   c: 1,    f: 10,   cat: 'proteina' },
+  { name: 'Queijo provolone (50g)',        kcal: 175, p: 13,   c: 0.5,  f: 13,   cat: 'proteina' },
+  { name: 'Queijo parmesão ralado (1 col)',kcal: 30,  p: 2.8,  c: 0.3,  f: 2,    cat: 'proteina' },
+  { name: 'Queijo gorgonzola (30g)',       kcal: 105, p: 6,    c: 0.6,  f: 9,    cat: 'proteina' },
+  { name: 'Queijo brie (30g)',             kcal: 100, p: 6,    c: 0.1,  f: 8,    cat: 'proteina' },
+  { name: 'Queijo gouda (30g)',            kcal: 105, p: 7.5,  c: 0.7,  f: 8,    cat: 'proteina' },
+  { name: 'Cream cheese (1 col sopa)',     kcal: 50,  p: 1,    c: 0.7,  f: 5,    cat: 'gordura' },
+  { name: 'Requeijão (1 col sopa)',        kcal: 60,  p: 2,    c: 1,    f: 5,    cat: 'gordura' },
+  { name: 'Iogurte de morango (100g)',     kcal: 85,  p: 3,    c: 14,   f: 1.5,  cat: 'proteina' },
+  { name: 'Skyr natural (100g)',           kcal: 63,  p: 11,   c: 4,    f: 0.2,  cat: 'proteina' },
+  { name: 'Kefir natural (200ml)',         kcal: 110, p: 8,    c: 9,    f: 4,    cat: 'bebida' },
+  { name: 'Iogurte grego com mel (100g)',  kcal: 130, p: 7,    c: 18,   f: 3,    cat: 'proteina' },
+
+  // ===== Expansão: Pratos brasileiros / regionais =====
+  { name: 'Feijoada (1 porção 400g)',      kcal: 560, p: 30,   c: 40,   f: 28,   cat: 'prato' },
+  { name: 'Moqueca de peixe (400g)',       kcal: 380, p: 32,   c: 8,    f: 24,   cat: 'prato' },
+  { name: 'Acarajé com vatapá (1un)',      kcal: 360, p: 12,   c: 24,   f: 24,   cat: 'erro' },
+  { name: 'Vaca atolada (300g)',           kcal: 380, p: 28,   c: 22,   f: 18,   cat: 'prato' },
+  { name: 'Galinhada (300g)',              kcal: 420, p: 28,   c: 45,   f: 14,   cat: 'prato' },
+  { name: 'Baião de dois (300g)',          kcal: 360, p: 14,   c: 50,   f: 10,   cat: 'prato' },
+  { name: 'Tutu de feijão (200g)',         kcal: 260, p: 11,   c: 35,   f: 8,    cat: 'prato' },
+  { name: 'Virado à paulista (400g)',      kcal: 580, p: 30,   c: 55,   f: 22,   cat: 'prato' },
+  { name: 'Escondidinho carne seca (300g)',kcal: 450, p: 26,   c: 38,   f: 20,   cat: 'prato' },
+  { name: 'Bobó de camarão (300g)',        kcal: 420, p: 22,   c: 32,   f: 22,   cat: 'prato' },
+  { name: 'Caldo verde (300ml)',           kcal: 180, p: 6,    c: 22,   f: 7,    cat: 'prato' },
+  { name: 'Canjica doce (200g)',           kcal: 290, p: 6,    c: 50,   f: 7,    cat: 'doce' },
+  { name: 'Curau de milho (150g)',         kcal: 220, p: 4,    c: 38,   f: 6,    cat: 'doce' },
+  { name: 'Salpicão (200g)',               kcal: 280, p: 14,   c: 18,   f: 18,   cat: 'prato' },
+  { name: 'Empadão de frango (200g)',      kcal: 420, p: 14,   c: 40,   f: 22,   cat: 'erro' },
+  { name: 'Quiche de queijo (1 fatia)',    kcal: 320, p: 11,   c: 22,   f: 21,   cat: 'erro' },
+
+  // ===== Expansão: Pratos coreanos =====
+  { name: 'Japchae (1 porção ~250g)',      kcal: 420, p: 11,   c: 60,   f: 14,   cat: 'prato',    ko: '잡채' },
+  { name: 'Sundubu jjigae (1 tigela)',     kcal: 230, p: 18,   c: 12,   f: 13,   cat: 'prato',    ko: '순두부찌개' },
+  { name: 'Gimbap atum (1 rolo)',          kcal: 460, p: 18,   c: 70,   f: 12,   cat: 'prato',    ko: '참치김밥' },
+  { name: 'Bibimbap dolsot (1 tigela)',    kcal: 620, p: 27,   c: 80,   f: 20,   cat: 'prato',    ko: '돌솥비빔밥' },
+  { name: 'Galbi (200g)',                  kcal: 480, p: 32,   c: 6,    f: 35,   cat: 'prato',    ko: '갈비' },
+  { name: 'Dakgalbi (300g)',               kcal: 420, p: 28,   c: 20,   f: 24,   cat: 'prato',    ko: '닭갈비' },
+  { name: 'Yangnyeom chicken (200g)',      kcal: 510, p: 25,   c: 38,   f: 28,   cat: 'erro',     ko: '양념치킨' },
+  { name: 'Kimchi fried rice (300g)',      kcal: 480, p: 12,   c: 65,   f: 18,   cat: 'prato',    ko: '김치볶음밥' },
+  { name: 'Bingsu (sobremesa 300g)',       kcal: 320, p: 6,    c: 60,   f: 7,    cat: 'doce',     ko: '빙수' },
+  { name: 'Hotteok (1un)',                 kcal: 230, p: 4,    c: 38,   f: 7,    cat: 'doce',     ko: '호떡' },
+  { name: 'Bungeoppang (1un)',             kcal: 200, p: 4,    c: 38,   f: 4,    cat: 'doce',     ko: '붕어빵' },
+  { name: 'Soondae (200g)',                kcal: 360, p: 14,   c: 32,   f: 20,   cat: 'prato',    ko: '순대' },
+  { name: 'Banchan misto (porção 100g)',   kcal: 80,  p: 3,    c: 8,    f: 4,    cat: 'veg',      ko: '반찬' },
+  { name: 'Naengmyeon (sopa fria 1 porção)',kcal: 480,p: 18,   c: 80,   f: 7,    cat: 'prato',    ko: '냉면' },
+  { name: 'Patbingsu doce (300g)',         kcal: 290, p: 5,    c: 58,   f: 5,    cat: 'doce',     ko: '팥빙수' },
+  { name: 'Gyeranppang (pão de ovo)',      kcal: 220, p: 8,    c: 28,   f: 8,    cat: 'snack',    ko: '계란빵' },
+
+  // ===== Expansão: Pratos asiáticos diversos =====
+  { name: 'Sushi atum (1un)',              kcal: 48,  p: 2,    c: 7,    f: 1.2,  cat: 'erro',     ko: '초밥' },
+  { name: 'Niguiri salmão (1un)',          kcal: 50,  p: 2.5,  c: 7,    f: 1.5,  cat: 'erro' },
+  { name: 'Hot roll (4un)',                kcal: 380, p: 14,   c: 38,   f: 18,   cat: 'erro' },
+  { name: 'Yakimeshi (300g)',              kcal: 430, p: 14,   c: 65,   f: 12,   cat: 'prato' },
+  { name: 'Frango xadrez chinês (300g)',   kcal: 420, p: 26,   c: 30,   f: 20,   cat: 'prato' },
+  { name: 'Frango agridoce (300g)',        kcal: 480, p: 22,   c: 50,   f: 20,   cat: 'erro' },
+  { name: 'Pad thai (1 porção ~350g)',     kcal: 530, p: 18,   c: 70,   f: 19,   cat: 'prato' },
+  { name: 'Curry tailandês frango (300g)', kcal: 420, p: 22,   c: 30,   f: 22,   cat: 'prato' },
+  { name: 'Pho vietnamita (1 tigela)',     kcal: 350, p: 25,   c: 45,   f: 7,    cat: 'prato' },
+  { name: 'Rolinho primavera (1un)',       kcal: 100, p: 2.5,  c: 14,   f: 4,    cat: 'erro' },
+  { name: 'Harumaki (1un)',                kcal: 90,  p: 2,    c: 13,   f: 3.5,  cat: 'erro' },
+  { name: 'Gyoza (5un)',                   kcal: 280, p: 11,   c: 30,   f: 13,   cat: 'erro' },
+  { name: 'Ramen japonês (1 tigela)',      kcal: 480, p: 18,   c: 60,   f: 17,   cat: 'erro' },
+  { name: 'Tempurá camarão (4un)',         kcal: 240, p: 11,   c: 18,   f: 13,   cat: 'erro' },
+  { name: 'Curry indiano frango (300g)',   kcal: 380, p: 24,   c: 18,   f: 22,   cat: 'prato' },
+
+  // ===== Expansão: Pratos ocidentais / fast food =====
+  { name: 'Lasanha 4 queijos (200g)',      kcal: 420, p: 18,   c: 30,   f: 24,   cat: 'erro' },
+  { name: 'Macarrão carbonara (300g)',     kcal: 540, p: 20,   c: 65,   f: 22,   cat: 'erro' },
+  { name: 'Pizza marguerita (1 fatia)',    kcal: 250, p: 11,   c: 32,   f: 8,    cat: 'erro' },
+  { name: 'Pizza pepperoni (1 fatia)',     kcal: 310, p: 13,   c: 33,   f: 14,   cat: 'erro' },
+  { name: 'Pizza quatro queijos (1 fatia)',kcal: 320, p: 15,   c: 30,   f: 16,   cat: 'erro' },
+  { name: 'Calzone (1un ~300g)',           kcal: 720, p: 28,   c: 80,   f: 28,   cat: 'erro' },
+  { name: 'Cheeseburger McDonald s (1un)', kcal: 300, p: 15,   c: 32,   f: 13,   cat: 'erro' },
+  { name: 'McChicken (1un)',               kcal: 400, p: 14,   c: 39,   f: 21,   cat: 'erro' },
+  { name: 'Quarteirão (1un)',              kcal: 510, p: 26,   c: 41,   f: 26,   cat: 'erro' },
+  { name: 'Frango assado (1 quarto ~250g)',kcal: 380, p: 45,   c: 0,    f: 22,   cat: 'proteina' },
+  { name: 'Subway frango (15cm)',          kcal: 350, p: 25,   c: 47,   f: 5,    cat: 'prato' },
+  { name: 'Subway frango teriyaki (15cm)', kcal: 380, p: 26,   c: 53,   f: 5,    cat: 'prato' },
+  { name: 'Subway atum (15cm)',            kcal: 480, p: 20,   c: 44,   f: 25,   cat: 'erro' },
+  { name: 'Burrito frango (1un)',          kcal: 580, p: 24,   c: 70,   f: 22,   cat: 'erro' },
+  { name: 'Taco carne (1un)',              kcal: 220, p: 9,    c: 18,   f: 12,   cat: 'erro' },
+  { name: 'Nachos com queijo (200g)',      kcal: 580, p: 14,   c: 60,   f: 32,   cat: 'erro' },
+  { name: 'KFC balde frango (200g)',       kcal: 480, p: 30,   c: 18,   f: 30,   cat: 'erro' },
+  { name: 'Wrap de frango (1un)',          kcal: 360, p: 22,   c: 38,   f: 12,   cat: 'prato' },
+
+  // ===== Expansão: Snacks / lanches rápidos =====
+  { name: 'Misto quente (1un)',            kcal: 280, p: 15,   c: 26,   f: 13,   cat: 'snack' },
+  { name: 'X-salada lanchonete (~250g)',   kcal: 550, p: 26,   c: 42,   f: 30,   cat: 'erro' },
+  { name: 'X-tudo lanchonete (~350g)',     kcal: 820, p: 38,   c: 50,   f: 50,   cat: 'erro' },
+  { name: 'Sanduíche natural frango (1un)',kcal: 280, p: 22,   c: 28,   f: 9,    cat: 'snack' },
+  { name: 'Sanduíche atum (1un)',          kcal: 310, p: 18,   c: 30,   f: 13,   cat: 'snack' },
+  { name: 'Empada de frango (1un)',        kcal: 220, p: 8,    c: 22,   f: 11,   cat: 'erro' },
+  { name: 'Risoles de queijo (1un)',       kcal: 180, p: 5,    c: 18,   f: 9,    cat: 'erro' },
+  { name: 'Bolinho de bacalhau (1un)',     kcal: 180, p: 8,    c: 14,   f: 10,   cat: 'erro' },
+  { name: 'Bolinho de arroz (1un)',        kcal: 130, p: 3,    c: 18,   f: 5,    cat: 'erro' },
+  { name: 'Biscoito maizena (5un)',        kcal: 110, p: 1.5,  c: 19,   f: 3,    cat: 'doce' },
+  { name: 'Biscoito wafer (4un)',          kcal: 160, p: 1,    c: 22,   f: 7,    cat: 'doce' },
+  { name: 'Cracker integral (5un)',        kcal: 130, p: 3,    c: 20,   f: 4,    cat: 'snack' },
+  { name: 'Torrada light (4un)',           kcal: 95,  p: 3.5,  c: 17,   f: 1,    cat: 'snack' },
+  { name: 'Chips de batata-doce (50g)',    kcal: 240, p: 2.5,  c: 26,   f: 14,   cat: 'snack' },
+  { name: 'Chips de mandioca (50g)',       kcal: 260, p: 2,    c: 30,   f: 14,   cat: 'snack' },
+  { name: 'Tortilha de milho (1un)',       kcal: 60,  p: 1.6,  c: 13,   f: 0.6,  cat: 'snack' },
+  { name: 'Pipoca doce (100g)',            kcal: 425, p: 5,    c: 80,   f: 12,   cat: 'erro' },
+
+  // ===== Expansão: Doces / sobremesas =====
+  { name: 'Mousse de chocolate (1 taça)',  kcal: 230, p: 4,    c: 22,   f: 14,   cat: 'doce' },
+  { name: 'Mousse de maracujá (1 taça)',   kcal: 200, p: 4,    c: 28,   f: 8,    cat: 'doce' },
+  { name: 'Petit gateau (1un)',            kcal: 450, p: 6,    c: 50,   f: 24,   cat: 'doce' },
+  { name: 'Brownie (1un ~70g)',            kcal: 270, p: 3.5,  c: 35,   f: 14,   cat: 'doce' },
+  { name: 'Torta de morango (1 fatia)',    kcal: 280, p: 4,    c: 38,   f: 13,   cat: 'doce' },
+  { name: 'Torta de limão (1 fatia)',      kcal: 290, p: 4,    c: 40,   f: 13,   cat: 'doce' },
+  { name: 'Beijinho (1un)',                kcal: 70,  p: 1,    c: 11,   f: 2.5,  cat: 'doce' },
+  { name: 'Cajuzinho (1un)',               kcal: 80,  p: 1.5,  c: 10,   f: 4,    cat: 'doce' },
+  { name: 'Olho-de-sogra (1un)',           kcal: 60,  p: 1,    c: 11,   f: 1.5,  cat: 'doce' },
+  { name: 'Quindim (1un)',                 kcal: 145, p: 3,    c: 22,   f: 5,    cat: 'doce' },
+  { name: 'Cocada cremosa (1 fatia ~50g)', kcal: 220, p: 1.5,  c: 30,   f: 11,   cat: 'doce' },
+  { name: 'Paçoca (1un ~22g)',             kcal: 105, p: 2.5,  c: 13,   f: 5,    cat: 'doce' },
+  { name: 'Pé de moleque (1un ~20g)',      kcal: 95,  p: 2.5,  c: 11,   f: 4.5,  cat: 'doce' },
+  { name: 'Goiabada cascão (50g)',         kcal: 140, p: 0.4,  c: 34,   f: 0.1,  cat: 'doce' },
+  { name: 'Romeu e Julieta (queijo+goiabada)', kcal: 280, p: 11, c: 35, f: 11,   cat: 'doce' },
+  { name: 'Bolo de cenoura com cobertura', kcal: 330, p: 5,    c: 50,   f: 12,   cat: 'doce' },
+  { name: 'Bolo de fubá (1 fatia)',        kcal: 260, p: 5,    c: 42,   f: 8,    cat: 'doce' },
+  { name: 'Bolo de banana (1 fatia)',      kcal: 250, p: 4,    c: 40,   f: 9,    cat: 'doce' },
+  { name: 'Sorvete açaí (100g)',           kcal: 170, p: 2,    c: 28,   f: 6,    cat: 'doce' },
+  { name: 'Picolé de fruta (1un)',         kcal: 70,  p: 0.5,  c: 17,   f: 0,    cat: 'doce' },
+  { name: 'Açaí com leite condensado (300ml)', kcal: 450, p: 6, c: 75,  f: 14,   cat: 'erro' },
+
+  // ===== Expansão: Bebidas =====
+  { name: 'Água com gás',                  kcal: 0,   p: 0,    c: 0,    f: 0,    cat: 'bebida' },
+  { name: 'Água de coco natural (200ml)',  kcal: 38,  p: 1.4,  c: 9,    f: 0.4,  cat: 'bebida' },
+  { name: 'Suco verde (300ml)',            kcal: 80,  p: 2,    c: 18,   f: 0.5,  cat: 'bebida' },
+  { name: 'Suco de uva integral (200ml)',  kcal: 130, p: 1,    c: 32,   f: 0.2,  cat: 'bebida' },
+  { name: 'Suco de maracujá (300ml)',      kcal: 110, p: 1,    c: 27,   f: 0.3,  cat: 'bebida' },
+  { name: 'Suco de abacaxi (300ml)',       kcal: 165, p: 1,    c: 40,   f: 0.3,  cat: 'bebida' },
+  { name: 'Limonada com açúcar (300ml)',   kcal: 130, p: 0.2,  c: 33,   f: 0,    cat: 'bebida' },
+  { name: 'Chá preto sem açúcar',          kcal: 1,   p: 0,    c: 0,    f: 0,    cat: 'bebida' },
+  { name: 'Chá mate gelado (300ml)',       kcal: 80,  p: 0,    c: 20,   f: 0,    cat: 'bebida' },
+  { name: 'Matcha com leite (200ml)',      kcal: 150, p: 6,    c: 16,   f: 7,    cat: 'bebida',   ko: '말차' },
+  { name: 'Cappuccino c/ açúcar (200ml)',  kcal: 110, p: 5,    c: 14,   f: 4,    cat: 'bebida' },
+  { name: 'Latte (300ml)',                 kcal: 180, p: 8,    c: 16,   f: 9,    cat: 'bebida' },
+  { name: 'Mocha (300ml)',                 kcal: 290, p: 9,    c: 36,   f: 11,   cat: 'bebida' },
+  { name: 'Frappuccino caramelo (300ml)',  kcal: 380, p: 6,    c: 60,   f: 13,   cat: 'erro' },
+  { name: 'Achocolatado pronto (200ml)',   kcal: 160, p: 6,    c: 28,   f: 3,    cat: 'bebida' },
+  { name: 'Whisky dose 50ml',              kcal: 110, p: 0,    c: 0,    f: 0,    cat: 'bebida' },
+  { name: 'Vodka dose 50ml',               kcal: 95,  p: 0,    c: 0,    f: 0,    cat: 'bebida' },
+  { name: 'Cachaça dose 50ml',             kcal: 110, p: 0,    c: 0,    f: 0,    cat: 'bebida' },
+  { name: 'Caipirinha (1 copo)',           kcal: 240, p: 0,    c: 25,   f: 0,    cat: 'bebida' },
+  { name: 'Cerveja IPA (lata 350ml)',      kcal: 70,  p: 0.5,  c: 6,    f: 0,    cat: 'bebida' },
+  { name: 'Cerveja sem álcool (lata 350ml)',kcal: 30, p: 0.4,  c: 6,    f: 0,    cat: 'bebida' },
+  { name: 'Vinho branco (taça 150ml)',     kcal: 85,  p: 0.1,  c: 2.5,  f: 0,    cat: 'bebida' },
+  { name: 'Espumante / champagne (150ml)', kcal: 90,  p: 0.1,  c: 2,    f: 0,    cat: 'bebida' },
+  { name: 'Gatorade (500ml)',              kcal: 130, p: 0,    c: 35,   f: 0,    cat: 'bebida' },
+  { name: 'Isotônico zero (500ml)',        kcal: 10,  p: 0,    c: 2,    f: 0,    cat: 'bebida' },
+  { name: 'Kombucha (300ml)',              kcal: 30,  p: 0,    c: 7,    f: 0,    cat: 'bebida' },
+
+  // ===== Expansão: Suplementos / fitness =====
+  { name: 'Whey hidrolisado (1 scoop 30g)',kcal: 115, p: 25,   c: 1.5,  f: 1,    cat: 'supl' },
+  { name: 'Whey vegan ervilha (1 scoop)',  kcal: 120, p: 22,   c: 4,    f: 2,    cat: 'supl' },
+  { name: 'Hipercalórico (1 dose 100g)',   kcal: 380, p: 30,   c: 60,   f: 3,    cat: 'supl' },
+  { name: 'Maltodextrina (30g)',           kcal: 120, p: 0,    c: 30,   f: 0,    cat: 'supl' },
+  { name: 'Waxy maize (30g)',              kcal: 117, p: 0,    c: 29,   f: 0,    cat: 'supl' },
+  { name: 'Termogênico cápsula',           kcal: 5,   p: 0,    c: 1,    f: 0,    cat: 'supl' },
+  { name: 'Ômega-3 cápsula',               kcal: 9,   p: 0,    c: 0,    f: 1,    cat: 'supl' },
+  { name: 'Colágeno hidrolisado (10g)',    kcal: 36,  p: 9,    c: 0,    f: 0,    cat: 'supl' },
+  { name: 'Beta-alanina (3g)',             kcal: 0,   p: 0,    c: 0,    f: 0,    cat: 'supl' },
+  { name: 'L-carnitina (3g)',              kcal: 0,   p: 0,    c: 0,    f: 0,    cat: 'supl' },
+  { name: 'ZMA cápsula',                   kcal: 0,   p: 0,    c: 0,    f: 0,    cat: 'supl' },
+  { name: 'Probiótico cápsula',            kcal: 0,   p: 0,    c: 0,    f: 0,    cat: 'supl' },
+
+  // ===== Expansão: Vegano / vegetariano =====
+  { name: 'Hambúrguer vegetal (1un ~120g)',kcal: 220, p: 18,   c: 16,   f: 11,   cat: 'proteina' },
+  { name: 'Falafel assado (3un)',          kcal: 180, p: 8,    c: 22,   f: 8,    cat: 'prato' },
+  { name: 'Tempeh grelhado (100g)',        kcal: 192, p: 19,   c: 7,    f: 11,   cat: 'proteina' },
+  { name: 'Seitan (100g)',                 kcal: 121, p: 25,   c: 4,    f: 0.5,  cat: 'proteina' },
+  { name: 'PTS / proteína de soja (50g)',  kcal: 165, p: 26,   c: 15,   f: 1,    cat: 'proteina' },
+  { name: 'Leite de soja (200ml)',         kcal: 80,  p: 7,    c: 6,    f: 4,    cat: 'bebida' },
+  { name: 'Leite de coco (200ml)',         kcal: 350, p: 3,    c: 6,    f: 36,   cat: 'bebida' },
+  { name: 'Iogurte de coco vegano (100g)', kcal: 70,  p: 1,    c: 8,    f: 4,    cat: 'proteina' },
+  { name: 'Queijo vegano (50g)',           kcal: 130, p: 4,    c: 6,    f: 10,   cat: 'proteina' },
+
+  // ===== Expansão: Molhos e condimentos =====
+  { name: 'Ketchup (1 col sopa)',          kcal: 20,  p: 0.2,  c: 5,    f: 0,    cat: 'doce' },
+  { name: 'Mostarda amarela (1 col sopa)', kcal: 10,  p: 0.6,  c: 0.6,  f: 0.6,  cat: 'gordura' },
+  { name: 'Mostarda dijon (1 col sopa)',   kcal: 15,  p: 0.8,  c: 1,    f: 0.9,  cat: 'gordura' },
+  { name: 'Molho shoyu (1 col sopa)',      kcal: 8,   p: 1.3,  c: 0.8,  f: 0,    cat: 'veg',      ko: '간장' },
+  { name: 'Molho gochujang (1 col sopa)',  kcal: 30,  p: 1,    c: 6,    f: 0.5,  cat: 'veg',      ko: '고추장' },
+  { name: 'Molho tarê (1 col sopa)',       kcal: 30,  p: 1,    c: 6,    f: 0,    cat: 'veg' },
+  { name: 'Molho barbecue (1 col sopa)',   kcal: 30,  p: 0.2,  c: 7,    f: 0.1,  cat: 'doce' },
+  { name: 'Molho tártaro (1 col sopa)',    kcal: 90,  p: 0.2,  c: 0.5,  f: 9,    cat: 'gordura' },
+  { name: 'Molho rosé (1 col sopa)',       kcal: 80,  p: 0.2,  c: 2,    f: 8,    cat: 'gordura' },
+  { name: 'Molho pesto (1 col sopa)',      kcal: 80,  p: 1,    c: 1,    f: 8,    cat: 'gordura' },
+  { name: 'Molho tomate caseiro (100g)',   kcal: 35,  p: 1.5,  c: 7,    f: 0.5,  cat: 'veg' },
+  { name: 'Vinagre balsâmico (1 col sopa)',kcal: 14,  p: 0,    c: 2.7,  f: 0,    cat: 'veg' },
+  { name: 'Geleia de frutas (1 col sopa)', kcal: 50,  p: 0.1,  c: 13,   f: 0,    cat: 'doce' },
 ];
 
 // Conquistas / 업적 — checadas após cada save de log/treino/etc.
@@ -460,9 +1159,34 @@ const KPOP_CHOREOS = [
   { song: 'Smoothie',         artist: 'NCT Dream',     year: 2024, diff: 3, style: 'funky pop',      dur: '2:58', tip: 'Body roll central. Tronco solto.' },
 ];
 
-// Desafios físicos temáticos — mistura corpos de lutadores MK + idols K-pop.
+// Objetivos visuais (Goals) — "como eu quero ficar".
+// Cada item tem uma chave que aponta para uma imagem opcional em
+// GOALS — só metadados, sem imagens default. O usuário sobe suas próprias fotos
+// pela aba Metas; imagens ficam em state.user.goalImages[key] como data URL.
+const GOALS = [
+  { key: 'bracos',     name: 'Bíceps & Braços',  focus: 'braços + ombros',
+    why: 'Braços firmes em camiseta. Vem de bíceps + tríceps + ombros trabalhados juntos.' },
+  { key: 'abdomen',    name: 'Abdômen',          focus: 'core / abdômen',
+    why: 'Marcação de abdômen é cut + core treinado — os dois precisam acontecer.' },
+  { key: 'calistenia', name: 'Calistenia',       focus: 'corpo todo · sem equipamento',
+    why: 'Força relativa: empurra, puxa, segura o próprio peso. Mobilidade + funcional.' },
+  { key: 'forca',      name: 'Força bruta',      focus: 'massa + compostos pesados',
+    why: 'Físico "tank" — agachamento, terra, supino pesados. Força acima de estética.' },
+  { key: 'peitoral',   name: 'Peitoral',         focus: 'peito',
+    why: 'Peito largo e marcado vem de pressão horizontal pesada + crucifixo controlado.' },
+  { key: 'dorsal',     name: 'Dorsal',           focus: 'dorsal V · costas',
+    why: 'Latíssimo desenvolvido — V-taper. Tração pesada + escápula retraída.' },
+  { key: 'ombros',     name: 'Ombros',           focus: 'deltoide + antebraço',
+    why: 'Ombros largos abrem a silhueta. Desenvolvimento + elevações + face pull.' },
+  { key: 'cardio',     name: 'Cardio & Magreza', focus: 'cardio + composição',
+    why: 'Físico magro e explosivo. Cardio frequente + déficit calórico leve.' },
+  { key: 'definicao',  name: 'Definição',        focus: 'corpo todo lean',
+    why: 'Definido sem ser monstro. Volume moderado + cut bem feito + sono consistente.' },
+];
+
+// Desafios — só skincare + leitura. Os antigos temas MK/k-pop foram removidos.
 // Ideal pra alternar quando o foco normal "cansa" (TDAH-friendly).
-const BODY_CHALLENGES = [
+const _LEGACY_BODY_CHALLENGES_REMOVED = [
   { id: 'c01', name: 'Bíceps do Kano',        inspiration: 'Kano (MK)',         focus: 'bíceps',     xp: 5, icon: '💪',
     sets: 'Método 21s: 7 reps meia-amplitude baixa + 7 meia-amplitude alta + 7 completas. 3 séries.',
     tip: 'Carga moderada. Sente cada porção do movimento.' },
@@ -509,9 +1233,109 @@ const BODY_CHALLENGES = [
   { id: 'c15', name: 'Total Stage Ready',      inspiration: 'idol full pack',    focus: 'corpo todo', xp: 10, icon: '🏆',
     sets: 'Sessão completa: peito + dorsal + perna leve + 30min cardio. Tudo em uma sessão.',
     tip: '"Stage ready" = pronto pra ficar 2h dançando no palco. Resistência total.' },
+
+  // ===== Skincare — desafios de pele (rotina K-beauty inspirada) =====
+  { id: 's01', name: 'Limpeza dupla AM',         inspiration: 'K-beauty AM routine', focus: 'skincare', xp: 3, icon: '🧼',
+    sets: 'Lavar rosto com sabonete + tônico + hidratante + protetor solar FPS 50+.',
+    tip: 'Protetor é o passo #1 anti-envelhecimento. Não pule nem no dia nublado.' },
+  { id: 's02', name: 'Rotina noturna completa',  inspiration: '10-step Korean (versão lean)', focus: 'skincare', xp: 4, icon: '🌙',
+    sets: 'Demaquilante + sabonete + tônico + sérum + hidratante + tratamento spot se precisar.',
+    tip: 'Limpeza noturna é mais crítica que matinal — remove poluição e oleosidade do dia.' },
+  { id: 's03', name: 'Esfoliação semanal',       inspiration: 'derma exfoliation', focus: 'skincare',   xp: 3, icon: '✨',
+    sets: 'Esfoliante químico (BHA ou AHA) 1–2x na semana à noite, alternando com sérum hidratante.',
+    tip: 'Nunca esfoliar todo dia. Pele virgem? Comece BHA 1x/sem.' },
+  { id: 's04', name: 'Máscara hidratante',       inspiration: 'sheet mask',         focus: 'skincare',   xp: 2, icon: '🎭',
+    sets: 'Sheet mask 15–20min após o tônico, à noite. Bater o sérum residual na pele.',
+    tip: 'Sheet mask é hidratação extra — não substitui rotina diária.' },
+  { id: 's05', name: 'Hidratação labial',        inspiration: 'lip care',           focus: 'skincare',   xp: 1, icon: '👄',
+    sets: 'Esfoliar lábios suavemente + balm reparador noturno (vaselina ou lanolina).',
+    tip: 'Lábio rachado denuncia desidratação geral — toma água também.' },
+  { id: 's06', name: 'Tratamento de acne',       inspiration: 'spot treatment',     focus: 'skincare',   xp: 3, icon: '🎯',
+    sets: 'Aplicação localizada de ácido salicílico ou patch de hidrocolóide nas áreas inflamadas.',
+    tip: 'Nunca espreme. Patch de hidrocolóide drena sozinho em 6–8h.' },
+  { id: 's07', name: 'Anti-olheira',             inspiration: 'eye care K-routine', focus: 'skincare',   xp: 2, icon: '👁️',
+    sets: 'Creme com cafeína + vitamina K na pálpebra inferior, AM e PM. Massagem com dedo anelar.',
+    tip: 'Sono 7h+ resolve mais que creme. Cafeína tópica só desincha.' },
+  { id: 's08', name: 'Glass skin protocol',      inspiration: 'glass skin meta',    focus: 'skincare',   xp: 5, icon: '💎',
+    sets: '7 dias seguidos com toner essence (snail mucin/galactomyces) + hidratante denso à noite.',
+    tip: 'Glass skin = barreira saudável + hidratação profunda + nada de álcool ou fragrância.' },
+  { id: 's09', name: 'Hidratação por dentro',    inspiration: 'inside-out beauty',  focus: 'skincare',   xp: 2, icon: '💧',
+    sets: '2L de água + ômega-3 + colágeno hidrolisado 10g + alimentos ricos em vit C.',
+    tip: 'Pele é o último órgão que recebe nutrientes — comece de dentro pra fora.' },
+  { id: 's10', name: 'Detox digital pré-sono',   inspiration: 'blue light skin care', focus: 'skincare', xp: 3, icon: '📵',
+    sets: '60min sem tela antes de dormir + máscara noturna + travesseiro de seda/cetim.',
+    tip: 'Luz azul acelera fotoenvelhecimento. Tela LED em quarto escuro = pior.' },
 ];
 
-// Frases curtas pra trigger de eventos especiais (overlays).
+// Pool ativo de desafios — só skincare + leitura.
+const BODY_CHALLENGES = [
+  // ===== Skincare =====
+  { id: 's01', name: 'Limpeza dupla AM',         inspiration: 'K-beauty rotina manhã', focus: 'skincare', xp: 3, icon: '🧼',
+    sets: 'Lavar rosto com sabonete + tônico + hidratante + protetor solar FPS 50+.',
+    tip: 'Protetor é o passo #1 anti-envelhecimento. Não pule nem no dia nublado.' },
+  { id: 's02', name: 'Rotina noturna completa',  inspiration: '10-step lean', focus: 'skincare', xp: 4, icon: '🌙',
+    sets: 'Demaquilante + sabonete + tônico + sérum + hidratante + tratamento spot se precisar.',
+    tip: 'Limpeza noturna é mais crítica que matinal — remove poluição e oleosidade do dia.' },
+  { id: 's03', name: 'Esfoliação semanal',       inspiration: 'derma exfoliation', focus: 'skincare',   xp: 3, icon: '✨',
+    sets: 'Esfoliante químico (BHA ou AHA) 1–2x na semana à noite, alternando com sérum hidratante.',
+    tip: 'Nunca esfoliar todo dia. Pele virgem? Comece BHA 1x/sem.' },
+  { id: 's04', name: 'Máscara hidratante',       inspiration: 'sheet mask',         focus: 'skincare',   xp: 2, icon: '🎭',
+    sets: 'Sheet mask 15–20min após o tônico, à noite. Bater o sérum residual na pele.',
+    tip: 'Sheet mask é hidratação extra — não substitui rotina diária.' },
+  { id: 's05', name: 'Hidratação labial',        inspiration: 'lip care',           focus: 'skincare',   xp: 1, icon: '👄',
+    sets: 'Esfoliar lábios suavemente + balm reparador noturno (vaselina ou lanolina).',
+    tip: 'Lábio rachado denuncia desidratação geral — toma água também.' },
+  { id: 's06', name: 'Tratamento de acne',       inspiration: 'spot treatment',     focus: 'skincare',   xp: 3, icon: '🎯',
+    sets: 'Aplicação localizada de ácido salicílico ou patch de hidrocolóide nas áreas inflamadas.',
+    tip: 'Nunca espreme. Patch de hidrocolóide drena sozinho em 6–8h.' },
+  { id: 's07', name: 'Anti-olheira',             inspiration: 'eye care', focus: 'skincare',   xp: 2, icon: '👁️',
+    sets: 'Creme com cafeína + vitamina K na pálpebra inferior, AM e PM. Massagem com dedo anelar.',
+    tip: 'Sono 7h+ resolve mais que creme. Cafeína tópica só desincha.' },
+  { id: 's08', name: 'Glass skin protocol',      inspiration: 'glass skin',         focus: 'skincare',   xp: 5, icon: '💎',
+    sets: '7 dias seguidos com toner essence (snail mucin/galactomyces) + hidratante denso à noite.',
+    tip: 'Glass skin = barreira saudável + hidratação profunda + nada de álcool ou fragrância.' },
+  { id: 's09', name: 'Hidratação por dentro',    inspiration: 'inside-out beauty',  focus: 'skincare',   xp: 2, icon: '💧',
+    sets: '2L de água + ômega-3 + colágeno hidrolisado 10g + alimentos ricos em vit C.',
+    tip: 'Pele é o último órgão que recebe nutrientes — comece de dentro pra fora.' },
+  { id: 's10', name: 'Detox digital pré-sono',   inspiration: 'blue light care',    focus: 'skincare', xp: 3, icon: '📵',
+    sets: '60min sem tela antes de dormir + máscara noturna + travesseiro de seda/cetim.',
+    tip: 'Luz azul acelera fotoenvelhecimento. Tela LED em quarto escuro = pior.' },
+
+  // ===== Leitura =====
+  { id: 'r01', name: 'Sprint de 30 min',         inspiration: 'pomodoro 30',        focus: 'leitura',    xp: 4, icon: '📖',
+    sets: 'Timer 30min, celular no modo avião, 1 livro físico. Sem pausa.',
+    tip: 'Fim do sprint: anote 1 frase do que ficou na cabeça. Memória ativa.' },
+  { id: 'r02', name: '15 min antes de dormir',    inspiration: 'pre-sleep reading',  focus: 'leitura',    xp: 2, icon: '🌙',
+    sets: 'Substitui scroll noturno — 15 min de livro físico até pegar no sono.',
+    tip: 'Luz amarela na cabeceira; nada de telas nesses 15 min.' },
+  { id: 'r03', name: 'Um capítulo inteiro',      inspiration: 'cap challenge',      focus: 'leitura',    xp: 5, icon: '📚',
+    sets: 'Termine um capítulo do livro atual sem interrupção, qualquer hora do dia.',
+    tip: 'Capítulo é unidade natural — fechar dá dopamina.' },
+  { id: 'r04', name: '50 páginas',               inspiration: 'page sprint',        focus: 'leitura',    xp: 6, icon: '🏃',
+    sets: 'Meta de 50 páginas em um dia. Pode dividir em sessões.',
+    tip: 'Sprint mais agressivo — escolhe um livro com ritmo leve.' },
+  { id: 'r05', name: 'Café da manhã + livro',    inspiration: 'morning ritual',     focus: 'leitura',    xp: 3, icon: '☕',
+    sets: '20 min de livro no café da manhã. Celular em outro cômodo.',
+    tip: 'Cérebro em alfa após o sono — receptivo a ideias novas.' },
+  { id: 'r06', name: 'Não-ficção pesada',        inspiration: 'deep work',          focus: 'leitura',    xp: 5, icon: '🧠',
+    sets: 'Sessão única de 45min em livro denso (filosofia, ciência, técnica).',
+    tip: 'Toma nota à mão a cada 15 min — força síntese.' },
+  { id: 'r07', name: 'Reler 1 trecho',           inspiration: 'active recall',      focus: 'leitura',    xp: 2, icon: '🔁',
+    sets: 'Releia o trecho marcado da última sessão antes de continuar.',
+    tip: 'Releitura cimenta — você só "lê" mesmo no segundo passe.' },
+  { id: 'r08', name: 'Resumo em 3 frases',       inspiration: 'feynman lite',       focus: 'leitura',    xp: 3, icon: '✍️',
+    sets: 'Termine a sessão e escreva 3 frases resumindo o que leu.',
+    tip: 'Se você não consegue resumir, você não entendeu — volte e releia.' },
+  { id: 'r09', name: 'Audiolivro caminhando',    inspiration: 'walk-and-listen',    focus: 'leitura',    xp: 3, icon: '🎧',
+    sets: '30 min de audiolivro durante caminhada — combina cardio + foco.',
+    tip: 'Velocidade 1.2-1.5x funciona pra maioria. Acima disso vira ruído.' },
+  { id: 'r10', name: 'Marathon: 2h seguidas',    inspiration: 'reading marathon',   focus: 'leitura',    xp: 8, icon: '🏆',
+    sets: '2 horas seguidas de leitura focada (pode ser 4×30min com 5min pausa).',
+    tip: 'Sessão longa de fim de semana. Lugar silencioso, água por perto.' },
+];
+
+// Eventos celebratórios (overlays). Variam por tema — KOMBAT_EVENTS é só
+// o default kpop_anime; os outros temas têm seus próprios textos.
 const KOMBAT_EVENTS = {
   flawless:  { title: 'FLAWLESS VICTORY',    sub: 'Dia 7/7 XP — perfeito' },
   fatality:  { title: 'FATALITY',            sub: 'Weekly quest derrotada' },
@@ -521,243 +1345,50 @@ const KOMBAT_EVENTS = {
   toasty:    { title: 'TOASTY!',             sub: 'Surpresa de combo' },
 };
 
-// Lutadores Mortal Kombat — SVGs estilizados (fan-art geométrica).
-// Cada lutador é mascote de um atributo + aparece em overlays + banner.
-// Construídos com formas geométricas pra identidade clara sem violar copyright.
+const THEME_EVENTS = {
+  kpop_anime: KOMBAT_EVENTS,
+  inside_out: {
+    flawless:  { title: 'LEMBRANÇA-NÚCLEO!',      sub: 'Dia 7/7 XP — memória dourada' },
+    fatality:  { title: 'NOVA ILHA!',             sub: 'Weekly quest derrotada' },
+    brutality: { title: 'EUREKA!',                sub: 'PERSONAL RECORD batido' },
+    finish:    { title: 'DIA NA MENTE!',          sub: 'Dia registrado' },
+    outstanding:{ title: 'SUBIU DE NÍVEL!',       sub: 'Promoção de rank' },
+    toasty:    { title: 'BING BONG!',             sub: 'Surpresa de combo' },
+  },
+  fashion: {
+    flawless:  { title: 'COUTURE LEVEL',          sub: 'Dia 7/7 XP — impecável' },
+    fatality:  { title: 'BEST DRESSED',           sub: 'Weekly quest derrotada' },
+    brutality: { title: 'STATEMENT PIECE',        sub: 'PERSONAL RECORD batido' },
+    finish:    { title: 'LOGGED IT, DARLING',     sub: 'Dia registrado' },
+    outstanding:{ title: 'FRONT ROW UPGRADE',     sub: 'Promoção de rank' },
+    toasty:    { title: 'CHIC SURPRISE',          sub: 'Surpresa de combo' },
+  },
+  futebol_lol: {
+    flawless:  { title: 'CLEAN SHEET',            sub: 'Dia 7/7 XP — sem sofrer' },
+    fatality:  { title: 'PENTAKILL',              sub: 'Weekly quest derrotada' },
+    brutality: { title: 'BICICLETA!',             sub: 'PERSONAL RECORD batido' },
+    finish:    { title: 'APITO FINAL',            sub: 'Dia registrado' },
+    outstanding:{ title: 'PROMOTED!',             sub: 'Subiu de elo' },
+    toasty:    { title: 'GG, EZ',                 sub: 'Surpresa de combo' },
+  },
+};
+
+function themeEvent(kind) {
+  const themeKey = state?.user?.theme || 'kpop_anime';
+  const events = THEME_EVENTS[themeKey] || KOMBAT_EVENTS;
+  return events[kind] || KOMBAT_EVENTS[kind];
+}
+
+// Lutadores Mortal Kombat — apenas metadados (sem SVG).
+// O fighterHtml() carrega imagem real de icons/fighters/<key>.{webp,png,jpg};
+// se não existir, mostra um placeholder limpo com o nome.
 const FIGHTERS = {
-  // KANO — implante laser vermelho no olho direito, faca, peito tatuado, careca.
-  // Atributo: FORÇA. Overlay: BRUTALITY.
-  kano: { name: 'Kano', accent: '#B8242E', tagline: 'BRUTAL POWER', attr: 'forca', svg: `
-    <svg viewBox="0 0 200 250" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <!-- cabeça careca -->
-      <ellipse cx="100" cy="55" rx="36" ry="42" fill="#D4A574" stroke="#1A1A2E" stroke-width="2.5"/>
-      <!-- sobrancelha esquerda -->
-      <path d="M70 48 L88 44" stroke="#1A1A2E" stroke-width="3.5" stroke-linecap="round"/>
-      <!-- olho esquerdo -->
-      <circle cx="82" cy="58" r="3" fill="#1A1A2E"/>
-      <!-- implante laser direito (placa metálica + olho vermelho brilhante) -->
-      <path d="M108 38 L138 42 L140 70 L110 72 Z" fill="#888" stroke="#1A1A2E" stroke-width="2"/>
-      <path d="M114 44 L130 46 L132 64 L116 66 Z" fill="#444"/>
-      <circle cx="123" cy="55" r="6" fill="#FF1818"/>
-      <circle cx="123" cy="55" r="2.5" fill="#FFE0E0"/>
-      <!-- linha vermelha lateral (laser scan) -->
-      <line x1="140" y1="55" x2="195" y2="55" stroke="#FF1818" stroke-width="1.5" opacity="0.5" stroke-dasharray="3 3"/>
-      <!-- barba/queixo -->
-      <path d="M76 78 Q100 92 124 78" stroke="#1A1A2E" stroke-width="2.5" fill="none"/>
-      <!-- pescoço grosso -->
-      <rect x="84" y="92" width="32" height="14" fill="#D4A574" stroke="#1A1A2E" stroke-width="2"/>
-      <!-- ombros largos + camiseta preta sem manga -->
-      <path d="M45 130 Q50 108 90 105 L110 105 Q150 108 155 130 L155 195 L45 195 Z" fill="#1A1A2E" stroke="#1A1A2E" stroke-width="2"/>
-      <!-- braços musculosos (bíceps) -->
-      <ellipse cx="42" cy="155" rx="18" ry="36" fill="#D4A574" stroke="#1A1A2E" stroke-width="2"/>
-      <ellipse cx="158" cy="155" rx="18" ry="36" fill="#D4A574" stroke="#1A1A2E" stroke-width="2"/>
-      <!-- veias bíceps -->
-      <path d="M38 145 Q44 155 38 165" stroke="#8B5A3C" stroke-width="1.5" fill="none"/>
-      <path d="M162 145 Q156 155 162 165" stroke="#8B5A3C" stroke-width="1.5" fill="none"/>
-      <!-- caveira no peito (tatuagem) -->
-      <circle cx="100" cy="140" r="10" fill="none" stroke="#B8242E" stroke-width="2"/>
-      <circle cx="96" cy="138" r="2" fill="#B8242E"/>
-      <circle cx="104" cy="138" r="2" fill="#B8242E"/>
-      <path d="M94 145 L98 147 L100 144 L102 147 L106 145" stroke="#B8242E" stroke-width="1.5" fill="none"/>
-      <!-- faca na mão direita (Kano blade) -->
-      <path d="M178 178 L196 168 L198 174 L182 184 Z" fill="#C0C0C0" stroke="#1A1A2E" stroke-width="1.5"/>
-      <rect x="172" y="180" width="10" height="14" rx="2" fill="#1A1A2E"/>
-    </svg>` },
-
-  // JOHNNY CAGE — óculos escuros, jaqueta verde com JC, smirk, dedinho apontando.
-  // Atributo: VITALIDADE (Hollywood vibes). Overlay: TOASTY.
-  cage: { name: 'Johnny Cage', accent: '#3FBF7F', tagline: 'HOLLYWOOD APPROVES', attr: 'vitalidade', svg: `
-    <svg viewBox="0 0 200 250" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <!-- cabelo preto curto -->
-      <path d="M62 42 Q70 18 100 16 Q130 18 138 42 L136 60 L64 60 Z" fill="#2A2A2A" stroke="#1A1A2E" stroke-width="2"/>
-      <!-- rosto -->
-      <ellipse cx="100" cy="62" rx="34" ry="40" fill="#F0C8A0" stroke="#1A1A2E" stroke-width="2.5"/>
-      <!-- óculos escuros (cool sunglasses) -->
-      <rect x="68" y="54" width="28" height="14" rx="3" fill="#1A1A2E" stroke="#1A1A2E" stroke-width="2"/>
-      <rect x="104" y="54" width="28" height="14" rx="3" fill="#1A1A2E" stroke="#1A1A2E" stroke-width="2"/>
-      <line x1="96" y1="60" x2="104" y2="60" stroke="#1A1A2E" stroke-width="3"/>
-      <!-- reflexo nos óculos -->
-      <path d="M72 56 L92 56" stroke="#FFF" stroke-width="2" opacity="0.6"/>
-      <path d="M108 56 L128 56" stroke="#FFF" stroke-width="2" opacity="0.6"/>
-      <!-- sorriso confiante -->
-      <path d="M86 85 Q100 96 116 85" stroke="#1A1A2E" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-      <!-- queixo / sombra -->
-      <path d="M100 95 Q104 99 100 102" stroke="#1A1A2E" stroke-width="1" fill="none" opacity="0.4"/>
-      <!-- pescoço -->
-      <rect x="86" y="100" width="28" height="14" fill="#F0C8A0" stroke="#1A1A2E" stroke-width="2"/>
-      <!-- jaqueta verde + camiseta preta -->
-      <path d="M55 200 L55 130 Q60 115 88 110 L100 130 L112 110 Q140 115 145 130 L145 200 Z" fill="#3FBF7F" stroke="#1A1A2E" stroke-width="2"/>
-      <!-- gola da jaqueta -->
-      <path d="M82 110 L100 142 L118 110 L130 132 L120 200 M82 110 L70 132 L80 200" fill="#2A8C5A" stroke="#1A1A2E" stroke-width="1.5"/>
-      <!-- camiseta preta debaixo -->
-      <path d="M100 130 L88 140 L100 150 L112 140 Z" fill="#1A1A2E"/>
-      <!-- JC no peito (badge) -->
-      <circle cx="100" cy="170" r="13" fill="#FFE89E" stroke="#1A1A2E" stroke-width="2"/>
-      <text x="100" y="175" text-anchor="middle" font-family="Russo One, Impact, sans-serif" font-size="13" font-weight="800" fill="#1A1A2E">JC</text>
-      <!-- braços (jaqueta) -->
-      <path d="M55 130 L38 200 L52 205 L62 138 Z" fill="#3FBF7F" stroke="#1A1A2E" stroke-width="2"/>
-      <path d="M145 130 L162 200 L148 205 L138 138 Z" fill="#3FBF7F" stroke="#1A1A2E" stroke-width="2"/>
-      <!-- mão direita apontando (signature pose) -->
-      <circle cx="166" cy="206" r="9" fill="#F0C8A0" stroke="#1A1A2E" stroke-width="2"/>
-      <path d="M170 208 L188 196" stroke="#F0C8A0" stroke-width="6" stroke-linecap="round"/>
-      <path d="M170 208 L188 196" stroke="#1A1A2E" stroke-width="1.5" fill="none"/>
-    </svg>` },
-
-  // SCORPION — máscara amarela, bandana ninja, olhos brancos vazios, kunai.
-  // Atributo: nenhum direto. Overlay: FATALITY ("GET OVER HERE!").
-  scorpion: { name: 'Scorpion', accent: '#E8C56B', tagline: 'GET OVER HERE!', attr: null, svg: `
-    <svg viewBox="0 0 200 250" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <!-- bandana ninja amarela com 2 pontas -->
-      <path d="M58 38 Q100 18 142 38 L150 28 L155 50 L142 56 Q100 50 58 56 L45 50 L50 28 Z" fill="#E8C56B" stroke="#1A1A2E" stroke-width="2.5"/>
-      <!-- bandana ponta tras balançando -->
-      <path d="M50 50 L20 70 L25 85 L52 65" fill="#E8C56B" stroke="#1A1A2E" stroke-width="2"/>
-      <!-- rosto/máscara amarela -->
-      <ellipse cx="100" cy="78" rx="36" ry="44" fill="#E8C56B" stroke="#1A1A2E" stroke-width="2.5"/>
-      <!-- máscara ninja inferior preta (cobre boca/nariz) -->
-      <path d="M68 84 Q100 78 132 84 L134 120 Q100 130 66 120 Z" fill="#1A1A2E" stroke="#1A1A2E" stroke-width="2"/>
-      <!-- detalhe da máscara (linhas) -->
-      <line x1="78" y1="100" x2="122" y2="100" stroke="#666" stroke-width="1.5"/>
-      <line x1="80" y1="112" x2="120" y2="112" stroke="#666" stroke-width="1.5"/>
-      <!-- olhos vazios brancos (Hanzo undead) -->
-      <ellipse cx="84" cy="68" rx="6" ry="4" fill="#FFFFFF" stroke="#1A1A2E" stroke-width="1.5"/>
-      <ellipse cx="116" cy="68" rx="6" ry="4" fill="#FFFFFF" stroke="#1A1A2E" stroke-width="1.5"/>
-      <!-- chamas saindo dos olhos -->
-      <path d="M82 60 Q84 50 86 58 Q88 50 86 60" fill="#E84A1A" stroke="#B8242E" stroke-width="1"/>
-      <path d="M114 60 Q116 50 118 58 Q120 50 118 60" fill="#E84A1A" stroke="#B8242E" stroke-width="1"/>
-      <!-- pescoço -->
-      <rect x="86" y="128" width="28" height="12" fill="#E8C56B" stroke="#1A1A2E" stroke-width="2"/>
-      <!-- traje amarelo torso -->
-      <path d="M55 200 L55 145 Q60 130 90 128 L110 128 Q140 130 145 145 L145 200 Z" fill="#E8C56B" stroke="#1A1A2E" stroke-width="2"/>
-      <!-- detalhes pretos faixa central -->
-      <rect x="92" y="140" width="16" height="60" fill="#1A1A2E"/>
-      <circle cx="100" cy="160" r="4" fill="#E8C56B"/>
-      <circle cx="100" cy="180" r="4" fill="#E8C56B"/>
-      <!-- braços -->
-      <path d="M55 145 L40 200 L54 205 L62 152 Z" fill="#E8C56B" stroke="#1A1A2E" stroke-width="2"/>
-      <path d="M145 145 L160 200 L146 205 L138 152 Z" fill="#E8C56B" stroke="#1A1A2E" stroke-width="2"/>
-      <!-- mão direita segurando kunai/spear -->
-      <circle cx="164" cy="210" r="8" fill="#1A1A2E"/>
-      <path d="M168 208 L196 200 L198 207 L170 215 Z" fill="#C0C0C0" stroke="#1A1A2E" stroke-width="1.5"/>
-      <!-- corrente do spear -->
-      <path d="M170 212 Q180 218 190 214" stroke="#888" stroke-width="2" fill="none" stroke-dasharray="3 2"/>
-    </svg>` },
-
-  // SUB-ZERO — máscara azul, capuz, gelo nas mãos.
-  // Atributo: DISCIPLINA. Overlay: nenhum direto (BRUTALITY já é Kano).
-  subzero: { name: 'Sub-Zero', accent: '#7BB8FF', tagline: 'FROZEN DISCIPLINE', attr: 'disciplina', svg: `
-    <svg viewBox="0 0 200 250" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <!-- capuz azul -->
-      <path d="M55 60 Q60 22 100 18 Q140 22 145 60 L145 90 Q130 88 100 88 Q70 88 55 90 Z" fill="#3A7BC8" stroke="#1A1A2E" stroke-width="2.5"/>
-      <!-- rosto (parte exposta) -->
-      <ellipse cx="100" cy="68" rx="28" ry="32" fill="#E0D5C0" stroke="#1A1A2E" stroke-width="2"/>
-      <!-- máscara azul inferior -->
-      <path d="M75 76 Q100 70 125 76 L128 110 Q100 118 72 110 Z" fill="#5A9BE0" stroke="#1A1A2E" stroke-width="2"/>
-      <!-- olhos azul-gelo brilhantes -->
-      <ellipse cx="88" cy="62" rx="5" ry="3.5" fill="#A8E0FF" stroke="#1A1A2E" stroke-width="1.5"/>
-      <ellipse cx="112" cy="62" rx="5" ry="3.5" fill="#A8E0FF" stroke="#1A1A2E" stroke-width="1.5"/>
-      <!-- raio gelado lateral -->
-      <path d="M70 50 L60 40 M68 56 L52 52 M132 56 L148 52 M130 50 L140 40"
-            stroke="#A8E0FF" stroke-width="1.5" stroke-linecap="round"/>
-      <!-- pescoço -->
-      <rect x="88" y="116" width="24" height="12" fill="#E0D5C0" stroke="#1A1A2E" stroke-width="2"/>
-      <!-- torso azul + faixa preta -->
-      <path d="M58 200 L58 135 Q62 122 90 118 L110 118 Q138 122 142 135 L142 200 Z" fill="#3A7BC8" stroke="#1A1A2E" stroke-width="2"/>
-      <rect x="58" y="148" width="84" height="10" fill="#1A1A2E"/>
-      <!-- dragão Lin Kuei no peito -->
-      <circle cx="100" cy="175" r="11" fill="none" stroke="#A8E0FF" stroke-width="2"/>
-      <path d="M94 173 Q100 168 106 173 Q100 180 94 173" fill="#A8E0FF"/>
-      <!-- braços -->
-      <path d="M58 135 L42 200 L56 205 L66 142 Z" fill="#3A7BC8" stroke="#1A1A2E" stroke-width="2"/>
-      <path d="M142 135 L158 200 L144 205 L134 142 Z" fill="#3A7BC8" stroke="#1A1A2E" stroke-width="2"/>
-      <!-- mão direita com gelo cristalino brotando -->
-      <circle cx="162" cy="208" r="9" fill="#E0D5C0" stroke="#1A1A2E" stroke-width="2"/>
-      <path d="M168 200 L178 186 L182 200 L194 195 L186 210 L196 218 L180 218 L182 232 L170 222 Z"
-            fill="#A8E0FF" stroke="#7BB8FF" stroke-width="1.5"/>
-    </svg>` },
-
-  // RAIDEN — chapéu de palha cônico, raios saindo das mãos, manto branco.
-  // Atributo: SABEDORIA. Overlay: OUTSTANDING.
-  raiden: { name: 'Raiden', accent: '#FFE08F', tagline: 'THUNDER GOD', attr: 'sabedoria', svg: `
-    <svg viewBox="0 0 200 250" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <!-- chapéu cônico (kasa) -->
-      <path d="M45 70 L100 14 L155 70 Z" fill="#C49B5C" stroke="#1A1A2E" stroke-width="2.5"/>
-      <ellipse cx="100" cy="70" rx="58" ry="10" fill="#A57B40" stroke="#1A1A2E" stroke-width="2"/>
-      <!-- linhas verticais do chapéu -->
-      <line x1="78" y1="50" x2="80" y2="68" stroke="#1A1A2E" stroke-width="1" opacity="0.4"/>
-      <line x1="100" y1="30" x2="100" y2="68" stroke="#1A1A2E" stroke-width="1" opacity="0.4"/>
-      <line x1="122" y1="50" x2="120" y2="68" stroke="#1A1A2E" stroke-width="1" opacity="0.4"/>
-      <!-- rosto sombreado pelo chapéu -->
-      <ellipse cx="100" cy="92" rx="28" ry="28" fill="#D4A574" stroke="#1A1A2E" stroke-width="2"/>
-      <path d="M72 80 Q100 96 128 80 L128 92 Q100 100 72 92 Z" fill="#1A1A2E" opacity="0.5"/>
-      <!-- olhos brilhantes brancos (Thunder God) -->
-      <ellipse cx="88" cy="92" rx="6" ry="3" fill="#FFFFFF"/>
-      <ellipse cx="112" cy="92" rx="6" ry="3" fill="#FFFFFF"/>
-      <!-- raios saindo dos olhos -->
-      <line x1="84" y1="88" x2="76" y2="82" stroke="#FFE08F" stroke-width="2" stroke-linecap="round"/>
-      <line x1="116" y1="88" x2="124" y2="82" stroke="#FFE08F" stroke-width="2" stroke-linecap="round"/>
-      <!-- boca/queixo -->
-      <path d="M88 110 Q100 116 112 110" stroke="#1A1A2E" stroke-width="2" fill="none"/>
-      <!-- manto branco -->
-      <path d="M50 200 L60 132 Q70 122 90 122 L110 122 Q130 122 140 132 L150 200 Z" fill="#F5F2E8" stroke="#1A1A2E" stroke-width="2"/>
-      <!-- detalhe do manto (cinto vermelho) -->
-      <rect x="56" y="162" width="88" height="8" fill="#B8242E" stroke="#1A1A2E" stroke-width="1.5"/>
-      <!-- raio no peito -->
-      <path d="M104 130 L92 152 L100 152 L94 170 L110 148 L102 148 Z" fill="#FFE08F" stroke="#1A1A2E" stroke-width="1.5"/>
-      <!-- braços com mãos eletrificadas -->
-      <path d="M60 132 L45 195 L58 200 L70 138 Z" fill="#F5F2E8" stroke="#1A1A2E" stroke-width="2"/>
-      <path d="M140 132 L155 195 L142 200 L130 138 Z" fill="#F5F2E8" stroke="#1A1A2E" stroke-width="2"/>
-      <!-- bolas de raios nas mãos -->
-      <circle cx="42" cy="205" r="14" fill="#FFE08F" opacity="0.4"/>
-      <circle cx="42" cy="205" r="9"  fill="#FFE08F"/>
-      <path d="M42 196 L40 202 L44 202 L40 210 L46 200 L42 200 Z" fill="#FFF" stroke="#1A1A2E" stroke-width="1"/>
-      <circle cx="158" cy="205" r="14" fill="#FFE08F" opacity="0.4"/>
-      <circle cx="158" cy="205" r="9"  fill="#FFE08F"/>
-      <path d="M158 196 L156 202 L160 202 L156 210 L162 200 L158 200 Z" fill="#FFF" stroke="#1A1A2E" stroke-width="1"/>
-    </svg>` },
-
-  // LIU KANG — faixa vermelha, peito nu, pose de bicicleta voadora.
-  // Atributo: RESISTÊNCIA. Overlay: FLAWLESS VICTORY.
-  liukang: { name: 'Liu Kang', accent: '#E84A1A', tagline: 'ENDURING FIRE', attr: 'resistencia', svg: `
-    <svg viewBox="0 0 200 250" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <!-- cabelo preto curto -->
-      <path d="M70 30 Q100 12 130 30 L130 48 L70 48 Z" fill="#1A1A2E" stroke="#1A1A2E" stroke-width="2"/>
-      <!-- faixa vermelha na testa (signature headband) -->
-      <rect x="64" y="44" width="72" height="10" fill="#B8242E" stroke="#1A1A2E" stroke-width="2"/>
-      <!-- pontas da faixa balançando atras -->
-      <path d="M64 50 L40 65 L48 70 L66 56" fill="#B8242E" stroke="#1A1A2E" stroke-width="1.5"/>
-      <path d="M64 54 L42 78 L50 82 L66 60" fill="#B8242E" stroke="#1A1A2E" stroke-width="1.5"/>
-      <!-- rosto -->
-      <ellipse cx="100" cy="68" rx="32" ry="32" fill="#C49060" stroke="#1A1A2E" stroke-width="2.5"/>
-      <!-- sobrancelhas concentradas -->
-      <path d="M78 62 L92 60" stroke="#1A1A2E" stroke-width="3" stroke-linecap="round"/>
-      <path d="M122 62 L108 60" stroke="#1A1A2E" stroke-width="3" stroke-linecap="round"/>
-      <!-- olhos determinados -->
-      <ellipse cx="86" cy="70" rx="3" ry="2.5" fill="#1A1A2E"/>
-      <ellipse cx="114" cy="70" rx="3" ry="2.5" fill="#1A1A2E"/>
-      <!-- nariz/boca -->
-      <path d="M100 76 L98 84 L102 84 Z" fill="#1A1A2E" opacity="0.3"/>
-      <path d="M90 92 Q100 88 110 92" stroke="#1A1A2E" stroke-width="2" fill="none"/>
-      <!-- pescoço grosso -->
-      <rect x="86" y="98" width="28" height="12" fill="#C49060" stroke="#1A1A2E" stroke-width="2"/>
-      <!-- peito nu musculoso -->
-      <path d="M58 200 L62 130 Q70 115 100 115 Q130 115 138 130 L142 200 Z" fill="#C49060" stroke="#1A1A2E" stroke-width="2.5"/>
-      <!-- definição peitoral -->
-      <path d="M75 128 Q88 140 100 138 Q112 140 125 128" stroke="#1A1A2E" stroke-width="1.5" fill="none" opacity="0.5"/>
-      <line x1="100" y1="138" x2="100" y2="175" stroke="#1A1A2E" stroke-width="1.5" opacity="0.4"/>
-      <!-- 6-pack abs -->
-      <path d="M88 150 L88 175 M112 150 L112 175 M84 162 L116 162" stroke="#1A1A2E" stroke-width="1" opacity="0.4"/>
-      <!-- calça preta + cinto vermelho -->
-      <rect x="62" y="180" width="78" height="10" fill="#B8242E" stroke="#1A1A2E" stroke-width="1.5"/>
-      <path d="M62 190 L142 190 L138 230 L66 230 Z" fill="#1A1A2E"/>
-      <!-- braços musculosos em pose de soco -->
-      <path d="M62 130 L50 165 L40 160 L58 122 Z" fill="#C49060" stroke="#1A1A2E" stroke-width="2"/>
-      <path d="M138 130 L160 175 L168 168 L148 124 Z" fill="#C49060" stroke="#1A1A2E" stroke-width="2"/>
-      <!-- punho cerrado direito -->
-      <circle cx="170" cy="180" r="10" fill="#C49060" stroke="#1A1A2E" stroke-width="2"/>
-      <!-- bola de fogo na mão -->
-      <circle cx="170" cy="180" r="14" fill="#E84A1A" opacity="0.5"/>
-      <path d="M170 170 Q175 175 173 180 Q178 178 174 184 Q170 180 168 185 Q166 178 170 170" fill="#FFE08F"/>
-    </svg>` },
+  kano:     { name: 'Kano',        accent: '#B8242E', tagline: 'BRUTAL POWER',       attr: 'forca' },
+  cage:     { name: 'Johnny Cage', accent: '#3FBF7F', tagline: 'HOLLYWOOD APPROVES', attr: 'vitalidade' },
+  scorpion: { name: 'Scorpion',    accent: '#E8C56B', tagline: 'GET OVER HERE!',     attr: null },
+  subzero:  { name: 'Sub-Zero',    accent: '#7BB8FF', tagline: 'FROZEN DISCIPLINE',  attr: 'disciplina' },
+  raiden:   { name: 'Raiden',      accent: '#FFE08F', tagline: 'THUNDER GOD',        attr: 'sabedoria' },
+  liukang:  { name: 'Liu Kang',    accent: '#E84A1A', tagline: 'ENDURING FIRE',      attr: 'resistencia' },
 };
 
 /** Extensões que o fighterHtml() tenta em ordem antes de desistir. */
@@ -771,41 +1402,154 @@ window.tryNextFighterExt = function (img) {
   img.src = `icons/fighters/${img.dataset.fkey}.${FIGHTER_EXTS[attempt]}`;
 };
 
-/** Renderiza um lutador com 2 camadas:
- *  - SVG estilizado embutido (sempre presente, é o fallback)
- *  - <img> opcional tentando `icons/fighters/<key>.{webp,png,jpg,...}` em cascata
- *  Quando alguma das extensões carrega com sucesso, a imagem sobrepõe o SVG
- *  com fade-in. Se nenhuma existir, fica só o SVG. As imagens NÃO entram
- *  no repositório (estão no .gitignore). */
+/** SVGs abstratos de focos musculares — usados como placeholder visual
+ *  quando a imagem real do objetivo não existe. Formas geométricas
+ *  abstratas, não representações de pessoas reais. */
+const FOCUS_SVGS = {
+  'bíceps + tríceps': `<svg viewBox="0 0 100 120" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M30 20 L20 50 L25 80 L35 100"/>
+    <path d="M50 25 Q60 35 60 55 L55 75 L60 100"/>
+    <ellipse cx="42" cy="50" rx="14" ry="20" fill="currentColor" opacity="0.18"/>
+    <path d="M28 45 Q35 38 42 38 Q49 38 56 45"/>
+    <path d="M28 60 Q35 70 42 70 Q49 70 56 60" opacity="0.6"/>
+  </svg>`,
+  'core / abdômen': `<svg viewBox="0 0 100 120" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+    <path d="M30 30 Q50 25 70 30 L68 100 Q50 105 32 100 Z" fill="currentColor" opacity="0.15"/>
+    <line x1="50" y1="35" x2="50" y2="95"/>
+    <line x1="35" y1="50" x2="65" y2="50"/>
+    <line x1="35" y1="65" x2="65" y2="65"/>
+    <line x1="35" y1="80" x2="65" y2="80"/>
+    <line x1="35" y1="92" x2="65" y2="92" opacity="0.4"/>
+  </svg>`,
+  'peito': `<svg viewBox="0 0 100 120" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M20 30 Q30 25 50 25 Q70 25 80 30 L82 70 Q70 78 50 78 Q30 78 18 70 Z" fill="currentColor" opacity="0.18"/>
+    <path d="M50 30 L50 75" opacity="0.55"/>
+    <path d="M22 40 Q35 60 48 60 Q35 60 22 50" opacity="0.5"/>
+    <path d="M78 40 Q65 60 52 60 Q65 60 78 50" opacity="0.5"/>
+  </svg>`,
+  'dorsal V': `<svg viewBox="0 0 100 120" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M20 25 L50 18 L80 25 L72 95 L50 100 L28 95 Z" fill="currentColor" opacity="0.18"/>
+    <path d="M28 35 L50 30 L72 35" opacity="0.6"/>
+    <path d="M50 30 L50 95" opacity="0.5"/>
+    <path d="M22 45 L48 50 M52 50 L78 45" opacity="0.5"/>
+  </svg>`,
+  'quadríceps + glúteo': `<svg viewBox="0 0 100 120" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+    <path d="M35 20 Q30 60 30 95 L40 105 L42 95 L45 60 L48 30 Z" fill="currentColor" opacity="0.18"/>
+    <path d="M58 20 Q60 60 56 95 L50 105 L48 95 L46 60 L48 30" fill="currentColor" opacity="0.15"/>
+    <path d="M38 50 Q42 55 38 65" opacity="0.5"/>
+    <path d="M52 50 Q56 55 52 65" opacity="0.5"/>
+  </svg>`,
+  'perna + glúteo': `<svg viewBox="0 0 100 120" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+    <ellipse cx="35" cy="25" rx="15" ry="10" fill="currentColor" opacity="0.2"/>
+    <ellipse cx="65" cy="25" rx="15" ry="10" fill="currentColor" opacity="0.2"/>
+    <path d="M30 35 Q28 65 32 95 L42 105" fill="currentColor" opacity="0.16"/>
+    <path d="M70 35 Q72 65 68 95 L58 105" fill="currentColor" opacity="0.16"/>
+  </svg>`,
+  'coxa + glúteo': `<svg viewBox="0 0 100 120" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+    <path d="M22 15 Q18 50 30 80 L40 92 L48 75 L45 35 Z" fill="currentColor" opacity="0.18"/>
+    <path d="M78 15 Q82 50 70 80 L60 92 L52 75 L55 35" fill="currentColor" opacity="0.18"/>
+    <path d="M32 40 Q38 50 32 60" opacity="0.5"/>
+    <path d="M68 40 Q62 50 68 60" opacity="0.5"/>
+  </svg>`,
+  'oblíquos + cintura': `<svg viewBox="0 0 100 120" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M25 20 L75 20 L70 55 L55 65 L55 90 L45 90 L45 65 L30 55 Z" fill="currentColor" opacity="0.18"/>
+    <path d="M50 25 L50 90" opacity="0.4"/>
+    <path d="M30 45 L48 55 M70 45 L52 55" opacity="0.55"/>
+  </svg>`,
+  'braços + ombros': `<svg viewBox="0 0 100 120" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+    <circle cx="20" cy="35" r="12" fill="currentColor" opacity="0.2"/>
+    <circle cx="80" cy="35" r="12" fill="currentColor" opacity="0.2"/>
+    <path d="M22 45 Q15 70 25 95" fill="currentColor" opacity="0.16"/>
+    <path d="M78 45 Q85 70 75 95" fill="currentColor" opacity="0.16"/>
+    <path d="M32 30 L68 30" opacity="0.5"/>
+  </svg>`,
+  'corpo todo lean': `<svg viewBox="0 0 100 120" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="50" cy="20" r="10" fill="currentColor" opacity="0.2"/>
+    <path d="M30 35 Q50 32 70 35 L68 60 L62 90 L60 110 M68 60 L75 90 L78 110 M32 60 L25 90 L22 110 M32 35 L32 60" fill="currentColor" opacity="0.16"/>
+    <path d="M40 50 Q50 56 60 50" opacity="0.5"/>
+  </svg>`,
+  'corpo todo': `<svg viewBox="0 0 100 120" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="50" cy="22" r="11" fill="currentColor" opacity="0.2"/>
+    <path d="M30 40 L25 75 L20 110 M30 40 L50 38 L70 40 M70 40 L75 75 L80 110 M50 38 L52 80 L48 110" fill="currentColor" opacity="0.16"/>
+    <path d="M35 55 L65 55" opacity="0.4"/>
+    <path d="M42 70 L58 70" opacity="0.4"/>
+  </svg>`,
+};
+
+/** Retorna o SVG mais adequado pro foco do objetivo. */
+function focusSvg(focus = '') {
+  if (FOCUS_SVGS[focus]) return FOCUS_SVGS[focus];
+  // Fallback por keyword
+  const f = focus.toLowerCase();
+  if (f.includes('bíceps') || f.includes('biceps') || f.includes('tríceps') || f.includes('triceps') || f.includes('braço')) return FOCUS_SVGS['braços + ombros'];
+  if (f.includes('abdom') || f.includes('core') || f.includes('oblí')) return FOCUS_SVGS['core / abdômen'];
+  if (f.includes('peito')) return FOCUS_SVGS['peito'];
+  if (f.includes('dorsal') || f.includes('costas')) return FOCUS_SVGS['dorsal V'];
+  if (f.includes('quad')) return FOCUS_SVGS['quadríceps + glúteo'];
+  if (f.includes('glúteo') || f.includes('post')) return FOCUS_SVGS['perna + glúteo'];
+  if (f.includes('cintura')) return FOCUS_SVGS['oblíquos + cintura'];
+  if (f.includes('coxa')) return FOCUS_SVGS['coxa + glúteo'];
+  if (f.includes('lean')) return FOCUS_SVGS['corpo todo lean'];
+  return FOCUS_SVGS['corpo todo'];
+}
+
+/** Tenta a próxima extensão na cadeia para imagens de objetivos (icons/goals/). */
+window.tryNextGoalExt = function (img) {
+  const attempt = (+img.dataset.attempt || 0) + 1;
+  if (attempt >= FIGHTER_EXTS.length) { img.remove(); return; }
+  img.dataset.attempt = attempt;
+  img.src = `icons/goals/${img.dataset.gkey}.${FIGHTER_EXTS[attempt]}`;
+};
+
+/** Renderiza imagem de objetivo. Procura primeiro em
+ *  state.user.goalImages[key] (data URL upada pelo usuário). Senão mostra
+ *  SVG abstrato do grupo muscular como placeholder. */
+function goalImageHtml(g, { className = '' } = {}) {
+  const svg = focusSvg(g.focus);
+  const customSrc = state?.user?.goalImages?.[g.key];
+  return `
+    <div class="goal-img-wrap ${className}">
+      <div class="goal-placeholder">
+        <div class="goal-svg">${svg}</div>
+        <div class="goal-name-overlay">${g.name}</div>
+      </div>
+      ${customSrc ? `
+        <img src="${customSrc}"
+             alt="${g.name}"
+             class="goal-img loaded"
+             loading="lazy"
+             data-gkey="${g.key}" />
+      ` : ''}
+    </div>`;
+}
+
+/** Renderiza um lutador como tile limpo (gradient + iniciais).
+ *  Versão pós-rework: imagens MK foram removidas — apenas o placeholder. */
 function fighterHtml(key, { className = '' } = {}) {
   const f = FIGHTERS[key];
   if (!f) return '';
+  const initials = f.name.split(' ').map((w) => w[0]).join('').slice(0, 2);
   return `
     <div class="fighter-wrap ${className}" data-key="${key}">
-      <div class="fighter-svg">${f.svg}</div>
-      <img src="icons/fighters/${key}.${FIGHTER_EXTS[0]}"
-           alt="${f.name}"
-           class="fighter-img"
-           loading="lazy"
-           data-fkey="${key}"
-           data-attempt="0"
-           onload="this.classList.add('loaded')"
-           onerror="tryNextFighterExt(this)" />
+      <div class="fighter-placeholder" style="--accent:${f.accent}">
+        <div class="fighter-init">${initials}</div>
+        <div class="fighter-pname">${f.name}</div>
+      </div>
     </div>`;
 }
 
 // 5 atributos — agora com lutador MK como mascote.
 const ATTRIBUTES = [
-  { key: 'forca',       name: 'Força',       color: '#B8242E', icon: '💪', fighter: 'kano',
-    desc: 'Cresce com treinos pesados (compostos, séries baixas). Mascote: Kano.' },
-  { key: 'resistencia', name: 'Resistência', color: '#E84A1A', icon: '🔥', fighter: 'liukang',
-    desc: 'Cresce com cardio, passos e dança. Mascote: Liu Kang.' },
-  { key: 'sabedoria',   name: 'Sabedoria',   color: '#FFE08F', icon: '⚡', fighter: 'raiden',
-    desc: 'Cresce com leitura, estudo e foco. Mascote: Raiden.' },
-  { key: 'disciplina',  name: 'Disciplina',  color: '#7BB8FF', icon: '❄️', fighter: 'subzero',
-    desc: 'Cresce com proteína na meta + sono regular. Mascote: Sub-Zero.' },
-  { key: 'vitalidade',  name: 'Vitalidade',  color: '#3FBF7F', icon: '🕶️', fighter: 'cage',
-    desc: 'Cresce com streaks e quests. Mascote: Johnny Cage.' },
+  { key: 'forca',       name: 'Força',       ko: '힘',     color: '#B8242E', icon: '💪', fighter: 'kano',
+    desc: 'Cresce com treinos pesados (compostos, séries baixas).' },
+  { key: 'resistencia', name: 'Resistência', ko: '지구력', color: '#E84A1A', icon: '🔥', fighter: 'liukang',
+    desc: 'Cresce com cardio, passos e dança.' },
+  { key: 'sabedoria',   name: 'Sabedoria',   ko: '지혜',   color: '#FFE08F', icon: '⚡', fighter: 'raiden',
+    desc: 'Cresce com leitura, estudo e foco.' },
+  { key: 'disciplina',  name: 'Disciplina',  ko: '절제',   color: '#7BB8FF', icon: '❄️', fighter: 'subzero',
+    desc: 'Cresce com proteína na meta + sono regular.' },
+  { key: 'vitalidade',  name: 'Vitalidade',  ko: '활력',   color: '#3FBF7F', icon: '🕶️', fighter: 'cage',
+    desc: 'Cresce com streaks e quests.' },
 ];
 
 // Biblioteca de exercícios pré-cadastrados.
@@ -1073,7 +1817,120 @@ const EXERCISE_LIBRARY = {
       mistakes: 'Tentar a velocidade real direto — frustra.',
       tip: 'Grava em vídeo pra ver onde está errando. 화이팅 ☆' },
   ],
-  'Outro': [],
+  'Peito + Tríceps': [
+    { name: 'Supino reto barra', target: '4×6–10', muscles: 'peitoral, tríceps, deltóide ant.',
+      description: 'Compoosto principal pra construir peito.', technique: 'Escápula retraída, descida controlada até o mamilo, sobe explosivo.',
+      mistakes: 'Cotovelos a 90°. Levantar bunda. Não tocar o peito.', tip: 'Pés firmes no chão, glúteo levemente apertado.' },
+    { name: 'Supino inclinado halteres', target: '4×8–12', muscles: 'peito superior, deltóide ant.',
+      description: 'Foca peito alto — região "preenchida" esteticamente.', technique: 'Banco 30–45°, halteres na largura dos ombros, desce profundo.',
+      mistakes: 'Banco muito íngreme (vira ombro). Encostar halteres no topo.', tip: 'Use o cabo se quiser mais tensão constante.' },
+    { name: 'Crucifixo halteres', target: '3×10–15', muscles: 'peitoral (alongamento)',
+      description: 'Alongamento intenso de peito.', technique: 'Cotovelos semi-flex fixos, abre como abraçando um barril.',
+      mistakes: 'Esticar cotovelo no fim (vira supino).', tip: 'Pausa 1s no ponto mais aberto.' },
+    { name: 'Tríceps testa', target: '3×8–12', muscles: 'tríceps (cabeça longa)',
+      description: 'Alongamento máximo de tríceps.', technique: 'Cotovelos travados apontando pro teto, só antebraço move.',
+      mistakes: 'Cotovelo abrindo (vira pullover).', tip: 'Use barra W pra poupar punho.' },
+    { name: 'Tríceps corda', target: '3×12–15', muscles: 'tríceps (todas cabeças)',
+      description: 'Volume e pump.', technique: 'Cotovelos colados ao corpo, abra a corda no fim do movimento.',
+      mistakes: 'Cotovelo subindo (vira ombro).', tip: 'Termina com drop set — pump absurdo.' },
+    { name: 'Mergulho em paralelas', target: '3×AMRAP', muscles: 'tríceps, peito inferior',
+      description: 'Composto pesado de tríceps.', technique: 'Corpo ereto pra focar tríceps; levemente inclinado pra focar peito.',
+      mistakes: 'Descer demais (estressa ombro).', tip: 'Adicione carga com cinto quando bater 12 reps.' },
+  ],
+  'Costas + Bíceps': [
+    { name: 'Barra fixa (pull-up)', target: '4×AMRAP', muscles: 'dorsal, bíceps',
+      description: 'O rei da largura de dorsal.', technique: 'Pegada pronada, queixo passa a barra, escápula retraída.',
+      mistakes: 'Subir só com bíceps. Sub-amplitude.', tip: 'Negativas + assistida elástica se ainda não tira.' },
+    { name: 'Remada curvada barra', target: '4×6–10', muscles: 'dorsal, romboides, trapézio médio',
+      description: 'Espessura de dorsal.', technique: 'Tronco ~45°, puxa até umbigo, escápula aperta.',
+      mistakes: 'Tronco subindo a cada rep.', tip: 'Imagine "partir uma noz" entre as escápulas.' },
+    { name: 'Pulldown pegada neutra', target: '4×10–12', muscles: 'dorsal, bíceps',
+      description: 'Substituto/complemento do pull-up.', technique: 'Coxas travadas, leve inclinação (15°), puxa até a clavícula.',
+      mistakes: 'Puxar com bíceps. Deitar demais.', tip: 'Empurre o peito pra cima durante a fase concêntrica.' },
+    { name: 'Remada unilateral halter', target: '3×8–12/lado', muscles: 'dorsal, romboides',
+      description: 'Amplitude maior + sem fadiga lombar.', technique: 'Joelho e mão no banco, costas planas, cotovelo perto do corpo.',
+      mistakes: 'Rotação de tronco (cheating).', tip: '"Cotovelo pro bolso de trás".' },
+    { name: 'Rosca direta barra', target: '3×8–12', muscles: 'bíceps braquial',
+      description: 'Hipertrofia clássica de bíceps.', technique: 'Cotovelos colados ao corpo, pulso neutro.',
+      mistakes: 'Balanço de quadril.', tip: 'Encosta as costas na parede pra remover o cheating.' },
+    { name: 'Rosca martelo', target: '3×10–12', muscles: 'bíceps + braquiorradial',
+      description: 'Bíceps mais grosso + antebraço.', technique: 'Pegada neutra (polegares pra cima), cotovelo fixo.',
+      mistakes: 'Cotovelo indo pra frente.', tip: 'Alterne reto + martelo em superset.' },
+  ],
+  'Ombros': [
+    { name: 'Desenvolvimento militar barra', target: '4×6–10', muscles: 'deltóide anterior, tríceps',
+      description: 'Pressão vertical pesada.', technique: 'Core travado, sobe a barra em linha reta, retraia cabeça na passagem.',
+      mistakes: 'Hiperestender lombar.', tip: 'Imagine atravessar uma janela com a cabeça.' },
+    { name: 'Desenvolvimento halteres sentado', target: '4×8–12', muscles: 'deltóide ant+médio',
+      description: 'Mais amplitude e equilíbrio bilateral.', technique: 'Halteres na altura das orelhas, palma virada pra frente.',
+      mistakes: 'Travar cotovelos.', tip: 'Pegada neutra (palmas se olhando) é mais "ombro-amigável".' },
+    { name: 'Elevação lateral', target: '4×12–15', muscles: 'deltóide médio',
+      description: 'O exercício mais importante pra ombro largo.', technique: 'Cotovelo guia o movimento, sobe até linha do ombro.',
+      mistakes: 'Polegar pra cima (vira ant.). Trapézio subindo.', tip: 'Imagine derramar uma jarra de café — pulso ligeiramente abaixado no topo.' },
+    { name: 'Elevação frontal', target: '3×12', muscles: 'deltóide anterior',
+      description: 'Isolamento se ombro anterior estiver fraco.', technique: 'Halteres na frente das coxas, sobe até linha do ombro.',
+      mistakes: 'Subir acima do ombro (vira trapézio).', tip: 'Se já faz muito supino, pode pular.' },
+    { name: 'Face pull', target: '4×15', muscles: 'deltóide posterior, manguito',
+      description: 'Antídoto da postura cifótica.', technique: 'Polia alta com corda, puxa até as mãos chegarem nas orelhas.',
+      mistakes: 'Carga pesada (perde forma).', tip: 'Faz no fim de todo treino — postura agradece.' },
+    { name: 'Encolhimento de ombros (shrug)', target: '4×12', muscles: 'trapézio superior',
+      description: 'Trapézio em volume.', technique: 'Halteres ao lado do corpo, sobe ombro até a orelha, pausa 1s.',
+      mistakes: 'Rolar o ombro (não rola).', tip: 'Carga vai longe — trapézio aguenta muito.' },
+  ],
+  'Pernas (quadríceps)': [
+    { name: 'Agachamento livre', target: '5×5–8', muscles: 'quadríceps, glúteo, posterior',
+      description: 'O rei dos exercícios.', technique: 'Pés largura dos ombros, ponta leve pra fora, profundidade até paralelo.',
+      mistakes: 'Joelho valgo. Calcanhar levantando.', tip: '"Rosqueie" os pés no chão pra fora antes de descer.' },
+    { name: 'Leg press 45°', target: '4×8–12', muscles: 'quadríceps, glúteo',
+      description: 'Volume sem fadigar core.', technique: 'Pés meio do apoio, desce até joelho ~90°.', mistakes: 'Soltar a lombar.', tip: 'Pés mais baixos = mais quad.' },
+    { name: 'Cadeira extensora', target: '4×10–15', muscles: 'quadríceps isolado',
+      description: 'Isolamento puro de quad.', technique: 'Eixo alinhado com joelho, estende até quase travar, aperta no topo.',
+      mistakes: 'Travar com chute.', tip: 'Ponta do pé pra fora recruta vasto medial (gota acima do joelho).' },
+    { name: 'Hack squat', target: '4×8–12', muscles: 'quadríceps (mais que glúteo)',
+      description: 'Variação focada em quad.', technique: 'Pés meio do apoio, desce profundo.', mistakes: 'Joelhos pra dentro.', tip: 'Pés mais baixos = mais quad ainda.' },
+    { name: 'Afundo passada', target: '3×10/perna', muscles: 'quad, glúteo, estabilizador',
+      description: 'Unilateral — corrige assimetrias.', technique: 'Passada longa, desce até joelho de trás quase tocar.',
+      mistakes: 'Joelho da frente passando do pé.', tip: 'Passada longa = mais glúteo. Curta = mais quad.' },
+    { name: 'Panturrilha em pé', target: '4×12–15', muscles: 'gastrocnêmio',
+      description: 'Joelho estendido = gastrocnêmio.', technique: 'Antepé na borda, calcanhar abaixo da linha.',
+      mistakes: 'Amplitude curta.', tip: 'Faz 1 dropset por treino — panturrilha responde a volume alto.' },
+  ],
+  'Pernas (posterior + glúteo)': [
+    { name: 'Stiff (RDL)', target: '4×8–10', muscles: 'isquiotibiais, glúteo, lombar',
+      description: 'Posterior de coxa via hip hinge.', technique: 'Joelhos quase travados, empurra quadril pra trás, barra colada à perna.',
+      mistakes: 'Agachar. Lombar arredondando.', tip: '"Fechar a porta com a bunda" — quadril pra trás, não pra baixo.' },
+    { name: 'Hip thrust', target: '5×6–10', muscles: 'glúteo máximo, isquio',
+      description: 'O exercício mais eficiente para glúteo.', technique: 'Escápula no banco, sobe até alinhar tronco-coxa, aperta 1s no topo.',
+      mistakes: 'Hiperestender lombar.', tip: 'Olhar fixo num ponto à frente, não pro teto.' },
+    { name: 'Mesa flexora', target: '4×10–12', muscles: 'isquiotibiais',
+      description: 'Isolamento de posterior.', technique: 'Quadril apoiado, puxa calcanhar até quase tocar o glúteo.',
+      mistakes: 'Levantar quadril.', tip: 'Conte 3s na fase de volta — isquio cresce na excêntrica.' },
+    { name: 'Cadeira flexora sentado', target: '3×10–15', muscles: 'isquiotibiais',
+      description: 'Variação sentada com mais alongamento.', technique: 'Flexiona joelho ao máximo, segura 1s.',
+      mistakes: 'Voltar com inércia.', tip: 'Pés pra dentro recruta a cabeça medial.' },
+    { name: 'Afundo búlgaro', target: '3×8/perna', muscles: 'glúteo, quad, posterior',
+      description: 'Unilateral pesado.', technique: 'Pé de trás elevado num banco, desce reto, peso na perna da frente.',
+      mistakes: 'Curvar pra frente.', tip: 'Tronco ligeiramente inclinado = mais glúteo.' },
+    { name: 'Panturrilha sentado', target: '4×15', muscles: 'sóleo',
+      description: 'Joelho flexionado = sóleo.', technique: 'Joelho 90°, pad na coxa, sobe forte, desce profundo.',
+      mistakes: 'Amplitude curta.', tip: 'Reps altas (15–25).' },
+  ],
+  'Braços (bíceps + tríceps)': [
+    { name: 'Rosca direta barra', target: '4×8–10', muscles: 'bíceps braquial',
+      description: 'Hipertrofia clássica.', technique: 'Cotovelos colados, pulso neutro.', mistakes: 'Balanço.', tip: 'Encoste a parede.' },
+    { name: 'Rosca martelo', target: '3×10–12', muscles: 'bíceps + braquiorradial',
+      description: 'Bíceps grosso + antebraço.', technique: 'Pegada neutra, cotovelo fixo.', mistakes: 'Cotovelo indo pra frente.', tip: 'Superset com rosca direta.' },
+    { name: 'Rosca scott', target: '3×10–12', muscles: 'bíceps (parte baixa)',
+      description: 'Pico de bíceps.', technique: 'Banco scott, amplitude completa, sem balanço.', mistakes: 'Não esticar completamente.', tip: 'Não estoure cotovelo — controle no fim.' },
+    { name: 'Tríceps testa', target: '4×8–12', muscles: 'tríceps cabeça longa',
+      description: 'Alongamento intenso.', technique: 'Cotovelos travados apontando pro teto.', mistakes: 'Cotovelo abrindo.', tip: 'Barra W.' },
+    { name: 'Tríceps corda', target: '4×12–15', muscles: 'tríceps todas cabeças',
+      description: 'Volume e pump.', technique: 'Abra a corda no fim.', mistakes: 'Cotovelo subindo.', tip: 'Drop set no fim.' },
+    { name: 'Tríceps francês', target: '3×10', muscles: 'tríceps cabeça longa',
+      description: 'Alongamento profundo.', technique: 'Halter atrás da cabeça, cotovelos apontando pro teto.', mistakes: 'Cotovelo abrindo.', tip: 'Use halter de peso médio com amplitude total.' },
+  ],
+  '🆓 Treino livre': [], // modo aberto — você adiciona exercícios e o app detecta o split
+  'Outro':           [],
 };
 
 // Buffs/debuffs disponíveis no log diário (multi-select).
@@ -1099,6 +1956,97 @@ const META = {
 const DAILY_XP_CAP = 7;
 
 const STORAGE_KEY = 'quest.state.v1';
+const ACCOUNTS_KEY = 'quest.accounts.v1';
+const SESSION_KEY  = 'quest.session.v1';
+
+// ===== 1b. AUTH (local) =====================================
+// Multi-conta no mesmo dispositivo. Cada conta tem state próprio em
+// quest.state.v1.<accountId>. Senha é hasheada com SHA-256 + salt fixo.
+// Não é segurança forte — é "tranca de porta" pra família compartilhar
+// o dispositivo. Para auth real seria preciso backend.
+
+/** Lê um File de imagem, redimensiona pra `maxW` (mantém aspect),
+ *  e retorna como data URL JPEG comprimido. Mantém o localStorage leve. */
+function resizeImageToDataUrl(file, maxW = 700, quality = 0.82) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(reader.error);
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error('image decode failed'));
+      img.onload = () => {
+        const scale = Math.min(1, maxW / img.naturalWidth);
+        const w = Math.round(img.naturalWidth * scale);
+        const h = Math.round(img.naturalHeight * scale);
+        const c = document.createElement('canvas');
+        c.width = w; c.height = h;
+        c.getContext('2d').drawImage(img, 0, 0, w, h);
+        resolve(c.toDataURL('image/jpeg', quality));
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+async function sha256(text) {
+  const buf = new TextEncoder().encode(text);
+  const hash = await crypto.subtle.digest('SHA-256', buf);
+  return Array.from(new Uint8Array(hash)).map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+function loadAccounts() {
+  try { return JSON.parse(localStorage.getItem(ACCOUNTS_KEY)) || []; }
+  catch { return []; }
+}
+function saveAccounts(accs) {
+  localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(accs));
+}
+function getSession() {
+  return localStorage.getItem(SESSION_KEY) || null;
+}
+function setSession(id) {
+  if (id) localStorage.setItem(SESSION_KEY, id);
+  else    localStorage.removeItem(SESSION_KEY);
+}
+function currentAccount() {
+  const id = getSession();
+  if (!id) return null;
+  return loadAccounts().find((a) => a.id === id) || null;
+}
+function stateKey(accountId) {
+  return accountId ? `${STORAGE_KEY}.${accountId}` : STORAGE_KEY;
+}
+
+async function createAccount({ username, password }) {
+  username = (username || '').trim();
+  if (username.length < 2) throw new Error('Usuário precisa ter ao menos 2 letras.');
+  if ((password || '').length < 4) throw new Error('Senha precisa ter ao menos 4 caracteres.');
+  const accs = loadAccounts();
+  if (accs.some((a) => a.username.toLowerCase() === username.toLowerCase())) {
+    throw new Error('Esse usuário já existe.');
+  }
+  const id = 'u' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+  const passwordHash = await sha256(password + '·quest-salt·' + id);
+  accs.push({ id, username, passwordHash, createdAt: new Date().toISOString() });
+  saveAccounts(accs);
+  return id;
+}
+
+async function loginAccount({ username, password }) {
+  const accs = loadAccounts();
+  const acc = accs.find((a) => a.username.toLowerCase() === (username || '').trim().toLowerCase());
+  if (!acc) throw new Error('Usuário não encontrado.');
+  const hash = await sha256(password + '·quest-salt·' + acc.id);
+  if (hash !== acc.passwordHash) throw new Error('Senha incorreta.');
+  return acc.id;
+}
+
+function logoutAccount() {
+  setSession(null);
+  state = null;
+  showAuthScreen();
+}
 
 // ===== 2. STATE ==============================================
 
@@ -1133,7 +2081,18 @@ function makeEmptyState() {
       weeklyCurrent: { weekStart: null, item: null, progress: 0, completed: false },
     },
     rewards: {
-      available: ['Comprar lightstick novo', 'Sessão de fotos', 'Cinema sozinho'],
+      available: [
+        // Reforços rápidos (sessões de lazer guilt-free)
+        '1 partida de LoL (ranqueada)',
+        '2 partidas de LoL (normal/aram)',
+        '1 episódio de anime',
+        'Maratona 3 eps do anime atual',
+        'Filme com pipoca',
+        // Recompensas maiores
+        'Comprar lightstick novo',
+        'Sessão de fotos',
+        'Cinema sozinho',
+      ],
       unlocked: [],   // skins desbloqueadas (3 semanas seguidas em Platina, etc.)
       redeemed: [],   // {date, text}
     },
@@ -1146,18 +2105,92 @@ function makeEmptyState() {
 
 function loadState() {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const acc = currentAccount();
+    const key = stateKey(acc?.id);
+    let raw = localStorage.getItem(key);
+    // Compat: se a conta foi recém-criada e não tem state, mas existe
+    // state no key legado (quest.state.v1), promove pra essa conta.
+    if (!raw && acc) {
+      const legacy = localStorage.getItem(STORAGE_KEY);
+      if (legacy) raw = legacy;
+    }
     if (!raw) return null;
-    return JSON.parse(raw);
+    const s = JSON.parse(raw);
+    migrateState(s);
+    return s;
   } catch (e) {
     console.error('Falha lendo localStorage:', e);
     return null;
   }
 }
 
+/** Garante que campos novos apareçam mesmo em estados antigos.
+ *  Idempotente — chame quantas vezes quiser sem efeito colateral. */
+function migrateState(s) {
+  if (!s) return;
+  // Tema legado → tema novo
+  s.user = s.user || {};
+  if (s.user.theme === 'kpop')  s.user.theme = 'kpop_anime';
+  if (s.user.theme === 'clean') s.user.theme = 'inside_out';
+  if (!s.user.theme || !THEMES[s.user.theme]) s.user.theme = 'kpop_anime';
+
+  // Marca quests específicas de K-pop no pool já salvo (idempotente)
+  const KPOP_QUEST_IDS = new Set(['q26', 'q32', 'q33', 'q34', 'q35', 'q36']);
+  if (s.quests?.pool) {
+    s.quests.pool.forEach((q) => {
+      if (KPOP_QUEST_IDS.has(q.id)) q.kpopOnly = true;
+    });
+  }
+
+  s.rewards = s.rewards || { available: [], unlocked: [], redeemed: [] };
+  s.rewards.available = s.rewards.available || [];
+  const newRewards = [
+    '1 partida de LoL (ranqueada)',
+    '2 partidas de LoL (normal/aram)',
+    '1 episódio de anime',
+    'Maratona 3 eps do anime atual',
+  ];
+  // Compatibilidade: aceita strings legadas e objetos novos {id, text, daily}
+  const existingTexts = new Set(
+    s.rewards.available.map((r) => typeof r === 'string' ? r : r.text)
+  );
+  for (const r of newRewards) {
+    if (!existingTexts.has(r)) s.rewards.available.push(r);
+  }
+
+  // Migração de keys antigas de GOALS → novas (após rework por grupo muscular).
+  s.user = s.user || {};
+  if (Array.isArray(s.user.activeGoals)) {
+    const goalKeyMap = {
+      // Keys antigas (versões 1 e 2) → novas keys por grupo muscular
+      'cage_arms':    'definicao',
+      'jeno_abs':     'abdomen',
+      'liu_pecs':     'peitoral',
+      'subzero_back': 'dorsal',
+      'wonho_arms':   'bracos',
+      'jaypark_lean': 'calistenia',
+      'johnny':       'bracos',
+      'leejeno':      'abdomen',
+      'kano':         'forca',
+      'liukang':      'peitoral',
+      'subzero':      'dorsal',
+      'raiden':       'ombros',
+      'scorpion':     'cardio',
+      'cage':         'definicao',
+      // sem foto correspondente: kitana_legs, karina_waist, lisa_thighs, stage_ready → removidos
+    };
+    const validKeys = new Set(['bracos','abdomen','calistenia','forca','peitoral','dorsal','ombros','cardio','definicao']);
+    s.user.activeGoals = s.user.activeGoals
+      .map((k) => goalKeyMap[k] || k)
+      .filter((k) => validKeys.has(k));
+    s.user.activeGoals = Array.from(new Set(s.user.activeGoals));
+  }
+}
+
 function saveState() {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    const acc = currentAccount();
+    localStorage.setItem(stateKey(acc?.id), JSON.stringify(state));
   } catch (e) {
     console.error('Falha gravando localStorage:', e);
     toast('⚠️ Sem espaço para salvar localmente');
@@ -1327,12 +2360,14 @@ function checkAchievements() {
   }
 }
 
-/** Retorna a quote do dia (determinística — muda 1x por dia).
- *  Pode retornar quote coreana OU frase Mortal Kombat. */
+/** Retorna a quote do dia, do pool do tema atual (determinística — muda 1x/dia). */
 function dailyQuote() {
   const d = new Date(todayISO()).getTime();
-  const idx = Math.floor(d / 86400000) % QUOTES.length;
-  return QUOTES[idx];
+  const dayIdx = Math.floor(d / 86400000);
+  const pool = (getTheme(state).quotes && getTheme(state).quotes.length)
+    ? getTheme(state).quotes
+    : [getTheme(state).quote];
+  return pool[dayIdx % pool.length];
 }
 const dailyKoreanQuote = dailyQuote; // compat — chamada antiga ainda funciona
 
@@ -1409,9 +2444,12 @@ function ensureDailyQuests() {
   const today = todayISO();
   const da = state.quests.dailyAssigned;
   if (da.date !== today) {
+    // Filtra quests específicas de K-pop quando o tema não é kpop_anime
+    const isKpop = state.user.theme === 'kpop_anime' || !state.user.theme;
+    const pool = state.quests.pool.filter((q) => isKpop || !q.kpopOnly);
     state.quests.dailyAssigned = {
       date: today,
-      items: sample(state.quests.pool, 3),
+      items: sample(pool, 3),
       rerolled: false,
       completed: [],
     };
@@ -1519,11 +2557,12 @@ const OVERLAY_FIGHTER = {
   toasty:     'cage',     // easter egg
 };
 
-/** Overlay tipo Mortal Kombat — "FATALITY!", "FLAWLESS VICTORY!", etc.
- *  Mostra silhueta do lutador relacionado por trás do texto. */
+/** Overlay celebratório — varia por tema (KOMBAT_EVENTS = só K-pop/Anime).
+ *  Mostra silhueta do lutador relacionado por trás do texto no tema K-pop. */
 function kombatOverlay(kind = 'finish') {
-  const ev = KOMBAT_EVENTS[kind] || KOMBAT_EVENTS.finish;
-  const fighterKey = OVERLAY_FIGHTER[kind];
+  const ev = themeEvent(kind) || KOMBAT_EVENTS.finish;
+  const showFighter = state?.user?.theme === 'kpop_anime' || !state?.user?.theme;
+  const fighterKey = showFighter ? OVERLAY_FIGHTER[kind] : null;
   const fighter = fighterKey && FIGHTERS[fighterKey];
   const overlay = document.createElement('div');
   overlay.className = 'mk-overlay';
@@ -1594,10 +2633,12 @@ const app = () => document.getElementById('app');
 function render() {
   ensureDailyQuests();
   ensureWeeklyQuest();
+  applyTheme();
   const views = {
     home:     viewDashboard,
     workout:  viewWorkout,
     nutri:    viewNutrition,
+    goals:    viewGoals,
     body:     viewBody,
     insights: viewInsights,
     config:   viewConfig,
@@ -1637,20 +2678,20 @@ function viewDashboard() {
   const attrs = state.user.attributes || { forca:0, resistencia:0, sabedoria:0, disciplina:0, vitalidade:0 };
   const unlockedCount = (state.user.achievementsUnlocked || []).length;
 
-  // Renderiza quote: coreano OU kombat estilo MK
-  const quoteHtml = quote.kombat
-    ? `<div class="font-kombat text-sm tracking-widest text-blood dark:text-ember">${quote.kombat}</div>
-       <div class="text-xs italic text-ink/55 dark:text-paper/55">"${quote.pt}" <span class="opacity-60">— ${quote.source || 'Mortal Kombat'}</span></div>`
-    : `<div class="font-display text-base text-ink/80 dark:text-paper/80">${quote.ko}</div>
-       <div class="text-xs italic text-ink/55 dark:text-paper/55">"${quote.pt}"</div>`;
-  const borderClass = quote.kombat ? 'border-blood/60' : 'border-pink/60 dark:border-pink/50';
+  // Quote do dia — rotaciona dentro do pool do tema atual
+  const theme = getTheme(state);
+  const q = dailyQuote();
+  const quoteHtml = `
+    <div class="font-display text-base text-ink/80 dark:text-paper/80">${q.primary}</div>
+    ${q.secondary ? `<div class="text-xs italic text-ink/55 dark:text-paper/55">${q.secondary}</div>` : ''}`;
+  const borderClass = 'border-pink/60 dark:border-pink/50';
+  const greetingTop = theme.greeting?.primary || g.ko;
 
   return `
   <header class="pt-7 pb-3 px-5 kombat-hero">
-    <div class="kombat-hero-svg text-blood">${I.dragon}</div>
     <div class="flex items-center justify-between relative">
       <div>
-        <div class="font-display text-xs uppercase tracking-widest text-ink/40 dark:text-paper/40">${g.ko}</div>
+        <div class="font-display text-xs uppercase tracking-widest text-ink/40 dark:text-paper/40">${greetingTop}</div>
         <h1 class="text-2xl font-extrabold mt-0.5">${g.pt}, ${u.name}.</h1>
       </div>
       <button id="toggle-dark" class="q-btn q-btn-ghost px-3 py-2" aria-label="modo escuro">
@@ -1697,7 +2738,7 @@ function viewDashboard() {
   <section class="px-4 mt-4">
     <div class="q-card p-3">
       <div class="flex items-center justify-between mb-3">
-        <h3 class="font-kombat text-sm tracking-widest uppercase">Atributos · Kombatants</h3>
+        <h3 class="font-bold text-sm tracking-wider uppercase opacity-70">Atributos</h3>
         <span class="text-xs text-ink/45 dark:text-paper/45">${ATTRIBUTES.reduce((s,a)=>s+(attrs[a.key]||0),0)} pts</span>
       </div>
       <div class="grid grid-cols-5 gap-1">
@@ -1705,12 +2746,13 @@ function viewDashboard() {
           const val = attrs[a.key] || 0;
           const max = Math.max(...ATTRIBUTES.map(x => attrs[x.key] || 0), 10);
           const pct = (val / max) * 100;
-          const fighter = FIGHTERS[a.fighter];
           return `
-          <button class="flex flex-col items-center gap-0.5 attr-tile" data-attr="${a.key}" aria-label="${a.name}: ${val}">
-            <div class="attr-fighter h-16 w-full">${a.fighter ? fighterHtml(a.fighter) : a.icon}</div>
-            <div class="w-full xp-track is-kombat" style="height:5px"><div class="xp-fill" style="width:${pct}%; background:${a.color}"></div></div>
-            <div class="text-[11px] font-bold mt-0.5" style="color:${a.color}">${val}</div>
+          <button class="flex flex-col items-center gap-1 attr-tile" data-attr="${a.key}" aria-label="${a.name}: ${val}">
+            <div class="attr-chip" style="--accent:${a.color}" data-fallback="${a.icon}">
+              <span class="attr-ko">${a.ko || a.icon}</span>
+            </div>
+            <div class="w-full xp-track" style="height:5px"><div class="xp-fill" style="width:${pct}%; background:${a.color}"></div></div>
+            <div class="text-[11px] font-bold" style="color:${a.color}">${val}</div>
             <div class="text-[9px] text-ink/55 dark:text-paper/55 leading-tight text-center">${a.name}</div>
           </button>`;
         }).join('')}
@@ -1720,22 +2762,46 @@ function viewDashboard() {
 
   <section class="px-4 mt-3">
     ${(() => {
-      // Banner com lutador rotativo do dia (alinhado com a quote)
-      const fkeys = Object.keys(FIGHTERS);
-      const fidx = Math.floor(new Date(todayISO()).getTime() / 86400000) % fkeys.length;
-      const fkey = fkeys[fidx];
-      const f = FIGHTERS[fkey];
+      const idx = Math.floor(new Date(todayISO()).getTime() / 86400000) % ATTRIBUTES.length;
+      const a = ATTRIBUTES[idx];
+      const val = attrs[a.key] || 0;
+      const showKo = theme.showKombatant;
       return `
-      <div class="fighter-banner">
-        <div class="fighter-banner-svg">${fighterHtml(fkey)}</div>
+      <div class="q-card p-3 flex items-center gap-3">
+        <div class="attr-chip shrink-0" style="--accent:${a.color}; width:56px; height:56px; font-size:22px;" data-fallback="${a.icon}">
+          ${showKo ? `<span class="attr-ko">${a.ko || a.icon}</span>` : ''}
+        </div>
         <div class="flex-1 min-w-0">
-          <div class="text-[10px] uppercase tracking-widest text-ink/45 dark:text-paper/45">Kombatant of the day</div>
-          <div class="fighter-banner-text text-base" style="color:${f.accent}">${f.name}</div>
-          <div class="text-[10px] font-kombat tracking-widest text-ink/65 dark:text-paper/65">${f.tagline}</div>
+          <div class="text-[10px] uppercase tracking-widest text-ink/45 dark:text-paper/45">Atributo do dia</div>
+          <div class="font-extrabold text-base" style="color:${a.color}">${a.name}${showKo && a.ko ? ` · ${a.ko}` : ''}</div>
+          <div class="text-[11px] text-ink/60 dark:text-paper/60 leading-tight mt-0.5">${a.desc}</div>
+        </div>
+        <div class="text-right">
+          <div class="text-[10px] text-ink/45 dark:text-paper/45">pts</div>
+          <div class="text-xl font-extrabold" style="color:${a.color}">${val}</div>
         </div>
       </div>`;
     })()}
   </section>
+
+  ${(() => {
+    const dailies = (state.rewards.available || [])
+      .map((r) => typeof r === 'string' ? { text: r, daily: false } : r)
+      .filter((r) => r.daily);
+    if (!dailies.length) return '';
+    return `
+    <section class="px-4 mt-3">
+      <button id="open-rewards-daily" class="q-card w-full p-3 text-left flex items-center gap-3" style="border-left:3px solid #D6A93E">
+        <span class="text-xl">🎁</span>
+        <div class="flex-1 min-w-0">
+          <div class="text-[10px] uppercase tracking-widest text-kgold">Recompensas diárias</div>
+          <div class="font-semibold text-sm truncate">${dailies.map(r => r.text).slice(0,2).join(' · ')}${dailies.length > 2 ? ` +${dailies.length - 2}` : ''}</div>
+          <div class="text-[10px] text-ink/55 dark:text-paper/55">Você tem ${dailies.length} recompensa${dailies.length === 1 ? '' : 's'} pra resgatar hoje</div>
+        </div>
+        <span class="w-4 h-4 opacity-40">${I.chev}</span>
+      </button>
+    </section>`;
+  })()}
 
   <section class="px-4 mt-5">
     <div class="flex items-center justify-between mb-2">
@@ -1786,30 +2852,33 @@ function viewDashboard() {
 
   <section class="px-4 mt-6">
     <button id="open-log" class="q-btn q-btn-finish w-full py-4 text-base">
-      <span class="w-5 h-5">${I.flame}</span> FINISH IT! <span class="w-5 h-5">${I.flame}</span>
+      <span class="w-5 h-5">${I.flame}</span> ${theme.labels?.finishBtn || 'FINISH IT!'} <span class="w-5 h-5">${I.flame}</span>
     </button>
     <p class="text-center text-xs text-ink/45 dark:text-paper/45 mt-2">
-      Registrar dia · ${dayXP}/${DAILY_XP_CAP} XP capturados hoje
+      ${theme.labels?.register || 'Registrar dia'} · ${dayXP}/${DAILY_XP_CAP} XP capturados hoje
     </p>
   </section>
 
   <section class="px-4 mt-6">
-    <div class="kombat-divider">⚔ ARSENAL ⚔</div>
+    <div class="kombat-divider">${theme.labels?.arsenal || '⚔ ARSENAL ⚔'}</div>
     <div class="grid grid-cols-2 gap-3">
-      ${quickTile('choreo',   'Dança K-pop', I.spark,  'modal')}
-      ${quickTile('challenge','Desafios',    I.fist,   'modal')}
-      ${quickTile('sleep',    'Sono',        I.moon,   'modal')}
-      ${quickTile('reading',  'Leitura',     I.book,   'modal')}
-      ${quickTile('library',  'Biblioteca',  I.brain,  'modal')}
-      ${quickTile('rewards',  'Recompensas', I.gift,   'modal')}
+      ${theme.showKombatant ? quickTile('choreo', 'Dança K-pop', I.spark, 'modal') : ''}
+      ${quickTile('challenge',  'Desafios',    I.skull,  'modal')}
+      ${quickTile('compete',    'Competição',  I.trophy, 'modal')}
+      ${quickTile('library',    'Biblioteca',  I.brain,  'modal')}
+      ${quickTile('sleep',      'Sono',        I.moon,   'modal')}
+      ${quickTile('reading',    'Leitura',     I.book,   'modal')}
+      ${quickTile('rewards',    'Recompensas', I.gift,   'modal')}
+      ${quickTile('insights',   'Insights',    I.spark)}
       ${quickTile('achievements', `Conquistas · ${unlockedCount}`, I.award, 'modal')}
-      ${quickTile('config',   'Config',      I.cog)}
+      ${quickTile('config',     'Config',      I.cog)}
     </div>
   </section>
 
+  ${theme.labels?.footer ? `
   <section class="px-4 mt-6 pb-2 text-center">
-    <div class="font-kombat text-[10px] text-blood/50 dark:text-ember/50 tracking-[0.4em]">— MORTAL KOMBAT NEVER ENDS —</div>
-  </section>
+    <div class="font-kombat text-[10px] text-blood/50 dark:text-ember/50 tracking-[0.4em]">${theme.labels.footer}</div>
+  </section>` : ''}
   `;
 }
 
@@ -1983,30 +3052,95 @@ function upsertDailyLog(log) {
 function viewWorkout() {
   const types = Object.keys(EXERCISE_LIBRARY);
   const subtitles = {
-    'Upper A': 'peito + dorsais', 'Upper B': 'peito alto + ombros',
-    'Lower A': 'compostos pesados', 'Lower B': 'glúteo + acessórios',
-    'Push': 'peito · ombro · tríceps', 'Pull': 'dorsais · bíceps',
-    'Core/Abs': 'núcleo de combate', 'Cardio HIIT': 'queima · resistência',
-    'Calistenia': 'sem peso · só corpo', 'Dança K-pop': 'cardio + coordenação',
-    'Outro': 'modo livre',
+    '🆓 Treino livre': 'detecta split sozinho',
+    'Peito + Tríceps':  'pressão + isolamento', 'Costas + Bíceps':  'tração + isolamento',
+    'Ombros':           'deltóide completo',     'Braços (bíceps + tríceps)': 'dia de braço',
+    'Pernas (quadríceps)': 'quad isolado',       'Pernas (posterior + glúteo)': 'cadeia posterior',
+    'Upper A': 'peito + dorsais',                'Upper B': 'peito alto + ombros',
+    'Lower A': 'compostos pesados',              'Lower B': 'glúteo + acessórios',
+    'Push':    'peito · ombro · tríceps',        'Pull':    'dorsais · bíceps',
+    'Core/Abs': 'núcleo de combate',             'Cardio HIIT': 'queima · resistência',
+    'Calistenia': 'sem peso · só corpo',         'Dança K-pop': 'cardio + coordenação',
+    'Outro': 'modo aberto',
   };
   const icons = {
+    '🆓 Treino livre': I.plus,
+    'Peito + Tríceps': I.flame, 'Costas + Bíceps': I.dumb,
+    'Ombros': I.fist,           'Braços (bíceps + tríceps)': I.fist,
+    'Pernas (quadríceps)': I.bolt, 'Pernas (posterior + glúteo)': I.bolt,
     'Upper A': I.fist, 'Upper B': I.fist, 'Lower A': I.bolt, 'Lower B': I.bolt,
     'Push': I.flame, 'Pull': I.dumb, 'Core/Abs': I.skull,
     'Cardio HIIT': I.bolt, 'Calistenia': I.fighter, 'Dança K-pop': I.spark,
     'Outro': I.sword,
   };
+  // Sugestão de descanso ativo: rotaciona por dia
+  const restPicks = pickActiveRest();
+
   return `
   <header class="pt-7 pb-3 px-5 kombat-hero">
-    <div class="absolute right-1 top-4 w-32 h-44 opacity-90 pointer-events-none" style="filter:drop-shadow(0 4px 12px rgba(184,36,46,0.3))">${fighterHtml('kano')}</div>
-    <div class="kombat-tagline text-xs">⚔ TEST YOUR MIGHT ⚔</div>
+    <div class="kombat-tagline text-xs">${getTheme(state).tags.workout}</div>
     <h1 class="text-2xl font-extrabold mt-1">Treino</h1>
-    <p class="text-sm text-ink/55 dark:text-paper/55 max-w-[60%]">Kano diz: <i>"Sem dor, sem glória."</i> Toque <b>(i)</b> em qualquer exercício pra técnica.</p>
+    <p class="text-sm text-ink/55 dark:text-paper/55">Escolha um split, registre manualmente, ou descreva o que você quer.</p>
     <button id="open-library" class="q-btn q-btn-ghost mt-3 text-sm">
       <span class="w-4 h-4">${I.brain}</span> Biblioteca completa
     </button>
   </header>
+
   <section class="px-4 space-y-3">
+    <!-- Registro manual + auto-detecção -->
+    <details class="q-card overflow-hidden" id="manual-card">
+      <summary class="p-3 flex items-center gap-2 cursor-pointer list-none">
+        <span class="w-5 h-5 text-lavender">${I.plus}</span>
+        <span class="font-bold flex-1">Registrar manualmente</span>
+        <span class="text-xs text-ink/45 dark:text-paper/45">o app detecta o split</span>
+      </summary>
+      <div class="px-3 pb-3 pt-1 space-y-2">
+        <p class="text-xs text-ink/55 dark:text-paper/55">Cole ou digite os exercícios (um por linha). Pode incluir peso/reps depois do nome.</p>
+        <textarea id="manual-text" class="q-input w-full text-sm" rows="5"
+          placeholder="Supino reto 4x10 60kg&#10;Crucifixo 3x12&#10;Tríceps corda 3x15"></textarea>
+        <div id="manual-detected" class="text-xs text-ink/55 dark:text-paper/55 min-h-[1em]"></div>
+        <div class="flex gap-2">
+          <button id="manual-detect" class="q-btn q-btn-ghost flex-1 text-sm">🔍 Detectar tipo</button>
+          <button id="manual-save"   class="q-btn q-btn-primary flex-1 text-sm">💾 Salvar sessão</button>
+        </div>
+      </div>
+    </details>
+
+    <!-- Sugestão de exercícios por descrição -->
+    <details class="q-card overflow-hidden" id="suggest-card">
+      <summary class="p-3 flex items-center gap-2 cursor-pointer list-none">
+        <span class="w-5 h-5 text-lavender">${I.spark}</span>
+        <span class="font-bold flex-1">Sugerir exercícios</span>
+        <span class="text-xs text-ink/45 dark:text-paper/45">descreva e veja sugestões</span>
+      </summary>
+      <div class="px-3 pb-3 pt-1 space-y-2">
+        <p class="text-xs text-ink/55 dark:text-paper/55">Ex: "peito e tríceps em 30min", "perna leve sem academia", "core no chão".</p>
+        <input id="suggest-text" class="q-input w-full text-sm" placeholder="Descreva o que você quer treinar..." />
+        <div class="flex flex-wrap gap-1">
+          ${['peito leve','perna pesada','cardio 20min','calistenia em casa','core curto',
+             'mobilidade quadril','recuperação leve','dança 30min','peito e tríceps','costas e bíceps',
+             'pernas e glúteo','antebraço grip','ombro completo','full body sem equipamento','HIIT 15 min'].map(p =>
+            `<button class="pill is-pill suggest-preset text-[10px]" data-q="${p}">${p}</button>`
+          ).join('')}
+        </div>
+        <button id="suggest-go" class="q-btn q-btn-primary w-full text-sm">✨ Sugerir</button>
+        <div id="suggest-results" class="space-y-1"></div>
+      </div>
+    </details>
+
+    <!-- Descanso ativo / calistenia -->
+    <div class="q-card p-3">
+      <div class="flex items-center gap-2">
+        <span class="w-5 h-5 text-mint">${I.fighter}</span>
+        <h3 class="font-bold flex-1">Descanso ativo de hoje</h3>
+        <button id="rest-shuffle" class="text-xs text-lavender">🎲</button>
+      </div>
+      <p class="text-xs text-ink/55 dark:text-paper/55 mt-0.5">Calistenia leve para dias sem academia — circuito em casa.</p>
+      <div id="rest-list" class="mt-2 space-y-1.5">
+        ${renderRestPicks(restPicks)}
+      </div>
+    </div>
+
     <div class="kombat-divider">SELECIONE SEU ESTILO</div>
     <div class="grid grid-cols-2 gap-2">
       ${types.map(t => `
@@ -2036,13 +3170,199 @@ function viewWorkout() {
   `;
 }
 
-function modalWorkoutSession(type, dateISO = null) {
+// --- helpers para o Treino livre / sugestão / descanso ativo -----------
+
+const ACTIVE_REST_POOL = [
+  { name: 'Caminhada leve',                 dur: '30–40min', tip: 'ritmo de conversa, fora ou esteira.' },
+  { name: 'Mobilidade de quadril',          dur: '10min',    tip: 'cossack squat + 90/90 + lunges com rotação.' },
+  { name: 'Yoga flow básico',               dur: '15min',    tip: 'saudação ao sol A + cobra + criança.' },
+  { name: 'Alongamento total',              dur: '15min',    tip: 'cada postura 30s, foque no que dói.' },
+  { name: 'Prancha estática',               dur: '3×45s',    tip: 'sem prender respiração; corpo reto.' },
+  { name: 'Glúteo ponte',                   dur: '3×15',     tip: 'pés afastados; aperte 1s no topo.' },
+  { name: 'Flexão de joelhos',              dur: '3×10',     tip: 'descida controlada, 3s.' },
+  { name: 'Agachamento livre',              dur: '3×20',     tip: 'pés largura ombros; sem pressa.' },
+  { name: 'Afundo alternado',               dur: '3×10/perna', tip: 'joelho da frente alinhado ao pé.' },
+  { name: 'Burpee devagar',                 dur: '3×8',      tip: 'sem pulo final; foco em transição.' },
+  { name: 'Mountain climber',               dur: '3×30s',    tip: 'quadril estável; passada curta.' },
+  { name: 'Bird dog',                       dur: '3×10/lado', tip: 'mão e perna opostas; pausa 2s.' },
+  { name: 'Dead bug',                       dur: '3×10/lado', tip: 'lombar colada; respirar pra fora.' },
+  { name: 'Superman',                       dur: '3×15',     tip: 'queixo encostado; eleva 2s.' },
+  { name: 'Polichinelo',                    dur: '3×40s',    tip: 'aquecimento ou cardio leve.' },
+  { name: 'Pular corda imaginária',         dur: '3×60s',    tip: 'panturrilha; pés leves.' },
+  { name: 'Escalador alpinista',            dur: '3×30s',    tip: 'velocidade controlada.' },
+  { name: 'Abdominal infra (leg raise)',    dur: '3×12',     tip: 'sem balanço; controle na descida.' },
+  { name: 'Russian twist sem peso',         dur: '3×20',     tip: 'pés no chão se ainda tá fraco.' },
+  { name: 'Wall sit',                       dur: '3×45s',    tip: 'coxa paralela; respiração contínua.' },
+];
+
+function pickActiveRest(seedOffset = 0) {
+  const seed = +todayISO().replace(/-/g, '') + seedOffset + (state.user?.activeRestRoll || 0);
+  const a = [...ACTIVE_REST_POOL];
+  const picked = [];
+  let s = seed;
+  for (let i = 0; i < 4 && a.length; i++) {
+    s = (s * 9301 + 49297) % 233280;
+    const idx = s % a.length;
+    picked.push(a.splice(idx, 1)[0]);
+  }
+  return picked;
+}
+
+function renderRestPicks(picks) {
+  return picks.map(p => `
+    <div class="flex items-center gap-2 text-sm py-1 border-b border-ink/5 dark:border-paper/5 last:border-0">
+      <span class="w-1.5 h-1.5 rounded-full bg-mint shrink-0"></span>
+      <span class="font-semibold flex-1">${p.name}</span>
+      <span class="text-xs text-ink/55 dark:text-paper/55">${p.dur}</span>
+    </div>
+    <div class="text-[11px] text-ink/45 dark:text-paper/45 pl-3.5 -mt-1 mb-1 italic">${p.tip}</div>
+  `).join('');
+}
+
+/** Parser de texto livre para extrair lista de exercícios.
+ *  Aceita uma linha por exercício, separadores comuns. */
+function parseManualExercises(text) {
+  return text.split(/\n+/).map((l) => l.trim()).filter(Boolean).map((line) => {
+    // remove sets/reps/peso comuns: "4x10", "3 x 12", "60kg", "60 kg"
+    const cleaned = line
+      .replace(/\b\d+\s*[xX×]\s*\d+\b/g, '')
+      .replace(/\b\d+\s*kg\b/gi, '')
+      .replace(/[\-–—]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+    return { name: cleaned, sets: [{ reps: '', weight: '', technique: '' }] };
+  }).filter((e) => e.name.length > 1);
+}
+
+/** A partir de descrição livre, sugere exercícios da EXERCISE_LIBRARY.
+ *  Pondera por grupo muscular, equipamento (calistenia se "casa/sem peso")
+ *  e tempo (cardio se "curto/30min"). */
+function suggestExercises(query) {
+  const q = (query || '').toLowerCase();
+  if (!q.trim()) return { groups: [], items: [], summary: 'Descreva o que você quer treinar.' };
+  // Detecta grupos-alvo
+  const wants = {
+    peito:       /\bpeito|peit|chest|supino/.test(q),
+    dorsal:      /\bcosta|dorsal|back|pull|remada|barra fixa/.test(q),
+    biceps:      /\bbice|bicep|rosca/.test(q),
+    triceps:     /\btric|tricep|testa|fran/.test(q),
+    ombro:       /\bombro|delt|shoulder|desenvolv/.test(q),
+    quad:        /\bperna|quad|leg|agach|squat/.test(q),
+    post:        /\bglute|posterior|hamstring|isquio|stiff|terra|deadlift|hip thrust/.test(q),
+    core:        /\bcore|abdom|abs|barriga|prancha|plank/.test(q),
+    cardio:      /\bcardio|hiit|corrida|aerob|queim|fôleg/.test(q),
+    panturrilha: /\bpanturrilha|calf/.test(q),
+    antebraço:   /\bantebra|farmer|pulso|grip/.test(q),
+  };
+  const isCalistenia = /\bcasa|sem peso|sem academia|sem equipamento|calist|bodyweight|peso corporal/.test(q);
+  const isShort      = /\b(?:5|10|15|20|25|30)\s?min|curto|r[áa]pido|quick/.test(q);
+  const isLong       = /\b(?:45|60|90)\s?min|longo|completo/.test(q);
+  const isLight      = /\bleve|fácil|facil|light|recupera|cansa|cansad/.test(q);
+  const isHeavy      = /\bpesad|forte|max|heavy|hipertro|massa|forc|força/.test(q);
+  const isMobility   = /\bmobilid|alonga|flex|stretch|yoga/.test(q);
+  const isDance      = /\bdan[çc]a|coreo|kpop|hip hop|ballet/.test(q);
+  const targets = Object.keys(wants).filter((k) => wants[k]);
+
+  // Pool de candidatos: todos os exercícios + alguns "extras" calistênicos para casa
+  const all = [];
+  for (const [type, exes] of Object.entries(EXERCISE_LIBRARY)) {
+    for (const e of exes) all.push({ ...e, _type: type });
+  }
+  // Suplemento de atividades para casa/mobilidade (não estão na library)
+  const HOME_EXTRAS = [
+    { name: 'Caminhada 30 min',          muscles: 'cardio, panturrilha', _type: 'Cardio' },
+    { name: 'Pular corda 3x60s',         muscles: 'cardio, panturrilha', _type: 'Cardio HIIT' },
+    { name: 'Burpees 3x10',              muscles: 'corpo todo, cardio',  _type: 'Calistenia' },
+    { name: 'Mountain climber 3x30s',    muscles: 'core, cardio',        _type: 'Calistenia' },
+    { name: 'Polichinelo 3x40s',         muscles: 'cardio, panturrilha', _type: 'Cardio HIIT' },
+    { name: 'Bird dog 3x10/lado',        muscles: 'core, estabilidade',  _type: 'Mobilidade' },
+    { name: 'Dead bug 3x10/lado',        muscles: 'core, oblíquos',      _type: 'Mobilidade' },
+    { name: 'Cossack squat 3x8/lado',    muscles: 'quadríceps, mobilidade quadril', _type: 'Mobilidade' },
+    { name: '90/90 hip stretch 2 min',   muscles: 'quadril, mobilidade', _type: 'Mobilidade' },
+    { name: 'Cat-cow 10 reps',           muscles: 'coluna, mobilidade',  _type: 'Mobilidade' },
+    { name: 'Cobra + criança 5 ciclos',  muscles: 'lombar, mobilidade',  _type: 'Yoga' },
+    { name: 'Saudação ao sol 5 ciclos',  muscles: 'corpo todo, mobilidade', _type: 'Yoga' },
+    { name: 'Wall sit 3x45s',            muscles: 'quadríceps, glúteo',  _type: 'Calistenia' },
+    { name: 'Glute bridge 3x15',         muscles: 'glúteo, posterior',   _type: 'Calistenia' },
+    { name: 'Superman 3x15',             muscles: 'lombar, glúteo',      _type: 'Calistenia' },
+    { name: 'Russian twist 3x20',        muscles: 'core, oblíquos',      _type: 'Calistenia' },
+    { name: 'Prancha lateral 2x30s/lado',muscles: 'oblíquos, core',      _type: 'Calistenia' },
+    { name: 'Agachamento livre 3x20',    muscles: 'quadríceps, glúteo',  _type: 'Calistenia' },
+    { name: 'Afundo passada 3x10/perna', muscles: 'quadríceps, glúteo',  _type: 'Calistenia' },
+    { name: 'Flexão de joelhos 3x10',    muscles: 'peito, tríceps',      _type: 'Calistenia' },
+    { name: 'Flexão diamante 3x8',       muscles: 'peito, tríceps',      _type: 'Calistenia' },
+    { name: 'Pike push-up 3x8',          muscles: 'ombro, tríceps',      _type: 'Calistenia' },
+    { name: 'Inverted row na mesa 3x10', muscles: 'dorsal, bíceps',      _type: 'Calistenia' },
+    { name: 'Escalador alpinista 3x30s', muscles: 'cardio, core',        _type: 'Cardio HIIT' },
+    { name: 'Step-up no banco 3x10/perna', muscles: 'quadríceps, glúteo', _type: 'Calistenia' },
+    { name: 'High knees 3x30s',          muscles: 'cardio, quadríceps',  _type: 'Cardio HIIT' },
+    { name: 'Box jump (cama/banco) 3x8', muscles: 'cardio, quadríceps',  _type: 'Cardio HIIT' },
+    { name: 'Sprint na escada 3x',       muscles: 'cardio, glúteo',      _type: 'Cardio HIIT' },
+    { name: 'Pular corda 5 min',         muscles: 'cardio, panturrilha', _type: 'Cardio HIIT' },
+    { name: 'Cardio dança K-pop 20 min', muscles: 'cardio, coordenação', _type: 'Dança K-pop' },
+    { name: 'Cardio dança hip-hop 20 min', muscles: 'cardio, coordenação', _type: 'Dança' },
+  ];
+  for (const e of HOME_EXTRAS) all.push(e);
+
+  // Score por compatibilidade
+  const scored = all.map((e) => {
+    let s = 0;
+    const muscles = (e.muscles || '').toLowerCase();
+    const name = (e.name || '').toLowerCase();
+    if (targets.length === 0) s = 0.4;
+    for (const t of targets) {
+      const map = { peito:'peito', dorsal:'dorsal|costas', biceps:'bíceps', triceps:'tríceps', ombro:'ombro|delt',
+                    quad:'quadr|coxa', post:'glúteo|isquio|posterior', core:'core|abdom|oblí',
+                    cardio:'cardio|resist', panturrilha:'panturrilha', antebraço:'antebraço|pulso' };
+      if (new RegExp(map[t] || t).test(muscles)) s += 2;
+      if (new RegExp(map[t] || t).test(name)) s += 0.8;
+    }
+    if (isCalistenia && (e._type === 'Calistenia' || /flex[ãa]o|prancha|burpee|jumping|polichinelo|wall|glute bridge|superman|bird|dead bug|pike|squat/i.test(name))) s += 2;
+    if (isCalistenia && /smith|máquina|maquina|cabo|leg press|halter pesado/i.test(name)) s -= 2;
+    if (isShort  && (e._type === 'Cardio HIIT' || e._type === 'Core/Abs' || e._type === 'Mobilidade')) s += 1;
+    if (isLong   && /agachamento|terra|stiff|supino|deadlift/i.test(name)) s += 0.6;
+    if (isLight  && (e._type === 'Mobilidade' || e._type === 'Yoga' || /alongamento|caminhada|bird|dead bug|wall|cat-cow|cobra|saudação|stretch/i.test(name))) s += 1.2;
+    if (isHeavy  && /agachamento|levantamento|stiff|supino|barra|terra|deadlift|squat livre/i.test(name)) s += 1;
+    if (isMobility && (e._type === 'Mobilidade' || e._type === 'Yoga' || /mobilidade|alonga|stretch|yoga/i.test(name + ' ' + muscles))) s += 1.5;
+    if (isDance && (e._type === 'Dança K-pop' || e._type === 'Dança' || /dan[çc]a|coreo/i.test(name))) s += 2;
+    return { e, s };
+  }).filter((x) => x.s > 0);
+  scored.sort((a, b) => b.s - a.s);
+  // Dedup por nome — limite 12, com diversidade por _type quando possível
+  const seen = new Set();
+  const items = [];
+  const byType = {};
+  for (const { e } of scored) {
+    if (seen.has(e.name)) continue;
+    seen.add(e.name);
+    byType[e._type] = (byType[e._type] || 0) + 1;
+    if (byType[e._type] > 4 && items.length >= 6) continue; // após 6 itens, evita 5+ do mesmo tipo
+    items.push(e);
+    if (items.length >= 12) break;
+  }
+  const grpsLabel = targets.length ? targets.join(' + ') : 'geral';
+  const tags = [
+    grpsLabel,
+    isCalistenia && 'sem equipamento',
+    isShort && 'curto',
+    isLong && 'longo',
+    isLight && 'leve',
+    isHeavy && 'pesado',
+    isMobility && 'mobilidade',
+    isDance && 'dança',
+  ].filter(Boolean);
+  return { groups: targets, items, summary: tags.join(' · ') };
+}
+
+function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
   // Se dateISO presente: visualização de sessão antiga.
+  // Se prebuiltStart presente: reabre modal mantendo o estado em memória (após
+  // adicionar exercício custom).
   const editing = dateISO
     ? state.workouts.find((w) => w.date === dateISO && w.type === type)
     : null;
   const lib = EXERCISE_LIBRARY[type] || [];
-  const start = editing || {
+  const start = prebuiltStart || editing || {
     date: todayISO(),
     type,
     exercises: lib.map((e) => ({
@@ -2116,9 +3436,29 @@ function modalWorkoutSession(type, dateISO = null) {
         </div>`;
       }).join('')}
 
+      <button class="q-btn q-btn-ghost w-full py-2" id="add-custom-ex">+ Adicionar exercício</button>
       <button class="q-btn q-btn-primary w-full py-3" id="save-workout">Salvar treino</button>
     </div>
   `);
+
+  // Handler do botão "+ adicionar exercício"
+  document.getElementById('add-custom-ex').addEventListener('click', () => {
+    const name = prompt('Nome do exercício (ex: "Crucifixo inclinado", "Pulldown unilateral")');
+    if (!name || !name.trim()) return;
+    // Sincroniza o que foi digitado até agora pra não perder
+    syncSetsFromDOM(start);
+    start.exercises.push({
+      name: name.trim(),
+      sets: [
+        { reps: '', weight: '', technique: '' },
+        { reps: '', weight: '', technique: '' },
+        { reps: '', weight: '', technique: '' },
+      ],
+    });
+    closeModal();
+    // Reabre o modal com o exercício novo já no estado
+    setTimeout(() => modalWorkoutSession(type, dateISO, start), 50);
+  });
 
   // Info popover por exercício --------------------------------------
   document.querySelectorAll('.ex-info').forEach((btn) => {
@@ -2224,6 +3564,16 @@ function modalWorkoutSession(type, dateISO = null) {
       if (curTop > lastTop && lastTop > 0) { prDetected = true; break; }
     }
 
+    // Se for "🆓 Treino livre", detecta o split automaticamente
+    let detectedMsg = '';
+    if (start.type === '🆓 Treino livre' || start.type === 'Outro') {
+      const det = detectSplit(start.exercises);
+      if (det.type !== 'Outro') {
+        start.type = det.type;
+        detectedMsg = `Sistema identificou: ${det.type} (${det.reason})`;
+      }
+    }
+
     // Substitui sessão do mesmo dia/tipo
     const idx = state.workouts.findIndex((w) => w.date === start.date && w.type === start.type);
     if (idx >= 0) state.workouts[idx] = start;
@@ -2235,10 +3585,107 @@ function modalWorkoutSession(type, dateISO = null) {
       kombatOverlay('brutality');
       addAttributeXP('forca', 5);
     } else {
-      toast('Treino salvo 💪');
+      toast(detectedMsg || 'Treino salvo 💪', detectedMsg ? 3600 : 2200);
     }
     render();
   });
+}
+
+/** Identifica grupos musculares de um exercício pelo nome.
+ *  Procura primeiro na EXERCISE_LIBRARY (campo muscles); cai pra regex
+ *  no nome do exercício se não achar. Retorna lista de grupos: peito,
+ *  triceps, dorsal, biceps, ombro, quad, post, core, cardio. */
+function detectMuscleGroups(exerciseName) {
+  const lowerName = (exerciseName || '').toLowerCase();
+  // 1) Procura no library
+  for (const exes of Object.values(EXERCISE_LIBRARY)) {
+    const ex = exes.find((e) => e.name.toLowerCase() === lowerName);
+    if (ex) {
+      const m = (ex.muscles || '').toLowerCase();
+      const g = [];
+      if (m.includes('peito') || m.includes('peitoral')) g.push('peito');
+      if (m.includes('tríceps') || m.includes('triceps')) g.push('triceps');
+      if (m.includes('dorsal') || m.includes('romboides') || m.includes('trapézio')) g.push('dorsal');
+      if (m.includes('bíceps') || m.includes('biceps')) g.push('biceps');
+      if (m.includes('ombro') || m.includes('deltóide')) g.push('ombro');
+      if (m.includes('quad') || m.includes('quadrí')) g.push('quad');
+      if (m.includes('glúteo') || m.includes('isquio') || m.includes('posterior')) g.push('post');
+      if (m.includes('core') || m.includes('abdom') || m.includes('oblí')) g.push('core');
+      if (m.includes('cardio') || m.includes('resistência')) g.push('cardio');
+      if (m.includes('panturrilha') || m.includes('gastroc') || m.includes('sóleo')) g.push('panturrilha');
+      if (m.includes('antebraço') || m.includes('antebra')) g.push('antebraço');
+      return g.length ? g : ['outros'];
+    }
+  }
+  // 2) Inferência por regex no nome
+  const g = [];
+  if (/supino|crucifixo|peito|fly|press peito/.test(lowerName)) g.push('peito');
+  if (/tríceps|triceps|testa|francês|corda|paralelas|dip|mergulho/.test(lowerName)) g.push('triceps');
+  if (/remada|pulldown|pull[\- ]up|barra fixa|chin[\- ]up|dorsal/.test(lowerName)) g.push('dorsal');
+  if (/rosca|bíceps|biceps|martelo|scott/.test(lowerName)) g.push('biceps');
+  if (/desenvolv|elevação|ombro|deltóide|face pull|shrug|encolhimento|arnold/.test(lowerName)) g.push('ombro');
+  if (/agach|squat|leg press|extensora|hack|afundo|lunge|pistol/.test(lowerName)) g.push('quad');
+  if (/stiff|rdl|hip thrust|deadlift|levantamento terra|flexora|glúteo|posterior|búlgaro/.test(lowerName)) g.push('post');
+  if (/abdominal|prancha|plank|crunch|core|leg raise|wheel|woodchopper|russian/.test(lowerName)) g.push('core');
+  if (/cardio|sprint|hiit|corrida|bike|burpee|jumping|pular corda/.test(lowerName)) g.push('cardio');
+  if (/panturrilha|calf|raise/.test(lowerName)) g.push('panturrilha');
+  if (/antebraço|farmer|punho/.test(lowerName)) g.push('antebraço');
+  return g.length ? g : ['outros'];
+}
+
+/** A partir de um array de exercícios (com name), detecta qual split
+ *  é mais provável. Retorna o nome do split + nível de confiança (0-1). */
+function detectSplit(exercises) {
+  if (!exercises.length) return { type: 'Outro', confidence: 0, reason: 'nada pra analisar' };
+  const counts = { peito:0, triceps:0, dorsal:0, biceps:0, ombro:0, quad:0, post:0, core:0, cardio:0, panturrilha:0, antebraço:0 };
+  for (const ex of exercises) {
+    const groups = detectMuscleGroups(ex.name);
+    for (const g of groups) if (counts[g] !== undefined) counts[g]++;
+  }
+  const has = (k) => (counts[k] || 0) > 0;
+  const total = exercises.length;
+  let type, confidence = 0.7;
+  // Heurísticas, ordem importa (do mais específico ao mais genérico)
+  if (has('peito') && has('triceps') && !has('dorsal') && !has('biceps')) {
+    type = 'Peito + Tríceps';
+  } else if (has('dorsal') && has('biceps') && !has('peito')) {
+    type = 'Costas + Bíceps';
+  } else if (has('biceps') && has('triceps') && !has('peito') && !has('dorsal')) {
+    type = 'Braços (bíceps + tríceps)';
+  } else if (has('peito') && has('ombro') && has('triceps')) {
+    type = 'Push';
+  } else if (has('dorsal') && has('biceps')) {
+    type = 'Pull';
+  } else if (has('ombro') && counts.ombro >= 2 && !has('peito') && !has('dorsal')) {
+    type = 'Ombros';
+  } else if (has('quad') && counts.post === 0) {
+    type = 'Pernas (quadríceps)';
+  } else if (has('post') && !has('quad')) {
+    type = 'Pernas (posterior + glúteo)';
+  } else if (has('peito') && has('dorsal')) {
+    type = 'Upper A';
+  } else if (has('quad') && has('post')) {
+    type = 'Lower A';
+  } else if (has('core') && total === counts.core) {
+    type = 'Core/Abs';
+  } else if (has('cardio') && total === counts.cardio) {
+    type = 'Cardio HIIT';
+  } else if (has('peito')) {
+    type = 'Push'; confidence = 0.5;
+  } else if (has('dorsal')) {
+    type = 'Pull'; confidence = 0.5;
+  } else if (has('quad') || has('post')) {
+    type = 'Lower A'; confidence = 0.5;
+  } else {
+    type = 'Outro'; confidence = 0.3;
+  }
+  // Lista dos grupos mais frequentes pra mostrar pro usuário
+  const top = Object.entries(counts)
+    .filter(([, c]) => c > 0)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3)
+    .map(([k]) => k);
+  return { type, confidence, reason: `Detectou: ${top.join(' + ')}` };
 }
 
 function lastSessionsFor(exName, n) {
@@ -2280,7 +3727,7 @@ function viewNutrition() {
 
   return `
   <header class="pt-7 pb-3 px-5 kombat-hero">
-    <div class="kombat-tagline text-xs">🔥 FUEL FOR BATTLE 🔥</div>
+    <div class="kombat-tagline text-xs">${getTheme(state).tags.nutri}</div>
     <h1 class="text-2xl font-extrabold mt-1">Nutrição</h1>
     <p class="text-sm text-ink/55 dark:text-paper/55">Toque em um alimento pra adicionar.</p>
   </header>
@@ -2473,10 +3920,42 @@ function viewBody() {
   const weights = ms.map((m) => m.weight);
   const avg7 = weights.length >= 2 ? (weights.slice(-7).reduce((a, b) => a + b, 0) / Math.min(7, weights.length)).toFixed(1) : '—';
 
+  // Calcula próxima medida quinzenal (14 dias após a última)
+  let nextDueLabel = 'Registre a primeira medida';
+  let dueClass = 'is-mint';
+  if (last) {
+    const lastDate = new Date(last.date + 'T00:00:00');
+    const next = new Date(lastDate); next.setDate(next.getDate() + 14);
+    const daysLeft = Math.ceil((next - new Date()) / 86400000);
+    if (daysLeft > 0) {
+      nextDueLabel = `Próxima medida em ${daysLeft} dia${daysLeft === 1 ? '' : 's'}`;
+      dueClass = daysLeft <= 3 ? 'is-sun' : 'is-mint';
+    } else if (daysLeft === 0) {
+      nextDueLabel = 'Próxima medida hoje';
+      dueClass = 'is-sun';
+    } else {
+      nextDueLabel = `Atrasou ${Math.abs(daysLeft)} dia${Math.abs(daysLeft) === 1 ? '' : 's'} — registra agora`;
+      dueClass = 'is-pink';
+    }
+  }
+
+  // Última medida — mostrar todos os campos preenchidos
+  const fieldsLast = last ? [
+    last.weight && ['Peso', last.weight + 'kg'],
+    last.waist  && ['Cintura', last.waist + 'cm'],
+    last.chest  && ['Peito',   last.chest + 'cm'],
+    last.arm    && ['Braço',   last.arm + 'cm'],
+    last.hip    && ['Quadril', last.hip + 'cm'],
+    last.thigh  && ['Coxa',    last.thigh + 'cm'],
+    last.calf   && ['Panturrilha', last.calf + 'cm'],
+    last.neck   && ['Pescoço', last.neck + 'cm'],
+    last.bf     && ['% gordura', last.bf + '%'],
+  ].filter(Boolean) : [];
+
   return `
   <header class="pt-7 pb-3 px-5">
     <h1 class="text-2xl font-extrabold">Corpo</h1>
-    <p class="text-sm text-ink/55 dark:text-paper/55">Peso, medidas e fotos progresso.</p>
+    <p class="text-sm text-ink/55 dark:text-paper/55">Peso, medidas quinzenais e fotos progresso.</p>
   </header>
 
   <section class="px-4">
@@ -2494,19 +3973,57 @@ function viewBody() {
       <svg class="spark mt-3" viewBox="0 0 300 60" preserveAspectRatio="none">
         ${sparkline(weights, 300, 60)}
       </svg>
-      <button class="q-btn q-btn-ghost w-full mt-3" id="add-weight">+ registrar peso/medidas</button>
+      <div class="flex items-center justify-between mt-3 gap-2">
+        <span class="pill ${dueClass} text-[10px]">📅 ${nextDueLabel}</span>
+        <button class="q-btn q-btn-primary text-sm" id="add-weight">+ registrar medidas</button>
+      </div>
     </div>
   </section>
 
-  <section class="px-4 mt-4">
-    <h2 class="font-extrabold mb-2">Medidas quinzenais</h2>
-    <div class="q-card divide-y divide-ink/5 dark:divide-paper/5">
-      ${ms.slice().reverse().slice(0, 8).map(m => `
-        <div class="p-3 flex items-center justify-between text-sm">
-          <span class="font-semibold">${formatDateBR(m.date)}</span>
-          <span class="text-ink/65 dark:text-paper/65">${m.weight}kg · cintura ${m.waist}cm · peito ${m.chest}cm · braço ${m.arm}cm</span>
-        </div>`).join('') || `<div class="p-4 text-sm text-ink/50">Sem registros.</div>`}
+  ${fieldsLast.length ? `
+  <section class="px-4 mt-3">
+    <div class="q-card p-3">
+      <div class="text-xs uppercase tracking-wider text-ink/45 dark:text-paper/45 mb-2">
+        Última medida · ${formatDateBR(last.date)}
+      </div>
+      <div class="grid grid-cols-3 gap-2 text-sm">
+        ${fieldsLast.map(([k, v]) => `
+          <div class="text-center">
+            <div class="text-[10px] text-ink/55 dark:text-paper/55">${k}</div>
+            <div class="font-bold">${v}</div>
+          </div>
+        `).join('')}
+      </div>
+      ${last.notes ? `<div class="mt-2 pt-2 border-t border-ink/5 dark:border-paper/5 text-xs italic text-ink/55 dark:text-paper/55">"${last.notes}"</div>` : ''}
     </div>
+  </section>` : ''}
+
+  <section class="px-4 mt-4">
+    <h2 class="font-extrabold mb-2">Histórico quinzenal</h2>
+    <div class="q-card divide-y divide-ink/5 dark:divide-paper/5">
+      ${ms.slice().reverse().slice(0, 12).map(m => `
+        <div class="p-3 text-sm">
+          <div class="flex items-center justify-between">
+            <span class="font-semibold">${formatDateBR(m.date)}</span>
+            <span class="text-ink/65 dark:text-paper/65 text-xs">
+              ${m.weight ? m.weight + 'kg' : ''}${m.waist ? ' · ' + m.waist + 'cm cintura' : ''}${m.hip ? ' · ' + m.hip + 'cm quadril' : ''}
+            </span>
+          </div>
+          ${(m.chest || m.arm || m.thigh || m.calf || m.neck || m.bf) ? `
+            <div class="mt-1 text-[11px] text-ink/55 dark:text-paper/55">
+              ${[
+                m.chest && 'peito ' + m.chest + 'cm',
+                m.arm   && 'braço ' + m.arm + 'cm',
+                m.thigh && 'coxa ' + m.thigh + 'cm',
+                m.calf  && 'panturrilha ' + m.calf + 'cm',
+                m.neck  && 'pescoço ' + m.neck + 'cm',
+                m.bf    && m.bf + '% gordura',
+              ].filter(Boolean).join(' · ')}
+            </div>` : ''}
+          ${m.notes ? `<div class="mt-1 text-[11px] italic text-ink/50 dark:text-paper/50">"${m.notes}"</div>` : ''}
+        </div>`).join('') || `<div class="p-4 text-sm text-ink/50">Sem registros — toque em "+ registrar medidas".</div>`}
+    </div>
+    ${ms.length > 0 ? `<p class="text-[10px] text-ink/45 dark:text-paper/45 mt-2 italic">Recomendado: tirar medidas a cada 2 semanas, sempre no mesmo horário do dia (manhã em jejum).</p>` : ''}
   </section>
 
   <section class="px-4 mt-5">
@@ -2546,26 +4063,58 @@ function modalWeightEntry() {
   const last = state.bodyMeasurements[state.bodyMeasurements.length - 1] || {};
   openModal(`
     <header class="flex items-center justify-between p-4 border-b border-ink/5 dark:border-paper/5">
-      <h2 class="font-extrabold text-lg">Registrar medidas</h2>
+      <div>
+        <h2 class="font-extrabold text-lg">Medidas quinzenais</h2>
+        <p class="text-xs text-ink/55 dark:text-paper/55">Tire de manhã, em jejum, sempre no mesmo horário.</p>
+      </div>
       <button class="modal-close p-1"><span class="w-5 h-5">${I.close}</span></button>
     </header>
-    <form id="weight-form" class="p-4 space-y-3">
+    <form id="weight-form" class="p-4 space-y-3 overflow-y-auto" style="max-height:75vh">
       <label class="block">
         <span class="text-sm font-semibold">Peso (kg)</span>
-        <input class="q-input mt-1" type="number" step="0.1" name="weight" required value="${last.weight||''}" />
+        <input class="q-input mt-1" type="number" step="0.1" name="weight" required value="${last.weight||''}" placeholder="ex: 78.5" />
       </label>
+
+      <div class="text-xs uppercase tracking-wider text-ink/45 dark:text-paper/45 pt-1">Tronco · cm</div>
       <div class="grid grid-cols-3 gap-2">
-        <label><span class="text-sm font-semibold">Cintura</span>
+        <label><span class="text-xs font-semibold">Cintura</span>
           <input class="q-input mt-1" type="number" step="0.1" name="waist" value="${last.waist||''}" />
         </label>
-        <label><span class="text-sm font-semibold">Peito</span>
+        <label><span class="text-xs font-semibold">Peito</span>
           <input class="q-input mt-1" type="number" step="0.1" name="chest" value="${last.chest||''}" />
         </label>
-        <label><span class="text-sm font-semibold">Braço</span>
-          <input class="q-input mt-1" type="number" step="0.1" name="arm" value="${last.arm||''}" />
+        <label><span class="text-xs font-semibold">Quadril</span>
+          <input class="q-input mt-1" type="number" step="0.1" name="hip" value="${last.hip||''}" />
         </label>
       </div>
-      <button type="submit" class="q-btn q-btn-primary w-full">Salvar</button>
+
+      <div class="text-xs uppercase tracking-wider text-ink/45 dark:text-paper/45 pt-1">Membros · cm</div>
+      <div class="grid grid-cols-4 gap-2">
+        <label><span class="text-xs font-semibold">Braço</span>
+          <input class="q-input mt-1" type="number" step="0.1" name="arm" value="${last.arm||''}" />
+        </label>
+        <label><span class="text-xs font-semibold">Coxa</span>
+          <input class="q-input mt-1" type="number" step="0.1" name="thigh" value="${last.thigh||''}" />
+        </label>
+        <label><span class="text-xs font-semibold">Pant.</span>
+          <input class="q-input mt-1" type="number" step="0.1" name="calf" value="${last.calf||''}" />
+        </label>
+        <label><span class="text-xs font-semibold">Pesc.</span>
+          <input class="q-input mt-1" type="number" step="0.1" name="neck" value="${last.neck||''}" />
+        </label>
+      </div>
+
+      <div class="text-xs uppercase tracking-wider text-ink/45 dark:text-paper/45 pt-1">Opcional</div>
+      <label class="block">
+        <span class="text-xs font-semibold">% gordura corporal (se medir com bioimpedância/dobras)</span>
+        <input class="q-input mt-1" type="number" step="0.1" name="bf" value="${last.bf||''}" placeholder="ex: 16.5" />
+      </label>
+      <label class="block">
+        <span class="text-xs font-semibold">Notas (como tá se sentindo, observações)</span>
+        <textarea class="q-input mt-1" name="notes" rows="2" placeholder="ex: cintura mais firme, sono melhorou na semana">${last.notes||''}</textarea>
+      </label>
+
+      <button type="submit" class="q-btn q-btn-primary w-full mt-2">Salvar medidas</button>
     </form>
   `);
   document.getElementById('weight-form').addEventListener('submit', (e) => {
@@ -2577,6 +4126,12 @@ function modalWeightEntry() {
       waist:  +f.waist.value  || 0,
       chest:  +f.chest.value  || 0,
       arm:    +f.arm.value    || 0,
+      hip:    +f.hip.value    || 0,
+      thigh:  +f.thigh.value  || 0,
+      calf:   +f.calf.value   || 0,
+      neck:   +f.neck.value   || 0,
+      bf:     +f.bf.value     || 0,
+      notes:  (f.notes.value || '').trim(),
     });
     saveState();
     closeModal();
@@ -2586,101 +4141,205 @@ function modalWeightEntry() {
 }
 
 // ----- 6.5 Insights view -----------------------------------
+// Rework limpo, sem fotos motivacionais: dados próprios do usuário.
 
 function viewInsights() {
+  const today = new Date(todayISO() + 'T00:00:00');
   const logs = state.dailyLogs.slice().sort((a, b) => (a.date < b.date ? -1 : 1));
+  const byDate = new Map(logs.map((l) => [l.date, l]));
+
+  // ===== Heatmap dos últimos 35 dias (5 semanas × 7 dias) =====
+  const HEAT_DAYS = 35;
+  const heatCells = [];
+  for (let i = HEAT_DAYS - 1; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const iso = isoDate(d);
+    const log = byDate.get(iso);
+    const xp = log?.xp || 0;
+    const lvl = xp === 0 ? 0 : xp <= 2 ? 1 : xp <= 4 ? 2 : xp <= 6 ? 3 : 4;
+    heatCells.push({ iso, day: d.getDate(), xp, lvl });
+  }
+
+  // ===== Stats agregados (últimos 30 dias) =====
+  const last30 = logs.slice(-30);
+  const totalDays    = last30.length;
+  const totalActive  = last30.filter((l) => (l.xp || 0) > 0).length;
+  const totalTrain   = last30.filter((l) => l.training?.done).length;
+  const totalSleep   = last30.filter((l) => (l.sleep?.hours || 0) >= 7).length;
+  const totalProtein = last30.filter((l) => l.protein?.hit).length;
+  const avgXP        = last30.length ? (last30.reduce((s, l) => s + (l.xp || 0), 0) / last30.length).toFixed(1) : '0';
+  const maxStreak    = getMaxLogStreak(state);
+
+  // ===== Distribuição XP por dia da semana =====
+  const dowLabels = ['DOM','SEG','TER','QUA','QUI','SEX','SÁB'];
+  const dowSum = [0,0,0,0,0,0,0], dowN = [0,0,0,0,0,0,0];
+  for (const l of last30) {
+    const d = new Date(l.date + 'T00:00:00').getDay();
+    dowSum[d] += (l.xp || 0);
+    dowN[d]++;
+  }
+  const dowAvg = dowSum.map((s, i) => (dowN[i] ? s / dowN[i] : 0));
+  const dowMax = Math.max(...dowAvg, 1);
+  const bestDow = dowAvg.indexOf(Math.max(...dowAvg));
+  const worstDow = dowAvg
+    .map((v, i) => ({ v, i }))
+    .filter((x) => dowN[x.i] > 0)
+    .sort((a, b) => a.v - b.v)[0]?.i ?? 0;
+
+  // ===== Personal record destacado =====
+  const allSets = [];
+  for (const w of state.workouts) {
+    for (const ex of w.exercises) {
+      for (const s of ex.sets) {
+        const wt = +s.weight || 0;
+        if (wt > 0) allSets.push({ name: ex.name, weight: wt, reps: s.reps, date: w.date });
+      }
+    }
+  }
+  const prByName = {};
+  for (const r of allSets) {
+    if (!prByName[r.name] || r.weight > prByName[r.name].weight) prByName[r.name] = r;
+  }
+  const topPRs = Object.values(prByName).sort((a, b) => b.weight - a.weight).slice(0, 3);
+
+  // ===== Próximo passo (1 ação concreta) =====
   const last7 = logs.slice(-7);
-  const last14 = logs.slice(-14);
-
-  // Correlação simples: dias com sono>=7h vs adesão treino
-  const goodSleep = last14.filter((l) => l.sleep?.hours >= 7);
-  const badSleep = last14.filter((l) => l.sleep?.hours < 7);
-  const adGood = goodSleep.length ? (goodSleep.filter((l) => l.training?.done).length / goodSleep.length) : 0;
-  const adBad  = badSleep.length  ? (badSleep.filter((l) => l.training?.done).length / badSleep.length) : 0;
-  const sleepCorr = goodSleep.length && badSleep.length
-    ? `Em dias com sono ≥7h você treinou em <b>${Math.round(adGood*100)}%</b> deles (vs <b>${Math.round(adBad*100)}%</b> nos dias de sono curto).`
-    : 'Registre mais dias para destravar correlações.';
-
-  const weakest = findWeakestArea(last7);
+  const next = nextStepRec(last7);
 
   return `
   <header class="pt-7 pb-3 px-5 kombat-hero">
-    <div class="kombat-tagline text-xs">⚡ BATTLE REPORT ⚡</div>
-    <h1 class="text-2xl font-extrabold mt-1">Insights da semana</h1>
+    <div class="kombat-tagline text-xs">${getTheme(state).tags.insights}</div>
+    <h1 class="text-2xl font-extrabold mt-1">Insights</h1>
+    <p class="text-sm text-ink/55 dark:text-paper/55">${totalDays === 0 ? 'Registre seu primeiro dia para destravar.' : `${totalDays} ${totalDays === 1 ? 'dia acompanhado' : 'dias acompanhados'} · média ${avgXP} XP/dia`}</p>
   </header>
 
   <section class="px-4 space-y-3">
-    <div class="q-card p-4">
-      <div class="text-xs uppercase tracking-wider text-ink/45 dark:text-paper/45">Correlação</div>
-      <div class="text-sm mt-1">${sleepCorr}</div>
+
+    <!-- Próximo passo (call to action única) -->
+    <div class="q-card p-4 border-l-4" style="border-color:${next.color}">
+      <div class="text-[10px] uppercase tracking-widest" style="color:${next.color}">PRÓXIMO PASSO</div>
+      <div class="font-extrabold text-base mt-0.5">${next.title}</div>
+      <div class="text-xs text-ink/60 dark:text-paper/60 mt-0.5">${next.tip}</div>
     </div>
 
+    <!-- Heatmap 35 dias -->
     <div class="q-card p-4">
-      <div class="text-xs uppercase tracking-wider text-ink/45 dark:text-paper/45">Foco da semana</div>
-      <div class="font-bold mt-1">${weakest.label}</div>
-      <div class="text-sm text-ink/65 dark:text-paper/65 mt-0.5">${weakest.tip}</div>
+      <div class="flex items-center justify-between mb-2">
+        <div class="text-xs uppercase tracking-wider text-ink/45 dark:text-paper/45">Atividade · 35 dias</div>
+        <div class="flex items-center gap-1 text-[9px] text-ink/45 dark:text-paper/45">
+          menos
+          ${[0,1,2,3,4].map((l) => `<span class="heat-cell heat-l${l}" style="width:8px;height:8px"></span>`).join('')}
+          mais
+        </div>
+      </div>
+      <div class="heat-grid">
+        ${heatCells.map((c) => `
+          <div class="heat-cell heat-l${c.lvl}" title="${c.iso} · ${c.xp} XP"></div>
+        `).join('')}
+      </div>
     </div>
 
+    <!-- Stats em 4 quadros -->
+    <div class="grid grid-cols-2 gap-2">
+      ${miniStat('Treinos', totalTrain, '30d', '#B8242E')}
+      ${miniStat('Streak', maxStreak, 'dias', '#E84A1A')}
+      ${miniStat('Sono ≥7h', totalSleep, '30d', '#7BB8FF')}
+      ${miniStat('Proteína ✓', totalProtein, '30d', '#3FBF7F')}
+    </div>
+
+    <!-- Distribuição por dia da semana -->
     <div class="q-card p-4">
-      <div class="text-xs uppercase tracking-wider text-ink/45 dark:text-paper/45">Histórico de ranks</div>
-      <div class="mt-2 space-y-1">
-        ${(state.rankHistory.length
-          ? state.rankHistory.slice(-6)
-          : [{ weekStart: isoDate(startOfWeek()), rank: rankFromXP(state.user.rankXP||0).key, xp: weeklyXP() }]
-        ).map(rh => {
-          const r = RANKS.find(x => x.key === rh.rank) || RANKS[0];
-          return `<div class="flex items-center justify-between text-sm">
-            <span class="text-ink/55 dark:text-paper/55">${formatDateBR(rh.weekStart)}</span>
-            <span class="font-bold" style="color:${r.color}">${r.name}</span>
-            <span class="text-xs">${rh.xp} XP</span>
+      <div class="text-xs uppercase tracking-wider text-ink/45 dark:text-paper/45">XP médio · dia da semana</div>
+      <div class="dow-chart mt-3">
+        ${dowAvg.map((v, i) => {
+          const h = Math.max(6, Math.round((v / dowMax) * 56));
+          const isBest = i === bestDow && v > 0;
+          const isWorst = i === worstDow && dowN[i] > 0 && i !== bestDow;
+          return `
+          <div class="dow-col">
+            <div class="dow-bar" style="height:${h}px; background:${isBest ? '#3FBF7F' : isWorst ? '#B8242E55' : 'var(--lavender)'}"></div>
+            <div class="dow-label">${dowLabels[i]}</div>
+            <div class="dow-val">${v.toFixed(1)}</div>
           </div>`;
         }).join('')}
       </div>
+      ${(dowAvg[bestDow] > 0) ? `
+        <div class="text-xs text-ink/60 dark:text-paper/60 mt-3">
+          Você rende mais em <b style="color:#3FBF7F">${dowLabels[bestDow]}</b>${dowN[worstDow] > 0 && worstDow !== bestDow ? ` e menos em <b>${dowLabels[worstDow]}</b>` : ''}.
+        </div>` : ''}
     </div>
-  </section>
 
-  <section class="px-4 mt-4">
-    <h2 class="font-extrabold mb-2">Últimos 7 dias</h2>
-    <div class="q-card divide-y divide-ink/5 dark:divide-paper/5">
-      ${last7.slice().reverse().map(l => `
-        <div class="p-3 text-sm flex items-center justify-between">
-          <div>
-            <div class="font-semibold">${formatDateBR(l.date)}</div>
-            <div class="text-xs text-ink/50 dark:text-paper/50">
-              ${l.training?.done ? '🏋️ '+l.training.type : '💤'}
-              · ${l.protein?.grams||0}g
-              · ${l.sleep?.hours||0}h
-              · ${l.steps||0} passos
+    <!-- Personal Records -->
+    ${topPRs.length ? `
+      <div class="q-card p-4">
+        <div class="text-xs uppercase tracking-wider text-ink/45 dark:text-paper/45">Personal records</div>
+        <div class="mt-2 space-y-1.5">
+          ${topPRs.map((pr, i) => `
+            <div class="flex items-center gap-2 text-sm">
+              <span class="font-kombat text-xs w-4" style="color:#D6A93E">${['🥇','🥈','🥉'][i]||''}</span>
+              <span class="flex-1 truncate">${pr.name}</span>
+              <span class="font-bold">${pr.weight}kg${pr.reps?` × ${pr.reps}`:''}</span>
+              <span class="text-[10px] text-ink/45 dark:text-paper/45">${formatDateBR(pr.date)}</span>
             </div>
-          </div>
-          <div class="pill is-mint">${l.xp||0} XP</div>
-        </div>`).join('') || `<div class="p-4 text-sm">Sem registros.</div>`}
-    </div>
+          `).join('')}
+        </div>
+      </div>` : ''}
+
+    <!-- Histórico de ranks (compacto) -->
+    ${state.rankHistory.length > 1 ? `
+      <div class="q-card p-4">
+        <div class="text-xs uppercase tracking-wider text-ink/45 dark:text-paper/45">Histórico de ranks</div>
+        <div class="mt-2 space-y-1">
+          ${state.rankHistory.slice(-5).map(rh => {
+            const r = RANKS.find(x => x.key === rh.rank) || RANKS[0];
+            return `<div class="flex items-center justify-between text-sm">
+              <span class="text-ink/55 dark:text-paper/55">${formatDateBR(rh.weekStart)}</span>
+              <span class="font-bold" style="color:${r.color}">${r.name}</span>
+              <span class="text-xs">${rh.xp} XP</span>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>` : ''}
+
   </section>
   `;
 }
 
-function findWeakestArea(logs) {
-  if (!logs.length) return { label: 'Comece a registrar', tip: 'Faça o primeiro log do dia para ver onde focar.' };
-  const score = {
-    treino:   logs.filter((l) => l.training?.done).length / logs.length,
-    proteina: logs.filter((l) => l.protein?.hit).length / logs.length,
-    sono:     logs.filter((l) => (l.sleep?.hours||0) >= 7).length / logs.length,
-    leitura:  logs.filter((l) => (l.reading?.minutes||0) >= 15).length / logs.length,
-    passos:   logs.filter((l) => (l.steps||0) >= 8000).length / logs.length,
+function miniStat(label, value, unit, color) {
+  return `
+    <div class="q-card p-3">
+      <div class="text-[10px] uppercase tracking-wider text-ink/45 dark:text-paper/45">${label}</div>
+      <div class="flex items-baseline gap-1 mt-0.5">
+        <div class="text-2xl font-extrabold" style="color:${color}">${value}</div>
+        <div class="text-[10px] text-ink/45 dark:text-paper/45">${unit}</div>
+      </div>
+    </div>`;
+}
+
+/** Devolve a recomendação mais relevante para os últimos 7 dias.
+ *  Retorna { title, tip, color }. */
+function nextStepRec(logs) {
+  if (!logs.length) return {
+    title: 'Faça seu primeiro registro',
+    tip: `Toque em "${getTheme(state).labels?.finishBtn || 'FINISH IT!'}" na home pra registrar o dia.`,
+    color: '#B7B5FF',
   };
-  const tips = {
-    treino:   'Tente garantir 3 treinos esta semana — agende como compromisso.',
-    proteina: 'Planeje refeições com 30g+ de proteína cada. Café da manhã é o vilão.',
-    sono:     'Apague a luz 23:30 em ≥5 dias. Sem celular nos 30 min finais.',
-    leitura:  'Use o timer de 15 min do app antes de dormir.',
-    passos:   'Caminhe 30 min após o almoço — quase resolve sozinho.',
-  };
-  const labels = {
-    treino: 'Adesão a treinos', proteina: 'Proteína diária', sono: 'Sono ≥7h', leitura: 'Leitura 15min', passos: '8k passos',
-  };
-  const worst = Object.entries(score).sort((a, b) => a[1] - b[1])[0];
-  return { label: labels[worst[0]], tip: tips[worst[0]] };
+  const trainPct   = logs.filter((l) => l.training?.done).length / logs.length;
+  const sleepPct   = logs.filter((l) => (l.sleep?.hours||0) >= 7).length / logs.length;
+  const proteinPct = logs.filter((l) => l.protein?.hit).length / logs.length;
+  const stepsPct   = logs.filter((l) => (l.steps||0) >= 8000).length / logs.length;
+  const readPct    = logs.filter((l) => (l.reading?.minutes||0) >= 15).length / logs.length;
+
+  const items = [
+    { k:'sleep', pct: sleepPct,   title: 'Priorize o sono ≥7h',     tip: 'Apague a luz 23:30 hoje. Sem celular nos últimos 30min.',         color:'#7BB8FF' },
+    { k:'train', pct: trainPct,   title: 'Trave 3 treinos no calendário', tip: 'Coloca como compromisso fixo — o app detecta o tipo automaticamente.', color:'#B8242E' },
+    { k:'prot',  pct: proteinPct, title: 'Encha as refeições de proteína', tip: 'Mire 30g+ por refeição. Whey resolve quando der ruim.',           color:'#3FBF7F' },
+    { k:'step',  pct: stepsPct,   title: 'Caminhe 30 min após o almoço', tip: 'Resolve passos e digestão de uma vez.',                            color:'#E84A1A' },
+    { k:'read',  pct: readPct,    title: 'Leitura 15 min antes de dormir', tip: 'Use o timer pomodoro do app. Substitui o scroll noturno.',         color:'#B7B5FF' },
+  ];
+  items.sort((a, b) => a.pct - b.pct);
+  return items[0];
 }
 
 // ----- 6.6 Sleep modal -------------------------------------
@@ -2741,12 +4400,13 @@ let readingInt = null;
 let readingStart = 0;
 
 function modalReading() {
+  const board = buildReadingLeaderboard();
   openModal(`
     <header class="flex items-center justify-between p-4 border-b border-ink/5 dark:border-paper/5">
       <h2 class="font-extrabold text-lg">Leitura</h2>
       <button class="modal-close p-1"><span class="w-5 h-5">${I.close}</span></button>
     </header>
-    <div class="p-4 space-y-4">
+    <div class="p-4 space-y-4 overflow-y-auto" style="max-height:75vh">
       <div class="q-card p-4 text-center">
         <div class="text-xs uppercase tracking-wider text-ink/45 dark:text-paper/45">Timer de leitura</div>
         <div id="reading-timer" class="text-4xl font-extrabold mt-1">15:00</div>
@@ -2754,6 +4414,31 @@ function modalReading() {
           <button id="r-start" class="q-btn q-btn-primary flex-1">Iniciar 15 min</button>
           <button id="r-stop" class="q-btn q-btn-ghost flex-1">Parar</button>
         </div>
+      </div>
+
+      <!-- Leaderboard semanal (estilo gymrats) -->
+      <div class="q-card p-3">
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="font-bold text-sm">🏆 Leaderboard · semana</h3>
+          <span class="text-[10px] text-ink/45 dark:text-paper/45">você está em <b style="color:var(--lavender)">${board.youRank}º</b></span>
+        </div>
+        <div class="space-y-1">
+          ${board.rows.map((r, i) => `
+            <div class="flex items-center gap-2 py-1 ${r.isYou ? 'bg-lavender/10 rounded' : ''}">
+              <span class="w-5 text-xs font-bold text-center ${i < 3 ? 'text-kgold' : 'text-ink/45 dark:text-paper/45'}">${i+1}</span>
+              <span class="w-7 h-7 rounded-full flex items-center justify-center font-bold text-xs"
+                    style="background:${r.color}25; color:${r.color}">${r.username.slice(0,1).toUpperCase()}</span>
+              <div class="flex-1 min-w-0">
+                <div class="text-sm font-semibold truncate ${r.isYou ? 'text-lavender' : ''}">${r.username}${r.isYou ? ' (você)' : r.isNpc ? ' · bot' : ''}</div>
+                <div class="xp-track mt-0.5" style="height:3px"><div class="xp-fill" style="width:${r.pct}%"></div></div>
+              </div>
+              <span class="text-xs font-bold tabular-nums">${r.minutes}min</span>
+            </div>
+          `).join('')}
+        </div>
+        <p class="text-[10px] text-ink/45 dark:text-paper/45 mt-2 italic">
+          Compete com outras contas neste dispositivo + 3 bots que leem em ritmo realista. Renova toda segunda.
+        </p>
       </div>
 
       <h3 class="font-bold">Livros em andamento</h3>
@@ -2819,6 +4504,185 @@ function modalReading() {
     state.books.push({ title: f.title.value, totalPages: +f.pages.value || 200, currentPage: 0 });
     saveState(); modalReading();
   };
+}
+
+// NPCs do leaderboard de leitura — perfis com ritmo realista (média min/dia).
+// O progresso é gerado deterministicamente a partir do ISO da semana, então
+// a "competição" não muda durante a semana, mas vira nova toda segunda.
+const READING_NPCS = [
+  { username: 'Ana',          avgMin: 28, variance: 12, color: '#FF85A5' },
+  { username: 'João',         avgMin: 16, variance: 8,  color: '#7BB8FF' },
+  { username: 'BookwormZ',    avgMin: 42, variance: 10, color: '#A8E6CF' },
+];
+
+// NPCs de cuidados (skincare/rotina) — pontos = quantos rituais concluiu na semana
+const CARE_NPCS = [
+  { username: 'Mari',         avgPts: 5, variance: 2, color: '#FFB7C5' },
+  { username: 'Lia',          avgPts: 3, variance: 2, color: '#B7B5FF' },
+  { username: 'Beto',         avgPts: 2, variance: 1, color: '#A8E6CF' },
+];
+
+function weekStartISO(d = new Date()) {
+  const x = new Date(d);
+  const day = x.getDay();
+  x.setDate(x.getDate() - day); // domingo
+  return isoDate(x);
+}
+
+function mulberry32(seed) {
+  let a = seed >>> 0;
+  return function () {
+    a = (a + 0x6D2B79F5) >>> 0;
+    let t = a;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+/** Constrói o leaderboard semanal de leitura.
+ *  Junta: você + outras contas locais + 3 NPCs. Cada um pontua "minutos" da
+ *  semana atual. Retorna { rows: [...sorted], youRank }. */
+function buildReadingLeaderboard() {
+  const wkStart = weekStartISO();
+  // Minutos da semana — minha conta + outras contas locais
+  const accs = loadAccounts();
+  const youId = currentAccount()?.id;
+  const rows = [];
+
+  for (const acc of accs) {
+    const key = stateKey(acc.id);
+    let minutes = 0;
+    try {
+      const raw = localStorage.getItem(key);
+      if (raw) {
+        const s = JSON.parse(raw);
+        minutes = (s.dailyLogs || []).filter((l) => l.date >= wkStart).reduce((sum, l) => sum + (l.reading?.minutes || 0), 0);
+      }
+    } catch {}
+    rows.push({ username: acc.username, minutes, isYou: acc.id === youId, isNpc: false, color: '#B7B5FF' });
+  }
+
+  // Se não estou logado mas estou em modo legado, adiciono "convidado" usando state em memória
+  if (!youId && state) {
+    const minutes = (state.dailyLogs || []).filter((l) => l.date >= wkStart).reduce((s, l) => s + (l.reading?.minutes || 0), 0);
+    rows.push({ username: state.user?.name || 'Convidado', minutes, isYou: true, isNpc: false, color: '#B7B5FF' });
+  }
+
+  // NPCs — progresso determinístico por semana (mulberry32 com seed do wkStart)
+  const seedBase = wkStart.split('-').join('') | 0;
+  READING_NPCS.forEach((npc, i) => {
+    const rng = mulberry32(seedBase + i * 1009);
+    // Dia atual da semana (0 = domingo até 6 = sábado)
+    const dow = new Date().getDay();
+    // Para cada dia 0..dow, NPC lê (avgMin ± variance), no mínimo 0
+    let total = 0;
+    for (let d = 0; d <= dow; d++) {
+      const v = npc.avgMin + (rng() * 2 - 1) * npc.variance;
+      total += Math.max(0, Math.round(v));
+    }
+    rows.push({ username: npc.username, minutes: total, isYou: false, isNpc: true, color: npc.color });
+  });
+
+  rows.sort((a, b) => b.minutes - a.minutes);
+  const maxMin = Math.max(...rows.map((r) => r.minutes), 1);
+  rows.forEach((r) => { r.pct = Math.round((r.minutes / maxMin) * 100); });
+  const youRank = (rows.findIndex((r) => r.isYou) + 1) || rows.length;
+  return { rows, youRank };
+}
+
+/** Leaderboard de cuidados — conta desafios concluídos com id começando em "s"
+ *  (skincare) na semana atual, somando contas locais + 3 NPCs. */
+function buildCareLeaderboard() {
+  const wkStart = weekStartISO();
+  const accs = loadAccounts();
+  const youId = currentAccount()?.id;
+  const rows = [];
+
+  function countCareForState(s) {
+    return (s.user?.challengesDone || [])
+      .filter((d) => d.date >= wkStart && /^s\d+/.test(d.id))
+      .length;
+  }
+  for (const acc of accs) {
+    let pts = 0;
+    try {
+      const raw = localStorage.getItem(stateKey(acc.id));
+      if (raw) pts = countCareForState(JSON.parse(raw));
+    } catch {}
+    rows.push({ username: acc.username, pts, isYou: acc.id === youId, isNpc: false, color: '#B7B5FF' });
+  }
+  if (!youId && state) {
+    rows.push({ username: state.user?.name || 'Convidado', pts: countCareForState(state), isYou: true, isNpc: false, color: '#B7B5FF' });
+  }
+  const seedBase = wkStart.split('-').join('') | 0;
+  CARE_NPCS.forEach((npc, i) => {
+    const rng = mulberry32(seedBase + i * 4441);
+    const dow = new Date().getDay();
+    let total = 0;
+    for (let d = 0; d <= dow; d++) {
+      // chance de fazer cuidado naquele dia ~ avgPts/7
+      if (rng() < npc.avgPts / 7) total++;
+    }
+    rows.push({ username: npc.username, pts: total, isYou: false, isNpc: true, color: npc.color });
+  });
+  rows.sort((a, b) => b.pts - a.pts);
+  const max = Math.max(...rows.map((r) => r.pts), 1);
+  rows.forEach((r) => { r.pct = Math.round((r.pts / max) * 100); });
+  const youRank = (rows.findIndex((r) => r.isYou) + 1) || rows.length;
+  return { rows, youRank };
+}
+
+/** Modal "Competição" com ambos os leaderboards (leitura + cuidados). */
+function modalCompete() {
+  const reading = buildReadingLeaderboard();
+  const care    = buildCareLeaderboard();
+
+  function leaderboardHtml(title, sub, board, unit) {
+    return `
+      <div class="q-card p-3">
+        <div class="flex items-center justify-between mb-2">
+          <div>
+            <h3 class="font-bold text-sm">${title}</h3>
+            <div class="text-[10px] text-ink/45 dark:text-paper/45">${sub}</div>
+          </div>
+          <span class="text-[10px] text-ink/45 dark:text-paper/45">${board.youRank}º</span>
+        </div>
+        <div class="space-y-1">
+          ${board.rows.map((r, i) => `
+            <div class="flex items-center gap-2 py-1 ${r.isYou ? 'bg-lavender/10 rounded' : ''}">
+              <span class="w-5 text-xs font-bold text-center ${i < 3 ? 'text-kgold' : 'text-ink/45 dark:text-paper/45'}">${i+1}</span>
+              <span class="w-7 h-7 rounded-full flex items-center justify-center font-bold text-xs"
+                    style="background:${r.color}25; color:${r.color}">${r.username.slice(0,1).toUpperCase()}</span>
+              <div class="flex-1 min-w-0">
+                <div class="text-sm font-semibold truncate ${r.isYou ? 'text-lavender' : ''}">${r.username}${r.isYou ? ' (você)' : r.isNpc ? ' · bot' : ''}</div>
+                <div class="xp-track mt-0.5" style="height:3px"><div class="xp-fill" style="width:${r.pct}%"></div></div>
+              </div>
+              <span class="text-xs font-bold tabular-nums">${(r.minutes ?? r.pts)}${unit}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>`;
+  }
+
+  openModal(`
+    <header class="flex items-center justify-between p-4 border-b border-ink/5 dark:border-paper/5">
+      <div>
+        <div class="kombat-tagline text-[10px]">${getTheme(state).short}</div>
+        <h2 class="font-extrabold text-lg mt-0.5">Competição · semana</h2>
+        <p class="text-xs text-ink/55 dark:text-paper/55">Você + outras contas no aparelho + 3 bots de cada categoria.</p>
+      </div>
+      <button class="modal-close p-1"><span class="w-5 h-5">${I.close}</span></button>
+    </header>
+    <div class="p-4 space-y-3 overflow-y-auto" style="max-height:75vh">
+      ${leaderboardHtml('📖 Leitura', 'Minutos lidos na semana', reading, 'min')}
+      ${leaderboardHtml('✨ Cuidados', 'Rituais de skincare concluídos', care, 'pts')}
+      <p class="text-[10px] text-ink/45 dark:text-paper/45 italic">
+        Cuidados pontua cada vez que você marca um desafio de skincare como concluído.
+        Renova toda segunda. Bots leem/cuidam em ritmo realista.
+      </p>
+    </div>
+  `);
 }
 
 function recordReadingMinutes(min) {
@@ -2914,7 +4778,7 @@ function modalAchievements() {
             <div class="flex-1 min-w-0">
               <div class="font-bold flex items-center gap-2">
                 <span>${a.name}</span>
-                <span class="font-display text-xs text-ink/45 dark:text-paper/45">${a.ko}</span>
+                ${state.user.theme === 'kpop_anime' && a.ko ? `<span class="font-display text-xs text-ink/45 dark:text-paper/45">${a.ko}</span>` : ''}
               </div>
               <div class="text-xs text-ink/55 dark:text-paper/55">${a.desc}</div>
             </div>
@@ -2936,12 +4800,15 @@ function modalChoreo() {
   const candidates = KPOP_CHOREOS.map((c, i) => ({ ...c, id: i })).filter((c) => !recent.has(c.id));
   const c = candidates[Math.floor(Math.random() * candidates.length)] || KPOP_CHOREOS[0];
   const diffStars = '★'.repeat(c.diff) + '☆'.repeat(5 - c.diff);
-  const searchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(c.artist + ' ' + c.song + ' dance practice')}`;
+  const ytPractice = `https://www.youtube.com/results?search_query=${encodeURIComponent(c.artist + ' ' + c.song + ' dance practice')}`;
+  const ytTutorial = `https://www.youtube.com/results?search_query=${encodeURIComponent(c.artist + ' ' + c.song + ' dance tutorial mirrored')}`;
+  const tiktokTag   = `https://www.tiktok.com/tag/${encodeURIComponent((c.artist + c.song).replace(/[^a-z0-9]/gi, ''))}`;
+  const tiktokSearch = `https://www.tiktok.com/search?q=${encodeURIComponent(c.artist + ' ' + c.song + ' dance')}`;
 
   openModal(`
     <header class="flex items-center justify-between p-4 border-b border-ink/5 dark:border-paper/5">
       <div>
-        <div class="kombat-tagline text-[10px]">🎵 DANCE ARENA 🎵</div>
+        <div class="kombat-tagline text-[10px]">${getTheme(state).tags.dance}</div>
         <h2 class="font-extrabold text-lg mt-0.5">Coreografia sorteada</h2>
       </div>
       <button class="modal-close p-1"><span class="w-5 h-5">${I.close}</span></button>
@@ -2955,9 +4822,20 @@ function modalChoreo() {
         <div class="text-xs text-ink/55 dark:text-paper/55 mt-3 italic">"${c.tip}"</div>
       </div>
 
-      <a href="${searchUrl}" target="_blank" rel="noopener" class="q-btn q-btn-primary w-full text-center">
-        🔍 Buscar "dance practice" no YouTube
-      </a>
+      <div class="grid grid-cols-2 gap-2">
+        <a href="${ytPractice}" target="_blank" rel="noopener" class="q-btn q-btn-primary text-center text-xs leading-tight py-2">
+          ▶ YouTube<br><span class="opacity-80 text-[10px]">dance practice</span>
+        </a>
+        <a href="${ytTutorial}" target="_blank" rel="noopener" class="q-btn q-btn-ghost text-center text-xs leading-tight py-2">
+          🎓 YouTube<br><span class="opacity-80 text-[10px]">tutorial espelhado</span>
+        </a>
+        <a href="${tiktokSearch}" target="_blank" rel="noopener" class="q-btn q-btn-primary text-center text-xs leading-tight py-2" style="background:linear-gradient(135deg,#000,#25F4EE)">
+          🎵 TikTok<br><span class="opacity-80 text-[10px]">busca da música</span>
+        </a>
+        <a href="${tiktokTag}" target="_blank" rel="noopener" class="q-btn q-btn-ghost text-center text-xs leading-tight py-2">
+          # TikTok<br><span class="opacity-80 text-[10px]">hashtag/challenge</span>
+        </a>
+      </div>
 
       <div class="flex gap-2">
         <button id="choreo-reroll" class="q-btn q-btn-ghost flex-1">🎲 Sortear outra</button>
@@ -2995,19 +4873,135 @@ function modalChoreo() {
   };
 }
 
+// ----- 6.3c Goals / Metas view -----------------------------
+// Tab "Metas" — apenas referências visuais (com imagens reais). Os desafios
+// físicos (BODY_CHALLENGES) ficam no modalChallenge() acessível pela home.
+
+function viewGoals() {
+  if (!state.user.activeGoals) state.user.activeGoals = [];
+  const activeKeys = new Set(state.user.activeGoals);
+  const activeGoals = GOALS.filter((g) => activeKeys.has(g.key));
+  const otherGoals = GOALS.filter((g) => !activeKeys.has(g.key));
+
+  return `
+  <header class="pt-7 pb-3 px-5 kombat-hero">
+    <div class="kombat-tagline text-xs">${getTheme(state).tags.goals}</div>
+    <h1 class="text-2xl font-extrabold mt-1">Metas</h1>
+    <p class="text-sm text-ink/55 dark:text-paper/55">Referências visuais — como você quer ficar.</p>
+  </header>
+
+  ${activeGoals.length ? `
+  <section class="px-4 mb-4">
+    <div class="kombat-divider">★ ATIVAS (${activeGoals.length})</div>
+    <div class="grid grid-cols-2 gap-3">
+      ${activeGoals.map(g => goalCardHtml(g, true)).join('')}
+    </div>
+  </section>` : ''}
+
+  <section class="px-4 mb-6">
+    <div class="kombat-divider">📸 GALERIA</div>
+    <p class="text-xs text-ink/55 dark:text-paper/55 mb-3 leading-relaxed">
+      Toque ★ pra marcar como meta. ${activeGoals.length ? '' : 'Comece marcando 1–2 que ressoem.'}
+    </p>
+    <div class="grid grid-cols-2 gap-3">
+      ${otherGoals.map(g => goalCardHtml(g, false)).join('')}
+    </div>
+  </section>
+
+  <section class="px-4 mb-6">
+    <button id="open-challenges" class="q-btn q-btn-ghost w-full text-sm">
+      🥊 Ver desafios físicos de hoje
+    </button>
+  </section>
+  `;
+}
+
+function goalCardHtml(g, active) {
+  const hasImage = !!state?.user?.goalImages?.[g.key];
+  return `
+    <div class="q-card overflow-hidden goal-card ${active ? 'is-active' : ''}" data-key="${g.key}">
+      <label class="aspect-[3/4] block cursor-pointer relative group">
+        ${goalImageHtml(g)}
+        <span class="absolute bottom-1 right-1 text-[10px] px-1.5 py-0.5 rounded bg-ink/70 text-paper pointer-events-none">
+          ${hasImage ? '🔁 trocar' : '📷 enviar foto'}
+        </span>
+        <input type="file" accept="image/*" class="hidden goal-img-input" data-key="${g.key}" />
+      </label>
+      <div class="p-3">
+        <div class="font-bold text-sm">${g.name}</div>
+        <div class="text-[10px] text-ink/50 dark:text-paper/50 mt-0.5">${g.focus}</div>
+        <p class="text-xs text-ink/65 dark:text-paper/65 mt-2 leading-snug">${g.why}</p>
+        <button class="goal-toggle q-btn ${active ? 'q-btn-finish' : 'q-btn-ghost'} w-full mt-2 py-1 text-xs" data-key="${g.key}">
+          ${active ? '★ Objetivo ativo' : '☆ Marcar como meta'}
+        </button>
+        ${hasImage ? `<button class="goal-img-remove q-btn q-btn-ghost w-full mt-1 py-1 text-[10px] text-ink/55 dark:text-paper/55" data-key="${g.key}">remover foto</button>` : ''}
+      </div>
+    </div>`;
+}
+
+// ----- 6.7d1 Goals (objetivos visuais) modal --------------
+
+function modalGoals() {
+  if (!state.user.activeGoals) state.user.activeGoals = [];
+  openModal(`
+    <header class="flex items-center justify-between p-4 border-b border-ink/5 dark:border-paper/5">
+      <div>
+        <div class="kombat-tagline text-[10px]">${getTheme(state).tags.goals}</div>
+        <h2 class="font-extrabold text-lg mt-0.5">Meus objetivos</h2>
+        <p class="text-xs text-ink/55 dark:text-paper/55">Marque as referências que você quer alcançar.</p>
+      </div>
+      <button class="modal-close p-1"><span class="w-5 h-5">${I.close}</span></button>
+    </header>
+    <div class="p-4 overflow-y-auto" style="max-height:75vh">
+      <p class="text-xs text-ink/55 dark:text-paper/55 mb-3 leading-relaxed">
+        Coloque imagens em <code>icons/goals/&lt;key&gt;.jpg</code> pra ver suas referências.
+        Sem imagem → placeholder colorido. Confira <code>icons/goals/README.md</code> pros nomes.
+      </p>
+      <div class="grid grid-cols-2 gap-3">
+        ${GOALS.map(g => {
+          const active = state.user.activeGoals.includes(g.key);
+          return `
+          <div class="q-card overflow-hidden goal-card ${active ? 'is-active' : ''}" data-key="${g.key}">
+            <div class="aspect-[3/4]">${goalImageHtml(g)}</div>
+            <div class="p-3">
+              <div class="font-bold text-sm">${g.name}</div>
+              <div class="text-[10px] text-ink/50 dark:text-paper/50 mt-0.5">${g.focus}</div>
+              <p class="text-xs text-ink/65 dark:text-paper/65 mt-2 leading-snug">${g.why}</p>
+              <button class="goal-toggle q-btn ${active ? 'q-btn-finish' : 'q-btn-ghost'} w-full mt-2 py-1 text-xs" data-key="${g.key}">
+                ${active ? '★ Objetivo ativo' : '☆ Marcar como meta'}
+              </button>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+  `);
+  document.querySelectorAll('.goal-toggle').forEach(b => b.onclick = () => {
+    const k = b.dataset.key;
+    const arr = state.user.activeGoals;
+    const i = arr.indexOf(k);
+    if (i >= 0) arr.splice(i, 1);
+    else arr.push(k);
+    saveState();
+    modalGoals(); // re-render
+  });
+}
+
 // ----- 6.7d Body challenges modal --------------------------
 
 function modalChallenge() {
   if (!state.user.challengesDone) state.user.challengesDone = [];
-  // Sorteia 3 desafios não recém-feitos
+  // Pool = skincare + leitura (compartilhado) + desafios temáticos do tema atual
+  const themeChallenges = getTheme(state).challenges || [];
+  const fullPool = [...BODY_CHALLENGES, ...themeChallenges];
   const recent = new Set(state.user.challengesDone.slice(-5).map((c) => c.id));
-  const pool = BODY_CHALLENGES.filter((c) => !recent.has(c.id));
-  const picked = sample(pool.length ? pool : BODY_CHALLENGES, 3);
+  const pool = fullPool.filter((c) => !recent.has(c.id));
+  const picked = sample(pool.length ? pool : fullPool, 3);
 
   openModal(`
     <header class="flex items-center justify-between p-4 border-b border-ink/5 dark:border-paper/5">
       <div>
-        <div class="kombat-tagline text-[10px]">⚔ MIRROR MATCH ⚔</div>
+        <div class="kombat-tagline text-[10px]">${getTheme(state).tags.workout}</div>
         <h2 class="font-extrabold text-lg mt-0.5">Desafios físicos</h2>
         <p class="text-xs text-ink/55 dark:text-paper/55">Inspirações de quem você admira.</p>
       </div>
@@ -3020,11 +5014,11 @@ function modalChallenge() {
             <div class="text-3xl">${c.icon}</div>
             <div class="flex-1 min-w-0">
               <div class="font-extrabold text-base">${c.name}</div>
-              <div class="font-kombat text-[10px] text-blood dark:text-ember tracking-widest">${c.inspiration} · ${c.focus}</div>
+              <div class="font-kombat text-[10px] text-blood dark:text-ember tracking-widest">${c.inspiration ? c.inspiration + ' · ' : ''}${c.focus}</div>
               <p class="text-sm mt-2 text-ink/75 dark:text-paper/75">${c.sets}</p>
               <p class="text-xs italic mt-1 text-ink/55 dark:text-paper/55">💡 ${c.tip}</p>
             </div>
-            <div class="pill is-kombat flex-shrink-0">+${c.xp} XP</div>
+            <div class="pill ${state.user.theme === 'kpop_anime' ? 'is-kombat' : 'is-mint'} flex-shrink-0">+${c.xp} XP</div>
           </div>
           <button class="q-btn q-btn-primary w-full mt-3 text-sm challenge-done" data-id="${c.id}" data-xp="${c.xp}" data-name="${c.name}">
             ✓ Concluí esse desafio
@@ -3074,26 +5068,63 @@ function modalChallenge() {
 // ----- 6.8 Rewards modal -----------------------------------
 
 function modalRewards() {
+  // Normaliza recompensas: aceita string (legado) OU objeto {text, daily, id}
+  const items = state.rewards.available.map((r, i) => {
+    if (typeof r === 'string') return { id: 'r' + i, text: r, daily: false };
+    return { id: r.id || 'r' + i, text: r.text || '', daily: !!r.daily };
+  });
+
+  function rewardRow(r, i) {
+    const isDaily = r.daily;
+    return `
+      <div class="q-card p-3 flex items-center gap-2" data-i="${i}">
+        <span class="reward-toggle-daily cursor-pointer text-sm select-none" data-i="${i}"
+              title="Marcar como recompensa diária">
+          ${isDaily ? '⭐' : '☆'}
+        </span>
+        <span class="flex-1 min-w-0 text-sm">${r.text}${isDaily ? ' <span class="text-[10px] text-kgold">· diária</span>' : ''}</span>
+        <button class="q-btn q-btn-primary text-xs py-1 px-2 redeem" data-i="${i}">Resgatar</button>
+        <button class="reward-delete q-btn q-btn-ghost text-xs py-1 px-2 text-ink/55 dark:text-paper/55" data-i="${i}" title="Remover">×</button>
+      </div>`;
+  }
+
+  const dailyItems   = items.filter((r) => r.daily);
+  const regularItems = items.filter((r) => !r.daily);
+
   openModal(`
     <header class="flex items-center justify-between p-4 border-b border-ink/5 dark:border-paper/5">
-      <h2 class="font-extrabold text-lg">Recompensas</h2>
+      <div>
+        <h2 class="font-extrabold text-lg">Recompensas</h2>
+        <p class="text-xs text-ink/55 dark:text-paper/55">⭐ = recompensa diária. Marque pra ver lembrete na home.</p>
+      </div>
       <button class="modal-close p-1"><span class="w-5 h-5">${I.close}</span></button>
     </header>
-    <div class="p-4 space-y-4">
+    <div class="p-4 space-y-4 overflow-y-auto" style="max-height:75vh">
+
+      ${dailyItems.length ? `
+      <div>
+        <h3 class="font-bold mb-2">⭐ Diárias</h3>
+        <div class="space-y-2">
+          ${dailyItems.map((r) => rewardRow(r, items.indexOf(r))).join('')}
+        </div>
+      </div>` : ''}
+
       <div>
         <h3 class="font-bold mb-2">Disponíveis</h3>
         <div class="space-y-2">
-          ${state.rewards.available.map((r, i) => `
-            <div class="q-card p-3 flex items-center justify-between">
-              <span>${r}</span>
-              <button class="q-btn q-btn-primary text-xs py-1 px-3 redeem" data-i="${i}">Resgatar</button>
-            </div>`).join('') || `<div class="q-card p-4 text-sm text-ink/50">Adicione sua primeira recompensa.</div>`}
+          ${regularItems.length
+            ? regularItems.map((r) => rewardRow(r, items.indexOf(r))).join('')
+            : `<div class="q-card p-4 text-sm text-ink/50">Adicione sua primeira recompensa.</div>`}
         </div>
       </div>
 
-      <form id="reward-form" class="flex gap-2">
-        <input class="q-input flex-1" name="text" placeholder="Nova recompensa" required />
-        <button class="q-btn q-btn-primary">+</button>
+      <form id="reward-form" class="space-y-2">
+        <input class="q-input w-full" name="text" placeholder="Nova recompensa" required />
+        <label class="flex items-center gap-2 text-xs text-ink/65 dark:text-paper/65 cursor-pointer">
+          <input type="checkbox" name="daily" class="accent-kgold" />
+          <span>Marcar como diária (aparece lembrete na home todo dia)</span>
+        </label>
+        <button class="q-btn q-btn-primary w-full">+ Adicionar recompensa</button>
       </form>
 
       ${state.rewards.unlocked.length ? `
@@ -3107,9 +5138,9 @@ function modalRewards() {
       ${state.rewards.redeemed.length ? `
       <div>
         <h3 class="font-bold mb-2">Histórico</h3>
-        <div class="q-card divide-y divide-ink/5 dark:divide-paper/5">
+        <div class="q-card divide-y divide-ink/5 dark:divide-paper/5 max-h-40 overflow-y-auto">
           ${state.rewards.redeemed.slice().reverse().map(r => `
-            <div class="p-3 flex justify-between text-sm">
+            <div class="p-2 flex justify-between text-xs">
               <span>${r.text}</span>
               <span class="text-ink/55 dark:text-paper/55">${formatDateBR(r.date)}</span>
             </div>`).join('')}
@@ -3117,27 +5148,77 @@ function modalRewards() {
       </div>` : ''}
     </div>
   `);
+
+  // Promove formato legado pra obj no save
+  function persist() {
+    state.rewards.available = items.map((r) => ({ id: r.id, text: r.text, daily: r.daily }));
+    saveState();
+  }
   document.querySelectorAll('.redeem').forEach(b => b.onclick = () => {
     const i = +b.dataset.i;
-    const text = state.rewards.available.splice(i, 1)[0];
-    state.rewards.redeemed.push({ date: todayISO(), text });
-    saveState(); modalRewards(); toast('🎁 Recompensa resgatada');
+    const r = items[i];
+    if (!r) return;
+    // Diárias ficam na lista; comuns saem
+    if (!r.daily) items.splice(i, 1);
+    state.rewards.redeemed.push({ date: todayISO(), text: r.text });
+    persist(); modalRewards(); toast('🎁 Recompensa resgatada');
+  });
+  document.querySelectorAll('.reward-delete').forEach(b => b.onclick = () => {
+    const i = +b.dataset.i;
+    const r = items[i];
+    if (!r) return;
+    if (!confirm(`Remover "${r.text}"?`)) return;
+    items.splice(i, 1);
+    persist(); modalRewards();
+  });
+  document.querySelectorAll('.reward-toggle-daily').forEach(b => b.onclick = () => {
+    const i = +b.dataset.i;
+    if (items[i]) items[i].daily = !items[i].daily;
+    persist(); modalRewards();
   });
   document.getElementById('reward-form').onsubmit = (e) => {
     e.preventDefault();
-    state.rewards.available.push(e.target.text.value);
-    saveState(); modalRewards();
+    const text = e.target.text.value.trim();
+    if (!text) return;
+    const daily = e.target.daily.checked;
+    items.push({ id: 'r' + Date.now(), text, daily });
+    persist(); modalRewards();
   };
 }
 
 // ----- 6.9 Config view -------------------------------------
 
 function viewConfig() {
+  const acc = currentAccount();
   return `
   <header class="pt-7 pb-3 px-5">
     <h1 class="text-2xl font-extrabold">Configurações</h1>
   </header>
   <section class="px-4 space-y-3">
+    ${acc ? `
+    <div class="q-card p-4 flex items-center gap-3">
+      <span class="w-10 h-10 rounded-full bg-lavender/20 flex items-center justify-center font-bold">${acc.username.slice(0,1).toUpperCase()}</span>
+      <div class="flex-1 min-w-0">
+        <div class="text-xs uppercase tracking-wider text-ink/45 dark:text-paper/45">Conta</div>
+        <div class="font-bold truncate">${acc.username}</div>
+      </div>
+      <button id="cfg-logout" class="q-btn q-btn-ghost text-xs">Sair</button>
+    </div>` : `
+    <div class="q-card p-4">
+      <div class="text-xs uppercase tracking-wider text-ink/45 dark:text-paper/45">Modo convidado</div>
+      <div class="font-bold mt-0.5">Sem conta — dados ficam no aparelho</div>
+      <p class="text-xs text-ink/55 dark:text-paper/55 mt-1 leading-relaxed">
+        Criar uma conta permite competir no leaderboard de Leitura e Cuidados com outros usuários do mesmo aparelho — e protege seus dados com senha.
+      </p>
+      <div class="flex gap-2 mt-3">
+        <button id="cfg-login"    class="q-btn q-btn-primary flex-1 text-sm">→ Entrar</button>
+        <button id="cfg-register" class="q-btn q-btn-ghost   flex-1 text-sm">✓ Criar conta</button>
+      </div>
+      <button id="cfg-promote" class="q-btn q-btn-ghost w-full mt-2 text-xs text-ink/55 dark:text-paper/55">
+        Manter estes dados em uma conta nova
+      </button>
+    </div>`}
+
     <div class="q-card p-4">
       <label class="block">
         <span class="text-sm font-semibold">Seu nome</span>
@@ -3151,6 +5232,24 @@ function viewConfig() {
         <span class="text-sm font-semibold">Lembretes de proteína (HH:MM separados por vírgula)</span>
         <input id="cfg-reminders" class="q-input mt-1" value="${state.user.reminders.proteinTimes.join(', ')}" />
       </label>
+      <div class="block mt-3">
+        <div class="text-sm font-semibold mb-2">Estética</div>
+        <div class="grid grid-cols-2 gap-2">
+          ${Object.entries(THEMES).map(([key, t]) => {
+            const isCurrent = (state.user.theme || 'kpop_anime') === key;
+            return `
+            <label class="q-card p-2 cursor-pointer ${isCurrent ? 'is-selected' : ''} cfg-theme-choice" data-theme="${key}">
+              <input type="radio" name="cfgTheme" value="${key}" class="hidden" ${isCurrent ? 'checked' : ''} />
+              <div class="text-[9px] tracking-widest uppercase" style="color:${t.accent}">${t.short}</div>
+              <div class="font-bold text-xs mt-1">${t.name}</div>
+              <div class="text-[10px] text-ink/55 dark:text-paper/55 leading-tight mt-0.5">${t.sub}</div>
+            </label>`;
+          }).join('')}
+        </div>
+        <p class="text-[10px] text-ink/45 dark:text-paper/45 mt-2 leading-relaxed">
+          Trocar tema atualiza apenas a estética. Suas quests, rewards e desafios temáticos permanecem (ajuste no pool abaixo).
+        </p>
+      </div>
       <button id="cfg-save" class="q-btn q-btn-primary w-full mt-3">Salvar</button>
     </div>
 
@@ -3212,11 +5311,11 @@ function viewConfig() {
 
 function renderTabbar() {
   const items = [
-    { key: 'home',     icon: I.home,  label: 'Início' },
-    { key: 'workout',  icon: I.dumb,  label: 'Treino' },
-    { key: 'nutri',    icon: I.bowl,  label: 'Nutri' },
-    { key: 'body',     icon: I.body,  label: 'Corpo' },
-    { key: 'insights', icon: I.spark, label: 'Insights' },
+    { key: 'home',     icon: I.home,   label: 'Início' },
+    { key: 'workout',  icon: I.dumb,   label: 'Treino' },
+    { key: 'nutri',    icon: I.bowl,   label: 'Nutri' },
+    { key: 'goals',    icon: I.trophy, label: 'Metas' },
+    { key: 'body',     icon: I.body,   label: 'Corpo' },
   ];
   document.getElementById('tabbar').innerHTML = `
     <div class="flex gap-1">
@@ -3250,6 +5349,7 @@ function closeModal() {
 
 function attachHandlers() {
   document.getElementById('open-log')?.addEventListener('click', () => { vibrate(15); modalDailyLog(); });
+  document.getElementById('open-rewards-daily')?.addEventListener('click', () => { vibrate(8); modalRewards(); });
 
   document.getElementById('toggle-dark')?.addEventListener('click', () => {
     state.user.darkMode = !state.user.darkMode;
@@ -3259,7 +5359,9 @@ function attachHandlers() {
 
   document.getElementById('reroll')?.addEventListener('click', () => {
     if (state.quests.dailyAssigned.rerolled) return;
-    state.quests.dailyAssigned.items = sample(state.quests.pool, 3);
+    const isKpop = state.user.theme === 'kpop_anime' || !state.user.theme;
+    const pool = state.quests.pool.filter((q) => isKpop || !q.kpopOnly);
+    state.quests.dailyAssigned.items = sample(pool, 3);
     state.quests.dailyAssigned.completed = [];
     state.quests.dailyAssigned.rerolled = true;
     saveState(); render(); toast('🎲 Re-roll feito');
@@ -3314,8 +5416,59 @@ function attachHandlers() {
       if (t === 'achievements') modalAchievements();
       if (t === 'choreo')       modalChoreo();
       if (t === 'challenge')    modalChallenge();
+      if (t === 'compete')      modalCompete();
     } else go(t);
   }));
+
+  // Handlers da aba "Metas" (viewGoals)
+  document.querySelectorAll('.goal-toggle').forEach((b) => b.onclick = (e) => {
+    e.stopPropagation();
+    const k = b.dataset.key;
+    const arr = state.user.activeGoals || (state.user.activeGoals = []);
+    const i = arr.indexOf(k);
+    if (i >= 0) arr.splice(i, 1);
+    else arr.push(k);
+    saveState(); render();
+  });
+  // Upload de foto por meta (resize p/ 700px de largura, JPEG 0.82 — economiza localStorage)
+  document.querySelectorAll('.goal-img-input').forEach((inp) => inp.onchange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const dataUrl = await resizeImageToDataUrl(file, 700, 0.82);
+      state.user.goalImages = state.user.goalImages || {};
+      state.user.goalImages[inp.dataset.key] = dataUrl;
+      saveState(); toast('Foto atualizada ✓'); render();
+    } catch (err) {
+      toast('Falha ao processar imagem');
+      console.error(err);
+    }
+  });
+  document.querySelectorAll('.goal-img-remove').forEach((b) => b.onclick = (e) => {
+    e.stopPropagation();
+    if (state.user.goalImages) delete state.user.goalImages[b.dataset.key];
+    saveState(); render();
+  });
+  document.getElementById('open-challenges')?.addEventListener('click', modalChallenge);
+  document.getElementById('challenge-reroll')?.addEventListener('click', () => render());
+  document.querySelectorAll('.challenge-done').forEach((btn) => btn.onclick = () => {
+    const id = btn.dataset.id;
+    const xp = +btn.dataset.xp;
+    const name = btn.dataset.name;
+    if (!state.user.challengesDone) state.user.challengesDone = [];
+    state.user.challengesDone.push({ id, name, date: todayISO() });
+    addAttributeXP('forca', 2);
+    const change = gainXP(xp, { attr: 'forca' });
+    saveState();
+    toast(`+${xp} XP — ${name} concluído 💪`);
+    confetti(1100);
+    vibrate(25);
+    btn.disabled = true;
+    btn.textContent = '✓ Concluído!';
+    btn.classList.remove('q-btn-primary');
+    btn.classList.add('q-btn-ghost');
+    if (change.changed) setTimeout(() => kombatOverlay('brutality'), 400);
+  });
 
   // Nutrição — busca + filtro de categoria combinados
   let _foodCat = 'all';
@@ -3353,6 +5506,86 @@ function attachHandlers() {
     if (w) modalWorkoutSession(w.type, w.date);
   });
 
+  // --- Manual entry handlers ---
+  const manualText = document.getElementById('manual-text');
+  const manualDetected = document.getElementById('manual-detected');
+  document.getElementById('manual-detect')?.addEventListener('click', () => {
+    const exs = parseManualExercises(manualText?.value || '');
+    if (!exs.length) { manualDetected.textContent = 'Digite ao menos um exercício.'; return; }
+    const det = detectSplit(exs);
+    manualDetected.innerHTML = `<span class="text-mint font-semibold">▸ ${det.type}</span> · <span class="opacity-70">${det.reason}</span>`;
+  });
+  document.getElementById('manual-save')?.addEventListener('click', () => {
+    const exs = parseManualExercises(manualText?.value || '');
+    if (!exs.length) { toast('Digite ao menos um exercício'); return; }
+    const det = detectSplit(exs);
+    const session = { date: todayISO(), type: det.type, exercises: exs };
+    const idx = state.workouts.findIndex(w => w.date === session.date && w.type === session.type);
+    if (idx >= 0) state.workouts[idx] = session;
+    else state.workouts.push(session);
+    // Atualiza log do dia (treino done)
+    let log = state.dailyLogs.find(l => l.date === session.date);
+    if (!log) {
+      log = { date: session.date, training: { type: det.type, done: true }, protein:{grams:0,hit:false},
+              sleep:{hours:0}, reading:{minutes:0}, steps:0, buffs:[], notes:'', meals:[], xp:0 };
+      state.dailyLogs.push(log);
+    } else { log.training = { type: det.type, done: true }; }
+    log.xp = computeDayXP(log);
+    addAttributeXP('forca', 2);
+    saveState(); confetti(700); toast(`✓ ${det.type} · ${exs.length} exercícios`, 3200); render();
+  });
+
+  // --- Sugestão handlers ---
+  const sugInput = document.getElementById('suggest-text');
+  const sugOut   = document.getElementById('suggest-results');
+  function runSuggest() {
+    if (!sugInput) return;
+    const { items, summary } = suggestExercises(sugInput.value);
+    if (!items.length) {
+      sugOut.innerHTML = `<div class="text-xs text-ink/55 dark:text-paper/55 italic">Nenhuma sugestão. Tente termos como "peito", "cardio", "calistenia"...</div>`;
+      return;
+    }
+    sugOut.innerHTML = `
+      <div class="text-[11px] uppercase tracking-wider text-ink/45 dark:text-paper/45 mt-2">${summary}</div>
+      ${items.map(e => `
+        <div class="flex items-start gap-2 py-1.5 border-b border-ink/5 dark:border-paper/5 last:border-0">
+          <span class="w-1.5 h-1.5 mt-1.5 rounded-full bg-lavender shrink-0"></span>
+          <div class="flex-1 min-w-0">
+            <div class="font-semibold text-sm truncate">${e.name}</div>
+            <div class="text-[11px] text-ink/55 dark:text-paper/55 truncate">${e.muscles || ''}${e._type ? ' · '+e._type : ''}</div>
+          </div>
+          <button class="text-[11px] text-mint font-semibold suggest-add" data-name="${e.name}">+ adicionar</button>
+        </div>
+      `).join('')}
+      <button id="suggest-into-manual" class="q-btn q-btn-ghost w-full text-xs mt-2">📋 Copiar todos para o registro manual</button>
+    `;
+    sugOut.querySelectorAll('.suggest-add').forEach(b => b.onclick = () => {
+      if (!manualText) return;
+      manualText.value = (manualText.value ? manualText.value.replace(/\s*$/, '\n') : '') + b.dataset.name + '\n';
+      document.getElementById('manual-card')?.setAttribute('open', '');
+      toast(`+ ${b.dataset.name}`);
+    });
+    document.getElementById('suggest-into-manual')?.addEventListener('click', () => {
+      if (!manualText) return;
+      manualText.value = items.map(i => i.name).join('\n');
+      document.getElementById('manual-card')?.setAttribute('open', '');
+      toast('Copiado pro registro manual');
+    });
+  }
+  document.getElementById('suggest-go')?.addEventListener('click', runSuggest);
+  sugInput?.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); runSuggest(); } });
+  document.querySelectorAll('.suggest-preset').forEach(b => b.onclick = () => {
+    if (sugInput) { sugInput.value = b.dataset.q; runSuggest(); }
+  });
+
+  // --- Descanso ativo shuffle ---
+  document.getElementById('rest-shuffle')?.addEventListener('click', () => {
+    state.user.activeRestRoll = (state.user.activeRestRoll || 0) + 1;
+    const list = document.getElementById('rest-list');
+    if (list) list.innerHTML = renderRestPicks(pickActiveRest());
+    saveState();
+  });
+
   document.getElementById('add-weight')?.addEventListener('click', modalWeightEntry);
 
   document.getElementById('photo-input')?.addEventListener('change', (e) => {
@@ -3387,11 +5620,55 @@ function attachHandlers() {
   });
 
   // Config
+  document.querySelectorAll('.cfg-theme-choice').forEach((card) => card.onclick = () => {
+    document.querySelectorAll('.cfg-theme-choice').forEach((c) => c.classList.remove('is-selected'));
+    card.classList.add('is-selected');
+    card.querySelector('input[type="radio"]').checked = true;
+  });
   document.getElementById('cfg-save')?.addEventListener('click', () => {
     state.user.name  = document.getElementById('cfg-name').value || 'Jogador';
     state.user.goals = document.getElementById('cfg-goals').value;
     state.user.reminders.proteinTimes = document.getElementById('cfg-reminders').value.split(',').map(s=>s.trim()).filter(Boolean);
+    const themePicked = document.querySelector('input[name="cfgTheme"]:checked')?.value;
+    if (themePicked === 'clean' || themePicked === 'kpop') state.user.theme = themePicked;
     saveState(); toast('Configurações salvas'); render();
+  });
+  document.getElementById('cfg-logout')?.addEventListener('click', () => {
+    if (!confirm('Sair da conta? Seus dados continuam salvos.')) return;
+    logoutAccount();
+  });
+  document.getElementById('cfg-login')?.addEventListener('click', () => {
+    state = null;
+    showAuthScreen('login');
+  });
+  document.getElementById('cfg-register')?.addEventListener('click', () => {
+    state = null;
+    showAuthScreen('register');
+  });
+  // "Promote": move state legado pra uma conta nova, preservando os dados atuais
+  document.getElementById('cfg-promote')?.addEventListener('click', async () => {
+    const username = prompt('Escolha um nome de usuário (≥2 letras):');
+    if (!username || username.trim().length < 2) return;
+    const pw1 = prompt('Defina uma senha (≥4 caracteres):');
+    if (!pw1 || pw1.length < 4) return;
+    const pw2 = prompt('Repita a senha:');
+    if (pw1 !== pw2) { alert('Senhas não conferem.'); return; }
+    try {
+      const id = await createAccount({ username: username.trim(), password: pw1 });
+      // Copia o state atual (legacy) pra chave da conta
+      const legacy = localStorage.getItem(STORAGE_KEY);
+      if (legacy) localStorage.setItem(stateKey(id), legacy);
+      setSession(id);
+      // Atualiza o user.name e remove o legacy pra evitar conflito futuro
+      const fresh = JSON.parse(localStorage.getItem(stateKey(id)));
+      fresh.user.name = username.trim();
+      localStorage.setItem(stateKey(id), JSON.stringify(fresh));
+      localStorage.removeItem(STORAGE_KEY);
+      toast(`Conta "${username.trim()}" criada com seus dados`);
+      bootGameState();
+    } catch (e) {
+      alert(e.message || 'Erro ao criar conta.');
+    }
   });
 
   document.querySelectorAll('.pool-rm').forEach(b => b.onclick = () => {
@@ -3536,18 +5813,172 @@ function checkWeeklyRollover() {
 }
 
 function init() {
+  // Sempre exige login. Sem sessão válida → tela de auth.
+  const session  = getSession();
+  if (!session) { showAuthScreen(); return; }
+  const acc = loadAccounts().find((a) => a.id === session);
+  if (!acc) { setSession(null); showAuthScreen(); return; }
+  bootGameState();
+}
+
+function bootGameState() {
   state = loadState();
   if (!state) {
-    // Estado completamente zerado — primeiro dia começa do Ferro com 0 XP.
     state = makeEmptyState();
+    const acc = currentAccount();
+    if (acc) state.user.name = acc.username;
     saveState();
   }
   if (state.user.darkMode) document.documentElement.classList.add('dark');
+  applyTheme();
   ensureDailyQuests();
   ensureWeeklyQuest();
   checkWeeklyRollover();
   setTimeout(checkAchievements, 100);
   render();
+}
+
+/** Aplica o tema do usuário (data-theme no <html>). */
+function applyTheme() {
+  const t = state?.user?.theme && THEMES[state.user.theme] ? state.user.theme : 'kpop_anime';
+  document.documentElement.dataset.theme = t;
+}
+
+/** Renderiza tela de login/cadastro sem tabbar. */
+function showAuthScreen(mode = 'login') {
+  document.getElementById('tabbar').innerHTML = '';
+  const app = document.getElementById('app');
+  app.innerHTML = `
+    <div class="px-5 pt-12 pb-8">
+      <div class="kombat-tagline text-xs">⚔ QUEST ⚔</div>
+      <h1 class="text-3xl font-extrabold mt-1">${mode === 'register' ? 'Criar conta' : 'Entrar'}</h1>
+      <p class="text-sm text-ink/55 dark:text-paper/55 mt-1">
+        ${mode === 'register' ? 'Escolha um usuário e uma senha. Seus dados ficam só neste dispositivo.' : 'Use seu usuário e senha. Sem conta? Cadastre-se abaixo.'}
+      </p>
+    </div>
+    <div class="px-5 space-y-3">
+      <form id="auth-form" class="q-card p-4 space-y-3">
+        <label class="block">
+          <div class="text-xs uppercase tracking-wider text-ink/45 dark:text-paper/45">Usuário</div>
+          <input class="q-input w-full mt-1" name="username" autocomplete="username" placeholder="ex: ueg, jogador1" required minlength="2" />
+        </label>
+        <label class="block">
+          <div class="text-xs uppercase tracking-wider text-ink/45 dark:text-paper/45">Senha</div>
+          <input class="q-input w-full mt-1" type="password" name="password" autocomplete="${mode === 'register' ? 'new-password' : 'current-password'}" placeholder="mínimo 4 caracteres" required minlength="4" />
+        </label>
+        ${mode === 'register' ? `
+          <label class="block">
+            <div class="text-xs uppercase tracking-wider text-ink/45 dark:text-paper/45">Confirmar senha</div>
+            <input class="q-input w-full mt-1" type="password" name="password2" autocomplete="new-password" placeholder="repita a senha" required minlength="4" />
+          </label>
+          <div>
+            <div class="text-xs uppercase tracking-wider text-ink/45 dark:text-paper/45 mb-2">Estética</div>
+            <div class="grid grid-cols-2 gap-2">
+              ${Object.entries(THEMES).map(([key, t], i) => `
+                <label class="theme-choice q-card p-3 cursor-pointer" data-theme="${key}">
+                  <input type="radio" name="theme" value="${key}" class="hidden" ${i === 0 ? 'checked' : ''} />
+                  <div class="text-[10px] tracking-widest uppercase" style="color:${t.accent}">${t.short}</div>
+                  <div class="font-bold mt-1 leading-tight">${t.name}</div>
+                  <div class="text-[10px] text-ink/55 dark:text-paper/55 mt-1 leading-tight">${t.sub}</div>
+                </label>
+              `).join('')}
+            </div>
+          </div>
+        ` : ''}
+        <div id="auth-error" class="text-xs text-blood min-h-[1em]"></div>
+        <button class="q-btn q-btn-primary w-full" type="submit">
+          ${mode === 'register' ? '✓ Criar e entrar' : '→ Entrar'}
+        </button>
+      </form>
+
+      <button id="auth-toggle" class="q-btn q-btn-ghost w-full text-sm">
+        ${mode === 'register' ? 'Já tenho conta — entrar' : 'Não tenho conta — cadastrar'}
+      </button>
+
+      ${loadAccounts().length > 0 && mode === 'login' ? `
+        <div class="q-card p-3">
+          <div class="text-xs uppercase tracking-wider text-ink/45 dark:text-paper/45 mb-2">Contas neste dispositivo</div>
+          <div class="space-y-1">
+            ${loadAccounts().map((a) => `
+              <button class="auth-quickuser flex items-center w-full p-2 rounded hover:bg-ink/5 dark:hover:bg-paper/5" data-user="${a.username}">
+                <span class="w-8 h-8 rounded-full bg-lavender/20 flex items-center justify-center font-bold text-sm">${a.username.slice(0,1).toUpperCase()}</span>
+                <span class="ml-3 font-semibold text-sm">${a.username}</span>
+              </button>
+            `).join('')}
+          </div>
+        </div>
+      ` : ''}
+    </div>
+  `;
+
+  const form = document.getElementById('auth-form');
+  const err  = document.getElementById('auth-error');
+  form.onsubmit = async (e) => {
+    e.preventDefault();
+    err.textContent = '';
+    const data = Object.fromEntries(new FormData(form));
+    try {
+      if (mode === 'register') {
+        if (data.password !== data.password2) throw new Error('Senhas não conferem.');
+        const wasFirstAccount = loadAccounts().length === 0;
+        const legacy = wasFirstAccount ? localStorage.getItem(STORAGE_KEY) : null;
+        const id = await createAccount({ username: data.username, password: data.password });
+        setSession(id);
+        const chosenTheme = THEMES[data.theme] ? data.theme : 'kpop_anime';
+        if (legacy) {
+          // Importa state legado para a conta nova (não perde dados pré-login).
+          try {
+            const imported = JSON.parse(legacy);
+            imported.user = imported.user || {};
+            imported.user.name  = data.username;
+            imported.user.theme = chosenTheme;
+            localStorage.setItem(stateKey(id), JSON.stringify(imported));
+            localStorage.removeItem(STORAGE_KEY);
+          } catch {
+            // fallback abaixo
+          }
+        }
+        // Se não importou legado, cria state fresco do tema
+        if (!localStorage.getItem(stateKey(id))) {
+          const initial = makeEmptyState();
+          initial.user.theme = chosenTheme;
+          initial.user.name  = data.username;
+          const themeQuests = THEMES[chosenTheme].quests || [];
+          initial.quests.pool = [...DEFAULT_QUEST_POOL, ...themeQuests];
+          const themeRewards = THEMES[chosenTheme].rewards || [];
+          if (themeRewards.length) {
+            initial.rewards.available = [
+              ...themeRewards,
+              'Cinema sozinho',
+              'Sessão de fotos',
+              'Comprar lightstick novo',
+            ];
+          }
+          try { localStorage.setItem(stateKey(id), JSON.stringify(initial)); } catch {}
+        }
+      } else {
+        const id = await loginAccount({ username: data.username, password: data.password });
+        setSession(id);
+      }
+      bootGameState();
+    } catch (ex) {
+      err.textContent = ex.message || 'Erro inesperado.';
+    }
+  };
+  document.getElementById('auth-toggle').onclick = () => showAuthScreen(mode === 'register' ? 'login' : 'register');
+  document.querySelectorAll('.auth-quickuser').forEach((b) => b.onclick = () => {
+    form.username.value = b.dataset.user;
+    form.password.focus();
+  });
+  // Visual selecionado nos chips de tema
+  document.querySelectorAll('.theme-choice').forEach((card) => {
+    card.onclick = () => {
+      document.querySelectorAll('.theme-choice').forEach((c) => c.classList.remove('is-selected'));
+      card.classList.add('is-selected');
+      card.querySelector('input[type="radio"]').checked = true;
+    };
+  });
+  document.querySelector('.theme-choice[data-theme="kpop"]')?.classList.add('is-selected');
 }
 
 init();

@@ -435,6 +435,112 @@ input[type=number] { -moz-appearance: textfield; }
 }
 .fighter-wrap .fighter-img.loaded { opacity: 1; }
 
+/* Placeholder limpo do lutador (sem SVG cartoon) ----------- */
+.fighter-placeholder {
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  background: linear-gradient(160deg, var(--accent, #B7B5FF) 0%, rgba(255,255,255,0.15) 100%);
+  border: 1px solid color-mix(in srgb, var(--accent, #B7B5FF) 60%, transparent);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
+  padding: 0.4rem;
+  position: relative;
+  overflow: hidden;
+}
+.fighter-placeholder::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at 70% 30%, rgba(255,255,255,.25), transparent 60%);
+  pointer-events: none;
+}
+.dark .fighter-placeholder {
+  background: linear-gradient(160deg, color-mix(in srgb, var(--accent, #B7B5FF) 60%, #1A1A2E) 0%, rgba(0,0,0,0.4) 100%);
+}
+.fighter-init {
+  font-family: 'Russo One', Impact, sans-serif;
+  font-size: clamp(1.2rem, 4vw, 2rem);
+  color: #FBFAF7;
+  letter-spacing: 0.05em;
+  line-height: 1;
+  text-shadow: 0 2px 4px rgba(0,0,0,.3);
+  z-index: 1;
+}
+.fighter-pname {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.85);
+  text-shadow: 0 1px 2px rgba(0,0,0,.4);
+  letter-spacing: 0.02em;
+  margin-top: 0.2rem;
+  z-index: 1;
+}
+
+/* Goal cards (objetivos visuais) ----------------------------- */
+.goal-img-wrap {
+  position: relative;
+  width: 100%; height: 100%;
+  overflow: hidden;
+}
+.goal-img-wrap .goal-placeholder {
+  position: absolute; inset: 0;
+  background: linear-gradient(160deg, #B7B5FF 0%, #FFB7C5 50%, #A8E6CF 100%);
+  display: flex; align-items: center; justify-content: center;
+}
+.goal-img-wrap .goal-placeholder::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at 30% 70%, rgba(255,255,255,.3), transparent 50%);
+  pointer-events: none;
+}
+.goal-init {
+  font-family: 'Russo One', sans-serif;
+  font-size: 2.4rem;
+  color: #FFFFFF;
+  text-shadow: 0 3px 8px rgba(0,0,0,.25);
+  letter-spacing: 0.05em;
+  z-index: 1;
+}
+.goal-svg {
+  width: 65%;
+  height: 65%;
+  color: #FFFFFF;
+  display: flex; align-items: center; justify-content: center;
+  filter: drop-shadow(0 3px 8px rgba(0,0,0,.18));
+  z-index: 1;
+}
+.goal-svg svg { width: 100%; height: 100%; }
+.goal-name-overlay {
+  position: absolute;
+  bottom: .5rem; left: 0; right: 0;
+  font-family: 'Russo One', sans-serif;
+  font-size: .65rem;
+  color: #FFFFFF;
+  text-shadow: 0 1px 2px rgba(0,0,0,.6);
+  letter-spacing: 0.08em;
+  text-align: center;
+  padding: 0 .4rem;
+  text-transform: uppercase;
+  z-index: 2;
+}
+.goal-img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity .35s ease;
+}
+.goal-img.loaded { opacity: 1; }
+
+.goal-card { transition: transform .15s ease, box-shadow .15s ease; }
+.goal-card.is-active {
+  outline: 2px solid #D6A93E;
+  outline-offset: -2px;
+  box-shadow: 0 8px 24px rgba(214,169,62,.3);
+}
+
 /* Lutador no overlay MK ----------------------------------- */
 .mk-fighter {
   width: clamp(160px, 45vw, 280px);
@@ -603,3 +709,164 @@ input[type=number] { -moz-appearance: textfield; }
   text-transform: uppercase;
 }
 .dark .pill.is-kombat { color: #E8C56B; }
+
+/* Pill genérica (variação leve do pill) ------------------- */
+.pill.is-pill {
+  background: rgba(183,181,255,0.12);
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-weight: 600;
+  display: inline-block;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: border-color .12s ease;
+}
+.pill.is-pill:hover { border-color: rgba(183,181,255,0.4); }
+.dark .pill.is-pill { color: var(--paper); }
+
+/* ===== Temas =============================================
+ * Default (sem data-theme ou kpop_anime) = K-pop/Anime/Jogos
+ * inside_out  = Divertidamente (cor alegria)
+ * fashion     = Moda (preto/dourado)
+ * futebol_lol = Futebol & LoL (verde grama / vermelho)
+ */
+:root[data-theme="inside_out"]  { --theme-accent: #FFD93D; --theme-accent2: #7BB8FF; }
+:root[data-theme="fashion"]     { --theme-accent: #0F0F0F; --theme-accent2: #D6A93E; }
+:root[data-theme="futebol_lol"] { --theme-accent: #1E5E2A; --theme-accent2: #E84A1A; }
+
+/* Hangul (attr-ko) só faz sentido no tema kpop. Nos demais, fallback ícone. */
+:root[data-theme="inside_out"] .attr-ko,
+:root[data-theme="fashion"] .attr-ko,
+:root[data-theme="futebol_lol"] .attr-ko {
+  display: none !important;
+}
+:root[data-theme="inside_out"] .attr-chip::before,
+:root[data-theme="fashion"] .attr-chip::before,
+:root[data-theme="futebol_lol"] .attr-chip::before {
+  content: attr(data-fallback);
+  font-size: 22px;
+  line-height: 1;
+}
+
+/* Tagline kombat: cor por tema (mesma estrutura, accent diferente) */
+:root[data-theme="inside_out"] .kombat-tagline {
+  color: #FFB400;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+:root[data-theme="fashion"] .kombat-tagline {
+  color: #0F0F0F;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.dark:root[data-theme="fashion"] .kombat-tagline { color: #D6A93E; }
+:root[data-theme="futebol_lol"] .kombat-tagline {
+  color: #1E5E2A;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+/* Font kombat (Russo One) só no tema kpop_anime. Nos outros vira Inter bold */
+:root[data-theme="inside_out"] .font-kombat,
+:root[data-theme="fashion"] .font-kombat,
+:root[data-theme="futebol_lol"] .font-kombat {
+  font-family: 'Inter', sans-serif !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase !important;
+}
+
+/* XP track gradiente dourado/vermelho MK só no tema kpop. Outros usam accent. */
+:root[data-theme="inside_out"]  .xp-track.is-kombat .xp-fill { background: linear-gradient(90deg,#FFD93D,#FFA500) !important; }
+:root[data-theme="fashion"]     .xp-track.is-kombat .xp-fill { background: linear-gradient(90deg,#D6A93E,#0F0F0F) !important; }
+:root[data-theme="futebol_lol"] .xp-track.is-kombat .xp-fill { background: linear-gradient(90deg,#1E5E2A,#E84A1A) !important; }
+
+/* Hero kombat background flames só no tema kpop */
+:root[data-theme="inside_out"]  .kombat-hero::before,
+:root[data-theme="futebol_lol"] .kombat-hero::before {
+  display: none !important;
+}
+
+/* No fashion, hero sem padding kombat e divider mais discreto */
+:root[data-theme="fashion"] .kombat-hero::before,
+:root[data-theme="fashion"] .kombat-hero-svg { display: none !important; }
+:root[data-theme="fashion"] .kombat-divider {
+  border: 0;
+  letter-spacing: 0.2em;
+  font-size: 10px;
+  color: rgba(15,15,15,0.45);
+}
+.dark:root[data-theme="fashion"] .kombat-divider { color: rgba(255,255,255,0.45); }
+
+/* Theme card highlight (auth + config) ---------------------- */
+.theme-choice, .cfg-theme-choice { transition: border-color .15s ease, box-shadow .15s ease; }
+.theme-choice.is-selected,
+.cfg-theme-choice.is-selected {
+  outline: 2px solid var(--lavender, #B7B5FF);
+  outline-offset: 1px;
+}
+
+/* Attribute chip (substitui o fighter tile) --------------- */
+.attr-chip {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 12px;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 14%, transparent) 0%, color-mix(in srgb, var(--accent) 6%, transparent) 100%);
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Noto Sans KR', 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: clamp(16px, 4.5vw, 22px);
+  color: var(--accent);
+  letter-spacing: -0.02em;
+}
+.attr-ko {
+  line-height: 1;
+  display: block;
+}
+
+/* Insights — heatmap & dow chart -------------------------- */
+.heat-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+.heat-cell {
+  aspect-ratio: 1 / 1;
+  border-radius: 3px;
+  background: rgba(120,120,140,0.10);
+  display: inline-block;
+}
+.heat-cell.heat-l0 { background: rgba(120,120,140,0.10); }
+.heat-cell.heat-l1 { background: rgba(168,230,207,0.45); }
+.heat-cell.heat-l2 { background: rgba(168,230,207,0.75); }
+.heat-cell.heat-l3 { background: rgba(168,230,207,1); }
+.heat-cell.heat-l4 { background: linear-gradient(135deg,#A8E6CF, #3FBF7F); }
+.dark .heat-cell.heat-l0 { background: rgba(255,255,255,0.05); }
+
+.dow-chart {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  align-items: end;
+}
+.dow-col { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.dow-bar {
+  width: 100%;
+  border-radius: 4px 4px 0 0;
+  min-height: 6px;
+  background: var(--lavender, #B7B5FF);
+  transition: height .25s ease;
+}
+.dow-label { font-size: 9px; color: rgba(26,26,46,0.5); letter-spacing: 0.05em; }
+.dark .dow-label { color: rgba(255,255,255,0.5); }
+.dow-val { font-size: 9px; font-weight: 600; color: rgba(26,26,46,0.7); }
+.dark .dow-val { color: rgba(255,255,255,0.7); }
+

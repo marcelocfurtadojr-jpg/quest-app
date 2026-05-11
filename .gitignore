@@ -13,3 +13,17 @@ icons/fighters/*.jpg
 icons/fighters/*.jpeg
 icons/fighters/*.webp
 icons/fighters/*.gif
+
+# Imagens de "objetivos" (referências físicas que você quer alcançar).
+# Mesmo motivo: mantenha cópias de imagens fora do repositório público.
+icons/goals/*.png
+icons/goals/*.jpg
+icons/goals/*.jpeg
+icons/goals/*.webp
+icons/goals/*.gif
+
+# Fotos de referência que ficavam no root do projeto (legado de versões
+# anteriores). Hoje o app usa upload via Metas → state.user.goalImages.
+johnny.jpg
+leejeno.jpg
+calistenia.webp
