@@ -837,6 +837,21 @@ input[type=number] { -moz-appearance: textfield; }
   display: block;
 }
 
+/* Mascote ------------------------------------------------- */
+.mascot-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.mascot-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.mascot-card { transition: border-color .25s ease; }
+.mascot-card:hover { transform: none; }
+
 /* Weekly quest stepper ------------------------------------- */
 .wq-stepper {
   display: flex;

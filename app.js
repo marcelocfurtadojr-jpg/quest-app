@@ -291,6 +291,19 @@ const THEMES = {
       { id: 't2_tt23', text: 'Acordar antes do sol nascer e ver amanhecer', xp: 2, tag: 'mente' },
       { id: 't2_tt24', text: 'Banho de banheira c/ leitura (no-shower)',  xp: 1, tag: 'mente' },
       { id: 't2_tt25', text: 'Coletar algo da natureza (folha, pedra)',    xp: 1, tag: 'mente' },
+      // === Descobertas: música, leitura, arte (criar/conhecer novo) ===
+      { id: 't2_nv1',  text: 'Ouvir 1 música nova de gênero que nunca ouviu', xp: 2, tag: 'descoberta' },
+      { id: 't2_nv2',  text: 'Descobrir 1 artista novo (escutar 3 músicas)',  xp: 2, tag: 'descoberta' },
+      { id: 't2_nv3',  text: 'Ler 1 poema novo (curto, de outro autor)',      xp: 1, tag: 'descoberta' },
+      { id: 't2_nv4',  text: 'Ler 1 conto/crônica que nunca leu',             xp: 2, tag: 'descoberta' },
+      { id: 't2_nv5',  text: 'Ouvir 1 podcast de tema desconhecido (30 min)', xp: 2, tag: 'descoberta' },
+      { id: 't2_nv6',  text: 'Ouvir trilha sonora de um filme novo',          xp: 1, tag: 'descoberta' },
+      { id: 't2_nv7',  text: 'Aprender 1 palavra/expressão em outro idioma', xp: 1, tag: 'descoberta' },
+      { id: 't2_nv8',  text: 'Memorizar 1 verso ou citação que te tocou',     xp: 1, tag: 'descoberta' },
+      { id: 't2_nv9',  text: 'Assistir 1 curta-metragem (até 20 min)',        xp: 2, tag: 'descoberta' },
+      { id: 't2_nv10', text: 'Visitar virtualmente um museu novo (5 obras)',  xp: 2, tag: 'descoberta' },
+      { id: 't2_nv11', text: 'Escrever 1 página de algo seu (poema/livre)',   xp: 2, tag: 'descoberta' },
+      { id: 't2_nv12', text: 'Desenhar/pintar livre por 15 min (sem julgar)', xp: 2, tag: 'descoberta' },
     ],
     weeklyQuests: [
       { id: 'tw2_1', text: 'Check-in das 5 emoções em 5 dias',            xp: 10, target: 5 },
@@ -360,6 +373,16 @@ const THEMES = {
       { id: 'io12', name: 'Visita ao avô / família distante', focus: 'mente · vínculo', xp: 5, icon: '🏡',
         sets: 'Liga, visita ou manda mensagem longa pra alguém da família que mora longe.',
         tip: 'Em Totoro, mãe doente é o pano de fundo. Família é raiz. Cultive.' },
+      // === Descoberta cultural ===
+      { id: 'io13', name: 'Playlist do gênero novo', focus: 'descoberta · música', xp: 4, icon: '🎵',
+        sets: 'Escolha um gênero que você nunca explora (jazz, MPB anos 70, soul, indie korean…) e monte playlist de 30 min.',
+        tip: 'Ampliar paleta sonora = ampliar paleta emocional.' },
+      { id: 'io14', name: 'Leitura curta nova', focus: 'descoberta · leitura', xp: 3, icon: '📜',
+        sets: 'Leia 1 poema, conto ou crônica que nunca leu (até 15 min). Anote 1 frase que te marcou.',
+        tip: 'Pouco texto, muita ressonância — começo perfeito pra hábito.' },
+      { id: 'io15', name: 'Cinema novo: 1 curta', focus: 'descoberta · arte', xp: 4, icon: '🎬',
+        sets: 'Assista 1 curta-metragem (até 20 min) de país/gênero que nunca explorou. YouTube tá cheio de Oscars.',
+        tip: 'Curta é entrada-acessível pro cinema autoral.' },
     ],
   },
 
@@ -435,6 +458,22 @@ const THEMES = {
       { id: 't3_fm38', text: 'Pesquisar street style (Tokyo, Copenhagen)', xp: 1, tag: 'curadoria' },
       { id: 't3_fm39', text: 'Inspiração: 1 ícone de estilo do passado',   xp: 1, tag: 'curadoria' },
       { id: 't3_fm40', text: 'Postar OOTD/looks em rede sem editar muito', xp: 1, tag: 'lazer' },
+      // === Criar/descobrir novo — make-up, customização, paletas ===
+      { id: 't3_nv1',  text: 'Testar uma maquiagem nova (gráfica, neutra…)', xp: 3, tag: 'criar' },
+      { id: 't3_nv2',  text: 'Treinar 1 técnica de make nova (esfumado…)',  xp: 3, tag: 'criar' },
+      { id: 't3_nv3',  text: 'Tentar 1 batom de cor que nunca usou',         xp: 1, tag: 'criar' },
+      { id: 't3_nv4',  text: 'Penteado novo (trança, coque, finalização)',   xp: 2, tag: 'criar' },
+      { id: 't3_nv5',  text: 'Customizar uma peça antiga (botão, manga)',    xp: 3, tag: 'criar' },
+      { id: 't3_nv6',  text: 'Tingir/lavar peça em casa pra renovar',        xp: 3, tag: 'criar' },
+      { id: 't3_nv7',  text: 'Costurar/ajustar barra ou cintura',            xp: 3, tag: 'criar' },
+      { id: 't3_nv8',  text: 'Combinação de cores que nunca tentou',         xp: 2, tag: 'criar' },
+      { id: 't3_nv9',  text: 'Desenhar 1 look no papel/app (croquis)',       xp: 2, tag: 'criar' },
+      { id: 't3_nv10', text: 'Criar mood-board de um estilo novo (grunge…)', xp: 2, tag: 'criar' },
+      { id: 't3_nv11', text: 'Editar foto OOTD com filtro/preset diferente', xp: 1, tag: 'criar' },
+      { id: 't3_nv12', text: 'Pesquisar 1 designer/marca que nunca conheceu',xp: 2, tag: 'descoberta' },
+      { id: 't3_nv13', text: 'Aprender 1 amarração de cachecol/lenço nova',  xp: 1, tag: 'criar' },
+      { id: 't3_nv14', text: 'Pintar/esmaltar unhas com arte ou cor diferente', xp: 2, tag: 'criar' },
+      { id: 't3_nv15', text: 'Tirar foto editorial caseira (luz, pose, fundo)', xp: 3, tag: 'criar' },
     ],
     weeklyQuests: [
       { id: 'tw3_1', text: 'Usar 5 looks distintos com mesmas 7 peças',    xp: 10, target: 5 },
@@ -491,6 +530,22 @@ const THEMES = {
       { id: 'fa12', name: 'Garimpo brechó / 2nd hand', focus: 'curadoria · valor', xp: 4, icon: '🛍️',
         sets: '30 min em brechó/online vintage. Só observar, mapear marcas e preços.',
         tip: 'Sebo de roupa — desenvolve olho pra qualidade real.' },
+      // === Criar novo ===
+      { id: 'fa13', name: 'Maquiagem nova do dia', focus: 'criar · maquiagem', xp: 4, icon: '💄',
+        sets: 'Tenta 1 técnica/estilo de make que nunca fez — esfumado novo, traço gráfico, batom em cor inesperada. Tira foto antes/depois.',
+        tip: 'Maquiagem é exercício de proporção e luz. Erra à vontade — sai e volta no banho.' },
+      { id: 'fa14', name: 'Customização DIY', focus: 'criar · upcycle', xp: 5, icon: '🪡',
+        sets: '1 hora customizando peça antiga: cropar camiseta, trocar botão por algo diferente, bordar, recortar.',
+        tip: 'Roupa virgem? Não precisa. Sua melhor peça é a única no mundo.' },
+      { id: 'fa15', name: 'Mood-board de estilo novo', focus: 'criar · curadoria', xp: 3, icon: '📋',
+        sets: 'Pinterest/Instagram: salva 15 imagens de um estilo que você não vive ainda (gorpcore, dark academia, Y2K…).',
+        tip: 'Você não precisa adotar — só treinar o olho. Linguagem visual amplia.' },
+      { id: 'fa16', name: 'Croquis caseiro', focus: 'criar · design', xp: 4, icon: '✏️',
+        sets: 'Desenha 3 looks no papel ou app (Procreate, Concepts). Sem habilidade, só pra documentar ideias.',
+        tip: 'Estilistas começam no papel. Você também.' },
+      { id: 'fa17', name: 'Editorial caseiro', focus: 'criar · foto', xp: 5, icon: '📸',
+        sets: '20 min de auto-foto OOTD: luz natural, 3 poses, 3 fundos. Edita 1 com filtro novo.',
+        tip: 'Self-portrait é treino de presença. Câmera mostra o que o espelho esconde.' },
     ],
   },
 
@@ -570,6 +625,22 @@ const THEMES = {
       { id: 't4_ft42', text: 'Postar clip/jogada nas redes do clã/squad',     xp: 1, tag: 'lazer' },
       { id: 't4_ft43', text: 'Drink isotônico (Gatorade-like) pré-partida',   xp: 1, tag: 'nutri' },
       { id: 't4_ft44', text: 'Stretch de gamer: pulso/cervical 5 min',        xp: 1, tag: 'mente' },
+      // === Descobrir esporte/jogo novo ===
+      { id: 't4_nv1',  text: 'Aprender as regras de um esporte novo',          xp: 3, tag: 'descoberta' },
+      { id: 't4_nv2',  text: 'Assistir 30 min de um esporte que nunca viu',    xp: 2, tag: 'descoberta' },
+      { id: 't4_nv3',  text: 'Estudar 1 atleta lendário de outro esporte',     xp: 2, tag: 'descoberta' },
+      { id: 't4_nv4',  text: 'Doc/biopic de esporte que você não pratica',     xp: 2, tag: 'descoberta' },
+      { id: 't4_nv5',  text: 'Aprender 1 jogada/macete tático de outro esporte', xp: 2, tag: 'descoberta' },
+      { id: 't4_nv6',  text: 'Tentar 1 fundamento novo (boxe, golf, vôlei…)',  xp: 3, tag: 'descoberta' },
+      { id: 't4_nv7',  text: 'Conhecer 1 jogo competitivo novo (Valorant, Dota, CS, FGC)', xp: 3, tag: 'descoberta' },
+      { id: 't4_nv8',  text: 'Tutorial de 1 champ de LoL que nunca jogou',     xp: 2, tag: 'lol' },
+      { id: 't4_nv9',  text: 'Aprender 1 modalidade do tênis/badminton',       xp: 2, tag: 'descoberta' },
+      { id: 't4_nv10', text: 'Pesquisar 1 cultura esportiva (NFL, sumô, F1…)', xp: 2, tag: 'descoberta' },
+      { id: 't4_nv11', text: 'Assistir 1 partida de esporte radical (skate, surf)', xp: 1, tag: 'descoberta' },
+      { id: 't4_nv12', text: 'Ler entrevista com técnico/coach de outra modalidade', xp: 2, tag: 'descoberta' },
+      { id: 't4_nv13', text: 'Visitar arena/estádio/quadra novo (ou virtual)', xp: 2, tag: 'descoberta' },
+      { id: 't4_nv14', text: 'Treinar jogada do jogo novo no lobby (10 min)',  xp: 2, tag: 'descoberta' },
+      { id: 't4_nv15', text: 'Aprender 1 termo técnico de outro esporte',      xp: 1, tag: 'descoberta' },
     ],
     weeklyQuests: [
       { id: 'tw4_1', text: 'Subir 1 div de LoL (ou manter promo)',            xp: 12, target: 1 },
@@ -636,12 +707,227 @@ const THEMES = {
       { id: 'fl15', name: 'Anti-tilt protocol', focus: 'mente · resiliência', xp: 4, icon: '🧘',
         sets: 'Após cada derrota, levante-se, água, 60s de respiração. Decide se continua.',
         tip: 'Tilt queue é o pior inimigo. Pausa de 5min vale 1 vitória.' },
+      // === Conhecer esporte/jogo novo ===
+      { id: 'fl16', name: 'Esporte novo: introdução', focus: 'descoberta · regras', xp: 4, icon: '🏉',
+        sets: 'Escolha um esporte que você nunca pratica/assiste (rugby, golf, badminton, surf…) — leia as regras básicas em 15 min.',
+        tip: 'Conhecer outros esportes amplia visão tática do seu favorito.' },
+      { id: 'fl17', name: 'Champ pool +1', focus: 'lol · novidade', xp: 4, icon: '🆕',
+        sets: 'Assista tutorial de 1 champ que você nunca jogou + 1 partida ARAM ou bot test com ele.',
+        tip: 'Conhecer matchups inimigos é meio caminho pra ganhar.' },
+      { id: 'fl18', name: 'Jogo competitivo novo', focus: 'descoberta · games', xp: 5, icon: '🎮',
+        sets: 'Tente 30 min de um jogo competitivo diferente do seu main (Valorant, CS2, Dota, Apex, Tekken).',
+        tip: 'Outros gêneros treinam mecânicas que voltam pro seu main.' },
+      { id: 'fl19', name: 'Atleta lendário', focus: 'descoberta · estudo', xp: 3, icon: '🏆',
+        sets: 'Leia/assista 30 min sobre 1 atleta lendário de outro esporte (Michael Jordan, Senna, Serena).',
+        tip: 'Mentalidade de campeão é transferível entre esportes.' },
+      { id: 'fl20', name: 'Doc esportivo novo', focus: 'descoberta · arte', xp: 4, icon: '🎥',
+        sets: 'Assista 1 documentário ou episódio de doc esportivo (The Last Dance, Drive to Survive, Sunderland Till I Die).',
+        tip: 'Bastidores ensinam mais que o jogo em si.' },
     ],
   },
 };
 
 function getTheme(state) {
   return THEMES[state?.user?.theme] || THEMES.kpop_anime;
+}
+
+// ===== Mascotes por tema ====================================
+// Cada tema tem um animal-mascote que muda de forma corporal (magro,
+// musculoso, gordo) conforme o que o usuário come no dia/semana.
+// SVGs inline minimalistas — corpo elipse + cabeça + características
+// específicas de cada animal (orelhas, cauda, cor).
+const MASCOTS = {
+  kpop_anime:  { name: 'Mapy',    species: 'Guaxinim',         emoji: '🦝' },
+  inside_out:  { name: 'Sol',     species: 'Golden Retriever', emoji: '🐕' },
+  fashion:     { name: 'Noir',    species: 'Gata preta',       emoji: '🐈‍⬛' },
+  futebol_lol: { name: 'Caramelo', species: 'Vira-lata caramelo', emoji: '🐕' },
+};
+
+/** Paletas de cor por espécie (corpo, detalhe, olho). */
+const MASCOT_PALETTES = {
+  kpop_anime:  { body: '#3D3D3D', detail: '#1A1A1A', face: '#F5F5F5', accent: '#FFB7C5' },
+  inside_out:  { body: '#E8B872', detail: '#C99466', face: '#FFE7C8', accent: '#FFD93D' },
+  fashion:     { body: '#1A1A1A', detail: '#000000', face: '#2A2A2A', accent: '#D6A93E' },
+  futebol_lol: { body: '#C99466', detail: '#A77242', face: '#E8C5A2', accent: '#1E5E2A' },
+};
+
+/** SVG do mascote em determinada forma. Tema controla qual animal + cor.
+ *  Forma: 'magro' | 'musculoso' | 'gordo' | 'neutro'. */
+function mascotSvg(themeKey, form = 'neutro') {
+  const p = MASCOT_PALETTES[themeKey] || MASCOT_PALETTES.kpop_anime;
+  // Dimensões do corpo elipse por forma
+  const dims = {
+    magro:     { bw: 32, bh: 42, head: 16, eye: 1.5, glow: false },
+    neutro:    { bw: 38, bh: 38, head: 17, eye: 1.6, glow: false },
+    musculoso: { bw: 52, bh: 40, head: 17, eye: 1.6, glow: true  },
+    gordo:     { bw: 60, bh: 46, head: 18, eye: 2,   glow: false },
+  };
+  const d = dims[form] || dims.neutro;
+
+  // Características por espécie
+  // Orelhas (top): gato pontuda, golden caída, guaxinim ponta arredondada, vira-lata mista
+  // Cauda
+  function speciesParts() {
+    if (themeKey === 'fashion') {
+      // Gata preta — orelhas triangulares, cauda fina e curva
+      return `
+        <polygon points="42,28 48,12 54,28" fill="${p.body}" />
+        <polygon points="66,28 72,12 78,28" fill="${p.body}" />
+        <polygon points="44,26 48,16 52,26" fill="${p.detail}" />
+        <polygon points="68,26 72,16 76,26" fill="${p.detail}" />
+        <!-- bigodes -->
+        <line x1="50" y1="50" x2="42" y2="48" stroke="${p.face}" stroke-width="0.8" />
+        <line x1="50" y1="52" x2="42" y2="52" stroke="${p.face}" stroke-width="0.8" />
+        <line x1="70" y1="50" x2="78" y2="48" stroke="${p.face}" stroke-width="0.8" />
+        <line x1="70" y1="52" x2="78" y2="52" stroke="${p.face}" stroke-width="0.8" />
+        <!-- cauda fina e enrolada -->
+        <path d="M ${60+d.bw/2} ${85+d.bh/3} q 14 -6 18 -22" stroke="${p.body}" stroke-width="4" fill="none" stroke-linecap="round" />
+      `;
+    }
+    if (themeKey === 'inside_out') {
+      // Golden — orelhas grandes e caídas, cauda alegre balançando
+      return `
+        <ellipse cx="44" cy="32" rx="7" ry="11" fill="${p.body}" transform="rotate(-15 44 32)" />
+        <ellipse cx="76" cy="32" rx="7" ry="11" fill="${p.body}" transform="rotate(15 76 32)" />
+        <ellipse cx="44" cy="34" rx="4" ry="8" fill="${p.detail}" transform="rotate(-15 44 34)" />
+        <ellipse cx="76" cy="34" rx="4" ry="8" fill="${p.detail}" transform="rotate(15 76 34)" />
+        <!-- focinho saliente -->
+        <ellipse cx="60" cy="50" rx="6" ry="4" fill="${p.face}" />
+        <circle cx="60" cy="48" r="1.8" fill="#1A1A1A" />
+        <!-- língua pra fora -->
+        <path d="M 58 53 q 2 4 4 0" fill="#FFB7C5" />
+        <!-- cauda longa balançando -->
+        <path d="M ${60+d.bw/2} ${82+d.bh/3} q 18 -10 22 -28" stroke="${p.body}" stroke-width="6" fill="none" stroke-linecap="round" />
+      `;
+    }
+    if (themeKey === 'futebol_lol') {
+      // Vira-lata caramelo — orelhas semi-caídas, cauda média
+      return `
+        <path d="M 44 26 L 40 38 L 50 32 Z" fill="${p.body}" />
+        <path d="M 76 26 L 80 38 L 70 32 Z" fill="${p.body}" />
+        <path d="M 46 27 L 44 36 L 50 32 Z" fill="${p.detail}" />
+        <path d="M 74 27 L 76 36 L 70 32 Z" fill="${p.detail}" />
+        <!-- focinho -->
+        <ellipse cx="60" cy="50" rx="5" ry="3.5" fill="${p.face}" />
+        <circle cx="60" cy="48" r="1.6" fill="#1A1A1A" />
+        <!-- cauda média -->
+        <path d="M ${60+d.bw/2} ${85+d.bh/3} q 14 -4 14 -22" stroke="${p.body}" stroke-width="5" fill="none" stroke-linecap="round" />
+      `;
+    }
+    // kpop_anime → guaxinim: orelhas arredondadas, máscara nos olhos, cauda anelada
+    return `
+      <circle cx="46" cy="26" r="6" fill="${p.body}" />
+      <circle cx="74" cy="26" r="6" fill="${p.body}" />
+      <circle cx="46" cy="27" r="3" fill="${p.detail}" />
+      <circle cx="74" cy="27" r="3" fill="${p.detail}" />
+      <!-- máscara guaxinim -->
+      <ellipse cx="55" cy="43" rx="6" ry="4" fill="${p.detail}" opacity="0.85" />
+      <ellipse cx="65" cy="43" rx="6" ry="4" fill="${p.detail}" opacity="0.85" />
+      <!-- focinho -->
+      <ellipse cx="60" cy="50" rx="4" ry="2.5" fill="${p.face}" />
+      <circle cx="60" cy="49" r="1.3" fill="#1A1A1A" />
+      <!-- cauda anelada -->
+      <path d="M ${60+d.bw/2} ${85+d.bh/3} q 12 -6 16 -22" stroke="${p.body}" stroke-width="6" fill="none" stroke-linecap="round" />
+      <path d="M ${60+d.bw/2+4} ${78+d.bh/3} q 5 -3 7 -8" stroke="${p.detail}" stroke-width="2" fill="none" />
+      <path d="M ${60+d.bw/2+9} ${72+d.bh/3} q 4 -2 5 -7" stroke="${p.detail}" stroke-width="2" fill="none" />
+    `;
+  }
+
+  // Corpo + músculos extras se musculoso
+  const muscles = d.glow ? `
+    <ellipse cx="46" cy="${78}" rx="6" ry="4" fill="${p.detail}" opacity="0.5" />
+    <ellipse cx="74" cy="${78}" rx="6" ry="4" fill="${p.detail}" opacity="0.5" />
+  ` : '';
+
+  const bellySize = form === 'gordo' ? 'rx="22" ry="14"' : 'rx="14" ry="8"';
+  const bellyOpacity = form === 'gordo' ? '0.45' : '0.25';
+
+  return `
+    <svg viewBox="0 0 120 130" xmlns="http://www.w3.org/2000/svg" class="mascot-svg">
+      <!-- corpo -->
+      <ellipse cx="60" cy="85" rx="${d.bw}" ry="${d.bh}" fill="${p.body}" />
+      <!-- barriga (mais visível se gordo) -->
+      <ellipse cx="60" cy="${form === 'gordo' ? 95 : 90}" ${bellySize} fill="${p.face}" opacity="${bellyOpacity}" />
+      <!-- pernas/patas -->
+      <ellipse cx="${form === 'gordo' ? 44 : 50}" cy="${118}" rx="6" ry="6" fill="${p.body}" />
+      <ellipse cx="${form === 'gordo' ? 76 : 70}" cy="${118}" rx="6" ry="6" fill="${p.body}" />
+      <!-- cabeça -->
+      <circle cx="60" cy="42" r="${d.head}" fill="${p.body}" />
+      <!-- características da espécie (orelhas, cauda, etc.) -->
+      ${speciesParts()}
+      <!-- olhos -->
+      <circle cx="54" cy="42" r="${d.eye}" fill="${p.face}" />
+      <circle cx="66" cy="42" r="${d.eye}" fill="${p.face}" />
+      <circle cx="54" cy="42" r="${d.eye * 0.6}" fill="#1A1A1A" />
+      <circle cx="66" cy="42" r="${d.eye * 0.6}" fill="#1A1A1A" />
+      ${muscles}
+    </svg>`;
+}
+
+/** Calcula a forma do mascote pra um conjunto de logs.
+ *  Considera: % da meta calórica, % proteína, fast food (cat 'erro') e treino.
+ *  Retorna 'magro' | 'musculoso' | 'gordo' | 'neutro'. */
+function computeMascotForm(logs) {
+  if (!logs || !logs.length) return 'neutro';
+  const kcalGoal = state?.user?.kcalGoal || 2200;
+  const pGoal    = state?.user?.proteinGoal || (META?.protein || 145);
+  let kcalSum = 0, pSum = 0, juckMeals = 0, trainDays = 0;
+  let totalMeals = 0;
+  for (const l of logs) {
+    for (const m of (l.meals || [])) {
+      kcalSum += m.kcal || 0;
+      pSum    += m.p    || 0;
+      totalMeals++;
+      if (m.cat === 'erro' || m.cat === 'doce') juckMeals++;
+    }
+    if (l.training?.done) trainDays++;
+  }
+  const days = logs.length;
+  const avgKcal   = kcalSum / Math.max(1, days);
+  const avgP      = pSum / Math.max(1, days);
+  const kcalRatio = avgKcal / kcalGoal;
+  const pRatio    = avgP / pGoal;
+  const juckRatio = totalMeals ? juckMeals / totalMeals : 0;
+  const trainRatio = trainDays / Math.max(1, days);
+
+  // Sem comida registrada → neutro
+  if (avgKcal < 200) return 'neutro';
+
+  // Gordo: muito acima da meta OU > 35% de refeições "erro/doce"
+  if (kcalRatio > 1.2 || juckRatio > 0.35) return 'gordo';
+  // Musculoso: kcal dentro/acima da meta + proteína na meta + treino em ≥40% dias
+  if (kcalRatio >= 0.85 && pRatio >= 0.85 && trainRatio >= 0.4) return 'musculoso';
+  // Magro: kcal < 70% da meta
+  if (kcalRatio < 0.7) return 'magro';
+  return 'neutro';
+}
+
+/** Retorna { name, species, emoji, formDay, formWeek, adviceDay, adviceWeek }. */
+function mascotState() {
+  const themeKey = state?.user?.theme && MASCOTS[state.user.theme] ? state.user.theme : 'kpop_anime';
+  const mascot = MASCOTS[themeKey];
+  const today = todayISO();
+  const wkStart = weekStartISO();
+  const todayLog = (state?.dailyLogs || []).find((l) => l.date === today);
+  const weekLogs = (state?.dailyLogs || []).filter((l) => l.date >= wkStart);
+
+  const formDay  = computeMascotForm(todayLog ? [todayLog] : []);
+  const formWeek = computeMascotForm(weekLogs);
+
+  const adviceMap = {
+    magro:     `${mascot.species} ${mascot.name} tá com fome — bate as kcal do dia.`,
+    neutro:    `${mascot.species} ${mascot.name} tá tranquilx — registra o que comeu hoje.`,
+    musculoso: `${mascot.species} ${mascot.name} tá em forma — proteína + treino batendo. 💪`,
+    gordo:     `${mascot.species} ${mascot.name} comeu demais — equilibra com proteína + cardio.`,
+  };
+  return {
+    themeKey,
+    ...mascot,
+    formDay,
+    formWeek,
+    adviceDay:  adviceMap[formDay],
+    adviceWeek: adviceMap[formWeek],
+  };
 }
 
 // Banco de alimentos — macros por 100g.
@@ -3909,11 +4195,15 @@ function migrateState(s) {
   if (s.user.theme === 'clean') s.user.theme = 'inside_out';
   if (!s.user.theme || !THEMES[s.user.theme]) s.user.theme = 'kpop_anime';
 
-  // Marca quests específicas de K-pop no pool já salvo (idempotente)
+  // Marca quests específicas de K-pop no pool já salvo (idempotente).
+  // Tudo com tag 'k-pop' ou id começando 't1_kp' (do tema kpop_anime) vira kpopOnly.
   const KPOP_QUEST_IDS = new Set(['q26', 'q32', 'q33', 'q34', 'q35', 'q36']);
   if (s.quests?.pool) {
     s.quests.pool.forEach((q) => {
       if (KPOP_QUEST_IDS.has(q.id)) q.kpopOnly = true;
+      if (q.tag === 'k-pop') q.kpopOnly = true;
+      if (typeof q.id === 'string' && q.id.startsWith('t1_kp')) q.kpopOnly = true;
+      if (q.ko && /[가-힣]/.test(q.ko)) q.kpopOnly = true; // qualquer ko com hangul → kpop
     });
   }
 
@@ -4621,6 +4911,25 @@ function viewDashboard() {
     </section>`;
   })()}
 
+  ${(() => {
+    const m = mascotState();
+    const formLabel = { magro: 'magrinho', musculoso: 'musculoso', gordo: 'fofinho', neutro: 'tranquilo' };
+    const formColor = { magro: '#7BB8FF', musculoso: '#A8E6CF', gordo: '#FFB7C5', neutro: '#B7B5FF' };
+    return `
+    <section class="px-4 mt-3">
+      <div class="q-card p-3 flex items-center gap-3 mascot-card" style="border-left:3px solid ${formColor[m.formDay]}">
+        <div class="mascot-wrap" style="width:72px; height:72px">${mascotSvg(m.themeKey, m.formDay)}</div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2">
+            <div class="text-[10px] uppercase tracking-widest text-ink/45 dark:text-paper/45">Mascote do dia · ${m.species}</div>
+          </div>
+          <div class="font-extrabold text-base" style="color:${formColor[m.formDay]}">${m.name} · ${formLabel[m.formDay]} ${m.emoji}</div>
+          <div class="text-[11px] text-ink/60 dark:text-paper/60 leading-tight mt-0.5">${m.adviceDay}</div>
+        </div>
+      </div>
+    </section>`;
+  })()}
+
   <section class="px-4 mt-5">
     <div class="flex items-center justify-between mb-2">
       <h2 class="font-extrabold text-lg">Daily quests</h2>
@@ -4659,6 +4968,9 @@ function viewDashboard() {
           </button>
         `).join('')}
       </div>` : '';
+    const mw = mascotState();
+    const formLabel = { magro: 'magrinho', musculoso: 'musculoso', gordo: 'fofinho', neutro: 'tranquilo' };
+    const formColor = { magro: '#7BB8FF', musculoso: '#A8E6CF', gordo: '#FFB7C5', neutro: '#B7B5FF' };
     return `
     <section class="px-4 mt-5">
       <div class="q-card p-4">
@@ -4679,6 +4991,15 @@ function viewDashboard() {
           <button id="wq-toggle" class="text-xs text-lavender font-semibold">
             ${wq.completed ? 'desmarcar' : (target > 1 ? 'marcar tudo como completa' : 'marcar como completa')}
           </button>
+        </div>
+        <!-- Mascote semanal -->
+        <div class="mt-3 pt-3 border-t border-ink/5 dark:border-paper/5 flex items-center gap-3">
+          <div class="mascot-wrap" style="width:56px; height:56px">${mascotSvg(mw.themeKey, mw.formWeek)}</div>
+          <div class="flex-1 min-w-0">
+            <div class="text-[10px] uppercase tracking-widest text-ink/45 dark:text-paper/45">Mascote · semana</div>
+            <div class="font-bold text-sm" style="color:${formColor[mw.formWeek]}">${mw.name} ${formLabel[mw.formWeek]} ${mw.emoji}</div>
+            <div class="text-[10px] text-ink/55 dark:text-paper/55 leading-tight">${mw.adviceWeek}</div>
+          </div>
         </div>
       </div>
     </section>`;
@@ -8302,7 +8623,38 @@ async function bootGameState() {
   ensureWeeklyQuest();
   checkWeeklyRollover();
   setTimeout(checkAchievements, 100);
+  setTimeout(maybeNotifyMascot, 1500);
   render();
+}
+
+/** Envia notificação Web do mascote 1x por dia (se o usuário permitiu).
+ *  Forma muda conforme nutri do dia — alerta visual fora do app. */
+async function maybeNotifyMascot() {
+  if (!('Notification' in window)) return;
+  if (Notification.permission === 'denied') return;
+  const today = todayISO();
+  if (state.user.mascotNotifiedAt === today) return;
+  // Pede permissão sem ser invasivo (só se ainda não escolheu)
+  if (Notification.permission === 'default') {
+    try {
+      const result = await Notification.requestPermission();
+      if (result !== 'granted') return;
+    } catch { return; }
+  }
+  if (Notification.permission !== 'granted') return;
+  const m = mascotState();
+  const formLabel = { magro: 'magrinho', musculoso: 'musculoso', gordo: 'fofinho', neutro: 'tranquilo' };
+  try {
+    new Notification(`${m.emoji} ${m.name} tá ${formLabel[m.formDay]}`, {
+      body: m.adviceDay,
+      icon: 'icons/icon-192.png',
+      tag: 'quest-mascot-' + today,
+    });
+    state.user.mascotNotifiedAt = today;
+    saveState();
+  } catch (e) {
+    console.warn('mascot notify failed:', e);
+  }
 }
 
 /** Aplica o tema do usuário (data-theme no <html>). */
