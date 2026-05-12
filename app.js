@@ -3755,6 +3755,48 @@ const EXERCISE_LIBRARY = {
       mistakes: 'Bumbum subindo. Joelho não chegando no peito.',
       tip: 'Põe 4 séries de 40s entre outros exercícios — vira finalizador HIIT.' },
   ],
+  'Caminhada': [
+    { name: 'Caminhada leve', target: '30–45min', muscles: 'cardio (LISS), panturrilha, postura', ko: '걷기',
+      description: 'LISS clássico — Low Intensity Steady State. Queima gordura sem fadigar SNC e ajuda a digestão.',
+      technique: 'Ritmo de conversa (~5–6 km/h). Postura ereta, ombros relaxados, passo natural. Respiração nasal.',
+      mistakes: 'Ir rápido demais (vira power walk e cansa). Cabeça baixa olhando celular o tempo todo.',
+      tip: 'Use no dia de descanso ou após o jantar. Coloca podcast/audiobook — vira 2 hábitos num só.' },
+    { name: 'Caminhada rápida (power walk)', target: '30min', muscles: 'cardio moderado, glúteo, panturrilha', ko: '파워 워킹',
+      description: 'Intensidade entre caminhada leve e corrida — eleva FC sem impacto articular.',
+      technique: 'Ritmo ~6.5–7.5 km/h. Cotovelos a 90°, braços bombando junto. Passada firme batendo calcanhar primeiro.',
+      mistakes: 'Inclinar tronco pra frente. Passos pequenos demais (perde glúteo).',
+      tip: 'Coloque a Mph numa playlist com BPM 130–140 — o pé sincroniza sozinho.' },
+    { name: 'Caminhada inclinada (esteira)', target: '30min · inclinação 8–12%', muscles: 'glúteo, posterior, panturrilha, cardio', ko: '경사 걷기',
+      description: '"12-3-30" famoso. Inclinação alta + ritmo moderado queima muito sem destruir joelho.',
+      technique: 'Inclinação 12% (ou 8–10% se iniciante). Velocidade 5–5.5 km/h. NÃO segure no corrimão (mata o esforço).',
+      mistakes: 'Velocidade alta demais (perde a inclinação). Mãos travadas no painel.',
+      tip: 'Substitui HIIT em dias pesados de perna ou quando o joelho pede impacto baixo.' },
+    { name: 'Caminhada pós-refeição', target: '10–15min', muscles: 'cardio leve, digestão', ko: '식후 걷기',
+      description: 'Walking digestion — reduz pico glicêmico até 30% se feito nos 30min após comer.',
+      technique: 'Ritmo qualquer, contanto que esteja em movimento. Ideal logo depois do almoço/jantar.',
+      mistakes: 'Sentar imediatamente após a refeição.',
+      tip: 'Vira um hábito automático: terminou de comer → calça os tênis e sai. 食後の散歩.' },
+    { name: 'Trilha / hike', target: '60–120min', muscles: 'corpo todo, cardio, propriocepção', ko: '하이킹',
+      description: 'Caminhada em terreno irregular — recruta estabilizadores que esteira nunca pega. Bônus de natureza.',
+      technique: 'Tênis com sola firme, mochila leve com água. Subidas com passos curtos; descidas com joelho semi-flex.',
+      mistakes: 'Calçado errado. Subestimar tempo e voltar no escuro.',
+      tip: 'Vale como treino + reset mental. 1× por semana já muda humor da semana inteira.' },
+    { name: 'Rucking (caminhada com peso)', target: '30–45min · 5–10kg', muscles: 'glúteo, posterior, core, postura', ko: '러킹',
+      description: 'Caminhada com mochila pesada. Funcional, queima muito mais que caminhar normal sem estressar joelho.',
+      technique: 'Mochila justa, peso colado às costas. Postura ereta, peito aberto. Comece com 5kg e suba 1kg/sem.',
+      mistakes: 'Mochila frouxa balançando (mata postura). Peso excessivo no começo.',
+      tip: 'Bom substituto pra dia de cardio "chato". Vale também ir/voltar do mercado com sacolas pesadas.' },
+    { name: 'Subir escadas', target: '10–15min', muscles: 'quadríceps, glúteo, panturrilha, cardio', ko: '계단 오르기',
+      description: 'Cardio intenso de baixo impacto. Pode ser feito em qualquer prédio.',
+      technique: 'Sobe normal ou de 2 em 2 degraus. Não segura corrimão. Desce devagar pra poupar joelho (ou pega elevador na descida).',
+      mistakes: 'Descer rápido (impacto alto). Inclinar pra frente.',
+      tip: '10 min de escada batem 30 min de caminhada leve. Excelente quebra-jejum cardiovascular.' },
+    { name: 'Steps de meta (10k passos)', target: '8.000–12.000 passos', muscles: 'cardio acumulado · NEAT', ko: '걸음 수',
+      description: 'Meta diária de passos. NEAT (atividade fora do treino) é metade da queima calórica diária.',
+      technique: 'Distribua ao longo do dia — não precisa fazer tudo de uma vez. Reuniões andando, sair do ônibus 1 ponto antes, etc.',
+      mistakes: 'Achar que só "treino conta". NEAT é onde mora a queima invisível.',
+      tip: 'Tenha 1 caminhada-âncora (10–15min após almoço) e o resto vem natural se você "se mexer".' },
+  ],
   'Calistenia': [
     { name: 'Flexão de braço', target: '4×AMRAP', muscles: 'peito, tríceps, ombro', ko: '푸쉬업',
       description: 'Movimento fundacional de empurrar. Faz em qualquer lugar.',
@@ -5242,8 +5284,8 @@ function viewDashboard() {
   <section class="px-4 mt-5">
     <div class="flex items-center justify-between mb-2">
       <h2 class="font-extrabold text-lg">Daily quests</h2>
-      <button id="reroll" class="text-xs flex items-center gap-1 ${da.rerolled ? 'opacity-40 pointer-events-none' : 'text-lavender'}">
-        <span class="w-4 h-4 inline-block">${I.reroll}</span> Re-roll
+      <button id="reroll" class="text-xs flex items-center gap-1 text-lavender font-semibold">
+        <span class="w-4 h-4 inline-block">${I.reroll}</span> Sortear
       </button>
     </div>
     <div class="q-card divide-y divide-ink/5 dark:divide-paper/5">
@@ -5526,6 +5568,7 @@ function viewWorkout() {
     'Lower A': 'compostos pesados',              'Lower B': 'glúteo + acessórios',
     'Push':    'peito · ombro · tríceps',        'Pull':    'dorsais · bíceps',
     'Core/Abs': 'núcleo de combate',             'Cardio HIIT': 'queima · resistência',
+    'Caminhada': 'LISS · passos · trilha',
     'Calistenia': 'sem peso · só corpo',         'Dança K-pop': 'cardio + coordenação',
     'Outro': 'modo aberto',
   };
@@ -5536,7 +5579,8 @@ function viewWorkout() {
     'Pernas (quadríceps)': I.bolt, 'Pernas (posterior + glúteo)': I.bolt,
     'Upper A': I.fist, 'Upper B': I.fist, 'Lower A': I.bolt, 'Lower B': I.bolt,
     'Push': I.flame, 'Pull': I.dumb, 'Core/Abs': I.skull,
-    'Cardio HIIT': I.bolt, 'Calistenia': I.fighter, 'Dança K-pop': I.spark,
+    'Cardio HIIT': I.bolt, 'Caminhada': I.fighter,
+    'Calistenia': I.fighter, 'Dança K-pop': I.spark,
     'Outro': I.sword,
   };
   // Sugestão de descanso ativo: rotaciona por dia
@@ -5987,6 +6031,8 @@ function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
   document.getElementById('workout-body').addEventListener('click', (e) => {
     const t = e.target.closest('.add-set');
     if (!t) return;
+    // 1) Captura TUDO o que está no DOM agora (reps/kg/técnica que o usuário digitou)
+    syncSetsFromDOM(start);
     const exIdx = +t.closest('[data-ex-idx]').dataset.exIdx;
     const ex = start.exercises[exIdx];
     if (t.dataset.action === 'add') {
@@ -5995,9 +6041,9 @@ function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
       const setIdx = +t.closest('[data-set-idx]').dataset.setIdx;
       ex.sets.splice(setIdx, 1);
     }
-    // re-renderiza apenas o card
-    modalWorkoutSession(type, dateISO); // simples: re-abre modal
-    syncSetsFromDOM(start);              // já salva o estado atual no objeto
+    // 2) Reabre o modal preservando o estado em memória (passa start como prebuiltStart)
+    closeModal();
+    setTimeout(() => modalWorkoutSession(type, dateISO, start), 30);
   });
 
   function syncSetsFromDOM(target) {
@@ -6491,6 +6537,130 @@ function viewBody() {
     last.bf     && ['% gordura', last.bf + '%'],
   ].filter(Boolean) : [];
 
+  // ========== DASHBOARDS · dados derivados ==========
+  const today = new Date(todayISO() + 'T00:00:00');
+  const allLogs = (state.dailyLogs || []).slice().sort((a, b) => (a.date < b.date ? -1 : 1));
+  const byDate = new Map(allLogs.map((l) => [l.date, l]));
+
+  // Helper — agrega stats de um array de logs
+  function aggLogs(logs) {
+    if (!logs.length) return { days:0, train:0, sleep7:0, protHit:0, avgSleep:0, avgSteps:0, avgKcal:0, avgProt:0 };
+    return {
+      days:     logs.length,
+      train:    logs.filter((l) => l.training?.done).length,
+      sleep7:   logs.filter((l) => (l.sleep?.hours || 0) >= 7).length,
+      protHit:  logs.filter((l) => l.protein?.hit).length,
+      avgSleep: logs.reduce((s, l) => s + (l.sleep?.hours || 0), 0) / logs.length,
+      avgSteps: Math.round(logs.reduce((s, l) => s + (l.steps || 0), 0) / logs.length),
+      avgKcal:  Math.round(logs.reduce((s, l) => s + (l.kcal || 0), 0) / logs.length),
+      avgProt:  Math.round(logs.reduce((s, l) => s + (l.protein?.grams || 0), 0) / logs.length),
+    };
+  }
+
+  // Janela últimos 30d e 30d anteriores
+  const last30 = allLogs.slice(-30);
+  const prev30 = allLogs.slice(-60, -30);
+  const agg30  = aggLogs(last30);
+  const aggPrev = aggLogs(prev30);
+
+  // Médias de peso por janela
+  function avgWeightIn(logsLike) {
+    const dates = new Set(logsLike.map((l) => l.date));
+    const ws = ms.filter((m) => dates.has(m.date) && m.weight).map((m) => m.weight);
+    return ws.length ? +(ws.reduce((s, v) => s + v, 0) / ws.length).toFixed(1) : null;
+  }
+  // Fallback simples: pega últimas N e anteriores N medidas
+  const weight30   = ms.slice(-4).filter((m) => m.weight).map((m) => m.weight);
+  const weightPrev = ms.slice(-8, -4).filter((m) => m.weight).map((m) => m.weight);
+  const avgW30   = weight30.length   ? +(weight30.reduce((s, v) => s + v, 0) / weight30.length).toFixed(1) : null;
+  const avgWPrev = weightPrev.length ? +(weightPrev.reduce((s, v) => s + v, 0) / weightPrev.length).toFixed(1) : null;
+
+  // ===== Composição corporal — métricas calculadas =====
+  const h = +state.user?.height || 0; // cm
+  const w = +last?.weight || 0;
+  const waist = +last?.waist || 0;
+  const hip   = +last?.hip   || 0;
+
+  function classifyBMI(v) {
+    if (v < 18.5) return { label: 'Abaixo', color: '#7BB8FF' };
+    if (v < 25)   return { label: 'Saudável', color: '#3FBF7F' };
+    if (v < 30)   return { label: 'Sobrepeso', color: '#FFD8A8' };
+    return { label: 'Obesidade', color: '#B8242E' };
+  }
+  // WHR (Waist-to-Hip Ratio) — risco cardiovascular
+  // Cutoffs OMS: M >0.90 risco, F >0.85 risco
+  function classifyWHR(v, sex) {
+    const cut = (sex === 'f') ? 0.85 : 0.90;
+    if (v < cut * 0.95) return { label: 'Saudável', color: '#3FBF7F' };
+    if (v < cut)        return { label: 'Atenção',  color: '#FFD8A8' };
+    return { label: 'Risco', color: '#B8242E' };
+  }
+  // WHtR (Waist-to-Height Ratio) — cutoff geral 0.5
+  function classifyWHtR(v) {
+    if (v < 0.43) return { label: 'Magro',    color: '#7BB8FF' };
+    if (v < 0.50) return { label: 'Saudável', color: '#3FBF7F' };
+    if (v < 0.58) return { label: 'Atenção',  color: '#FFD8A8' };
+    return { label: 'Risco', color: '#B8242E' };
+  }
+
+  const bmi  = (h > 0 && w > 0) ? +(w / Math.pow(h / 100, 2)).toFixed(1) : null;
+  const whr  = (waist > 0 && hip > 0) ? +(waist / hip).toFixed(2) : null;
+  const whtr = (h > 0 && waist > 0)   ? +(waist / h).toFixed(2)   : null;
+  const sex  = (state.user?.sex || '').toLowerCase();
+
+  const compoCards = [
+    bmi  ? { label: 'IMC',  value: bmi,  unit: '',  cls: classifyBMI(bmi) }                     : null,
+    whr  ? { label: 'WHR',  value: whr,  unit: '',  cls: classifyWHR(whr, sex) }                : null,
+    whtr ? { label: 'WHtR', value: whtr, unit: '',  cls: classifyWHtR(whtr) }                   : null,
+  ].filter(Boolean);
+
+  // ===== Heatmap 35 dias (atividade) =====
+  const HEAT_DAYS = 35;
+  const heatCells = [];
+  for (let i = HEAT_DAYS - 1; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const iso = isoDate(d);
+    const log = byDate.get(iso);
+    const xp = log?.xp || 0;
+    const lvl = xp === 0 ? 0 : xp <= 2 ? 1 : xp <= 4 ? 2 : xp <= 6 ? 3 : 4;
+    heatCells.push({ iso, day: d.getDate(), xp, lvl });
+  }
+
+  // Helper p/ % e ↑↓ de comparação
+  function compareTile(label, a, b, unit = '', kindLowerBetter = false) {
+    const diff = a - b;
+    const pct = b !== 0 ? (diff / Math.abs(b)) * 100 : (a > 0 ? 100 : 0);
+    const better = kindLowerBetter ? diff < 0 : diff > 0;
+    const color = b === 0 && a === 0 ? '#8E8E93' : (better ? '#3FBF7F' : '#B8242E');
+    const arrow = diff === 0 ? '→' : (diff > 0 ? '↑' : '↓');
+    return `
+      <div class="q-card p-3">
+        <div class="text-[10px] uppercase tracking-wider text-ink/45 dark:text-paper/45">${label}</div>
+        <div class="flex items-baseline gap-1 mt-0.5">
+          <div class="text-xl font-extrabold">${a}${unit}</div>
+          <div class="text-[10px] text-ink/45 dark:text-paper/45">vs ${b}${unit}</div>
+        </div>
+        <div class="text-[10px] mt-1" style="color:${color}">
+          ${arrow} ${Math.abs(diff).toFixed(unit === '%' || unit === 'kg' ? 1 : 0)}${unit}
+          ${b !== 0 ? ` (${pct >= 0 ? '+' : ''}${pct.toFixed(0)}%)` : ''}
+        </div>
+      </div>`;
+  }
+
+  function pctTile(label, num, den, color) {
+    const pct = den ? Math.round((num / den) * 100) : 0;
+    return `
+      <div class="q-card p-3">
+        <div class="text-[10px] uppercase tracking-wider text-ink/45 dark:text-paper/45">${label}</div>
+        <div class="flex items-baseline gap-1 mt-0.5">
+          <div class="text-2xl font-extrabold" style="color:${color}">${num}</div>
+          <div class="text-[10px] text-ink/45 dark:text-paper/45">/${den}d · ${pct}%</div>
+        </div>
+        <div class="xp-track mt-1" style="height:4px"><div class="xp-fill" style="width:${pct}%; background:${color}"></div></div>
+      </div>`;
+  }
+
   return `
   <header class="pt-7 pb-3 px-5">
     <h1 class="text-2xl font-extrabold">Corpo</h1>
@@ -6537,6 +6707,89 @@ function viewBody() {
         <div class="text-[10px] uppercase tracking-wider text-ink/45 dark:text-paper/45">Δ Peso total</div>
         <div class="text-2xl font-extrabold ${(weightDelta?.diff || 0) >= 0 ? 'text-mint' : 'text-pink'}">${weightDelta ? (weightDelta.diff >= 0 ? '+' : '') + weightDelta.diff.toFixed(1) : '—'}</div>
         <div class="text-[10px] text-ink/45 dark:text-paper/45">kg</div>
+      </div>
+    </div>
+  </section>` : ''}
+
+  ${compoCards.length ? `
+  <!-- Dashboard · Composição corporal -->
+  <section class="px-4 mt-3">
+    <div class="flex items-center justify-between mb-2">
+      <h2 class="font-extrabold">Composição corporal</h2>
+      <span class="text-[10px] text-ink/45 dark:text-paper/45">última medida</span>
+    </div>
+    <div class="grid grid-cols-3 gap-2">
+      ${compoCards.map((c) => `
+        <div class="q-card p-3 text-center" style="border-top:3px solid ${c.cls.color}">
+          <div class="text-[10px] uppercase tracking-wider text-ink/45 dark:text-paper/45">${c.label}</div>
+          <div class="text-2xl font-extrabold mt-0.5">${c.value}${c.unit}</div>
+          <div class="text-[10px] font-bold mt-0.5" style="color:${c.cls.color}">${c.cls.label}</div>
+        </div>
+      `).join('')}
+    </div>
+    ${(!bmi || !whr || !whtr) ? `
+      <p class="text-[10px] text-ink/45 dark:text-paper/45 mt-2 italic">
+        Preencha altura na Config${(!waist || !hip) ? ' e cintura/quadril na medida' : ''} pra desbloquear todas as métricas.
+      </p>` : ''}
+  </section>` : ''}
+
+  ${last30.length ? `
+  <!-- Dashboard · Hábitos 30 dias -->
+  <section class="px-4 mt-3">
+    <div class="flex items-center justify-between mb-2">
+      <h2 class="font-extrabold">Hábitos · 30 dias</h2>
+      <span class="text-[10px] text-ink/45 dark:text-paper/45">${last30.length}d registrados</span>
+    </div>
+    <div class="grid grid-cols-2 gap-2">
+      ${pctTile('Treinos',     agg30.train,   agg30.days, '#B8242E')}
+      ${pctTile('Sono ≥7h',    agg30.sleep7,  agg30.days, '#7BB8FF')}
+      ${pctTile('Proteína ✓',  agg30.protHit, agg30.days, '#3FBF7F')}
+      <div class="q-card p-3">
+        <div class="text-[10px] uppercase tracking-wider text-ink/45 dark:text-paper/45">Passos · média</div>
+        <div class="flex items-baseline gap-1 mt-0.5">
+          <div class="text-2xl font-extrabold" style="color:#E84A1A">${agg30.avgSteps.toLocaleString('pt-BR')}</div>
+          <div class="text-[10px] text-ink/45 dark:text-paper/45">/dia</div>
+        </div>
+        <div class="text-[10px] text-ink/55 dark:text-paper/55 mt-1">
+          sono médio ${agg30.avgSleep.toFixed(1)}h · proteína ${agg30.avgProt}g
+        </div>
+      </div>
+    </div>
+  </section>` : ''}
+
+  ${prev30.length ? `
+  <!-- Dashboard · Comparação 30d vs 30d anteriores -->
+  <section class="px-4 mt-3">
+    <div class="flex items-center justify-between mb-2">
+      <h2 class="font-extrabold">Comparação · 30d</h2>
+      <span class="text-[10px] text-ink/45 dark:text-paper/45">vs 30d anteriores</span>
+    </div>
+    <div class="grid grid-cols-2 gap-2">
+      ${compareTile('Treinos',  agg30.train,   aggPrev.train,   '')}
+      ${compareTile('Sono ≥7h', agg30.sleep7,  aggPrev.sleep7,  '')}
+      ${compareTile('Sono médio', +agg30.avgSleep.toFixed(1), +aggPrev.avgSleep.toFixed(1), 'h')}
+      ${compareTile('Proteína ✓', agg30.protHit, aggPrev.protHit, '')}
+      ${(avgW30 != null && avgWPrev != null) ? compareTile('Peso médio', avgW30, avgWPrev, 'kg', true) : ''}
+      ${(agg30.avgSteps || aggPrev.avgSteps) ? compareTile('Passos/dia', agg30.avgSteps, aggPrev.avgSteps, '') : ''}
+    </div>
+  </section>` : ''}
+
+  ${last30.length ? `
+  <!-- Dashboard · Heatmap atividade 35d -->
+  <section class="px-4 mt-3">
+    <div class="q-card p-4">
+      <div class="flex items-center justify-between mb-2">
+        <div class="text-xs uppercase tracking-wider text-ink/45 dark:text-paper/45">Atividade · 35 dias</div>
+        <div class="flex items-center gap-1 text-[9px] text-ink/45 dark:text-paper/45">
+          menos
+          ${[0,1,2,3,4].map((l) => `<span class="heat-cell heat-l${l}" style="width:8px;height:8px"></span>`).join('')}
+          mais
+        </div>
+      </div>
+      <div class="heat-grid">
+        ${heatCells.map((c) => `
+          <div class="heat-cell heat-l${c.lvl}" title="${c.iso} · ${c.xp} XP"></div>
+        `).join('')}
       </div>
     </div>
   </section>` : ''}
@@ -8531,13 +8784,20 @@ function attachHandlers() {
   });
 
   document.getElementById('reroll')?.addEventListener('click', () => {
-    if (state.quests.dailyAssigned.rerolled) return;
     const isKpop = state.user.theme === 'kpop_anime' || !state.user.theme;
-    const pool = state.quests.pool.filter((q) => isKpop || !q.kpopOnly);
-    state.quests.dailyAssigned.items = sample(pool, 3);
-    state.quests.dailyAssigned.completed = [];
-    state.quests.dailyAssigned.rerolled = true;
-    saveState(); render(); toast('🎲 Re-roll feito');
+    const da = state.quests.dailyAssigned;
+    // Mantém as quests já completadas (preserva o XP); só re-sorteia o que falta.
+    const completedIds = new Set(da.completed || []);
+    const keep = (da.items || []).filter((q) => completedIds.has(q.id));
+    const assignedIds = new Set((da.items || []).map((q) => q.id));
+    const pool = state.quests.pool.filter((q) => (isKpop || !q.kpopOnly) && !assignedIds.has(q.id));
+    const needed = Math.max(0, 3 - keep.length);
+    if (needed === 0) { toast('Tudo já completado — não tem o que sortear'); return; }
+    const fresh = sample(pool, needed);
+    if (!fresh.length) { toast('Sem novas quests no pool — adiciona mais na config'); return; }
+    da.items = [...keep, ...fresh];
+    da.rerolled = true;
+    saveState(); render(); toast('🎲 Sorteio feito');
   });
 
   document.querySelectorAll('.quest-row').forEach((row) => {
