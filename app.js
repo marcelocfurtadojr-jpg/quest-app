@@ -6597,30 +6597,34 @@ function viewDashboard() {
   </section>
 
   ${(() => {
-    // ===== Meta do dia — rotaciona uma das metas ativas (ou GOALS se nada ativo) =====
+    // ===== Meta do dia — rotaciona uma das metas ativas (ou todas se nada ativo) =====
+    // Usa allGoals() (builtin + custom) e respeita state.user.goalNames pra
+    // renomeações que o usuário fez na aba Metas.
+    const everyGoal = allGoals();
     const activeKeys = (state.user.activeGoals || []);
     const candidates = activeKeys.length
-      ? GOALS.filter((g) => activeKeys.includes(g.key))
-      : GOALS;
+      ? everyGoal.filter((g) => activeKeys.includes(g.key))
+      : everyGoal;
     if (!candidates.length) return '';
     const dayIdx = Math.floor(new Date(todayISO()).getTime() / 86400000) % candidates.length;
     const g = candidates[dayIdx];
     const customSrc = state?.user?.goalImages?.[g.key];
+    const displayName = state?.user?.goalNames?.[g.key] || g.name;
     return `
     <section class="px-4 mt-3">
       <button class="q-card w-full overflow-hidden text-left tile-btn goal-of-day-btn relative" data-target="goals" data-kind="tab" style="border-left:3px solid #FFD341">
         <div class="flex items-stretch">
           <div class="goal-of-day-thumb relative shrink-0" style="width:88px; height:88px; overflow:hidden; background:linear-gradient(160deg, #B7B5FF 0%, #FFB7C5 50%, #A8E6CF 100%)">
             ${customSrc
-              ? `<img src="${customSrc}" alt="${g.name}" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover" />`
+              ? `<img src="${customSrc}" alt="${displayName}" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover" />`
               : `<div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#FFF; opacity:.85">
                    <div style="width:55%; height:55%">${focusSvg(g.focus)}</div>
                  </div>`}
           </div>
           <div class="flex-1 min-w-0 p-3">
             <div class="text-[10px] uppercase tracking-widest text-kgold font-semibold">⭐ Meta do dia${activeKeys.length ? '' : ' (sugestão)'}</div>
-            <div class="font-extrabold text-base mt-0.5 truncate">${g.name}</div>
-            <div class="text-[10px] text-ink/55 dark:text-paper/55 leading-tight mt-0.5 line-clamp-2">${g.why}</div>
+            <div class="font-extrabold text-base mt-0.5 truncate">${displayName}</div>
+            <div class="text-[10px] text-ink/55 dark:text-paper/55 leading-tight mt-0.5 line-clamp-2">${g.why || ''}</div>
           </div>
         </div>
       </button>
