@@ -3486,6 +3486,607 @@ const KPOP_CHOREOS = [
   { song: 'Born to Be',       artist: 'ITZY',          year: 2024, diff: 4, style: 'powerful',        dur: '3:39', tip: 'Atitude. Coreografia técnica.' },
   { song: 'Easy',             artist: 'LE SSERAFIM',   year: 2024, diff: 3, style: 'sensual pop',     dur: '2:50', tip: 'Movimento contínuo.' },
   { song: 'Magnetic',         artist: 'ILLIT',         year: 2024, diff: 2, style: 'pop bounce',      dur: '2:35', tip: 'Foco no isolamento de quadril.' },
+
+  // ===============================================================
+  // ===== UNDERGROUND / GRUPOS MENOS CONHECIDOS / SUBUNITS ========
+  // ===============================================================
+
+  // ===== LOONA + sub-units (ARTMS, LOOSSEMBLE, ODD EYE CIRCLE) =====
+  { song: 'Hi High',          artist: 'LOONA',         year: 2018, diff: 3, style: 'orchestral pop',  dur: '3:15', tip: 'Coreografia debut. Linhas longas.' },
+  { song: 'Butterfly',        artist: 'LOONA',         year: 2019, diff: 4, style: 'dreamy pop',      dur: '3:32', tip: 'Vibe borboleta. Linhas fluidas.' },
+  { song: 'So What',          artist: 'LOONA',         year: 2020, diff: 4, style: 'powerful pop',    dur: '3:36', tip: 'Atitude. Pisadas firmes.' },
+  { song: 'Why Not?',         artist: 'LOONA',         year: 2020, diff: 4, style: 'pop',             dur: '3:11', tip: 'Energia leve.' },
+  { song: 'PTT (Paint The Town)', artist: 'LOONA',     year: 2021, diff: 4, style: 'middle eastern',  dur: '3:09', tip: 'Vibe oriental. Quadril.' },
+  { song: 'Flip That',        artist: 'LOONA',         year: 2022, diff: 4, style: 'pop',             dur: '3:21', tip: 'Vibe summer. Energia.' },
+  { song: 'Heat',             artist: 'LOONA 1/3',     year: 2017, diff: 3, style: 'cute pop',        dur: '3:21', tip: 'Sub-unit. Vibe leve.' },
+  { song: 'LOONATIC',         artist: 'ODD EYE CIRCLE', year: 2017, diff: 4, style: 'edm pop',        dur: '3:14', tip: 'Sub-unit. Energia eletrônica.' },
+  { song: 'Sweet Crazy Love', artist: 'ODD EYE CIRCLE', year: 2017, diff: 3, style: 'r&b pop',        dur: '3:35', tip: 'Vibe doce loucura.' },
+  { song: 'Air Force One',    artist: 'LOOSSEMBLE',    year: 2023, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe debut. Energia.' },
+  { song: 'Sensitive',        artist: 'LOOSSEMBLE',    year: 2024, diff: 3, style: 'pop',             dur: '2:54', tip: 'Vibe sensível.' },
+  { song: 'ONE OF A KIND',    artist: 'LOOSSEMBLE',    year: 2024, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe única. Atitude.' },
+  { song: 'Birth',            artist: 'ARTMS',         year: 2024, diff: 4, style: 'experimental pop', dur: '3:00', tip: 'Vibe renascimento. Sincronia.' },
+  { song: 'Virtual Angel',    artist: 'ARTMS',         year: 2024, diff: 4, style: 'ethereal pop',    dur: '3:00', tip: 'Vibe anjo virtual. Linhas.' },
+  { song: 'Madeleine',        artist: 'ARTMS',         year: 2024, diff: 3, style: 'soft pop',        dur: '3:00', tip: 'Vibe Madeleine. Suave.' },
+  { song: 'Flower Rhythm',    artist: 'ARTMS',         year: 2024, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe flor. Ritmo.' },
+
+  // ===== LIGHTSUM =====
+  { song: 'Vanilla',          artist: 'LIGHTSUM',      year: 2021, diff: 3, style: 'cute pop',        dur: '3:21', tip: 'Coreografia debut. Vibe baunilha.' },
+  { song: 'Vivace',           artist: 'LIGHTSUM',      year: 2022, diff: 3, style: 'pop',             dur: '2:54', tip: 'Vibe vivace.' },
+  { song: 'Honey or Spice',   artist: 'LIGHTSUM',      year: 2023, diff: 3, style: 'pop',             dur: '3:00', tip: 'Mel ou picante.' },
+  { song: 'Alive',            artist: 'LIGHTSUM',      year: 2023, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe vivo.' },
+  { song: 'Light a Wish',     artist: 'LIGHTSUM',      year: 2021, diff: 3, style: 'sweet pop',       dur: '3:24', tip: 'Vibe pedido.' },
+
+  // ===== Youha (solo) =====
+  { song: 'Lover',            artist: 'Youha',         year: 2022, diff: 2, style: 'r&b pop',         dur: '3:21', tip: 'Vibe amante. Suave.' },
+  { song: 'Friends',          artist: 'Youha',         year: 2020, diff: 2, style: 'soft pop',        dur: '3:38', tip: 'Vibe amizade.' },
+  { song: 'Last Dance',       artist: 'Youha',         year: 2021, diff: 2, style: 'r&b',             dur: '3:21', tip: 'Última dança.' },
+  { song: 'Get Ready',        artist: 'Youha',         year: 2021, diff: 2, style: 'r&b pop',         dur: '3:00', tip: 'Vibe se preparando.' },
+  { song: 'Abcd',             artist: 'Youha',         year: 2019, diff: 2, style: 'pop',             dur: '3:24', tip: 'Vibe alfabeto.' },
+  { song: 'Snowman',          artist: 'Youha',         year: 2020, diff: 2, style: 'winter pop',      dur: '3:15', tip: 'Vibe boneco de neve.' },
+
+  // ===== Odd Youth =====
+  { song: 'Eraser',           artist: 'Odd Youth',     year: 2023, diff: 3, style: 'indie pop',       dur: '3:00', tip: 'Vibe apagar.' },
+  { song: 'In My Room',       artist: 'Odd Youth',     year: 2024, diff: 3, style: 'indie pop',       dur: '3:00', tip: 'Vibe quarto.' },
+  { song: 'Hush',             artist: 'Odd Youth',     year: 2024, diff: 3, style: 'indie pop',       dur: '2:54', tip: 'Vibe sussurro.' },
+  { song: 'Static',           artist: 'Odd Youth',     year: 2024, diff: 3, style: 'indie pop',       dur: '3:00', tip: 'Vibe estática.' },
+
+  // ===== VIVIZ (ex-GFRIEND subunit) =====
+  { song: 'BOP BOP!',         artist: 'VIVIZ',         year: 2022, diff: 3, style: 'pop',             dur: '3:23', tip: 'Coreografia debut.' },
+  { song: 'LOVEADE',          artist: 'VIVIZ',         year: 2022, diff: 3, style: 'pop',             dur: '3:21', tip: 'Vibe limonada.' },
+  { song: 'Untie',            artist: 'VIVIZ',         year: 2022, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe soltar.' },
+  { song: 'Maniac',           artist: 'VIVIZ',         year: 2023, diff: 4, style: 'edgy pop',        dur: '3:00', tip: 'Vibe maníaca.' },
+  { song: 'Pull Up',          artist: 'VIVIZ',         year: 2023, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe puxa.' },
+
+  // ===== CRAVITY =====
+  { song: 'Break All The Rules', artist: 'CRAVITY',    year: 2020, diff: 4, style: 'powerful',        dur: '3:14', tip: 'Coreografia debut. Atitude.' },
+  { song: 'Flame',            artist: 'CRAVITY',       year: 2020, diff: 4, style: 'powerful pop',    dur: '3:21', tip: 'Vibe chama.' },
+  { song: 'My Turn',          artist: 'CRAVITY',       year: 2021, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe minha vez.' },
+  { song: 'Adrenaline',       artist: 'CRAVITY',       year: 2022, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe adrenalina.' },
+  { song: 'Party Rock',       artist: 'CRAVITY',       year: 2023, diff: 4, style: 'pop rock',        dur: '3:00', tip: 'Vibe festa rock.' },
+  { song: 'OMG !',            artist: 'CRAVITY',       year: 2023, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe OMG.' },
+
+  // ===== VERIVERY =====
+  { song: 'Tag Tag Tag',      artist: 'VERIVERY',      year: 2020, diff: 4, style: 'pop',             dur: '3:18', tip: 'Vibe tag.' },
+  { song: 'Get Away',         artist: 'VERIVERY',      year: 2021, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe fugir.' },
+  { song: 'Trigger',          artist: 'VERIVERY',      year: 2021, diff: 4, style: 'powerful',        dur: '3:00', tip: 'Vibe gatilho.' },
+  { song: 'Underground',      artist: 'VERIVERY',      year: 2022, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe subterrânea.' },
+  { song: 'GBTB',             artist: 'VERIVERY',      year: 2021, diff: 4, style: 'pop',             dur: '3:00', tip: 'Get back to back.' },
+
+  // ===== CIX =====
+  { song: 'Movie Star',       artist: 'CIX',           year: 2019, diff: 4, style: 'pop',             dur: '3:21', tip: 'Coreografia debut.' },
+  { song: 'Numb',             artist: 'CIX',           year: 2019, diff: 4, style: 'pop',             dur: '3:23', tip: 'Vibe entorpecido.' },
+  { song: 'Cinema',           artist: 'CIX',           year: 2020, diff: 4, style: 'pop',             dur: '3:21', tip: 'Vibe cinema.' },
+  { song: 'OK Prelude',       artist: 'CIX',           year: 2021, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe ok.' },
+  { song: 'Save Me Kill Me',  artist: 'CIX',           year: 2021, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe salvar matar.' },
+  { song: 'Wave',             artist: 'CIX',           year: 2022, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe onda.' },
+
+  // ===== ONF =====
+  { song: 'Why',              artist: 'ONF',           year: 2020, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe por quê.' },
+  { song: 'Sukhumvit Swimming', artist: 'ONF',         year: 2019, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe piscina.' },
+  { song: 'Beautiful Beautiful', artist: 'ONF',        year: 2020, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe bonito.' },
+  { song: 'Goosebumps',       artist: 'ONF',           year: 2021, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe arrepios.' },
+
+  // ===== AB6IX =====
+  { song: 'Hollywood',        artist: 'AB6IX',         year: 2019, diff: 3, style: 'pop',             dur: '3:21', tip: 'Vibe Hollywood.' },
+  { song: 'Breathe',          artist: 'AB6IX',         year: 2019, diff: 4, style: 'pop',             dur: '3:23', tip: 'Vibe respirar.' },
+  { song: 'The Answer',       artist: 'AB6IX',         year: 2020, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe resposta.' },
+  { song: 'Stay Young',       artist: 'AB6IX',         year: 2020, diff: 3, style: 'pop',             dur: '3:00', tip: 'Fique jovem.' },
+  { song: 'Loser',            artist: 'AB6IX',         year: 2021, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe perdedor.' },
+  { song: 'Cherry',           artist: 'AB6IX',         year: 2022, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe cereja.' },
+
+  // ===== Golden Child =====
+  { song: 'Without You',      artist: 'Golden Child',  year: 2019, diff: 3, style: 'pop',             dur: '3:30', tip: 'Vibe sem você.' },
+  { song: 'ONE (Lucid Dream)', artist: 'Golden Child', year: 2020, diff: 4, style: 'pop',             dur: '3:23', tip: 'Vibe sonho lúcido.' },
+  { song: 'Burn It',          artist: 'Golden Child',  year: 2021, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe queimar.' },
+  { song: 'Ra Pam Pam',       artist: 'Golden Child',  year: 2021, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe pampam.' },
+  { song: 'DDARA',            artist: 'Golden Child',  year: 2021, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe siga.' },
+
+  // ===== N.Flying (band) =====
+  { song: 'Rooftop',          artist: 'N.Flying',      year: 2019, diff: 2, style: 'band rock',       dur: '3:38', tip: 'Vibe terraço.' },
+  { song: 'Oh Really',        artist: 'N.Flying',      year: 2019, diff: 2, style: 'band rock',       dur: '3:51', tip: 'Vibe sério.' },
+  { song: 'Sober',            artist: 'N.Flying',      year: 2022, diff: 2, style: 'band rock',       dur: '3:15', tip: 'Vibe sóbrio.' },
+  { song: 'Moonshot',         artist: 'N.Flying',      year: 2020, diff: 2, style: 'band rock',       dur: '3:24', tip: 'Vibe lua.' },
+
+  // ===== DAY6 (band) =====
+  { song: 'You Were Beautiful', artist: 'DAY6',        year: 2017, diff: 2, style: 'band rock',       dur: '4:13', tip: 'Você era bonito.' },
+  { song: 'Time of Our Life', artist: 'DAY6',          year: 2019, diff: 2, style: 'band pop rock',   dur: '3:53', tip: 'Vibe nosso tempo.' },
+  { song: 'Zombie',           artist: 'DAY6',          year: 2020, diff: 2, style: 'band rock',       dur: '3:53', tip: 'Vibe zumbi.' },
+  { song: 'You Make Me',      artist: 'DAY6',          year: 2021, diff: 2, style: 'band rock',       dur: '3:24', tip: 'Vibe você me faz.' },
+  { song: 'HAPPY',            artist: 'DAY6',          year: 2024, diff: 2, style: 'band pop',        dur: '3:15', tip: 'Vibe feliz.' },
+
+  // ===== The Rose (band) =====
+  { song: 'Sour',             artist: 'The Rose',      year: 2022, diff: 2, style: 'indie rock',      dur: '3:24', tip: 'Vibe azedo.' },
+  { song: 'Beauty And The Beast', artist: 'The Rose',  year: 2022, diff: 2, style: 'rock pop',        dur: '3:00', tip: 'Bela e a fera.' },
+  { song: 'Pink',             artist: 'The Rose',      year: 2024, diff: 2, style: 'indie rock',      dur: '3:00', tip: 'Vibe rosa.' },
+
+  // ===== TEMPEST =====
+  { song: 'Dragon',           artist: 'TEMPEST',       year: 2022, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe dragão.' },
+  { song: 'Bad News',         artist: 'TEMPEST',       year: 2022, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe má notícia.' },
+  { song: 'Make It Right',    artist: 'TEMPEST',       year: 2022, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe consertar.' },
+  { song: 'On & On',          artist: 'TEMPEST',       year: 2023, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe continua.' },
+  { song: 'Vroom Vroom',      artist: 'TEMPEST',       year: 2023, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe carro.' },
+
+  // ===== xikers =====
+  { song: 'Tricky House',     artist: 'xikers',        year: 2023, diff: 4, style: 'pop',             dur: '3:00', tip: 'Coreografia debut.' },
+  { song: 'Homeboy',          artist: 'xikers',        year: 2023, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe homeboy.' },
+  { song: 'Red Sun',          artist: 'xikers',        year: 2023, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe sol vermelho.' },
+  { song: 'We Don\'t Stop',   artist: 'xikers',        year: 2024, diff: 4, style: 'pop',             dur: '3:00', tip: 'Nunca para.' },
+  { song: 'Hold On Tight',    artist: 'xikers',        year: 2024, diff: 4, style: 'pop',             dur: '3:00', tip: 'Segure firme.' },
+
+  // ===== EPEX =====
+  { song: 'Lock Down',        artist: 'EPEX',          year: 2021, diff: 4, style: 'pop',             dur: '3:00', tip: 'Coreografia debut.' },
+  { song: 'Anthem of Teen Spirit', artist: 'EPEX',     year: 2022, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe teen.' },
+  { song: 'Sunshower',        artist: 'EPEX',          year: 2022, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe chuva sol.' },
+  { song: 'Full Metal Jacket', artist: 'EPEX',         year: 2023, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe metal.' },
+
+  // ===== TNX =====
+  { song: 'MOVE',             artist: 'TNX',           year: 2022, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe debut.' },
+  { song: 'Kick It 4 Now',    artist: 'TNX',           year: 2023, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe chutar.' },
+  { song: 'Boom',             artist: 'TNX',           year: 2024, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe boom.' },
+
+  // ===== BAE173 =====
+  { song: 'Crush on U',       artist: 'BAE173',        year: 2020, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe paixão.' },
+  { song: 'Loved You',        artist: 'BAE173',        year: 2021, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe te amei.' },
+  { song: 'Intersection: Spark', artist: 'BAE173',     year: 2022, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe interseção.' },
+  { song: 'DaSH',             artist: 'BAE173',        year: 2023, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe correr.' },
+
+  // ===== DRIPPIN =====
+  { song: 'Nostalgia',        artist: 'DRIPPIN',       year: 2020, diff: 4, style: 'pop',             dur: '3:00', tip: 'Coreografia debut.' },
+  { song: 'Free Pass',        artist: 'DRIPPIN',       year: 2022, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe passe livre.' },
+  { song: 'Villain',          artist: 'DRIPPIN',       year: 2022, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe vilão.' },
+  { song: 'Zero',             artist: 'DRIPPIN',       year: 2023, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe zero.' },
+
+  // ===== A.C.E =====
+  { song: 'Cactus',           artist: 'A.C.E',         year: 2017, diff: 4, style: 'powerful pop',    dur: '3:18', tip: 'Coreografia debut.' },
+  { song: 'Goblin',           artist: 'A.C.E',         year: 2020, diff: 4, style: 'tribal pop',      dur: '3:00', tip: 'Vibe goblin.' },
+  { song: 'Higher',           artist: 'A.C.E',         year: 2021, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe mais alto.' },
+  { song: 'Down',             artist: 'A.C.E',         year: 2022, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe descida.' },
+
+  // ===== TO1 =====
+  { song: 'Drummin\'',        artist: 'TO1',           year: 2021, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe drum.' },
+  { song: 'Son of Beast',     artist: 'TO1',           year: 2022, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe besta.' },
+
+  // ===== Just B =====
+  { song: 'Damage',           artist: 'Just B',        year: 2021, diff: 4, style: 'pop',             dur: '3:00', tip: 'Coreografia debut.' },
+  { song: 'RDM',              artist: 'Just B',        year: 2022, diff: 4, style: 'pop',             dur: '3:00', tip: 'Random.' },
+  { song: 'Tick Tock',        artist: 'Just B',        year: 2023, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe relógio.' },
+
+  // ===== ATBO =====
+  { song: 'The Beginning',    artist: 'ATBO',          year: 2022, diff: 3, style: 'pop',             dur: '3:00', tip: 'Coreografia debut.' },
+  { song: 'Monochrome',       artist: 'ATBO',          year: 2023, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe monocromática.' },
+  { song: 'Must Have Love',   artist: 'ATBO',          year: 2024, diff: 3, style: 'pop',             dur: '3:00', tip: 'Precisa de amor.' },
+
+  // ===== MIRAE =====
+  { song: 'KILLA',            artist: 'MIRAE',         year: 2021, diff: 4, style: 'pop',             dur: '3:00', tip: 'Coreografia debut.' },
+  { song: 'Marvelous',        artist: 'MIRAE',         year: 2021, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe maravilhoso.' },
+  { song: 'Splash',           artist: 'MIRAE',         year: 2022, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe splash.' },
+
+  // ===== T1419 =====
+  { song: 'Asurabalbalta',    artist: 'T1419',         year: 2021, diff: 4, style: 'pop',             dur: '3:00', tip: 'Coreografia debut.' },
+  { song: 'FLEX',             artist: 'T1419',         year: 2021, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe flex.' },
+  { song: 'Confetti',         artist: 'T1419',         year: 2021, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe confete.' },
+
+  // ===== E\'LAST =====
+  { song: 'Day Dream',        artist: 'E\'LAST',       year: 2020, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe sonho.' },
+  { song: 'Tale of Dark Blue', artist: 'E\'LAST',      year: 2021, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe azul escuro.' },
+  { song: 'Hot Pink',         artist: 'E\'LAST',       year: 2022, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe rosa quente.' },
+
+  // ===== MCND =====
+  { song: 'TOP GANG',         artist: 'MCND',          year: 2020, diff: 4, style: 'pop',             dur: '3:00', tip: 'Coreografia debut.' },
+  { song: 'Spring',           artist: 'MCND',          year: 2020, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe primavera.' },
+  { song: '#MOOD',            artist: 'MCND',          year: 2022, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe mood.' },
+
+  // ===== WEi =====
+  { song: 'TWILIGHT',         artist: 'WEi',           year: 2020, diff: 4, style: 'pop',             dur: '3:00', tip: 'Coreografia debut.' },
+  { song: 'BYE BYE BYE',      artist: 'WEi',           year: 2021, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe tchau.' },
+  { song: 'Too Bad',          artist: 'WEi',           year: 2022, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe muito ruim.' },
+  { song: 'Estrella',         artist: 'WEi',           year: 2023, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe estrela.' },
+
+  // ===== &TEAM =====
+  { song: 'Under the skin',   artist: '&TEAM',         year: 2022, diff: 3, style: 'pop',             dur: '3:00', tip: 'Coreografia debut.' },
+  { song: 'FIREWORK',          artist: '&TEAM',         year: 2023, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe fogos.' },
+  { song: 'Scent of you',     artist: '&TEAM',         year: 2024, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe seu cheiro.' },
+  { song: 'Aoarashi',         artist: '&TEAM',         year: 2024, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe tempestade.' },
+
+  // ===== HORI7ON =====
+  { song: 'Lovers Or Friends', artist: 'HORI7ON',      year: 2023, diff: 3, style: 'pop',             dur: '3:00', tip: 'Amantes ou amigos.' },
+  { song: 'Hocus Pocus',      artist: 'HORI7ON',       year: 2024, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe mágica.' },
+
+  // ===== 8TURN =====
+  { song: 'PLUS MINUS ZERO',  artist: '8TURN',         year: 2023, diff: 4, style: 'pop',             dur: '3:00', tip: 'Coreografia debut.' },
+  { song: 'EXCEL',            artist: '8TURN',         year: 2023, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe excel.' },
+  { song: 'TIC TAC',          artist: '8TURN',         year: 2024, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe tic tac.' },
+
+  // ===== TAN =====
+  { song: 'Du Du Pop',        artist: 'TAN',           year: 2022, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe pop.' },
+  { song: 'Birthday',         artist: 'TAN',           year: 2022, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe aniversário.' },
+
+  // ===== LUN8 =====
+  { song: 'Run for Love',     artist: 'LUN8',          year: 2023, diff: 3, style: 'pop',             dur: '3:00', tip: 'Coreografia debut.' },
+  { song: 'I Love It',        artist: 'LUN8',          year: 2024, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe adoro.' },
+
+  // ===== ALL(H)OURS =====
+  { song: 'GO!',              artist: 'ALL(H)OURS',    year: 2024, diff: 4, style: 'pop',             dur: '3:00', tip: 'Coreografia debut.' },
+
+  // ===== Sweekes / Other newer boy groups =====
+  { song: 'Talk Saxy',        artist: 'RIIZE',         year: 2024, diff: 4, style: 'funky pop',       dur: '2:54', tip: 'Vibe sax.' },
+  { song: 'Touch',            artist: 'WHIB',          year: 2024, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe toque.' },
+  { song: 'Bang!',            artist: 'WHIB',          year: 2024, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe bang.' },
+
+  // ===== ARTBEAT / Other =====
+  { song: 'TEK IT',           artist: 'IDID',          year: 2023, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe pega.' },
+
+  // ===== NCT WISH =====
+  { song: 'WISH',             artist: 'NCT WISH',      year: 2024, diff: 3, style: 'pop',             dur: '3:00', tip: 'Coreografia debut.' },
+  { song: 'Songbird',         artist: 'NCT WISH',      year: 2024, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe passarinho.' },
+  { song: 'Steady',           artist: 'NCT WISH',      year: 2024, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe firme.' },
+
+  // ===== NCT DOJAEJUNG (subunit) =====
+  { song: 'Perfume',          artist: 'NCT DoJaeJung', year: 2023, diff: 3, style: 'r&b pop',         dur: '3:14', tip: 'Vibe perfume. Sensual.' },
+  { song: 'Strawberry Sundae', artist: 'NCT DoJaeJung', year: 2023, diff: 3, style: 'r&b',            dur: '3:00', tip: 'Vibe doce.' },
+
+  // ===== WayV =====
+  { song: 'Take Off',         artist: 'WayV',          year: 2019, diff: 4, style: 'pop',             dur: '3:18', tip: 'Vibe debut.' },
+  { song: 'Bad Alive',        artist: 'WayV',          year: 2020, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe vivo.' },
+  { song: 'Phantom',          artist: 'WayV',          year: 2022, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe fantasma.' },
+  { song: 'On My Youth',      artist: 'WayV',          year: 2023, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe minha juventude.' },
+
+  // ===== PURPLE KISS =====
+  { song: 'Ponzona',          artist: 'PURPLE KISS',   year: 2021, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe veneno.' },
+  { song: 'BBB',              artist: 'PURPLE KISS',   year: 2022, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe bbb.' },
+  { song: 'Pretty Psycho',    artist: 'PURPLE KISS',   year: 2022, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe psico.' },
+  { song: 'Sweet Juice',      artist: 'PURPLE KISS',   year: 2022, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe suco doce.' },
+  { song: 'BBN',              artist: 'PURPLE KISS',   year: 2023, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe BBN.' },
+
+  // ===== ROCKET PUNCH =====
+  { song: 'BIM BAM BUM',      artist: 'Rocket Punch',  year: 2019, diff: 3, style: 'cute pop',        dur: '3:24', tip: 'Coreografia debut.' },
+  { song: 'JUICY',            artist: 'Rocket Punch',  year: 2020, diff: 3, style: 'pop',             dur: '3:23', tip: 'Vibe suculenta.' },
+  { song: 'Ring Ring',        artist: 'Rocket Punch',  year: 2021, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe ring.' },
+  { song: 'BOUNCY',           artist: 'Rocket Punch',  year: 2022, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe pula.' },
+  { song: 'CHIQUITA',         artist: 'Rocket Punch',  year: 2023, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe chiquita.' },
+
+  // ===== Weeekly =====
+  { song: 'Tag Me',           artist: 'Weeekly',       year: 2020, diff: 2, style: 'cute pop',        dur: '3:24', tip: 'Coreografia debut.' },
+  { song: 'After School',     artist: 'Weeekly',       year: 2021, diff: 3, style: 'cute pop',        dur: '3:00', tip: 'Vibe depois da escola.' },
+  { song: 'Hide and Seek',    artist: 'Weeekly',       year: 2022, diff: 3, style: 'cute pop',        dur: '3:00', tip: 'Vibe esconde-esconde.' },
+  { song: 'Holiday Party',    artist: 'Weeekly',       year: 2021, diff: 3, style: 'cute pop',        dur: '3:00', tip: 'Vibe festa feriado.' },
+  { song: 'Play',             artist: 'Weeekly',       year: 2022, diff: 3, style: 'cute pop',        dur: '3:00', tip: 'Vibe brincar.' },
+
+  // ===== Brave Girls =====
+  { song: 'Rollin\'',         artist: 'Brave Girls',   year: 2017, diff: 3, style: 'pop',             dur: '3:09', tip: 'Hit viral 2021. Vibe rolar.' },
+  { song: 'Chi Mat Ba Ram',   artist: 'Brave Girls',   year: 2021, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe verão.' },
+  { song: 'We Ride',          artist: 'Brave Girls',   year: 2020, diff: 3, style: 'pop',             dur: '3:30', tip: 'Vibe cavalgada.' },
+
+  // ===== Cherry Bullet =====
+  { song: 'Hands Up',         artist: 'Cherry Bullet', year: 2019, diff: 3, style: 'cute pop',        dur: '3:00', tip: 'Coreografia debut.' },
+  { song: 'Love So Sweet',    artist: 'Cherry Bullet', year: 2020, diff: 3, style: 'cute pop',        dur: '3:00', tip: 'Vibe amor doce.' },
+  { song: 'Hands Up',         artist: 'Cherry Bullet', year: 2019, diff: 3, style: 'cute pop',        dur: '3:00', tip: 'Vibe mãos pra cima.' },
+  { song: 'Q&A',              artist: 'Cherry Bullet', year: 2021, diff: 3, style: 'cute pop',        dur: '3:00', tip: 'Vibe perguntas.' },
+  { song: 'P.O.V.',           artist: 'Cherry Bullet', year: 2021, diff: 3, style: 'cute pop',        dur: '3:00', tip: 'Vibe ponto de vista.' },
+
+  // ===== LOVELYZ =====
+  { song: 'Destiny',          artist: 'LOVELYZ',       year: 2016, diff: 3, style: 'cute pop',        dur: '3:24', tip: 'Vibe destino.' },
+  { song: 'Now, We',          artist: 'LOVELYZ',       year: 2018, diff: 3, style: 'cute pop',        dur: '3:24', tip: 'Vibe agora.' },
+  { song: 'Hi~',              artist: 'LOVELYZ',       year: 2016, diff: 3, style: 'cute pop',        dur: '3:24', tip: 'Vibe oi.' },
+
+  // ===== DREAMNOTE =====
+  { song: 'Hello',            artist: 'DREAMNOTE',     year: 2018, diff: 3, style: 'cute pop',        dur: '3:00', tip: 'Vibe debut.' },
+  { song: 'Dreams Come True', artist: 'DREAMNOTE',     year: 2019, diff: 3, style: 'cute pop',        dur: '3:00', tip: 'Sonhos realizados.' },
+  { song: 'WISH',             artist: 'DREAMNOTE',     year: 2021, diff: 3, style: 'cute pop',        dur: '3:00', tip: 'Vibe desejo.' },
+
+  // ===== HOT ISSUE =====
+  { song: 'GRATATA',          artist: 'HOT ISSUE',     year: 2021, diff: 4, style: 'powerful',        dur: '3:00', tip: 'Coreografia debut.' },
+  { song: 'Icons',            artist: 'HOT ISSUE',     year: 2021, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe ícones.' },
+  { song: 'BXXX',             artist: 'HOT ISSUE',     year: 2022, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe BXXX.' },
+
+  // ===== Billlie =====
+  { song: 'RING X RING',      artist: 'Billlie',       year: 2021, diff: 3, style: 'pop',             dur: '3:00', tip: 'Coreografia debut.' },
+  { song: 'GingaMingaYo',     artist: 'Billlie',       year: 2022, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe gingaminga.' },
+  { song: 'EUNOIA',           artist: 'Billlie',       year: 2022, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe eunoia.' },
+  { song: 'patbingsu (popsicle)', artist: 'Billlie',   year: 2023, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe gelado.' },
+
+  // ===== Pixy =====
+  { song: 'Bewitched',        artist: 'PIXY',          year: 2021, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe enfeitiçada.' },
+  { song: 'Karma',            artist: 'PIXY',          year: 2022, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe karma.' },
+
+  // ===== Pristin / IZ*ONE =====
+  { song: 'Wee Woo',          artist: 'PRISTIN',       year: 2017, diff: 3, style: 'cute pop',        dur: '3:38', tip: 'Coreografia debut.' },
+  { song: 'We Like',          artist: 'PRISTIN',       year: 2017, diff: 3, style: 'cute pop',        dur: '3:00', tip: 'Vibe gostamos.' },
+  { song: 'La Vie en Rose',   artist: 'IZ*ONE',        year: 2018, diff: 3, style: 'fancy pop',       dur: '3:21', tip: 'Vibe rosa.' },
+  { song: 'Violeta',          artist: 'IZ*ONE',        year: 2019, diff: 3, style: 'fancy pop',       dur: '3:13', tip: 'Vibe violeta.' },
+  { song: 'FIESTA',           artist: 'IZ*ONE',        year: 2020, diff: 4, style: 'powerful pop',    dur: '3:24', tip: 'Vibe festa.' },
+  { song: 'Panorama',         artist: 'IZ*ONE',        year: 2020, diff: 3, style: 'pop',             dur: '3:21', tip: 'Vibe panorama.' },
+
+  // ===== HIGHTEEN =====
+  { song: 'Cool Down',        artist: 'HIGHTEEN',      year: 2023, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe resfriar.' },
+  { song: 'AM 4:44',          artist: 'HIGHTEEN',      year: 2023, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe madrugada.' },
+
+  // ===== BVNDIT =====
+  { song: 'Cool',             artist: 'BVNDIT',        year: 2019, diff: 3, style: 'pop',             dur: '3:00', tip: 'Coreografia debut.' },
+  { song: 'JungleGym',        artist: 'BVNDIT',        year: 2020, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe ginástica.' },
+  { song: 'Children',         artist: 'BVNDIT',        year: 2020, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe crianças.' },
+
+  // ===== UNIS =====
+  { song: 'SUPERWOMAN',       artist: 'UNIS',          year: 2024, diff: 4, style: 'pop',             dur: '3:00', tip: 'Coreografia debut.' },
+  { song: 'CURIOUS',          artist: 'UNIS',          year: 2024, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe curioso.' },
+
+  // ===== IZNA =====
+  { song: 'IZNA',             artist: 'IZNA',          year: 2024, diff: 3, style: 'pop',             dur: '3:00', tip: 'Coreografia debut.' },
+
+  // ===== ROSEROSE / VVUP / BADVILLAIN =====
+  { song: 'WHO',              artist: 'BADVILLAIN',    year: 2024, diff: 4, style: 'powerful',        dur: '3:00', tip: 'Coreografia debut.' },
+  { song: 'Bouncy Bouncy',    artist: 'VVUP',          year: 2024, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe bouncy.' },
+
+  // ===== H1-KEY =====
+  { song: 'Athletic Girl',    artist: 'H1-KEY',        year: 2022, diff: 3, style: 'pop',             dur: '3:00', tip: 'Coreografia debut.' },
+  { song: 'Rose Blossom',     artist: 'H1-KEY',        year: 2023, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe rosa.' },
+  { song: 'Seoul (Such a beautiful city)', artist: 'H1-KEY', year: 2023, diff: 3, style: 'pop',       dur: '3:00', tip: 'Vibe Seoul.' },
+
+  // ===== fromis_9 =====
+  { song: 'Love Bomb',        artist: 'fromis_9',      year: 2018, diff: 3, style: 'cute pop',        dur: '3:24', tip: 'Vibe bomba amor.' },
+  { song: 'DKDK',             artist: 'fromis_9',      year: 2018, diff: 3, style: 'cute pop',        dur: '3:00', tip: 'Vibe coração.' },
+  { song: 'Feel Good',        artist: 'fromis_9',      year: 2020, diff: 3, style: 'cute pop',        dur: '3:00', tip: 'Vibe se sentir bem.' },
+  { song: 'WE GO',            artist: 'fromis_9',      year: 2021, diff: 3, style: 'cute pop',        dur: '3:00', tip: 'Vibe nós vamos.' },
+  { song: 'Stay This Way',    artist: 'fromis_9',      year: 2022, diff: 3, style: 'cute pop',        dur: '3:00', tip: 'Vibe fica assim.' },
+  { song: '#menow',           artist: 'fromis_9',      year: 2023, diff: 3, style: 'cute pop',        dur: '3:00', tip: 'Vibe agora.' },
+
+  // ===== Apink subunit / oh my girl =====
+  { song: 'BUNGEE (Fall in Love)', artist: 'OH MY GIRL', year: 2019, diff: 3, style: 'cute pop',      dur: '3:30', tip: 'Vibe bungee.' },
+  { song: 'Nonstop',          artist: 'OH MY GIRL',    year: 2020, diff: 3, style: 'cute pop',        dur: '3:25', tip: 'Vibe sem parar.' },
+  { song: 'Dolphin',          artist: 'OH MY GIRL',    year: 2020, diff: 3, style: 'cute pop',        dur: '3:24', tip: 'Vibe golfinho.' },
+  { song: 'Real Love',        artist: 'OH MY GIRL',    year: 2022, diff: 3, style: 'pop',             dur: '3:24', tip: 'Vibe amor real.' },
+  { song: 'Closer',           artist: 'OH MY GIRL',    year: 2015, diff: 3, style: 'fairy pop',       dur: '3:24', tip: 'Vibe mais perto.' },
+  { song: 'Coloring Book',    artist: 'OH MY GIRL',    year: 2017, diff: 3, style: 'cute pop',        dur: '3:00', tip: 'Vibe livro de colorir.' },
+  { song: 'Secret Garden',    artist: 'OH MY GIRL',    year: 2018, diff: 3, style: 'fairy pop',       dur: '3:00', tip: 'Vibe jardim secreto.' },
+
+  // ===== DIA =====
+  { song: 'Will You Go Out With Me', artist: 'DIA',    year: 2017, diff: 3, style: 'cute pop',        dur: '3:30', tip: 'Vibe namorar comigo.' },
+  { song: 'Woo Woo',          artist: 'DIA',           year: 2018, diff: 3, style: 'cute pop',        dur: '3:00', tip: 'Vibe woo.' },
+
+  // ===== Berry Good =====
+  { song: 'Mellow Mellow',    artist: 'Berry Good',    year: 2019, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe doce.' },
+  { song: 'Don\'t Believe',   artist: 'Berry Good',    year: 2017, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe não acredite.' },
+
+  // ===== Stellar / Ladies\' Code =====
+  { song: 'Vibrato',          artist: 'Stellar',       year: 2015, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe vibrato.' },
+  { song: 'Marionette',       artist: 'Stellar',       year: 2014, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe marionete.' },
+  { song: 'Galaxy',           artist: 'Ladies\' Code', year: 2013, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe galáxia.' },
+
+  // ===== AOA =====
+  { song: 'Heart Attack',     artist: 'AOA',           year: 2015, diff: 3, style: 'sensual pop',     dur: '3:30', tip: 'Vibe coração ataque.' },
+  { song: 'Miniskirt',        artist: 'AOA',           year: 2014, diff: 3, style: 'sensual pop',     dur: '3:30', tip: 'Vibe minissaia.' },
+  { song: 'Like A Cat',       artist: 'AOA',           year: 2014, diff: 3, style: 'sensual pop',     dur: '3:34', tip: 'Vibe gato.' },
+  { song: 'Excuse Me',        artist: 'AOA',           year: 2017, diff: 3, style: 'sensual pop',     dur: '3:00', tip: 'Vibe com licença.' },
+  { song: 'Bing Bing',        artist: 'AOA',           year: 2017, diff: 3, style: 'sensual pop',     dur: '3:00', tip: 'Vibe bing.' },
+
+  // ===== 4MINUTE =====
+  { song: 'Crazy',            artist: '4MINUTE',       year: 2015, diff: 4, style: 'pop',             dur: '3:14', tip: 'Vibe maluca.' },
+  { song: 'Hate',             artist: '4MINUTE',       year: 2016, diff: 4, style: 'pop',             dur: '3:24', tip: 'Vibe ódio.' },
+  { song: 'Whatcha Doin\' Today', artist: '4MINUTE',   year: 2014, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe hoje.' },
+
+  // ===== Sistar =====
+  { song: 'Touch My Body',    artist: 'Sistar',        year: 2014, diff: 3, style: 'tropical',        dur: '3:30', tip: 'Vibe verão.' },
+  { song: 'Loving U',         artist: 'Sistar',        year: 2012, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe te amando.' },
+  { song: 'Shake It',         artist: 'Sistar',        year: 2015, diff: 3, style: 'pop',             dur: '3:30', tip: 'Vibe sacudir.' },
+  { song: 'I Like That',      artist: 'Sistar',        year: 2016, diff: 3, style: 'pop',             dur: '3:30', tip: 'Vibe gosto.' },
+  { song: 'Lonely',           artist: 'Sistar',        year: 2017, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe solitária.' },
+
+  // ===== KARA =====
+  { song: 'Mister',           artist: 'KARA',          year: 2009, diff: 3, style: 'cute pop',        dur: '3:30', tip: 'Vibe bumbum dance.' },
+  { song: 'Step',             artist: 'KARA',          year: 2011, diff: 3, style: 'pop',             dur: '3:30', tip: 'Vibe passo.' },
+  { song: 'Mamma Mia',        artist: 'KARA',          year: 2014, diff: 3, style: 'pop',             dur: '3:30', tip: 'Vibe mamma.' },
+  { song: 'WHEN I MOVE',      artist: 'KARA',          year: 2022, diff: 3, style: 'pop',             dur: '3:24', tip: 'Vibe quando me mexo.' },
+
+  // ===== After School / Orange Caramel =====
+  { song: 'Bang!',            artist: 'After School',  year: 2010, diff: 3, style: 'pop',             dur: '3:30', tip: 'Vibe bang.' },
+  { song: 'Shampoo',          artist: 'After School',  year: 2011, diff: 3, style: 'pop',             dur: '3:30', tip: 'Vibe xampu.' },
+  { song: 'First Love',       artist: 'After School',  year: 2013, diff: 4, style: 'pole dance',      dur: '3:30', tip: 'Vibe pole dance.' },
+  { song: 'Diva',             artist: 'After School',  year: 2009, diff: 3, style: 'pop',             dur: '3:30', tip: 'Vibe diva.' },
+  { song: 'Catallena',        artist: 'Orange Caramel', year: 2014, diff: 3, style: 'cute pop',       dur: '3:30', tip: 'Vibe latina.' },
+  { song: 'My Copycat',       artist: 'Orange Caramel', year: 2014, diff: 3, style: 'cute pop',       dur: '3:00', tip: 'Vibe imitadora.' },
+  { song: 'Lipstick',         artist: 'Orange Caramel', year: 2012, diff: 3, style: 'cute pop',       dur: '3:30', tip: 'Vibe batom.' },
+
+  // ===== T-ara extras / WONDER GIRLS extras =====
+  { song: 'Why So Lonely',    artist: 'Wonder Girls',  year: 2016, diff: 3, style: 'tropical',        dur: '3:24', tip: 'Vibe solitária.' },
+  { song: 'I Feel You',       artist: 'Wonder Girls',  year: 2015, diff: 3, style: 'retro pop',       dur: '3:00', tip: 'Vibe sentindo.' },
+
+  // ===== Solo: Hwasa / Solar / Wheein / Moonbyul =====
+  { song: 'Maria',            artist: 'Hwasa',         year: 2020, diff: 3, style: 'pop',             dur: '3:24', tip: 'Vibe Maria.' },
+  { song: 'Twit',             artist: 'Hwasa',         year: 2019, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe twit.' },
+  { song: 'I\'m a Bitch',     artist: 'Hwasa',         year: 2021, diff: 3, style: 'pop',             dur: '3:00', tip: 'Atitude.' },
+  { song: 'Honey',            artist: 'Solar',         year: 2020, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe mel.' },
+  { song: 'Spit it out',      artist: 'Solar',         year: 2020, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe cuspir.' },
+  { song: 'COLORIS A',        artist: 'Solar',         year: 2022, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe coloris.' },
+  { song: 'Easy',             artist: 'Wheein',        year: 2021, diff: 2, style: 'pop',             dur: '3:00', tip: 'Vibe fácil.' },
+  { song: 'Water Color',      artist: 'Wheein',        year: 2021, diff: 2, style: 'pop',             dur: '3:00', tip: 'Vibe aquarela.' },
+  { song: 'Lunatic',          artist: 'Moonbyul',      year: 2023, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe lunática.' },
+  { song: 'Eclipse',          artist: 'Moonbyul',      year: 2020, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe eclipse.' },
+
+  // ===== Solo: Hyolyn =====
+  { song: 'Dally',            artist: 'Hyolyn',        year: 2018, diff: 4, style: 'r&b pop',         dur: '3:00', tip: 'Vibe dally.' },
+  { song: 'Layin\' Low',      artist: 'Hyolyn',        year: 2019, diff: 4, style: 'r&b pop',         dur: '3:00', tip: 'Vibe laying low.' },
+  { song: 'See Sea',          artist: 'Hyolyn',        year: 2021, diff: 4, style: 'r&b pop',         dur: '3:00', tip: 'Vibe mar.' },
+  { song: 'One Way Love',     artist: 'Hyolyn',        year: 2016, diff: 3, style: 'r&b pop',         dur: '3:00', tip: 'Vibe amor sentido único.' },
+
+  // ===== Solo: DEAN =====
+  { song: 'Instagram',        artist: 'DEAN',          year: 2018, diff: 2, style: 'indie r&b',       dur: '3:24', tip: 'Vibe instagram.' },
+  { song: 'Howlin\' 404',     artist: 'DEAN',          year: 2018, diff: 2, style: 'indie',           dur: '3:00', tip: 'Vibe uivo.' },
+  { song: 'Half Moon',        artist: 'DEAN',          year: 2016, diff: 2, style: 'r&b',             dur: '3:00', tip: 'Vibe meia lua.' },
+
+  // ===== Solo: Crush =====
+  { song: 'Cereal',           artist: 'Crush',         year: 2018, diff: 2, style: 'r&b',             dur: '3:00', tip: 'Vibe cereal.' },
+  { song: 'Skip',             artist: 'Crush',         year: 2019, diff: 2, style: 'r&b',             dur: '3:00', tip: 'Vibe pulando.' },
+  { song: 'Done',             artist: 'Crush',         year: 2020, diff: 2, style: 'r&b',             dur: '3:00', tip: 'Vibe acabou.' },
+  { song: 'From Midnight to Sunrise', artist: 'Crush', year: 2021, diff: 2, style: 'r&b',             dur: '3:00', tip: 'Vibe madrugada.' },
+
+  // ===== Solo: Heize =====
+  { song: 'Don\'t Know You',  artist: 'Heize',         year: 2017, diff: 2, style: 'pop',             dur: '3:00', tip: 'Vibe não te conheço.' },
+  { song: 'Star',             artist: 'Heize',         year: 2018, diff: 2, style: 'pop',             dur: '3:00', tip: 'Vibe estrela.' },
+  { song: 'Falling Leaves Are Beautiful', artist: 'Heize', year: 2019, diff: 2, style: 'pop',         dur: '3:00', tip: 'Folhas caem belas.' },
+  { song: 'Happen',           artist: 'Heize',         year: 2021, diff: 2, style: 'pop',             dur: '3:00', tip: 'Vibe acontece.' },
+
+  // ===== Solo: AKMU (Akdong Musician) =====
+  { song: 'How Can I Love the Heartbreak', artist: 'AKMU', year: 2019, diff: 2, style: 'pop ballad',  dur: '3:00', tip: 'Vibe amor partido.' },
+  { song: 'Dinosaur',         artist: 'AKMU',          year: 2017, diff: 2, style: 'pop',             dur: '3:00', tip: 'Vibe dinossauro.' },
+  { song: 'Last Goodbye',     artist: 'AKMU',          year: 2014, diff: 2, style: 'pop ballad',      dur: '3:00', tip: 'Vibe adeus.' },
+  { song: 'Hey Kid',          artist: 'AKMU',          year: 2018, diff: 2, style: 'pop',             dur: '3:00', tip: 'Vibe oi garoto.' },
+
+  // ===== Solo: BIBI =====
+  { song: 'BIBI Vengeance',   artist: 'BIBI',          year: 2021, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe vingança.' },
+  { song: 'Bam Yang Gang',    artist: 'BIBI',          year: 2023, diff: 2, style: 'pop',             dur: '3:00', tip: 'Vibe noite.' },
+  { song: 'JOTTO',            artist: 'BIBI',          year: 2023, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe JOTTO.' },
+
+  // ===== Solo: BoA extras =====
+  { song: 'Better',           artist: 'BoA',           year: 2020, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe melhor.' },
+  { song: 'Forgive Me',       artist: 'BoA',           year: 2022, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe perdoa.' },
+  { song: 'Atomic',           artist: 'BoA',           year: 2023, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe atômica.' },
+
+  // ===== Solo: 10cm / BOL4 (band/indie) =====
+  { song: 'Where Is My Hippo', artist: '10cm',         year: 2011, diff: 1, style: 'indie acoustic',  dur: '3:00', tip: 'Vibe acústica.' },
+  { song: 'But you',          artist: '10cm',          year: 2015, diff: 1, style: 'indie acoustic',  dur: '3:00', tip: 'Vibe mas você.' },
+  { song: 'Travel',           artist: 'BOL4',          year: 2019, diff: 2, style: 'indie pop',       dur: '3:24', tip: 'Vibe viagem.' },
+  { song: 'Galaxy',           artist: 'BOL4',          year: 2020, diff: 2, style: 'indie pop',       dur: '3:00', tip: 'Vibe galáxia.' },
+  { song: 'Workaholic',       artist: 'BOL4',          year: 2021, diff: 2, style: 'indie pop',       dur: '3:00', tip: 'Vibe workaholic.' },
+
+  // ===== Younha (band/solo, mais indie) =====
+  { song: 'Event Horizon',    artist: 'Younha',        year: 2022, diff: 2, style: 'rock pop',        dur: '3:30', tip: 'Vibe horizonte.' },
+  { song: 'Comet',            artist: 'Younha',        year: 2023, diff: 2, style: 'pop',             dur: '3:00', tip: 'Vibe cometa.' },
+
+  // ===== Yerin Baek =====
+  { song: 'Square',           artist: 'Yerin Baek',    year: 2019, diff: 2, style: 'r&b',             dur: '3:00', tip: 'Vibe square.' },
+  { song: 'Bambambam',        artist: 'Yerin Baek',    year: 2020, diff: 2, style: 'r&b',             dur: '3:00', tip: 'Vibe bambambam.' },
+
+  // ===== Henry / Eric Nam =====
+  { song: 'Trap',             artist: 'Henry',         year: 2013, diff: 2, style: 'pop violin',      dur: '3:00', tip: 'Vibe trap violino.' },
+  { song: 'I\'m Good',        artist: 'Henry',         year: 2019, diff: 2, style: 'pop',             dur: '3:00', tip: 'Estou bem.' },
+  { song: 'Honestly',         artist: 'Eric Nam',      year: 2020, diff: 2, style: 'pop',             dur: '3:00', tip: 'Vibe honesto.' },
+  { song: 'Echo',             artist: 'Eric Nam',      year: 2021, diff: 2, style: 'pop',             dur: '3:00', tip: 'Vibe eco.' },
+  { song: 'Heart on My Sleeve', artist: 'Eric Nam',    year: 2022, diff: 2, style: 'pop',             dur: '3:00', tip: 'Coração na manga.' },
+
+  // ===== Park Jihoon / Kang Daniel / Ha Sungwoon / Kim Jaehwan (ex-Wanna One) =====
+  { song: 'L.O.V.E',          artist: 'Park Jihoon',   year: 2019, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe amor.' },
+  { song: 'Wing',             artist: 'Park Jihoon',   year: 2020, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe asa.' },
+  { song: 'Gallery',          artist: 'Park Jihoon',   year: 2021, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe galeria.' },
+  { song: 'What are you up to', artist: 'Kang Daniel', year: 2019, diff: 3, style: 'pop',             dur: '3:00', tip: 'O que faz.' },
+  { song: 'TOUCHIN\'',        artist: 'Kang Daniel',   year: 2020, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe tocando.' },
+  { song: 'Antidote',         artist: 'Kang Daniel',   year: 2021, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe antídoto.' },
+  { song: 'Bird',             artist: 'Ha Sungwoon',   year: 2020, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe pássaro.' },
+  { song: 'BLUE',             artist: 'Ha Sungwoon',   year: 2021, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe azul.' },
+  { song: 'Get Ready',        artist: 'Ha Sungwoon',   year: 2022, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe pronto.' },
+
+  // ===== Solo: WOODZ =====
+  { song: 'Love Me Harder',   artist: 'WOODZ',         year: 2020, diff: 3, style: 'r&b',             dur: '3:00', tip: 'Vibe ame-me mais.' },
+  { song: 'Different',        artist: 'WOODZ',         year: 2021, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe diferente.' },
+  { song: 'WAITING',          artist: 'WOODZ',         year: 2022, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe esperando.' },
+  { song: 'I hate you',       artist: 'WOODZ',         year: 2023, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe te odeio.' },
+
+  // ===== Hi-Lite / 88RISING tier =====
+  { song: 'Officially Missing You', artist: 'Geeks',   year: 2014, diff: 2, style: 'r&b',             dur: '3:00', tip: 'Vibe sentindo falta.' },
+  { song: 'Click Me',         artist: 'Sik-K',         year: 2018, diff: 3, style: 'hip-hop',         dur: '3:00', tip: 'Vibe click.' },
+  { song: 'Watercolor',       artist: 'Pdogg',         year: 2018, diff: 2, style: 'r&b',             dur: '3:00', tip: 'Vibe aquarela.' },
+
+  // ===== Older 2nd Gen (mais profundo) =====
+  { song: 'Once In A Lifetime', artist: 'SHINHWA',     year: 2013, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe uma vez na vida.' },
+  { song: 'Love Like This',   artist: 'SS501',         year: 2009, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe amor assim.' },
+  { song: 'One Candle',       artist: 'god',           year: 2000, diff: 2, style: 'pop',             dur: '3:00', tip: 'Vibe vela.' },
+  { song: 'Candy',            artist: 'H.O.T.',        year: 1996, diff: 3, style: 'pop classic',     dur: '3:30', tip: 'Vibe primeiro K-pop.' },
+
+  // ===== AOA / B1A4 / TEEN TOP / FT Island (band) =====
+  { song: 'Crush',            artist: 'B1A4',          year: 2014, diff: 3, style: 'cute pop',        dur: '3:00', tip: 'Vibe paixão.' },
+  { song: 'A Lie',            artist: 'B1A4',          year: 2013, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe mentira.' },
+  { song: 'What\'s Happening', artist: 'B1A4',         year: 2013, diff: 3, style: 'pop',             dur: '3:00', tip: 'O que tá rolando.' },
+  { song: 'Rocking',          artist: 'TEEN TOP',      year: 2013, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe rocking.' },
+  { song: 'No More Perfume on You', artist: 'TEEN TOP', year: 2013, diff: 3, style: 'pop',            dur: '3:00', tip: 'Vibe perfume.' },
+  { song: 'Severely',         artist: 'FT Island',     year: 2013, diff: 2, style: 'band rock',       dur: '3:00', tip: 'Vibe severamente.' },
+  { song: 'Pretty Girl',      artist: 'FT Island',     year: 2007, diff: 2, style: 'rock pop',        dur: '3:00', tip: 'Vibe garota bonita.' },
+
+  // ===== U-KISS / VIXX extras / B.A.P =====
+  { song: 'Quit Playing',     artist: 'U-KISS',        year: 2014, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe pare.' },
+  { song: 'Bingeul Bingeul',  artist: 'U-KISS',        year: 2011, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe girando.' },
+  { song: 'WARRIOR',          artist: 'B.A.P',         year: 2012, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe guerreiro.' },
+  { song: 'Power',            artist: 'B.A.P',         year: 2012, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe poder.' },
+  { song: '1004 (Angel)',     artist: 'B.A.P',         year: 2014, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe anjo.' },
+  { song: 'Error',            artist: 'VIXX',          year: 2014, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe erro.' },
+  { song: 'Fantasy',          artist: 'VIXX',          year: 2016, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe fantasia.' },
+  { song: 'Hyde',             artist: 'VIXX',          year: 2013, diff: 4, style: 'dark pop',        dur: '3:00', tip: 'Vibe Hyde.' },
+
+  // ===== BTOB =====
+  { song: 'Missing You',      artist: 'BTOB',          year: 2017, diff: 2, style: 'ballad',          dur: '3:30', tip: 'Vibe saudade.' },
+  { song: 'Beautiful Pain',   artist: 'BTOB',          year: 2018, diff: 2, style: 'ballad pop',      dur: '3:00', tip: 'Dor bonita.' },
+  { song: 'Outsider',         artist: 'BTOB',          year: 2021, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe estranho.' },
+
+  // ===== BLOCK B =====
+  { song: 'Very Good',        artist: 'BLOCK B',       year: 2013, diff: 3, style: 'hip-hop pop',     dur: '3:00', tip: 'Vibe muito bom.' },
+  { song: 'Jackpot',          artist: 'BLOCK B',       year: 2014, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe jackpot.' },
+  { song: 'Toy',              artist: 'BLOCK B',       year: 2016, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe brinquedo.' },
+
+  // ===== iKON =====
+  { song: 'Love Scenario',    artist: 'iKON',          year: 2018, diff: 2, style: 'pop',             dur: '3:34', tip: 'Vibe cena amor.' },
+  { song: 'Killing Me',       artist: 'iKON',          year: 2018, diff: 4, style: 'pop',             dur: '3:30', tip: 'Vibe me matando.' },
+  { song: 'I\'m OK',          artist: 'iKON',          year: 2019, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe estou ok.' },
+  { song: 'Why Why Why',      artist: 'iKON',          year: 2020, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe por quê.' },
+  { song: 'BURN',             artist: 'iKON',          year: 2023, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe queimar.' },
+
+  // ===== WINNER =====
+  { song: 'Really Really',    artist: 'WINNER',        year: 2017, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe realmente.' },
+  { song: 'Everyday',         artist: 'WINNER',        year: 2018, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe todo dia.' },
+  { song: 'Empty',            artist: 'WINNER',        year: 2014, diff: 2, style: 'pop',             dur: '3:00', tip: 'Vibe vazio.' },
+  { song: 'Hold',             artist: 'WINNER',        year: 2020, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe segurar.' },
+
+  // ===== ASTRO extras =====
+  { song: 'All Night',        artist: 'ASTRO',         year: 2019, diff: 3, style: 'pop',             dur: '3:00', tip: 'Noite toda.' },
+  { song: 'Blue Flame',       artist: 'ASTRO',         year: 2019, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe chama azul.' },
+  { song: 'Hide & Seek',      artist: 'ASTRO',         year: 2020, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe esconde.' },
+
+  // ===== Pentagon extras =====
+  { song: 'Dr. BeBe',         artist: 'Pentagon',      year: 2020, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe doutor.' },
+  { song: 'Do or Not',        artist: 'Pentagon',      year: 2022, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe ou não.' },
+
+  // ===== ROCKETPUNCH / VICTON extras =====
+  { song: 'Stupid O\'Clock',  artist: 'VICTON',        year: 2022, diff: 3, style: 'pop',             dur: '3:00', tip: 'Hora boba.' },
+  { song: 'What I Said',      artist: 'VICTON',        year: 2022, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe o que disse.' },
+
+  // ===== AOA / Apink / EXID / GUGUDAN / GIRL\'S DAY etc =====
+  { song: 'Up & Down',        artist: 'EXID',          year: 2014, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe sobe desce.' },
+  { song: 'Ah Yeah',          artist: 'EXID',          year: 2015, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe ah sim.' },
+  { song: 'L.I.E',            artist: 'EXID',          year: 2016, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe mentira.' },
+  { song: 'A Girl Like Me',   artist: 'GUGUDAN',       year: 2018, diff: 3, style: 'pop',             dur: '3:00', tip: 'Uma garota como eu.' },
+  { song: 'Wonderland',       artist: 'GUGUDAN',       year: 2016, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe wonderland.' },
+  { song: 'Something',        artist: 'GIRL\'S DAY',   year: 2014, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe algo.' },
+  { song: 'Expect',           artist: 'GIRL\'S DAY',   year: 2013, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe espere.' },
+  { song: 'I\'ll be yours',   artist: 'GIRL\'S DAY',   year: 2017, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe serei sua.' },
+
+  // ===== Cherry On Top =====
+  { song: 'Cherry on Top',    artist: 'IVE',           year: 2024, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe cereja no topo.' },
+
+  // ===== MAMAMOO+ (subunit) =====
+  { song: 'Better',           artist: 'MAMAMOO+',      year: 2023, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe melhor.' },
+
+  // ===== Older girl groups =====
+  { song: 'Coming of Age Ceremony', artist: 'Park Ji Yoon', year: 2000, diff: 2, style: 'classic pop', dur: '3:00', tip: 'Vibe maioridade.' },
+  { song: 'Hate That…',       artist: 'Key',           year: 2021, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe odeio.' },
+  { song: 'Bad Love',         artist: 'Key',           year: 2021, diff: 3, style: 'pop',             dur: '3:00', tip: 'Mau amor.' },
+  { song: 'Gasoline',         artist: 'Key',           year: 2022, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe gasolina.' },
+  { song: 'Soul Lady',        artist: 'Yukika',        year: 2020, diff: 2, style: 'city pop',        dur: '3:30', tip: 'Vibe city pop.' },
+  { song: 'Insomnia',         artist: 'Yukika',        year: 2021, diff: 2, style: 'city pop',        dur: '3:00', tip: 'Vibe insônia.' },
+
+  // ===== TripleS subunits =====
+  { song: 'Atomic',           artist: 'tripleS Acid Angel from Asia', year: 2022, diff: 3, style: 'pop', dur: '3:00', tip: 'Vibe atômica.' },
+  { song: 'Cherry Gene',      artist: 'tripleS Krystal Eyes', year: 2023, diff: 3, style: 'pop',       dur: '3:00', tip: 'Vibe gene cereja.' },
+
+  // ===== Cosmic Boys / OMEGA X =====
+  { song: 'WHAT\'S GOIN ON',  artist: 'OMEGA X',       year: 2021, diff: 4, style: 'pop',             dur: '3:00', tip: 'Coreografia debut.' },
+  { song: 'love me like',     artist: 'OMEGA X',       year: 2022, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe ame-me.' },
+
+  // ===== POW / NCT-related =====
+  { song: 'Favorite',         artist: 'NCT 127',       year: 2021, diff: 4, style: 'pop',             dur: '3:21', tip: 'Vibe favorito.' },
+  { song: '2 Baddies',        artist: 'NCT 127',       year: 2022, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe baddies.' },
+  { song: 'Fact Check',       artist: 'NCT 127',       year: 2023, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe fato.' },
+  { song: 'Walk',             artist: 'NCT 127',       year: 2024, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe andar.' },
+  { song: 'Beatbox',          artist: 'NCT Dream',     year: 2022, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe beatbox.' },
+  { song: 'Glitch Mode',      artist: 'NCT Dream',     year: 2022, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe glitch.' },
+  { song: 'Candy',            artist: 'NCT Dream',     year: 2022, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe doce.' },
+  { song: 'ISTJ',             artist: 'NCT Dream',     year: 2023, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe MBTI.' },
 ];
 
 // Objetivos visuais (Goals) — "como eu quero ficar".
