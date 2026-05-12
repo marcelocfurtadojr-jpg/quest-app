@@ -5953,6 +5953,102 @@ function addAttributeXP(key, amount) {
   state.user.attributes[key] = (state.user.attributes[key] || 0) + amount;
 }
 
+// ===== Atributos estilo Tibia — progressão lenta e exponencial =====
+// Cada nível custa ATTR_BASE_COST * ATTR_GROWTH^(level-1) pontos. Crescimento
+// 1.08 → nível 30 ≈ 113 XP, nível 50 ≈ 573 XP, nível 70 ≈ 2330 XP, nível
+// 100 ≈ 13.7k XP. Combina com adds pequenos por ação pra dar sensação de
+// grind realista. Cap de exibição em 200 (matemático ilimitado).
+const ATTR_BASE_COST = 1;
+const ATTR_GROWTH    = 1.08;
+
+/** Custo absoluto pra ir do nível L-1 pro L (1-indexed: nível 1 = 1 XP). */
+function attrCostForLevel(L) {
+  return ATTR_BASE_COST * Math.pow(ATTR_GROWTH, L - 1);
+}
+
+/** XP total acumulado necessário pra atingir o nível L. */
+function attrTotalXPForLevel(L) {
+  // Soma da PG: a * (r^L - 1) / (r - 1)
+  if (L <= 0) return 0;
+  return ATTR_BASE_COST * (Math.pow(ATTR_GROWTH, L) - 1) / (ATTR_GROWTH - 1);
+}
+
+/** Retorna { level, intoLevel, nextCost, pctToNext } a partir do XP bruto. */
+function attrInfo(xp) {
+  xp = Math.max(0, xp || 0);
+  let level = 0;
+  let total = 0;
+  // Loop curto — convergência rápida mesmo pra XP altos
+  while (total + attrCostForLevel(level + 1) <= xp && level < 200) {
+    total += attrCostForLevel(level + 1);
+    level++;
+  }
+  const nextCost = attrCostForLevel(level + 1);
+  const intoLevel = xp - total;
+  const pctToNext = Math.min(100, (intoLevel / nextCost) * 100);
+  return { level, intoLevel, nextCost, pctToNext };
+}
+
+// Nomes de tier por atributo, por TEMA. Cada tema tem sua progressão própria
+// que faz sentido com a estética. Os 14 tiers de cada atributo vão de "fraco"
+// até um personagem/conceito icônico do tema.
+const ATTR_TIERS_BY_THEME = {
+  kpop_anime: {
+    // Mortal Kombat + fighters
+    forca:       ['Crybaby','Frangote','Iniciante','Frequentador','Marombeiro','Brawler','Liu Kang','Kano','Sektor','Jax','Sub-Zero','Kintaro','Goro','Shao Kahn'],
+    resistencia: ['Lambada','Sofá-rei','Trotador','Caminhante','Corredor casual','Atleta amador','Maratonista','Triatleta','Smoke','Scorpion','Cassie Cage','Sonya Blade','Liu Kang','Raiden'],
+    sabedoria:   ['Distraído','Esquecido','Curioso','Estudante','Aprendiz','Pesquisador','Polímata','Kung Lao','Kenshi','Shang Tsung','Quan Chi','Bo\' Rai Cho','Old Liu Kang','Raiden'],
+    disciplina:  ['Procrastinador','Bagunceiro','Aspirante','Determinado','Persistente','Focado','Implacável','Cyrax','Sektor','Noob Saibot','Reptile','Scorpion','Sub-Zero','Bi-Han'],
+    vitalidade:  ['Letárgico','Cansado','Disposto','Animado','Energético','Vibrante','Radiante','Stryker','Jacqui Briggs','Jax Briggs','Cassie Cage','Liu Kang','Hollywood','Johnny Cage'],
+  },
+  inside_out: {
+    // Inside Out (Pixar) — emoções e crescimento interior
+    forca:       ['Birrento','Tímido','Hesitante','Coragem inicial','Determinado','Bravo','Vigoroso','Combativo','Furioso','Implacável','Indignação','Anger','Berserker','Pure Rage'],
+    resistencia: ['Apagado','Mole','Constante','Disposto','Animado','Energético','Resiliente','Tireless','Sunshine','Brilho interno','Glee','Joyful','Pure Joy','Eternal Joy'],
+    sabedoria:   ['Confuso','Distraído','Curioso','Atento','Reflexivo','Pensativo','Lúcido','Sábio','Mentor','Filósofo','Sadness','Empática','Conselheira','Inner Sage'],
+    disciplina:  ['Bagunceiro','Casual','Organizado','Metódico','Focado','Persistente','Rigoroso','Implacável','Disgust','Crítica refinada','Padrão alto','Iron Will','Stoic','Beyond'],
+    vitalidade:  ['Letárgico','Cansado','Disposto','Animado','Vibrante','Radiante','Solar','Brilhante','Iluminado','Joy','Spark','Hollywood Glow','Sunray','Pure Joy'],
+  },
+  fashion: {
+    // Moda / estética coreana
+    forca:       ['Hesitante','Postura ruim','Postura OK','Pose firme','Cintura definida','Tonificado','Esculpido','Editorial','Cover Boy','Runway King','Adonis','Marble','Iconic','Living Sculpture'],
+    resistencia: ['Bambo','Estafado','Andar firme','Passarela básica','Frequenta','Pro casual','Catwalk Pro','Fashion Week','Maratonista da moda','Catwalk Master','Naomi Campbell','Tyra Banks','Iman','Supermodel'],
+    sabedoria:   ['Sem estilo','Iniciante','Curioso','Atento à moda','Bem informado','Trend reader','Influencer','Trend setter','Stylist','Estilista pro','Anna Wintour','Karl Lagerfeld','Coco Chanel','Visionário'],
+    disciplina:  ['Negligente','Casual','Aspirante','Cuidadoso','Disciplinado','Rotina firme','Skincare Pro','Glass Skin','K-Beauty','Beauty Master','Aesthete','Goddess Routine','Bae Suzy','Glass Goddess'],
+    vitalidade:  ['Apagado','Cansado','Disposto','Vivaz','Brilho','Glow','Radiante','Luminescente','Goddess Glow','BLINK Tier','Idol Tier','Lisa','Rosé','Pure Radiance'],
+  },
+  futebol_lol: {
+    // Futebol + LoL
+    forca:       ['Banco','Pelada de domingo','Iniciante','Júnior','Atacante','Centro-avante','Strong striker','Garen','Darius','Sett','Aatrox','Cristiano Ronaldo','Hulk','Adebayor'],
+    resistencia: ['Cansa fácil','Mediano','Caminhante','Trotador','Atleta','Volante','Maratonista','Pantheon','Hecarim','Udyr','Iniesta','Modric','Adriano Imperador','Maratona Olímpica'],
+    sabedoria:   ['Iniciante','Casual','Sabe o básico','Tático','Estuda jogo','Analista','Treinador','Yasuo','Orianna','Pep Guardiola','Tite','Mourinho','Ancelotti','Sócrates'],
+    disciplina:  ['Bagunceiro','Casual','Comprometido','Frequentador','Rigoroso','Profissional','Atleta','Lee Sin','Diana','Aatrox','Cafu','Maicon','Maradona','Kaká'],
+    vitalidade:  ['Apagado','Cansado','Disposto','Saudável','Vibrante','Energético','Atleta vital','Soraka','Yuumi','Bard','Nasus','Pelé','Zico','Maldini'],
+  },
+};
+
+// Limites de level por tier (mesmo pra todos os temas pra simplificar)
+const ATTR_TIER_MINS = [0, 2, 5, 10, 17, 25, 35, 45, 58, 72, 86, 100, 120, 150];
+
+/** Retorna o nome do tier atual + próximo (pra mostrar "falta X pra Y"). */
+function attrTierFor(key, level) {
+  const themeKey = state?.user?.theme || 'kpop_anime';
+  const themeTiers = ATTR_TIERS_BY_THEME[themeKey] || ATTR_TIERS_BY_THEME.kpop_anime;
+  const names = themeTiers[key] || [];
+  if (!names.length) return { current: '—', next: null, nextMin: null };
+  let currentIdx = 0;
+  for (let i = 0; i < ATTR_TIER_MINS.length; i++) {
+    if (level >= ATTR_TIER_MINS[i]) currentIdx = i;
+    else break;
+  }
+  const nextIdx = currentIdx + 1 < names.length ? currentIdx + 1 : null;
+  return {
+    current: names[currentIdx],
+    next: nextIdx != null ? names[nextIdx] : null,
+    nextMin: nextIdx != null ? ATTR_TIER_MINS[nextIdx] : null,
+  };
+}
+
 /** Verifica todas as conquistas; emite toast + confete pra cada nova desbloqueada. */
 function checkAchievements() {
   if (!state.user.achievementsUnlocked) state.user.achievementsUnlocked = [];
@@ -6377,21 +6473,21 @@ function viewDashboard() {
     <div class="q-card p-3">
       <div class="flex items-center justify-between mb-3">
         <h3 class="font-bold text-sm tracking-wider uppercase opacity-70">Atributos</h3>
-        <span class="text-xs text-ink/45 dark:text-paper/45">${ATTRIBUTES.reduce((s,a)=>s+(attrs[a.key]||0),0)} pts</span>
+        <span class="text-xs text-ink/45 dark:text-paper/45">total ${ATTRIBUTES.reduce((s,a)=>s+attrInfo(attrs[a.key]||0).level,0)} lvl</span>
       </div>
       <div class="grid grid-cols-5 gap-1">
         ${ATTRIBUTES.map(a => {
-          const val = attrs[a.key] || 0;
-          const max = Math.max(...ATTRIBUTES.map(x => attrs[x.key] || 0), 10);
-          const pct = (val / max) * 100;
+          const xp = attrs[a.key] || 0;
+          const info = attrInfo(xp);
+          const tier = attrTierFor(a.key, info.level);
           return `
-          <button class="flex flex-col items-center gap-1 attr-tile" data-attr="${a.key}" aria-label="${a.name}: ${val}">
+          <button class="flex flex-col items-center gap-1 attr-tile" data-attr="${a.key}" aria-label="${a.name}: ${tier.current} (lvl ${info.level})">
             <div class="attr-chip" style="--accent:${a.color}" data-fallback="${a.icon}">
               <span class="attr-ko">${a.ko || a.icon}</span>
             </div>
-            <div class="w-full xp-track" style="height:5px"><div class="xp-fill" style="width:${pct}%; background:${a.color}"></div></div>
-            <div class="text-[11px] font-bold" style="color:${a.color}">${val}</div>
-            <div class="text-[9px] text-ink/55 dark:text-paper/55 leading-tight text-center">${a.name}</div>
+            <div class="w-full xp-track" style="height:5px"><div class="xp-fill" style="width:${info.pctToNext}%; background:${a.color}"></div></div>
+            <div class="text-[10px] font-bold leading-tight text-center truncate w-full" style="color:${a.color}" title="${tier.current} · lvl ${info.level}">${tier.current}</div>
+            <div class="text-[9px] text-ink/55 dark:text-paper/55 leading-tight text-center">${a.name} <span class="opacity-60">${info.level}</span></div>
           </button>`;
         }).join('')}
       </div>
@@ -6402,21 +6498,28 @@ function viewDashboard() {
     ${(() => {
       const idx = Math.floor(new Date(todayISO()).getTime() / 86400000) % ATTRIBUTES.length;
       const a = ATTRIBUTES[idx];
-      const val = attrs[a.key] || 0;
+      const xp = attrs[a.key] || 0;
+      const info = attrInfo(xp);
       const showKo = theme.showKombatant;
+      const tier = attrTierFor(a.key, info.level);
       return `
       <div class="q-card p-3 flex items-center gap-3">
         <div class="attr-chip shrink-0" style="--accent:${a.color}; width:56px; height:56px; font-size:22px;" data-fallback="${a.icon}">
           ${showKo ? `<span class="attr-ko">${a.ko || a.icon}</span>` : ''}
         </div>
         <div class="flex-1 min-w-0">
-          <div class="text-[10px] uppercase tracking-widest text-ink/45 dark:text-paper/45">Atributo do dia</div>
-          <div class="font-extrabold text-base" style="color:${a.color}">${a.name}${showKo && a.ko ? ` · ${a.ko}` : ''}</div>
-          <div class="text-[11px] text-ink/60 dark:text-paper/60 leading-tight mt-0.5">${a.desc}</div>
+          <div class="text-[10px] uppercase tracking-widest text-ink/45 dark:text-paper/45">Atributo do dia · ${a.name}</div>
+          <div class="font-extrabold text-base" style="color:${a.color}">${tier.current}${showKo && a.ko ? ` · ${a.ko}` : ''}</div>
+          <div class="text-[10px] text-ink/60 dark:text-paper/60 leading-tight mt-0.5">${a.desc}</div>
+          <div class="xp-track mt-1" style="height:3px"><div class="xp-fill" style="width:${info.pctToNext}%; background:${a.color}"></div></div>
+          <div class="text-[9px] text-ink/45 dark:text-paper/45 mt-0.5">
+            lvl ${info.level} · ${info.intoLevel.toFixed(1)}/${info.nextCost.toFixed(1)} XP
+            ${tier.next ? ` · próximo tier: <b>${tier.next}</b> (lvl ${tier.nextMin})` : ''}
+          </div>
         </div>
         <div class="text-right">
-          <div class="text-[10px] text-ink/45 dark:text-paper/45">pts</div>
-          <div class="text-xl font-extrabold" style="color:${a.color}">${val}</div>
+          <div class="text-[10px] text-ink/45 dark:text-paper/45">lvl</div>
+          <div class="text-xl font-extrabold" style="color:${a.color}">${info.level}</div>
         </div>
       </div>`;
     })()}
@@ -7249,7 +7352,12 @@ function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
             ${targetInfo?.technique ? `<button class="ex-info text-lavender w-5 h-5 flex-shrink-0" data-ex-name="${encodeURIComponent(ex.name)}" aria-label="info">${I.info}</button>` : ''}
             <div class="text-xs font-bold ${progClass}">${progLabel}</div>
           </div>
-          <div class="q-grid mt-3 font-semibold text-xs text-ink/55 dark:text-paper/55">
+          <div class="flex items-center gap-1.5 mt-3 text-[11px]">
+            <span class="text-ink/55 dark:text-paper/55">Séries:</span>
+            ${[3, 4, 5, 6, 8].map(n => `<button class="sets-preset pill text-[10px] ${n === ex.sets.length ? 'is-mint font-bold' : ''}" data-n="${n}">${n}</button>`).join('')}
+            <span class="text-[9px] text-ink/40 dark:text-paper/40 ml-auto italic">técnica copia automático</span>
+          </div>
+          <div class="q-grid mt-2 font-semibold text-xs text-ink/55 dark:text-paper/55">
             <span>${exCols.tech}</span><span>${exCols.reps}</span><span>${exCols.weight}</span><span></span>
           </div>
           ${ex.sets.map((s, sIdx) => `
@@ -7362,23 +7470,65 @@ function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
     timerInt = setInterval(tick, 1000);
   }
 
-  // Add/remove set ---------------------------------------------------
+  // Add/remove set + preset de séries ---------------------------------
+  // Quando adiciona set novo, a técnica é HERDADA do set anterior (não precisa
+  // re-selecionar a cada nova série). Mesma coisa pros presets "3/4/5/6/8" que
+  // ajustam o número de séries de uma vez.
   document.getElementById('workout-body').addEventListener('click', (e) => {
-    const t = e.target.closest('.add-set');
-    if (!t) return;
+    const addBtn   = e.target.closest('.add-set');
+    const preset   = e.target.closest('.sets-preset');
+    if (!addBtn && !preset) return;
     // 1) Captura TUDO o que está no DOM agora (reps/kg/técnica que o usuário digitou)
     syncSetsFromDOM(start);
-    const exIdx = +t.closest('[data-ex-idx]').dataset.exIdx;
+    const exIdx = +(addBtn || preset).closest('[data-ex-idx]').dataset.exIdx;
     const ex = start.exercises[exIdx];
-    if (t.dataset.action === 'add') {
-      ex.sets.push({ reps: '', weight: '', technique: '' });
-    } else if (ex.sets.length > 1) {
-      const setIdx = +t.closest('[data-set-idx]').dataset.setIdx;
-      ex.sets.splice(setIdx, 1);
+    const lastSet = ex.sets[ex.sets.length - 1] || { reps: '', weight: '', technique: '' };
+
+    if (addBtn) {
+      if (addBtn.dataset.action === 'add') {
+        // Herda técnica do último set
+        ex.sets.push({ reps: '', weight: '', technique: lastSet.technique || '' });
+      } else if (ex.sets.length > 1) {
+        const setIdx = +addBtn.closest('[data-set-idx]').dataset.setIdx;
+        ex.sets.splice(setIdx, 1);
+      }
+    } else if (preset) {
+      const target = +preset.dataset.n;
+      if (target > 0 && target <= 20) {
+        if (target > ex.sets.length) {
+          // Adiciona séries herdando a técnica do último (ou do primeiro se vazio)
+          const techToInherit = lastSet.technique || ex.sets.find((s) => s.technique)?.technique || '';
+          while (ex.sets.length < target) {
+            ex.sets.push({ reps: '', weight: '', technique: techToInherit });
+          }
+        } else if (target < ex.sets.length) {
+          // Remove sets do fim
+          ex.sets = ex.sets.slice(0, target);
+        }
+      }
     }
-    // 2) Reabre o modal preservando o estado em memória (passa start como prebuiltStart)
+    // 2) Reabre o modal preservando o estado em memória
     closeModal();
     setTimeout(() => modalWorkoutSession(type, dateISO, start), 30);
+  });
+
+  // Quando o usuário escolhe uma técnica no PRIMEIRO set, propaga pros sets
+  // vazios (que ainda estão em branco). Não sobrescreve técnica já escolhida.
+  document.getElementById('workout-body').addEventListener('change', (e) => {
+    const sel = e.target.closest('.set-tech');
+    if (!sel) return;
+    const row = sel.closest('[data-set-idx]');
+    if (!row) return;
+    const card = row.closest('[data-ex-idx]');
+    const setIdx = +row.dataset.setIdx;
+    if (setIdx !== 0) return; // só auto-aplica se foi mudança no SET 1
+    const newTech = sel.value;
+    if (!newTech) return;
+    card.querySelectorAll('[data-set-idx]').forEach((r, i) => {
+      if (i === 0) return;
+      const s = r.querySelector('.set-tech');
+      if (s && s.value === '') s.value = newTech; // só preenche os vazios
+    });
   });
 
   function syncSetsFromDOM(target) {
