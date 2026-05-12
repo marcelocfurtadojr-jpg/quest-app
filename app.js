@@ -5407,8 +5407,12 @@ function quickTile(key, label, icon, kind = 'tab') {
 
 // ----- 6.2 Daily Log (modal) --------------------------------
 
-function modalDailyLog() {
-  const today = todayISO();
+function modalDailyLog(dateISO = null) {
+  // Aceita dateISO opcional pra registrar/editar dia retroativo.
+  // Nome da variável mantido como `today` por compatibilidade com restante do modal,
+  // mas representa "a data do log sendo editado" — pode ser hoje ou um dia passado.
+  const todayReal = todayISO();
+  const today = (dateISO && /^\d{4}-\d{2}-\d{2}$/.test(dateISO) && dateISO <= todayReal) ? dateISO : todayReal;
   const existing = state.dailyLogs.find((l) => l.date === today) || {
     date: today,
     training: { type: 'Upper A', done: false },
@@ -5421,7 +5425,12 @@ function modalDailyLog() {
   };
   openModal(`
     <header class="flex items-center justify-between p-4 border-b border-ink/5 dark:border-paper/5">
-      <h2 class="font-extrabold text-lg">Registrar dia</h2>
+      <div class="min-w-0 flex-1">
+        <h2 class="font-extrabold text-lg">Registrar dia${today !== todayReal ? ` <span class="text-[10px] text-pink">(retroativo)</span>` : ''}</h2>
+        <label class="block mt-1 text-[10px] text-ink/55 dark:text-paper/55">
+          Data <input type="date" name="log-date" class="q-input p-1 text-xs ml-1" style="width:auto;display:inline-block" value="${today}" max="${todayReal}" />
+        </label>
+      </div>
       <button class="modal-close p-1"><span class="w-5 h-5">${I.close}</span></button>
     </header>
     <form id="log-form" class="p-4 space-y-5 overflow-y-auto" style="max-height:70vh">
@@ -5483,7 +5492,16 @@ function modalDailyLog() {
 
       <button type="submit" class="q-btn q-btn-primary w-full py-3 mt-2">Salvar dia</button>
     </form>
-  `);
+  `, { persistent: true });
+
+  // Mudar a data recarrega o modal com o log dessa data (se já existir)
+  document.querySelector('input[name="log-date"]')?.addEventListener('change', (e) => {
+    const v = e.target.value;
+    if (v && /^\d{4}-\d{2}-\d{2}$/.test(v) && v !== today) {
+      closeModal();
+      setTimeout(() => modalDailyLog(v), 30);
+    }
+  });
 
   document.getElementById('log-form').addEventListener('submit', (e) => {
     e.preventDefault();
@@ -5881,35 +5899,62 @@ function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
     })),
   };
 
-  // Opções de "técnica" e labels de coluna variam por tipo de treino.
-  // Musculação usa rest-pause/drop-set/etc; cardio/caminhada usam outra coisa.
-  const isWalking = type === 'Caminhada';
-  const isHIIT    = type === 'Cardio HIIT';
-  const isDance   = type === 'Dança K-pop';
-  const isCardio  = isWalking || isHIIT || isDance;
+  // Categoria por exercício individual — cada exercício decide suas técnicas
+  // e labels de coluna. Cardio dentro de musculação (ou vice-versa em "Treino livre")
+  // fica correto.
+  function exerciseCategory(ex) {
+    const n = (ex?.name || '').toLowerCase();
+    if (/caminhada|caminhar|trilha|hike|rucking|escada|step|passos\b|10k passos/.test(n)) return 'walking';
+    if (/sprint|hiit|burpee|jumping|mountain climb|pular corda|tabata|jump squat|jump lunge/.test(n)) return 'hiit';
+    if (/dança|coreograf|dance|k-pop/.test(n)) return 'dance';
+    if (/cardio|corrida|bike|esteira|elíptico|spinning|remo erg|rowing|natação|nado/.test(n)) return 'cardio';
+    if (/prancha|plank|hollow|l-sit|isomet|wall sit|dead bug/.test(n)) return 'core-static';
+    // Por tipo de treino como fallback
+    if (type === 'Caminhada')   return 'walking';
+    if (type === 'Cardio HIIT') return 'hiit';
+    if (type === 'Dança K-pop') return 'dance';
+    // Sub-categorias de força — só pra ajustar opções, todas usam Reps/kg
+    if (/supino|press|desenvolv|crucifixo|fly|dip|mergulho|flexão|push|tríceps/.test(n))    return 'push';
+    if (/remada|pulldown|pull[\- ]up|barra fixa|chin[\- ]up|terra|deadlift|bíceps/.test(n)) return 'pull';
+    if (/agach|squat|leg press|hack|afundo|lunge|stiff|rdl|hip thrust|extensora|flexora|panturrilha|coxa/.test(n)) return 'leg';
+    if (/rosca|elevação|encolh|shrug|face pull|woodchopper|abdom|prancha|crunch/.test(n))   return 'isolation';
+    return 'strength';
+  }
 
-  const techOptions =
-      isWalking ? ['','ritmo leve','moderado','power walk','intervalado','inclinação','com peso','escadas']
-    : isHIIT    ? ['','aquecimento','alta intensidade','recuperação ativa','sprint','finisher']
-    : isDance   ? ['','aquecimento','coreografia','repetição','cooldown']
-    :             ['','rest-pause','drop-set','myo-reps','AMRAP'];
+  const TECH_BY_CAT = {
+    walking:      ['','ritmo leve','moderado','power walk','intervalado','inclinação','com peso','escadas'],
+    hiit:         ['','aquecimento','alta intensidade','recuperação ativa','sprint','finisher','tabata'],
+    cardio:       ['','aquecimento','ritmo leve','ritmo forte','intervalado','sprint','cooldown'],
+    dance:        ['','aquecimento','coreografia','repetição','freestyle','cooldown'],
+    'core-static':['','tempo','isometria 30s','isometria 60s','negativa','com peso'],
+    push:         ['','rest-pause','drop-set','tempo','pause-rep','eccentric','touch-and-go','AMRAP'],
+    pull:         ['','rest-pause','drop-set','tempo','pause-rep','eccentric','negativas','AMRAP'],
+    leg:          ['','rest-pause','drop-set','tempo','paused','box','AMRAP'],
+    isolation:    ['','drop-set','rest-pause','myo-reps','21s','tempo','AMRAP'],
+    strength:     ['','rest-pause','drop-set','myo-reps','AMRAP','tempo','pause-rep'],
+  };
 
-  const cols =
-      isWalking ? { tech: 'Modo',    reps: 'Min',    weight: 'km/h' }
-    : isHIIT    ? { tech: 'Bloco',   reps: 'Reps/s', weight: 'kg'   }
-    : isDance   ? { tech: 'Bloco',   reps: 'Min',    weight: 'BPM'  }
-    :             { tech: 'Técnica', reps: 'Reps',   weight: 'kg'   };
-
-  // Cardio precisa aceitar valores maiores (minutos ≥ 50). Musculação fica em 50.
-  const repsMax    = isCardio ? 500 : 50;
-  const weightMax  = 500;
-  const weightStep = isCardio ? 0.1 : 0.5;
+  const COLS_BY_CAT = {
+    walking:      { tech: 'Modo',     reps: 'Min',    weight: 'km/h', isCardio: true },
+    hiit:         { tech: 'Bloco',    reps: 'Reps/s', weight: 'kg',   isCardio: true },
+    cardio:       { tech: 'Bloco',    reps: 'Min',    weight: 'km/h', isCardio: true },
+    dance:        { tech: 'Bloco',    reps: 'Min',    weight: 'BPM',  isCardio: true },
+    'core-static':{ tech: 'Estilo',   reps: 'Segs',   weight: 'kg',   isCardio: false },
+    push:         { tech: 'Técnica',  reps: 'Reps',   weight: 'kg',   isCardio: false },
+    pull:         { tech: 'Técnica',  reps: 'Reps',   weight: 'kg',   isCardio: false },
+    leg:          { tech: 'Técnica',  reps: 'Reps',   weight: 'kg',   isCardio: false },
+    isolation:    { tech: 'Técnica',  reps: 'Reps',   weight: 'kg',   isCardio: false },
+    strength:     { tech: 'Técnica',  reps: 'Reps',   weight: 'kg',   isCardio: false },
+  };
 
   openModal(`
     <header class="flex items-center justify-between p-4 border-b border-ink/5 dark:border-paper/5">
-      <div>
+      <div class="min-w-0 flex-1">
         <div class="font-display text-xs uppercase tracking-widest text-ink/40 dark:text-paper/40">workout</div>
-        <h2 class="font-extrabold text-lg">${type} · ${formatDateBR(start.date)}</h2>
+        <h2 class="font-extrabold text-lg truncate">${type}</h2>
+        <label class="block mt-1 text-[10px] text-ink/55 dark:text-paper/55">
+          Data <input type="date" id="workout-date" class="q-input p-1 text-xs ml-1" style="width:auto;display:inline-block" value="${start.date}" max="${todayISO()}" />
+        </label>
       </div>
       <button class="modal-close p-1"><span class="w-5 h-5">${I.close}</span></button>
     </header>
@@ -5931,8 +5976,13 @@ function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
         const progClass = !last ? '' : curTopWeight > lastTopWeight ? 'prog-up' : curTopWeight === lastTopWeight ? 'prog-flat' : 'prog-down';
         const progLabel = !last ? '—' : curTopWeight > lastTopWeight ? `↑ +${(curTopWeight-lastTopWeight).toFixed(1)}` : curTopWeight === lastTopWeight ? '→ igual' : `↓ ${(curTopWeight-lastTopWeight).toFixed(1)}`;
         const targetInfo = lib.find((l) => l.name === ex.name);
+        const cat = exerciseCategory(ex);
+        const techOpts = TECH_BY_CAT[cat] || TECH_BY_CAT.strength;
+        const exCols   = COLS_BY_CAT[cat] || COLS_BY_CAT.strength;
+        const exRepsMax  = exCols.isCardio ? 500 : 50;
+        const exWeightStep = exCols.isCardio ? 0.1 : 0.5;
         return `
-        <div class="q-card p-3" data-ex-idx="${exIdx}">
+        <div class="q-card p-3" data-ex-idx="${exIdx}" data-ex-cat="${cat}">
           <div class="flex items-start justify-between gap-2">
             <div class="min-w-0 flex-1">
               <div class="font-bold flex items-center gap-2">
@@ -5945,15 +5995,15 @@ function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
             <div class="text-xs font-bold ${progClass}">${progLabel}</div>
           </div>
           <div class="q-grid mt-3 font-semibold text-xs text-ink/55 dark:text-paper/55">
-            <span>${cols.tech}</span><span>${cols.reps}</span><span>${cols.weight}</span><span></span>
+            <span>${exCols.tech}</span><span>${exCols.reps}</span><span>${exCols.weight}</span><span></span>
           </div>
           ${ex.sets.map((s, sIdx) => `
             <div class="q-grid mt-1" data-set-idx="${sIdx}">
               <select class="q-input p-1 text-xs set-tech">
-                ${techOptions.map(t => `<option ${s.technique===t?'selected':''}>${t}</option>`).join('')}
+                ${techOpts.map(t => `<option ${s.technique===t?'selected':''}>${t}</option>`).join('')}
               </select>
-              <input type="number" min="0" max="${repsMax}" class="q-input p-1 set-reps" value="${s.reps}" />
-              <input type="number" step="${weightStep}" min="0" max="${weightMax}" class="q-input p-1 set-weight" value="${s.weight}" />
+              <input type="number" min="0" max="${exRepsMax}" class="q-input p-1 set-reps" value="${s.reps}" />
+              <input type="number" step="${exWeightStep}" min="0" max="500" class="q-input p-1 set-weight" value="${s.weight}" />
               <button class="q-btn q-btn-ghost px-2 py-1 text-xs add-set" data-action="${sIdx===ex.sets.length-1?'add':'rm'}">${sIdx===ex.sets.length-1?'+':'−'}</button>
             </div>`).join('')}
           ${lastSessions.length ? `
@@ -5973,7 +6023,13 @@ function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
       <button class="q-btn q-btn-ghost w-full py-2" id="add-custom-ex">+ Adicionar exercício</button>
       <button class="q-btn q-btn-primary w-full py-3" id="save-workout">Salvar treino</button>
     </div>
-  `);
+  `, { persistent: true });
+
+  // Date picker: sincroniza start.date sempre que muda
+  document.getElementById('workout-date')?.addEventListener('change', (e) => {
+    const v = e.target.value;
+    if (v && /^\d{4}-\d{2}-\d{2}$/.test(v)) start.date = v;
+  });
 
   // Handler do botão "+ adicionar exercício"
   document.getElementById('add-custom-ex').addEventListener('click', () => {
@@ -6071,6 +6127,10 @@ function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
   });
 
   function syncSetsFromDOM(target) {
+    // Captura também a data escolhida no picker (caso o usuário tenha mudado
+    // mas não ainda disparado o evento change).
+    const dv = document.getElementById('workout-date')?.value;
+    if (dv && /^\d{4}-\d{2}-\d{2}$/.test(dv)) target.date = dv;
     document.querySelectorAll('[data-ex-idx]').forEach((card) => {
       const exIdx = +card.dataset.exIdx;
       target.exercises[exIdx].sets = [...card.querySelectorAll('[data-set-idx]')].map((row) => ({
@@ -6939,11 +6999,15 @@ function sparkline(values, w, h) {
 
 function modalWeightEntry() {
   const last = state.bodyMeasurements[state.bodyMeasurements.length - 1] || {};
+  const todayReal = todayISO();
   openModal(`
     <header class="flex items-center justify-between p-4 border-b border-ink/5 dark:border-paper/5">
-      <div>
+      <div class="min-w-0 flex-1">
         <h2 class="font-extrabold text-lg">Medidas quinzenais</h2>
         <p class="text-xs text-ink/55 dark:text-paper/55">Tire de manhã, em jejum, sempre no mesmo horário.</p>
+        <label class="block mt-1 text-[10px] text-ink/55 dark:text-paper/55">
+          Data <input type="date" name="measure-date" class="q-input p-1 text-xs ml-1" style="width:auto;display:inline-block" value="${todayReal}" max="${todayReal}" />
+        </label>
       </div>
       <button class="modal-close p-1"><span class="w-5 h-5">${I.close}</span></button>
     </header>
@@ -6994,12 +7058,14 @@ function modalWeightEntry() {
 
       <button type="submit" class="q-btn q-btn-primary w-full mt-2">Salvar medidas</button>
     </form>
-  `);
+  `, { persistent: true });
   document.getElementById('weight-form').addEventListener('submit', (e) => {
     e.preventDefault();
     const f = e.target;
+    const dInput = f['measure-date']?.value;
+    const date = (dInput && /^\d{4}-\d{2}-\d{2}$/.test(dInput) && dInput <= todayReal) ? dInput : todayReal;
     state.bodyMeasurements.push({
-      date: todayISO(),
+      date,
       weight: +f.weight.value || 0,
       waist:  +f.waist.value  || 0,
       chest:  +f.chest.value  || 0,
@@ -8748,15 +8814,18 @@ function renderTabbar() {
   document.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { vibrate(8); go(b.dataset.tab); });
 }
 
-function openModal(html) {
+function openModal(html, opts = {}) {
+  // opts.persistent → não fecha ao tocar no backdrop. Use pra modais com
+  // estado não salvo (treino, log, medidas) — só o botão × fecha.
   const root = document.getElementById('modal-root');
   root.classList.remove('hidden');
   root.innerHTML = `
-    <div class="absolute inset-0 bg-ink/40 backdrop-blur-sm" data-close></div>
+    <div class="absolute inset-0 bg-ink/40 backdrop-blur-sm"${opts.persistent ? '' : ' data-close'}></div>
     <div class="absolute inset-x-0 bottom-0 max-w-md mx-auto bg-paper dark:bg-navy rounded-t-3xl shadow-pop animate-pop-in overflow-hidden">
       ${html}
     </div>`;
-  root.querySelector('[data-close]').onclick = closeModal;
+  const backdrop = root.querySelector('[data-close]');
+  if (backdrop) backdrop.onclick = closeModal;
   root.querySelectorAll('.modal-close').forEach((b) => (b.onclick = closeModal));
 }
 
