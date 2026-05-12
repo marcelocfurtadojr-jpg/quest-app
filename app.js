@@ -9577,8 +9577,13 @@ function bindFoodRows() {
 // ===== Helpers de formatação =================================
 
 function formatDateBR(iso) {
-  const d = new Date(iso);
-  return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+  // Strings YYYY-MM-DD parseiam como UTC; em fusos negativos viram o dia anterior.
+  // Interpreta como data local pra evitar esse off-by-one.
+  if (typeof iso === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(iso)) {
+    const [y, m, d] = iso.split('-').map(Number);
+    return new Date(y, m - 1, d).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+  }
+  return new Date(iso).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
 }
 function formatTime(iso) {
   return new Date(iso).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
