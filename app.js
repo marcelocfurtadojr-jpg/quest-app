@@ -14,26 +14,62 @@
 
 // ===== 1. CONSTANTES =========================================
 
-// Sistema de rank inspirado em League of Legends (10 tiers).
-// O threshold é em "rankXP" — pontuação acumulada com decay semanal,
-// não apenas XP da semana corrente (assim subir é mais MOBA-real).
+// Sistema de rank LoL-style: 8 tiers base × 4 divisões (IV→I) + GM + Challenger.
+// Total: 34 níveis. Progressão fica mais lenta nos rankings altos (curva quase
+// quadrática nos thresholds), com decay semanal de 10% no rankXP.
 const RANKS = [
-  { key: 'iron',        name: 'Ferro',       color: '#8E8E93', threshold:    0 },
-  { key: 'bronze',      name: 'Bronze',      color: '#C99466', threshold:   25 },
-  { key: 'silver',      name: 'Prata',       color: '#C0C0D0', threshold:   70 },
-  { key: 'gold',        name: 'Ouro',        color: '#E8C56B', threshold:  140 },
-  { key: 'platinum',    name: 'Platina',     color: '#9BD9D6', threshold:  230 },
-  { key: 'emerald',     name: 'Esmeralda',   color: '#5FC7A0', threshold:  340 },
-  { key: 'diamond',     name: 'Diamante',    color: '#7BB8FF', threshold:  470 },
-  { key: 'master',      name: 'Mestre',      color: '#C77BFF', threshold:  640 },
-  { key: 'grandmaster', name: 'Grão-Mestre', color: '#FF7B9B', threshold:  840 },
-  { key: 'challenger',  name: 'Challenger',  color: '#FFD341', threshold: 1100 },
+  { key: 'iron4',     name: 'Ferro IV',      base: 'iron',     div: 4, color: '#8E8E93', threshold:    0 },
+  { key: 'iron3',     name: 'Ferro III',     base: 'iron',     div: 3, color: '#8E8E93', threshold:   15 },
+  { key: 'iron2',     name: 'Ferro II',      base: 'iron',     div: 2, color: '#8E8E93', threshold:   35 },
+  { key: 'iron1',     name: 'Ferro I',       base: 'iron',     div: 1, color: '#8E8E93', threshold:   60 },
+  { key: 'bronze4',   name: 'Bronze IV',     base: 'bronze',   div: 4, color: '#C99466', threshold:   90 },
+  { key: 'bronze3',   name: 'Bronze III',    base: 'bronze',   div: 3, color: '#C99466', threshold:  125 },
+  { key: 'bronze2',   name: 'Bronze II',     base: 'bronze',   div: 2, color: '#C99466', threshold:  165 },
+  { key: 'bronze1',   name: 'Bronze I',      base: 'bronze',   div: 1, color: '#C99466', threshold:  210 },
+  { key: 'silver4',   name: 'Prata IV',      base: 'silver',   div: 4, color: '#C0C0D0', threshold:  260 },
+  { key: 'silver3',   name: 'Prata III',     base: 'silver',   div: 3, color: '#C0C0D0', threshold:  315 },
+  { key: 'silver2',   name: 'Prata II',      base: 'silver',   div: 2, color: '#C0C0D0', threshold:  375 },
+  { key: 'silver1',   name: 'Prata I',       base: 'silver',   div: 1, color: '#C0C0D0', threshold:  440 },
+  { key: 'gold4',     name: 'Ouro IV',       base: 'gold',     div: 4, color: '#E8C56B', threshold:  510 },
+  { key: 'gold3',     name: 'Ouro III',      base: 'gold',     div: 3, color: '#E8C56B', threshold:  590 },
+  { key: 'gold2',     name: 'Ouro II',       base: 'gold',     div: 2, color: '#E8C56B', threshold:  680 },
+  { key: 'gold1',     name: 'Ouro I',        base: 'gold',     div: 1, color: '#E8C56B', threshold:  780 },
+  { key: 'plat4',     name: 'Platina IV',    base: 'platinum', div: 4, color: '#9BD9D6', threshold:  890 },
+  { key: 'plat3',     name: 'Platina III',   base: 'platinum', div: 3, color: '#9BD9D6', threshold: 1010 },
+  { key: 'plat2',     name: 'Platina II',    base: 'platinum', div: 2, color: '#9BD9D6', threshold: 1140 },
+  { key: 'plat1',     name: 'Platina I',     base: 'platinum', div: 1, color: '#9BD9D6', threshold: 1280 },
+  { key: 'emerald4',  name: 'Esmeralda IV',  base: 'emerald',  div: 4, color: '#5FC7A0', threshold: 1430 },
+  { key: 'emerald3',  name: 'Esmeralda III', base: 'emerald',  div: 3, color: '#5FC7A0', threshold: 1590 },
+  { key: 'emerald2',  name: 'Esmeralda II',  base: 'emerald',  div: 2, color: '#5FC7A0', threshold: 1760 },
+  { key: 'emerald1',  name: 'Esmeralda I',   base: 'emerald',  div: 1, color: '#5FC7A0', threshold: 1940 },
+  { key: 'dia4',      name: 'Diamante IV',   base: 'diamond',  div: 4, color: '#7BB8FF', threshold: 2140 },
+  { key: 'dia3',      name: 'Diamante III',  base: 'diamond',  div: 3, color: '#7BB8FF', threshold: 2360 },
+  { key: 'dia2',      name: 'Diamante II',   base: 'diamond',  div: 2, color: '#7BB8FF', threshold: 2600 },
+  { key: 'dia1',      name: 'Diamante I',    base: 'diamond',  div: 1, color: '#7BB8FF', threshold: 2860 },
+  { key: 'master4',   name: 'Mestre IV',     base: 'master',   div: 4, color: '#C77BFF', threshold: 3160 },
+  { key: 'master3',   name: 'Mestre III',    base: 'master',   div: 3, color: '#C77BFF', threshold: 3500 },
+  { key: 'master2',   name: 'Mestre II',     base: 'master',   div: 2, color: '#C77BFF', threshold: 3880 },
+  { key: 'master1',   name: 'Mestre I',      base: 'master',   div: 1, color: '#C77BFF', threshold: 4300 },
+  { key: 'gm',        name: 'Grão-Mestre',   base: 'gm',       div: 0, color: '#FF7B9B', threshold: 4800 },
+  { key: 'challenger',name: 'Challenger',    base: 'challenger',div:0, color: '#FFD341', threshold: 5500 },
 ];
 
+/** Retorna o tier base (iron/bronze/silver/...) de um rank key. */
+function baseRankOf(rankKey) {
+  return RANKS.find(r => r.key === rankKey)?.base || 'iron';
+}
+
+/** Mapeia base tier → índice (0=iron, 1=bronze, ..., 9=challenger).
+ *  Útil pra achievements estilo "alcançou platina+". */
+const BASE_RANK_ORDER = ['iron','bronze','silver','gold','platinum','emerald','diamond','master','gm','challenger'];
+function baseRankIndex(rankKey) {
+  const base = baseRankOf(rankKey);
+  return BASE_RANK_ORDER.indexOf(base);
+}
+
 // Decay aplicado uma vez por semana no rollover (toda segunda-feira).
-// Em equilíbrio, você precisa ganhar X*0.10 XP/semana para manter o rank atual.
-// → Challenger (1100 rankXP) exige ~110 XP/semana = teto absoluto sustentado.
-// → Diamante (470 rankXP) exige ~47 XP/semana = semana sólida.
+// Challenger (5500 rankXP) → 550 XP/semana só pra manter — quase impossível.
+// Diamante I (2860) → 286 XP/sem. Ouro IV (510) → 51 XP/sem (semana decente).
 const RANK_DECAY = 0.10;
 
 // Pool de daily quests — 35 opções com sabor coreano (일일 미션).
@@ -98,6 +134,45 @@ const DEFAULT_QUEST_POOL = [
   { id: 'q45', text: 'Contrast shower (frio no fim do banho)',      xp: 1, tag: 'saúde' },
   { id: 'q46', text: 'Caminhada 10 min após o almoço',              xp: 1, tag: 'cardio' },
   { id: 'q47', text: 'Falar com alguém que não fala há um tempo',   xp: 1, tag: 'mente' },
+  // ===== Expansão v2 — saúde / nutrição avançada =====
+  { id: 'q48', text: 'Tomar ômega-3 / azeite extra-virgem na refeição', xp: 1, tag: 'saúde' },
+  { id: 'q49', text: '5 porções de fruta/vegetal no dia',               xp: 2, tag: 'nutri' },
+  { id: 'q50', text: 'Comer 30g+ proteína no café da manhã',            xp: 2, tag: 'nutri' },
+  { id: 'q51', text: 'Beber 500ml de água em jejum',                    xp: 1, tag: 'saúde' },
+  { id: 'q52', text: 'Sem álcool hoje',                                 xp: 2, tag: 'saúde' },
+  { id: 'q53', text: 'Refeição cozinhada do zero (sem pronto)',         xp: 1, tag: 'nutri' },
+  { id: 'q54', text: 'Mastigar devagar 1 refeição inteira',             xp: 1, tag: 'nutri' },
+  // ===== Treino / cardio extra =====
+  { id: 'q55', text: 'Aquecimento de 5min antes do treino',             xp: 1, tag: 'treino' },
+  { id: 'q56', text: 'Alongar 10min na cadeia posterior',               xp: 1, tag: 'treino' },
+  { id: 'q57', text: '20min cardio (qualquer modalidade)',              xp: 2, tag: 'cardio' },
+  { id: 'q58', text: 'Levantar a cada 50 min se sentado',               xp: 1, tag: 'saúde' },
+  { id: 'q59', text: 'Treino unilateral (corrigir assimetria)',         xp: 1, tag: 'treino' },
+  { id: 'q60', text: 'Subir uma série em algum exercício hoje',         xp: 2, tag: 'treino' },
+  { id: 'q61', text: 'Pular corda 5 min',                               xp: 1, tag: 'cardio' },
+  // ===== Foco / produtividade =====
+  { id: 'q62', text: 'Inbox zero (mensagens/email)',                    xp: 1, tag: 'foco' },
+  { id: 'q63', text: '2 pomodoros de 25min sem interrupção',            xp: 2, tag: 'foco' },
+  { id: 'q64', text: 'Deep work 1h em projeto pessoal',                 xp: 2, tag: 'foco' },
+  { id: 'q65', text: 'Ler 1 capítulo de livro técnico/profissional',    xp: 2, tag: 'foco' },
+  { id: 'q66', text: 'Resumir o que aprendeu hoje em 3 bullets',        xp: 1, tag: 'foco' },
+  // ===== Sono / recuperação =====
+  { id: 'q67', text: 'Dormir 8h cheias hoje',                           xp: 2, tag: 'sono' },
+  { id: 'q68', text: 'Tirar cochilo de 20min',                          xp: 1, tag: 'sono' },
+  { id: 'q69', text: 'Tomar chá de camomila/maracujá antes de deitar',  xp: 1, tag: 'sono' },
+  { id: 'q70', text: 'Quarto a ≤19°C / ventilado pra dormir',           xp: 1, tag: 'sono' },
+  // ===== Mente / regulação =====
+  { id: 'q71', text: 'Caminhar 15min sem fone, só observando',          xp: 1, tag: 'mente' },
+  { id: 'q72', text: 'Anotar 1 dificuldade + 1 vitória do dia',         xp: 1, tag: 'mente' },
+  { id: 'q73', text: 'Stretch de quadril 5min (sapinho/borboleta)',     xp: 1, tag: 'treino' },
+  { id: 'q74', text: 'Postura check: ombros alinhados 1h',              xp: 1, tag: 'saúde' },
+  { id: 'q75', text: 'Cumprimentar/agradecer 3 pessoas hoje',           xp: 1, tag: 'mente' },
+  // ===== Social / criativo =====
+  { id: 'q76', text: 'Ligar pra um amigo (não mensagem)',               xp: 1, tag: 'mente' },
+  { id: 'q77', text: 'Atividade criativa 20min (desenhar/escrever/tocar)', xp: 2, tag: 'foco' },
+  { id: 'q78', text: 'Aprender 5 palavras novas (qualquer idioma)',     xp: 1, tag: 'foco' },
+  { id: 'q79', text: 'Não usar celular durante refeição',               xp: 1, tag: 'mente' },
+  { id: 'q80', text: 'Acordar até as 7h (mesmo no fim de semana)',      xp: 2, tag: 'sono' },
 ];
 
 // Pool de weekly quests. Cada quest tem `target` = quantos "checks" precisa
@@ -930,189 +1005,8 @@ function mascotState() {
   };
 }
 
-// ===== Spotify Now Playing (kpop_anime only) ================
-// PKCE OAuth flow — sem client secret. User precisa criar app no
-// developer.spotify.com e colar Client ID em Config.
-const SPOTIFY_REDIRECT_URI = window.location.origin + window.location.pathname;
-const SPOTIFY_SCOPES = 'user-read-currently-playing user-read-playback-state';
+// ===== (Spotify integration removed — não funcionou na prática) =====
 
-async function _spotifyPkceChallenge(verifier) {
-  const data = new TextEncoder().encode(verifier);
-  const hash = await crypto.subtle.digest('SHA-256', data);
-  return btoa(String.fromCharCode(...new Uint8Array(hash)))
-    .replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
-}
-
-function _spotifyRandomVerifier(len = 64) {
-  const bytes = new Uint8Array(len);
-  crypto.getRandomValues(bytes);
-  return btoa(String.fromCharCode(...bytes))
-    .replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'').slice(0, len);
-}
-
-/** Inicia o login do Spotify (redireciona). */
-async function spotifyConnect() {
-  const clientId = state.user.spotifyClientId;
-  if (!clientId) {
-    alert('Antes de conectar, cole seu Spotify Client ID em Config → Spotify.');
-    return;
-  }
-  const verifier = _spotifyRandomVerifier();
-  localStorage.setItem('spotify.verifier', verifier);
-  const challenge = await _spotifyPkceChallenge(verifier);
-  const params = new URLSearchParams({
-    client_id: clientId,
-    response_type: 'code',
-    redirect_uri: SPOTIFY_REDIRECT_URI,
-    scope: SPOTIFY_SCOPES,
-    code_challenge_method: 'S256',
-    code_challenge: challenge,
-  });
-  window.location.href = `https://accounts.spotify.com/authorize?${params}`;
-}
-
-/** Troca o code (callback do redirect) por access_token + refresh_token. */
-async function spotifyHandleCallback() {
-  const url = new URL(window.location.href);
-  const code = url.searchParams.get('code');
-  if (!code) return false;
-  const verifier = localStorage.getItem('spotify.verifier');
-  const clientId = state?.user?.spotifyClientId;
-  if (!verifier || !clientId) { url.searchParams.delete('code'); window.history.replaceState({}, '', url.toString()); return false; }
-  try {
-    const body = new URLSearchParams({
-      grant_type: 'authorization_code',
-      code,
-      redirect_uri: SPOTIFY_REDIRECT_URI,
-      client_id: clientId,
-      code_verifier: verifier,
-    });
-    const res = await fetch('https://accounts.spotify.com/api/token', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body,
-    });
-    const data = await res.json();
-    if (!data.access_token) throw new Error(data.error_description || 'token exchange failed');
-    state.user.spotifyTokens = {
-      access:  data.access_token,
-      refresh: data.refresh_token,
-      expiresAt: Date.now() + (data.expires_in - 60) * 1000,
-    };
-    saveState();
-    // Limpa code da URL
-    url.searchParams.delete('code');
-    url.searchParams.delete('state');
-    window.history.replaceState({}, '', url.toString());
-    return true;
-  } catch (e) {
-    console.warn('spotify token exchange failed:', e);
-    return false;
-  }
-}
-
-async function spotifyRefresh() {
-  const tk = state?.user?.spotifyTokens;
-  const clientId = state?.user?.spotifyClientId;
-  if (!tk?.refresh || !clientId) return false;
-  try {
-    const body = new URLSearchParams({
-      grant_type: 'refresh_token',
-      refresh_token: tk.refresh,
-      client_id: clientId,
-    });
-    const res = await fetch('https://accounts.spotify.com/api/token', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body,
-    });
-    const data = await res.json();
-    if (!data.access_token) return false;
-    state.user.spotifyTokens = {
-      access: data.access_token,
-      refresh: data.refresh_token || tk.refresh,
-      expiresAt: Date.now() + (data.expires_in - 60) * 1000,
-    };
-    saveState();
-    return true;
-  } catch { return false; }
-}
-
-async function spotifyNowPlaying() {
-  const tk = state?.user?.spotifyTokens;
-  if (!tk?.access) return null;
-  if (Date.now() > tk.expiresAt) {
-    const ok = await spotifyRefresh();
-    if (!ok) return null;
-  }
-  try {
-    const res = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
-      headers: { Authorization: 'Bearer ' + state.user.spotifyTokens.access },
-    });
-    if (res.status === 204 || res.status === 202) return { playing: false };
-    if (res.status === 401) {
-      await spotifyRefresh();
-      return spotifyNowPlaying();
-    }
-    if (!res.ok) return null;
-    const data = await res.json();
-    if (!data || !data.item) return { playing: false };
-    return {
-      playing: !!data.is_playing,
-      title: data.item.name,
-      artist: (data.item.artists || []).map((a) => a.name).join(', '),
-      album: data.item.album?.name,
-      art: data.item.album?.images?.[0]?.url,
-      url: data.item.external_urls?.spotify,
-      progressMs: data.progress_ms,
-      durationMs: data.item.duration_ms,
-    };
-  } catch (e) {
-    console.warn('spotify now playing failed:', e);
-    return null;
-  }
-}
-
-function spotifyDisconnect() {
-  if (state?.user?.spotifyTokens) delete state.user.spotifyTokens;
-  saveState();
-}
-
-/** Atualiza o elemento #spotify-now com a faixa atual (se autenticado). */
-async function spotifyUpdateNowPlaying() {
-  const el = document.getElementById('spotify-now');
-  if (!el) return;
-  if (!state?.user?.spotifyTokens) return;
-  const data = await spotifyNowPlaying();
-  if (!data) {
-    el.innerHTML = `<div class="flex items-center justify-between gap-2">
-      <span class="text-[11px]">Spotify conectado · sem dados</span>
-      <button id="spotify-disconnect" class="text-[10px] text-ink/45 dark:text-paper/45 underline">desconectar</button>
-    </div>`;
-  } else if (!data.playing) {
-    el.innerHTML = `<div class="flex items-center justify-between gap-2">
-      <span class="text-[11px]">⏸ Nada tocando agora</span>
-      <button id="spotify-disconnect" class="text-[10px] text-ink/45 dark:text-paper/45 underline">desconectar</button>
-    </div>`;
-  } else {
-    const pct = Math.round((data.progressMs / data.durationMs) * 100);
-    el.innerHTML = `
-      <a href="${data.url}" target="_blank" rel="noopener" class="flex items-center gap-2 hover:opacity-80">
-        ${data.art ? `<img src="${data.art}" alt="" class="w-10 h-10 rounded shrink-0" />` : '<span class="text-xl">🎵</span>'}
-        <div class="flex-1 min-w-0">
-          <div class="text-xs font-semibold truncate text-ink dark:text-paper">${data.title}</div>
-          <div class="text-[10px] text-ink/55 dark:text-paper/55 truncate">${data.artist}</div>
-          <div class="xp-track mt-1" style="height:2px"><div class="xp-fill" style="width:${pct}%"></div></div>
-        </div>
-        <button id="spotify-disconnect" class="text-[10px] text-ink/45 dark:text-paper/45 underline" onclick="event.preventDefault(); event.stopPropagation();">×</button>
-      </a>`;
-  }
-  document.getElementById('spotify-disconnect')?.addEventListener('click', (e) => {
-    e.preventDefault();
-    spotifyDisconnect();
-    render();
-  });
-}
 
 // ===== Notícias de Vôlei (kpop_anime only) ==================
 // Usa Google News RSS via rss2json (gratuito, sem API key — 10k req/dia).
@@ -3009,16 +2903,16 @@ const ACHIEVEMENTS = [
     cond: (s) => s.dailyLogs.some(l => (l.steps||0) >= 10000) },
   { id: 'reach_gold',  name: 'Ouro alcançado',       ko: '골드',    icon: '🏆', xp: 25,
     desc: 'Chegou ao rank Ouro.',
-    cond: (s) => RANKS.findIndex(r => r.key === s.user.currentRank) >= 3 },
+    cond: (s) => baseRankIndex(s.user.currentRank) >= 3 },
   { id: 'reach_plat',  name: 'Sangue de Platina',    ko: '플레티넘', icon: '💠', xp: 40,
     desc: 'Chegou ao rank Platina.',
-    cond: (s) => RANKS.findIndex(r => r.key === s.user.currentRank) >= 4 },
+    cond: (s) => baseRankIndex(s.user.currentRank) >= 4 },
   { id: 'reach_dia',   name: 'Olho de Diamante',     ko: '다이아',  icon: '💎', xp: 60,
     desc: 'Chegou ao rank Diamante.',
-    cond: (s) => RANKS.findIndex(r => r.key === s.user.currentRank) >= 6 },
+    cond: (s) => baseRankIndex(s.user.currentRank) >= 6 },
   { id: 'reach_master',name: 'Mestre dos hábitos',   ko: '마스터',  icon: '⚜️', xp: 100,
     desc: 'Chegou ao rank Mestre.',
-    cond: (s) => RANKS.findIndex(r => r.key === s.user.currentRank) >= 7 },
+    cond: (s) => baseRankIndex(s.user.currentRank) >= 7 },
   { id: 'reach_chall', name: 'Challenger 👑',         ko: '챌린저',  icon: '👑', xp: 200,
     desc: 'Chegou ao topo: Challenger.',
     cond: (s) => s.user.currentRank === 'challenger' },
@@ -4447,7 +4341,7 @@ function makeEmptyState() {
   return {
     user: {
       name: 'Jogador',
-      currentRank: 'iron',
+      currentRank: 'iron4',
       totalXP: 0,
       rankXP: 0, // pontuação acumulada que determina o rank (sofre decay semanal)
       goals: 'Recomposição corporal: cut com leve hipertrofia em peito/dorsais',
@@ -4534,6 +4428,15 @@ function migrateState(s) {
       if (typeof q.id === 'string' && q.id.startsWith('t1_kp')) q.kpopOnly = true;
       if (q.ko && /[가-힣]/.test(q.ko)) q.kpopOnly = true; // qualquer ko com hangul → kpop
     });
+
+    // Merge: insere quests built-in novas (DEFAULT_QUEST_POOL) que ainda não
+    // estão no pool do usuário, preservando todas as adicionadas por ele.
+    const existingIds = new Set(s.quests.pool.map((q) => q.id));
+    for (const builtIn of DEFAULT_QUEST_POOL) {
+      if (!existingIds.has(builtIn.id)) {
+        s.quests.pool.push({ ...builtIn });
+      }
+    }
   }
 
   // Garante que weekly quest atual tenha target. Procura no pool default +
@@ -4575,8 +4478,30 @@ function migrateState(s) {
     if (!existingTexts.has(r)) s.rewards.available.push(r);
   }
 
-  // Migração de keys antigas de GOALS → novas (após rework por grupo muscular).
+  // Migração de rank keys antigos (sem divisão) → novos com sub-tiers.
+  // Old: 'iron' → New: 'iron4' (ou recalcula pelo rankXP atual, mais robusto).
   s.user = s.user || {};
+  const OLD_RANK_TO_NEW = {
+    iron: 'iron4', bronze: 'bronze4', silver: 'silver4', gold: 'gold4',
+    platinum: 'plat4', emerald: 'emerald4', diamond: 'dia4', master: 'master4',
+    grandmaster: 'gm', challenger: 'challenger',
+  };
+  if (s.user.currentRank && OLD_RANK_TO_NEW[s.user.currentRank]) {
+    s.user.currentRank = OLD_RANK_TO_NEW[s.user.currentRank];
+  }
+  // Se o rank atual não existe mais, recalcula pelo rankXP
+  if (s.user.currentRank && !RANKS.find(r => r.key === s.user.currentRank)) {
+    s.user.currentRank = rankFromXP(s.user.rankXP || 0).key;
+  }
+  // Migra rankHistory também
+  if (Array.isArray(s.rankHistory)) {
+    s.rankHistory = s.rankHistory.map(h => ({
+      ...h,
+      rank: OLD_RANK_TO_NEW[h.rank] || h.rank,
+    }));
+  }
+
+  // Migração de keys antigas de GOALS → novas (após rework por grupo muscular).
   if (Array.isArray(s.user.activeGoals)) {
     const goalKeyMap = {
       // Keys antigas (versões 1 e 2) → novas keys por grupo muscular
@@ -5222,24 +5147,28 @@ function viewDashboard() {
   </section>
 
   ${theme.showKombatant ? `
-  <!-- K-pop Lounge: Vôlei + Spotify -->
+  <!-- Lounge esportivo: Notícias de Vôlei (Brasil / Itália / Japão) -->
   <section class="px-4 mt-3">
-    <div class="q-card p-3">
-      <div class="flex items-center justify-between mb-2">
-        <div class="text-xs uppercase tracking-wider text-ink/45 dark:text-paper/45">🏐 Vôlei · 🎵 Spotify</div>
-        <button id="kpop-lounge-refresh" class="text-[10px] text-lavender">🔄</button>
-      </div>
-      <!-- Spotify Now Playing -->
-      <div id="spotify-now" class="text-[11px] text-ink/55 dark:text-paper/55 mb-2">
-        ${state?.user?.spotifyTokens ? '🎵 carregando faixa atual…' : '<button id="spotify-connect" class="underline text-lavender">Conectar Spotify</button> pra ver o que tá tocando aqui'}
+    <div class="q-card overflow-hidden">
+      <div class="flex items-center gap-2 px-3 pt-3 pb-2 border-b border-ink/5 dark:border-paper/5">
+        <span class="text-base">🏐</span>
+        <div class="flex-1 min-w-0">
+          <div class="text-xs uppercase tracking-wider text-ink/45 dark:text-paper/45">Vôlei mundial</div>
+          <div class="text-[10px] text-ink/55 dark:text-paper/55">Manchetes de Superliga, SuperLega e V.League</div>
+        </div>
+        <button id="kpop-lounge-refresh" class="text-[10px] text-lavender px-2 py-1 rounded-full bg-lavender/10 hover:bg-lavender/20" aria-label="atualizar">🔄 atualizar</button>
       </div>
       <!-- Tabs de liga -->
-      <div class="flex gap-1 mb-2">
+      <div class="grid grid-cols-3 gap-0 border-b border-ink/5 dark:border-paper/5">
         ${Object.entries(VOLLEY_FEEDS).map(([k, f], i) =>
-          `<button class="volley-tab pill is-pill text-[10px] flex-1" data-league="${k}">${f.label.split(' · ')[0]}</button>`
+          `<button class="volley-tab text-[10px] py-2 px-1 font-semibold ${i===0?'is-active':''}" data-league="${k}">${f.label}</button>`
         ).join('')}
       </div>
-      <div id="volley-feed" class="text-xs text-ink/55 dark:text-paper/55 italic">Toque numa liga pra carregar notícias…</div>
+      <div id="volley-feed" class="text-xs p-3">
+        <div class="space-y-2">
+          ${[0,1,2].map(() => `<div class="h-10 rounded bg-ink/5 dark:bg-paper/5 animate-pulse"></div>`).join('')}
+        </div>
+      </div>
     </div>
   </section>` : ''}
 
@@ -5767,29 +5696,61 @@ function parseManualExercises(text) {
  *  e tempo (cardio se "curto/30min"). */
 function suggestExercises(query) {
   const q = (query || '').toLowerCase();
-  if (!q.trim()) return { groups: [], items: [], summary: 'Descreva o que você quer treinar.' };
-  // Detecta grupos-alvo
+  if (!q.trim()) return { groups: [], items: [], summary: 'Descreva o que você quer treinar.', notes: [] };
+  // Detecta grupos-alvo (regex amplos pra capturar variações)
   const wants = {
-    peito:       /\bpeito|peit|chest|supino/.test(q),
-    dorsal:      /\bcosta|dorsal|back|pull|remada|barra fixa/.test(q),
-    biceps:      /\bbice|bicep|rosca/.test(q),
-    triceps:     /\btric|tricep|testa|fran/.test(q),
-    ombro:       /\bombro|delt|shoulder|desenvolv/.test(q),
-    quad:        /\bperna|quad|leg|agach|squat/.test(q),
-    post:        /\bglute|posterior|hamstring|isquio|stiff|terra|deadlift|hip thrust/.test(q),
-    core:        /\bcore|abdom|abs|barriga|prancha|plank/.test(q),
-    cardio:      /\bcardio|hiit|corrida|aerob|queim|fôleg/.test(q),
-    panturrilha: /\bpanturrilha|calf/.test(q),
-    antebraço:   /\bantebra|farmer|pulso|grip/.test(q),
+    peito:       /\bpeito|peit|chest|supino|fly|crucifixo|press peito/.test(q),
+    dorsal:      /\bcosta|dorsal|back|pull[\- ]?up|remada|barra fixa|latíssimo|lats/.test(q),
+    biceps:      /\bbice|bicep|rosca|curl/.test(q),
+    triceps:     /\btric|tricep|testa|francês|frances|push[\- ]?down|dip|mergulho/.test(q),
+    ombro:       /\bombro|delt|shoulder|desenvolv|militar|elevaç|elevac|face pull/.test(q),
+    quad:        /\bperna|quad|leg|agach|squat|coxa(?! poster)/.test(q),
+    post:        /\bglute|posterior|hamstring|isquio|stiff|terra|deadlift|hip thrust|bumbum/.test(q),
+    core:        /\bcore|abdom|abs|barriga|prancha|plank|tanquinho|6 ?pack|cintura|oblí/.test(q),
+    cardio:      /\bcardio|hiit|corrida|aerob|queim|fôleg|folga|esteira|bike|spinning|fôlego/.test(q),
+    panturrilha: /\bpanturrilha|calf|gastroc|sóleo/.test(q),
+    antebraço:   /\bantebra|farmer|pulso|grip|preensão/.test(q),
   };
-  const isCalistenia = /\bcasa|sem peso|sem academia|sem equipamento|calist|bodyweight|peso corporal/.test(q);
-  const isShort      = /\b(?:5|10|15|20|25|30)\s?min|curto|r[áa]pido|quick/.test(q);
-  const isLong       = /\b(?:45|60|90)\s?min|longo|completo/.test(q);
-  const isLight      = /\bleve|fácil|facil|light|recupera|cansa|cansad/.test(q);
-  const isHeavy      = /\bpesad|forte|max|heavy|hipertro|massa|forc|força/.test(q);
-  const isMobility   = /\bmobilid|alonga|flex|stretch|yoga/.test(q);
-  const isDance      = /\bdan[çc]a|coreo|kpop|hip hop|ballet/.test(q);
+  // Heurísticas amplas (intenção, contexto, intensidade)
+  const isCalistenia = /\bcasa|sem peso|sem academia|sem equipamento|calist|bodyweight|peso corporal|viagem|hotel/.test(q);
+  const isShort      = /\b(?:5|10|15|20|25|30)\s?min|curto|r[áa]pido|quick|express/.test(q);
+  const isLong       = /\b(?:45|60|90|120)\s?min|longo|completo|hora cheia/.test(q);
+  const isLight      = /\bleve|fácil|facil|light|recupera|cansa|cansad|easy|gentle/.test(q);
+  const isHeavy      = /\bpesad|forte|max|heavy|hipertro|massa|forc|força|brutal|intenso/.test(q);
+  const isMobility   = /\bmobilid|alonga|flex(?:ibili)?|stretch|yoga|pilates|fáscia|rolamento/.test(q);
+  const isDance      = /\bdan[çc]a|coreo|kpop|hip hop|ballet|zumba|fitdance/.test(q);
+  const isFatLoss    = /\bemagrec|queimar (?:caloria|gordura)|cut|definição|definicao|secar|secagem/.test(q);
+  const isHypertroph = /\bhipertrof|ganhar massa|ganho muscular|volumar|bulk/.test(q);
+  const isBeginner   = /\biniciante|começ|começando|novato|nunca treinei/.test(q);
+  const isAdvanced   = /\bavançad|avancad|experiente|veterano/.test(q);
+  const isInjury     = /\bdor|lesão|lesao|machucad|joelho ruim|ombro ruim|coluna ruim/.test(q);
+  const isMorning    = /\bmanhã|manha|antes do trabalho|acordar/.test(q);
+  const isEvening    = /\bnoite|antes de dormir|relax|relaxar/.test(q);
+  // Modalidades específicas que NÃO estão na library — mapeia pro mais próximo
+  const isCrossfit   = /\bcrossfit|wod|amrap (?:de|do)|metcon/.test(q);
+  const isMartial    = /\bmuay|boxe|jiu[\- ]?jitsu|judo|judô|karatê|karate|taekwondo|luta/.test(q);
+  const isFunctional = /\bfuncional|functional|sandbag|kettlebell|treino metab/.test(q);
+  const isSwim       = /\bnatação|natacao|swim|piscina/.test(q);
+  const isRun        = /\bcorrer|corrida|run|trilha|hike/.test(q);
+  const isWalk       = /\bcaminh|andar a pé|andar a pe|10k passos/.test(q);
   const targets = Object.keys(wants).filter((k) => wants[k]);
+
+  // Coleta notas heurísticas: quando o usuário pede algo fora do escopo,
+  // a app explica o que entendeu e orienta com princípios gerais.
+  const notes = [];
+  if (isCrossfit) notes.push('💡 CrossFit: combine HIIT + agachamento livre + barra fixa + burpees. Pega o tile "Cardio HIIT" + "🆓 Treino livre" e adiciona movimentos compostos pesados.');
+  if (isMartial) notes.push('💡 Para arte marcial: alterne 8s explosão + 12s pausa (estilo tabata) com shadowboxing/saco. Combine com mobilidade de quadril e core anti-rotacional (woodchopper).');
+  if (isFunctional) notes.push('💡 Funcional: movimentos multiarticulares (terra, agachamento, swing, carry). Use "🆓 Treino livre" e adicione: kettlebell swing 4×15, farmer carry 30m, goblet squat 3×12.');
+  if (isSwim) notes.push('💡 Natação: cardio de baixo impacto. Como complemento, foca em mobilidade de ombro (face pull, band pull-aparts) e core anti-extensão.');
+  if (isRun) notes.push('💡 Corrida: fortaleça posterior (stiff, ponte) e panturrilha (calf raises) pra não lesionar. Combine com mobilidade de quadril.');
+  if (isWalk) notes.push('💡 Caminhada: melhor cardio pra recomposição. Use o tile "Caminhada" pra registrar (LISS, ritmos, inclinação).');
+  if (isInjury) notes.push('⚠️ Com dor/lesão: priorize movimentos com baixa carga e maior amplitude controlada. Evite agachamento livre pesado, terra, e desenvolvimento militar com barra. Considera fisio antes de progredir carga.');
+  if (isBeginner) notes.push('🌱 Iniciante: comece com calistenia 2×/sem + mobilidade. Foque em forma, não carga. Em 4 semanas migra pra força (Upper A / Lower A).');
+  if (isAdvanced && !targets.length) notes.push('🏋️ Avançado: alterna semana pesada (5×5) com semana de volume (4×12). Periodização DUP rende mais que linear.');
+  if (isFatLoss && !targets.length) notes.push('🔥 Emagrecer: déficit calórico + força pesada (preserva massa) + cardio. 3 treinos de força + 2-3 caminhadas longas (45min+) por semana.');
+  if (isHypertroph && !targets.length) notes.push('💪 Hipertrofia: 3-4 séries × 8-12 reps com 1-2 RIR (reservar 1-2 reps na falha). Volume semanal por grupo: 12-20 sets.');
+  if (isMorning) notes.push('🌅 Manhã: aquecimento 5min é não-negociável pra acordar SNC. Faça mobilidade dinâmica antes da carga pesada.');
+  if (isEvening) notes.push('🌙 Noite: evita HIIT 2h antes de dormir (eleva cortisol). Mobilidade, yoga e cardio leve funcionam bem.');
 
   // Pool de candidatos: todos os exercícios + alguns "extras" calistênicos para casa
   const all = [];
@@ -5878,8 +5839,16 @@ function suggestExercises(query) {
     isHeavy && 'pesado',
     isMobility && 'mobilidade',
     isDance && 'dança',
+    isFatLoss && 'emagrecer',
+    isHypertroph && 'hipertrofia',
+    isBeginner && 'iniciante',
+    isInjury && 'cuidado lesão',
   ].filter(Boolean);
-  return { groups: targets, items, summary: tags.join(' · ') };
+  // Se nada matchou, gera uma orientação heurística geral.
+  if (!items.length && !notes.length) {
+    notes.push('🤖 Não consegui mapear sua descrição pra um exercício específico. Tenta termos como: "peito sem academia", "perna leve 30min", "cardio HIIT", "mobilidade lombar", "treino para emagrecer". Você também pode descrever o objetivo ("ganhar massa") ou contexto ("treino na viagem").');
+  }
+  return { groups: targets, items, summary: tags.join(' · '), notes };
 }
 
 function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
@@ -6170,18 +6139,54 @@ function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
       }
     }
 
-    // Substitui sessão do mesmo dia/tipo
+    // Substitui sessão do mesmo dia/tipo (ou cria nova)
     const idx = state.workouts.findIndex((w) => w.date === start.date && w.type === start.type);
+    const isNewWorkout = idx < 0;
     if (idx >= 0) state.workouts[idx] = start;
     else state.workouts.push(start);
+
+    // XP direto pelo treino — só na primeira vez que salva pra esse dia/tipo
+    // (editar não dá XP de novo). Base 3 + 1 por exercício (cap 8) + PR bônus.
+    let xpChange = { changed: false };
+    if (isNewWorkout) {
+      const baseXP = 3;
+      const exBonus = Math.min(5, start.exercises.length);
+      const prBonus = prDetected ? 5 : 0;
+      const totalXP = baseXP + exBonus + prBonus;
+      // Detecta categoria majoritária pra atribuir o XP ao atributo certo
+      const cats = start.exercises.map(e => exerciseCategory(e));
+      const cardioMajor = cats.filter(c => ['walking','hiit','cardio','dance'].includes(c)).length > cats.length / 2;
+      xpChange = addQuestXP(totalXP, cardioMajor ? 'cardio' : 'treino');
+    }
+
+    // Atualiza o log do dia: marca training.done = true (também pra retroativo,
+    // mantendo o heatmap consistente). Não chama upsertDailyLog pra evitar
+    // double-XP — o addQuestXP acima já contou o treino.
+    let log = state.dailyLogs.find((l) => l.date === start.date);
+    if (!log) {
+      log = { date: start.date, training: { type: start.type, done: true },
+              protein: { grams: 0, hit: false }, sleep: { hours: 0 },
+              reading: { minutes: 0 }, steps: 0, buffs: [], notes: '', meals: [], xp: 0 };
+      state.dailyLogs.push(log);
+    } else {
+      log.training = { type: start.type, done: true };
+    }
+    log.xp = Math.max(log.xp || 0, computeDayXP(log));
+
     saveState();
     closeModal();
     confetti(700);
     if (prDetected) {
       kombatOverlay('brutality');
       addAttributeXP('forca', 5);
+    } else if (isNewWorkout) {
+      const xpMsg = `Treino salvo 💪 +${(xpChange.finalAmt || 0)} XP`;
+      toast(detectedMsg ? `${xpMsg} · ${detectedMsg}` : xpMsg, detectedMsg ? 3600 : 2400);
     } else {
-      toast(detectedMsg || 'Treino salvo 💪', detectedMsg ? 3600 : 2200);
+      toast(detectedMsg || 'Treino atualizado 💪', detectedMsg ? 3600 : 2200);
+    }
+    if (xpChange.changed) {
+      setTimeout(() => levelUpOverlay(xpChange.from, xpChange.to, xpChange.promoted), 1200);
     }
     render();
   });
@@ -6482,7 +6487,13 @@ function modalFoodPortion(foodName) {
   document.getElementById('add-meal').onclick = () => {
     const g = +input.value || 0;
     if (g <= 0) { toast('Quantidade inválida'); return; }
-    const log = state.dailyLogs.find((l) => l.date === todayISO());
+    let log = state.dailyLogs.find((l) => l.date === todayISO());
+    if (!log) {
+      log = { date: todayISO(), training: { type: 'descanso', done: false },
+              protein: { grams: 0, hit: false }, sleep: { hours: 0 },
+              reading: { minutes: 0 }, steps: 0, buffs: [], notes: '', meals: [], xp: 0 };
+      state.dailyLogs.push(log);
+    }
     if (!log.meals) log.meals = [];
     log.meals.push({
       name: f.name, ko: f.ko || '', grams: g, cat: f.cat,
@@ -6493,7 +6504,10 @@ function modalFoodPortion(foodName) {
     const oldHit = log.protein?.hit;
     log.protein = { grams: Math.round(totalP), hit: totalP >= getProteinGoal() };
     log.xp = computeDayXP(log);
-    // Se bateu meta pela primeira vez, ganha XP/disciplina
+    // upsertDailyLog calcula o delta de XP e chama gainXP — assim bater meta de
+    // proteína AGORA dá XP de rank na hora (sem precisar do FINISH IT!).
+    upsertDailyLog(log);
+    // Se bateu meta pela primeira vez, ganha bônus de atributo + celebração
     if (!oldHit && log.protein.hit) {
       addAttributeXP('disciplina', 3);
       confetti(1000);
@@ -6502,7 +6516,7 @@ function modalFoodPortion(foodName) {
     saveState();
     checkAchievements();
     closeModal();
-    toast(`+ ${f.name} adicionado`);
+    if (!(!oldHit && log.protein.hit)) toast(`+ ${f.name} adicionado`);
     vibrate(10);
     render();
   };
@@ -8696,16 +8710,6 @@ function viewConfig() {
           </details>`;
         })()}
       </div>
-      ${(state.user.theme || 'kpop_anime') === 'kpop_anime' ? `
-        <label class="block mt-3">
-          <span class="text-sm font-semibold">🎵 Spotify Client ID</span>
-          <input id="cfg-spotify-id" class="q-input mt-1" placeholder="ex: 5d12...abc"
-                 value="${state.user.spotifyClientId || ''}" autocomplete="off" />
-          <span class="text-[10px] text-ink/55 dark:text-paper/55 leading-tight block mt-1">
-            Crie em <a href="https://developer.spotify.com/dashboard" target="_blank" rel="noopener" class="underline">developer.spotify.com</a> · Defina Redirect URI = <code class="text-[9px]">${window.location.origin + window.location.pathname}</code>
-          </span>
-        </label>
-      ` : ''}
       <div class="block mt-3">
         <div class="text-sm font-semibold mb-2">Estética</div>
         <div class="grid grid-cols-2 gap-2">
@@ -8841,34 +8845,54 @@ function attachHandlers() {
   document.getElementById('open-log')?.addEventListener('click', () => { vibrate(15); modalDailyLog(); });
   document.getElementById('open-rewards-daily')?.addEventListener('click', () => { vibrate(8); modalRewards(); });
 
-  // ===== K-pop Lounge: Vôlei + Spotify =====
-  document.getElementById('spotify-connect')?.addEventListener('click', spotifyConnect);
-  document.querySelectorAll('.volley-tab').forEach((b) => b.onclick = async () => {
-    const league = b.dataset.league;
+  // ===== Lounge esportivo: notícias de vôlei =====
+  async function renderVolleyFeed(league, force = false) {
     const feed = document.getElementById('volley-feed');
     if (!feed) return;
-    document.querySelectorAll('.volley-tab').forEach((x) => x.classList.remove('is-active'));
-    b.classList.add('is-active');
-    feed.innerHTML = '<div class="text-xs">⏳ buscando…</div>';
-    const items = await fetchVolleyNews(league);
+    feed.innerHTML = `
+      <div class="space-y-2">
+        ${[0,1,2].map(() => `<div class="h-10 rounded bg-ink/5 dark:bg-paper/5 animate-pulse"></div>`).join('')}
+      </div>`;
+    const items = await fetchVolleyNews(league, force);
     if (!items.length) {
-      feed.innerHTML = '<div class="text-xs italic">Sem notícias agora. Tenta de novo daqui a pouco.</div>';
+      feed.innerHTML = `
+        <div class="text-center py-4">
+          <div class="text-xl mb-1">📭</div>
+          <div class="text-xs italic text-ink/55 dark:text-paper/55">Sem notícias dessa liga agora. Tenta de novo em alguns minutos.</div>
+        </div>`;
       return;
     }
-    feed.innerHTML = items.map((it) => `
-      <a href="${it.link}" target="_blank" rel="noopener" class="block py-1.5 border-b border-ink/5 dark:border-paper/5 last:border-0 hover:opacity-80">
-        <div class="text-xs font-semibold leading-tight">${it.title.replace(/\s*-\s*[^-]+$/, '')}</div>
-        <div class="text-[10px] text-ink/45 dark:text-paper/45 mt-0.5">${it.source} · ${new Date(it.pubDate).toLocaleDateString('pt-BR')}</div>
-      </a>
-    `).join('');
+    feed.innerHTML = items.map((it) => {
+      const title = it.title.replace(/\s*-\s*[^-]+$/, '');
+      const ago = timeAgoShort(new Date(it.pubDate));
+      return `
+        <a href="${it.link}" target="_blank" rel="noopener" class="volley-item flex items-start gap-2 py-2 border-b border-ink/5 dark:border-paper/5 last:border-0">
+          <span class="text-base mt-0.5">📰</span>
+          <div class="flex-1 min-w-0">
+            <div class="text-xs font-semibold leading-tight">${title}</div>
+            <div class="flex items-center gap-2 mt-1">
+              <span class="text-[9px] uppercase tracking-wider text-lavender font-semibold">${it.source || 'Google News'}</span>
+              <span class="text-[9px] text-ink/45 dark:text-paper/45">· ${ago}</span>
+            </div>
+          </div>
+          <span class="w-3 h-3 text-ink/30 dark:text-paper/30 mt-1 flex-shrink-0">${I.chev}</span>
+        </a>`;
+    }).join('');
+  }
+  document.querySelectorAll('.volley-tab').forEach((b) => b.onclick = () => {
+    document.querySelectorAll('.volley-tab').forEach((x) => x.classList.remove('is-active'));
+    b.classList.add('is-active');
+    renderVolleyFeed(b.dataset.league);
   });
+  // Auto-carrega o feed da liga ativa (primeira por padrão)
+  const activeVolley = document.querySelector('.volley-tab.is-active');
+  if (activeVolley) renderVolleyFeed(activeVolley.dataset.league);
+
   document.getElementById('kpop-lounge-refresh')?.addEventListener('click', async () => {
     Object.keys(VOLLEY_CACHE).forEach((k) => delete VOLLEY_CACHE[k]);
     const active = document.querySelector('.volley-tab.is-active');
-    if (active) active.click();
-    spotifyUpdateNowPlaying();
+    if (active) renderVolleyFeed(active.dataset.league, true);
   });
-  spotifyUpdateNowPlaying();
 
   document.getElementById('toggle-dark')?.addEventListener('click', () => {
     state.user.darkMode = !state.user.darkMode;
@@ -9412,13 +9436,21 @@ function attachHandlers() {
   const sugOut   = document.getElementById('suggest-results');
   function runSuggest() {
     if (!sugInput) return;
-    const { items, summary } = suggestExercises(sugInput.value);
+    const { items, summary, notes } = suggestExercises(sugInput.value);
+    const notesHtml = (notes && notes.length) ? `
+      <div class="space-y-2 mt-2 mb-3">
+        ${notes.map(n => `
+          <div class="q-card p-2 text-xs leading-snug" style="border-left:3px solid #B7B5FF">
+            ${n}
+          </div>`).join('')}
+      </div>` : '';
     if (!items.length) {
-      sugOut.innerHTML = `<div class="text-xs text-ink/55 dark:text-paper/55 italic">Nenhuma sugestão. Tente termos como "peito", "cardio", "calistenia"...</div>`;
+      sugOut.innerHTML = notesHtml || `<div class="text-xs text-ink/55 dark:text-paper/55 italic mt-2">Nenhuma sugestão. Tente termos como "peito", "cardio", "calistenia"...</div>`;
       return;
     }
     sugOut.innerHTML = `
-      <div class="text-[11px] uppercase tracking-wider text-ink/45 dark:text-paper/45 mt-2">${summary}</div>
+      ${notesHtml}
+      ${summary ? `<div class="text-[11px] uppercase tracking-wider text-ink/45 dark:text-paper/45 mt-2">${summary}</div>` : ''}
       ${items.map(e => `
         <div class="flex items-start gap-2 py-1.5 border-b border-ink/5 dark:border-paper/5 last:border-0">
           <span class="w-1.5 h-1.5 mt-1.5 rounded-full bg-lavender shrink-0"></span>
@@ -9501,8 +9533,6 @@ function attachHandlers() {
     state.user.name  = document.getElementById('cfg-name').value || 'Jogador';
     state.user.goals = document.getElementById('cfg-goals').value;
     state.user.reminders.proteinTimes = document.getElementById('cfg-reminders').value.split(',').map(s=>s.trim()).filter(Boolean);
-    const spotifyId = document.getElementById('cfg-spotify-id')?.value?.trim();
-    if (spotifyId !== undefined) state.user.spotifyClientId = spotifyId;
     // Perfil físico
     const h   = +document.getElementById('cfg-height')?.value;
     const age = +document.getElementById('cfg-age')?.value;
@@ -9669,6 +9699,24 @@ function bindFoodRows() {
 
 // ===== Helpers de formatação =================================
 
+/** "tempo desde" curto: "agora", "12min", "3h", "2d", "1sem". */
+function timeAgoShort(d) {
+  const ms = Date.now() - d.getTime();
+  if (isNaN(ms) || ms < 0) return '';
+  const s = Math.floor(ms / 1000);
+  if (s < 60) return 'agora';
+  const m = Math.floor(s / 60);
+  if (m < 60) return `${m}min`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h`;
+  const dd = Math.floor(h / 24);
+  if (dd < 7) return `${dd}d`;
+  const w = Math.floor(dd / 7);
+  if (w < 4) return `${w}sem`;
+  const mo = Math.floor(dd / 30);
+  return `${mo}mes`;
+}
+
 function formatDateBR(iso) {
   // Strings YYYY-MM-DD parseiam como UTC; em fusos negativos viram o dia anterior.
   // Interpreta como data local pra evitar esse off-by-one.
@@ -9715,10 +9763,10 @@ function checkWeeklyRollover() {
         rankXP: state.user.rankXP,
       });
 
-      // Skin: 3 semanas Platina+ seguidas
+      // Skin: 3 semanas Platina+ seguidas (qualquer divisão)
       const last3 = state.rankHistory.slice(-3);
-      const elite = new Set(['platinum','emerald','diamond','master','grandmaster','challenger']);
-      if (last3.length === 3 && last3.every(r => elite.has(r.rank))) {
+      const elite = new Set(['platinum','emerald','diamond','master','gm','challenger']);
+      if (last3.length === 3 && last3.every(r => elite.has(baseRankOf(r.rank)))) {
         const newSkin = `Skin K-${state.rankHistory.length}`;
         if (!state.rewards.unlocked.includes(newSkin)) {
           state.rewards.unlocked.push(newSkin);
@@ -9766,13 +9814,6 @@ function showAuthLoading() {
     </div>`;
 }
 
-async function _maybeHandleSpotifyCallback() {
-  // Roda antes do bootGameState pra capturar redirect Spotify OAuth.
-  if (window.location.search.includes('code=') && state?.user) {
-    await spotifyHandleCallback();
-  }
-}
-
 async function bootGameState() {
   // 1) Carrega cache local pra UI instantânea
   let local = loadState();
@@ -9805,17 +9846,8 @@ async function bootGameState() {
   ensureDailyQuests();
   ensureWeeklyQuest();
   checkWeeklyRollover();
-  await _maybeHandleSpotifyCallback();
   setTimeout(checkAchievements, 100);
   setTimeout(maybeNotifyMascot, 1500);
-  // Polling do Spotify Now Playing — só na home (kpop_anime) e a cada 20s
-  if (!window._spotifyPoll) {
-    window._spotifyPoll = setInterval(() => {
-      if (currentTab === 'home' && (state?.user?.theme || 'kpop_anime') === 'kpop_anime' && state?.user?.spotifyTokens) {
-        spotifyUpdateNowPlaying();
-      }
-    }, 20000);
-  }
   render();
 }
 
