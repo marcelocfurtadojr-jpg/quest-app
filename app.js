@@ -3023,6 +3023,469 @@ const KPOP_CHOREOS = [
   { song: 'Sticker',          artist: 'NCT 127',       year: 2021, diff: 5, style: 'experimental',   dur: '3:21', tip: 'Coreografia famosa pela dificuldade. Comece em 0.5x.' },
   { song: 'Crazy',            artist: 'NCT Dream',     year: 2024, diff: 4, style: 'urban boy',      dur: '3:01', tip: 'Sequência rápida — domina 8 contagens por vez.' },
   { song: 'Smoothie',         artist: 'NCT Dream',     year: 2024, diff: 3, style: 'funky pop',      dur: '2:58', tip: 'Body roll central. Tronco solto.' },
+
+  // ===== BTS =====
+  { song: 'Dynamite',         artist: 'BTS',           year: 2020, diff: 3, style: 'disco pop',       dur: '3:19', tip: 'Vibe festiva — sorria. Footwork retrô.' },
+  { song: 'Butter',           artist: 'BTS',           year: 2021, diff: 3, style: 'smooth pop',      dur: '2:44', tip: 'Movimentos deslizantes. Body roll suave.' },
+  { song: 'Boy With Luv',     artist: 'BTS',           year: 2019, diff: 3, style: 'feel-good',       dur: '3:29', tip: 'Coreografia divertida — emoção no rosto.' },
+  { song: 'Fake Love',        artist: 'BTS',           year: 2018, diff: 4, style: 'emo hip-hop',     dur: '4:02', tip: 'Coreografia carregada de pathos. Pesa cada movimento.' },
+  { song: 'DNA',              artist: 'BTS',           year: 2017, diff: 3, style: 'electro pop',     dur: '3:43', tip: 'Sequência icônica de pontos com os dedos.' },
+  { song: 'IDOL',             artist: 'BTS',           year: 2018, diff: 4, style: 'tribal pop',      dur: '3:42', tip: 'Vibe tribal — joelhos altos, energia.' },
+  { song: 'Permission to Dance', artist: 'BTS',        year: 2021, diff: 2, style: 'feel-good',       dur: '3:08', tip: 'Linguagem de sinais — gestos amplos.' },
+  { song: 'Black Swan',       artist: 'BTS',           year: 2020, diff: 5, style: 'contemporary',    dur: '3:18', tip: 'Coreografia artística. Linhas contínuas e controle.' },
+  { song: 'Mic Drop',         artist: 'BTS',           year: 2017, diff: 4, style: 'hip-hop',         dur: '3:58', tip: 'Atitude máxima. Pulsação no peito.' },
+  { song: 'Blood Sweat & Tears', artist: 'BTS',        year: 2016, diff: 4, style: 'sensual',         dur: '3:36', tip: 'Body wave + sensualidade. Olhar marcado.' },
+  { song: 'Fire',             artist: 'BTS',           year: 2016, diff: 5, style: 'aggressive',      dur: '3:21', tip: 'Cardio puro. Saltos, pulos, energia alta.' },
+  { song: 'Spring Day',       artist: 'BTS',           year: 2017, diff: 2, style: 'emotional',       dur: '4:34', tip: 'Coreografia lírica, foco em expressão.' },
+  { song: 'Not Today',        artist: 'BTS',           year: 2017, diff: 5, style: 'power hip-hop',   dur: '3:54', tip: 'Energia explosiva, marcha de guerra.' },
+  { song: 'Dope',             artist: 'BTS',           year: 2015, diff: 5, style: 'fast hip-hop',    dur: '3:43', tip: 'Coreografia super-rápida — 0.5x primeiro.' },
+  { song: 'Run',              artist: 'BTS',           year: 2015, diff: 4, style: 'urban',           dur: '3:55', tip: 'Footwork dinâmico, viradas constantes.' },
+  { song: 'Save Me',          artist: 'BTS',           year: 2016, diff: 3, style: 'emotional pop',   dur: '3:39', tip: 'Sincronia em V. Marca o killing part.' },
+  { song: 'Boy in Luv',       artist: 'BTS',           year: 2014, diff: 3, style: 'school boy',      dur: '3:11', tip: 'Vibe escola. Energia leve, gestos amplos.' },
+  { song: 'Danger',           artist: 'BTS',           year: 2014, diff: 4, style: 'hip-hop',         dur: '3:51', tip: 'Pose intimidante. Pulsações pesadas.' },
+  { song: 'No More Dream',    artist: 'BTS',           year: 2013, diff: 4, style: 'old hip-hop',     dur: '3:51', tip: 'Vibe debut — atitude punk.' },
+  { song: 'ON',               artist: 'BTS',           year: 2020, diff: 5, style: 'marching band',   dur: '4:07', tip: 'Coreografia com bateria. Pisadas marcantes.' },
+  { song: 'Yet To Come',      artist: 'BTS',           year: 2022, diff: 2, style: 'reflective',      dur: '3:13', tip: 'Coreografia minimalista, emoção pura.' },
+  { song: 'Run BTS',          artist: 'BTS',           year: 2022, diff: 5, style: 'aggressive',      dur: '3:33', tip: 'Coreografia bestial. Resistência cardiovascular alta.' },
+
+  // ===== BLACKPINK =====
+  { song: 'DDU-DU DDU-DU',    artist: 'BLACKPINK',     year: 2018, diff: 4, style: 'powerful',        dur: '3:29', tip: 'Pose de gun ícone. Atitude máxima.' },
+  { song: 'Kill This Love',   artist: 'BLACKPINK',     year: 2019, diff: 4, style: 'powerful',        dur: '3:11', tip: 'Marcha + saltos. Energia bélica.' },
+  { song: 'Lovesick Girls',   artist: 'BLACKPINK',     year: 2020, diff: 3, style: 'pop',             dur: '3:14', tip: 'Coreografia emocional. Linhas longas dos braços.' },
+  { song: 'BOOMBAYAH',        artist: 'BLACKPINK',     year: 2016, diff: 4, style: 'energetic',       dur: '4:00', tip: 'Debut icônico. Energia alta o tempo todo.' },
+  { song: 'Whistle',          artist: 'BLACKPINK',     year: 2016, diff: 3, style: 'urban pop',       dur: '3:30', tip: 'Footwork preciso. Gesto do assobio.' },
+  { song: 'Playing With Fire', artist: 'BLACKPINK',    year: 2016, diff: 3, style: 'pop',             dur: '3:24', tip: 'Body roll suave. Vibe sensual.' },
+  { song: 'As If It\'s Your Last', artist: 'BLACKPINK', year: 2017, diff: 3, style: 'tropical',       dur: '3:32', tip: 'Coreografia tropical, sorria sempre.' },
+  { song: 'Forever Young',    artist: 'BLACKPINK',     year: 2018, diff: 3, style: 'edm pop',         dur: '4:00', tip: 'Coreografia coreografada em V. Bom para grupo.' },
+  { song: 'Pink Venom',       artist: 'BLACKPINK',     year: 2022, diff: 4, style: 'savage pop',      dur: '3:07', tip: 'Atitude venenosa. Movimentos angulares.' },
+  { song: 'Ice Cream',        artist: 'BLACKPINK',     year: 2020, diff: 3, style: 'bubble pop',      dur: '2:54', tip: 'Vibe doce. Gestos infantis amplos.' },
+  { song: 'Shut Down',        artist: 'BLACKPINK',     year: 2022, diff: 3, style: 'urban',           dur: '2:55', tip: 'Coreografia minimalista. Atitude.' },
+  { song: 'STAY',             artist: 'BLACKPINK',     year: 2017, diff: 2, style: 'soft pop',        dur: '3:31', tip: 'Coreografia leve. Sentimento.' },
+  { song: 'Pretty Savage',    artist: 'BLACKPINK',     year: 2020, diff: 4, style: 'fierce',          dur: '3:13', tip: 'Pose intimidante. Pulsações fortes.' },
+
+  // ===== TWICE =====
+  { song: 'TT',               artist: 'TWICE',         year: 2016, diff: 2, style: 'cute pop',        dur: '3:32', tip: 'Vibe fofa — gesto do TT no rosto.' },
+  { song: 'Cheer Up',         artist: 'TWICE',         year: 2016, diff: 3, style: 'cute pop',        dur: '3:30', tip: 'Coreografia divertida. Energia leve.' },
+  { song: 'Likey',            artist: 'TWICE',         year: 2017, diff: 3, style: 'feel-good',       dur: '3:33', tip: 'Trabalha braços amplos. Body roll suave.' },
+  { song: 'Heart Shaker',     artist: 'TWICE',         year: 2017, diff: 3, style: 'edm pop',         dur: '3:09', tip: 'Coreografia natalina. Gestos amplos.' },
+  { song: 'Yes or Yes',       artist: 'TWICE',         year: 2018, diff: 3, style: 'fierce cute',     dur: '3:25', tip: 'Vibe escolhida. Pose ★.' },
+  { song: 'Fancy',            artist: 'TWICE',         year: 2019, diff: 3, style: 'mature pop',      dur: '3:33', tip: 'Vibe adulta. Movimento mais sofisticado.' },
+  { song: 'Feel Special',     artist: 'TWICE',         year: 2019, diff: 3, style: 'elegant pop',     dur: '3:31', tip: 'Coreografia em estrela — formação central.' },
+  { song: 'More & More',      artist: 'TWICE',         year: 2020, diff: 3, style: 'tropical',        dur: '3:13', tip: 'Vibe verão, energia leve. Saltos.' },
+  { song: 'I Can\'t Stop Me', artist: 'TWICE',         year: 2020, diff: 4, style: 'synth pop',       dur: '3:24', tip: 'Coreografia sincronizada. Footwork preciso.' },
+  { song: 'Alcohol-Free',     artist: 'TWICE',         year: 2021, diff: 3, style: 'latin pop',       dur: '3:33', tip: 'Quadril liberado. Vibe verão.' },
+  { song: 'The Feels',        artist: 'TWICE',         year: 2021, diff: 3, style: 'disco',           dur: '3:21', tip: 'Vibe disco retrô. Sincronia em grupo.' },
+  { song: 'Set Me Free',      artist: 'TWICE',         year: 2023, diff: 3, style: 'edm pop',         dur: '3:25', tip: 'Energia liberada. Saltos no refrão.' },
+  { song: 'Moonlight Sunrise', artist: 'TWICE',        year: 2023, diff: 3, style: 'r&b pop',         dur: '3:00', tip: 'Vibe noite. Movimentos suaves.' },
+  { song: 'One Spark',        artist: 'TWICE',         year: 2024, diff: 3, style: 'electro pop',     dur: '2:46', tip: 'Coreografia centelha — gestos elétricos.' },
+  { song: 'I Got You',        artist: 'TWICE',         year: 2024, diff: 3, style: 'pop bounce',      dur: '3:00', tip: 'Vibe leve. Bounces no refrão.' },
+  { song: 'What is Love?',    artist: 'TWICE',         year: 2018, diff: 3, style: 'cute pop',        dur: '3:24', tip: 'Coreografia romântica — gestos com mãos.' },
+  { song: 'Dance The Night Away', artist: 'TWICE',     year: 2018, diff: 3, style: 'tropical',        dur: '3:19', tip: 'Vibe praia. Saltinhos animados.' },
+
+  // ===== Red Velvet =====
+  { song: 'Bad Boy',          artist: 'Red Velvet',    year: 2018, diff: 4, style: 'urban r&b',       dur: '3:33', tip: 'Body wave + isolamento. Vibe sensual.' },
+  { song: 'Psycho',           artist: 'Red Velvet',    year: 2019, diff: 4, style: 'dark pop',        dur: '3:42', tip: 'Coreografia carregada. Expressão facial intensa.' },
+  { song: 'Russian Roulette', artist: 'Red Velvet',    year: 2016, diff: 3, style: 'retro pop',       dur: '3:14', tip: 'Vibe retrô. Footwork em duplas.' },
+  { song: 'Red Flavor',       artist: 'Red Velvet',    year: 2017, diff: 3, style: 'tropical pop',    dur: '3:13', tip: 'Energia verão. Bouncy o tempo todo.' },
+  { song: 'Power Up',         artist: 'Red Velvet',    year: 2018, diff: 3, style: 'cute pop',        dur: '2:55', tip: 'Coreografia das vogais. Vibe nerd.' },
+  { song: 'Peek-a-Boo',       artist: 'Red Velvet',    year: 2017, diff: 4, style: 'mysterious',      dur: '3:23', tip: 'Mistério. Gestos suaves e marcantes.' },
+  { song: 'Rookie',           artist: 'Red Velvet',    year: 2017, diff: 3, style: 'quirky pop',      dur: '3:13', tip: 'Vibe estranha. Faça do seu jeito.' },
+  { song: 'Dumb Dumb',        artist: 'Red Velvet',    year: 2015, diff: 4, style: 'funky',           dur: '3:13', tip: 'Funkadelic. Pernas soltas, ombros.' },
+  { song: 'Birthday',         artist: 'Red Velvet',    year: 2022, diff: 3, style: 'sweet pop',       dur: '2:54', tip: 'Vibe festa. Gestos de presente.' },
+  { song: 'Cosmic',           artist: 'Red Velvet',    year: 2024, diff: 3, style: 'electro pop',     dur: '3:21', tip: 'Vibe cósmica. Linhas estelares.' },
+  { song: 'Feel My Rhythm',   artist: 'Red Velvet',    year: 2022, diff: 4, style: 'classical pop',   dur: '3:34', tip: 'Coreografia clássica. Postura ballet.' },
+  { song: 'Queendom',         artist: 'Red Velvet',    year: 2021, diff: 3, style: 'powerful pop',    dur: '3:25', tip: 'Postura régia. Confiança máxima.' },
+
+  // ===== EXO =====
+  { song: 'Growl',            artist: 'EXO',           year: 2013, diff: 4, style: 'hip-hop',         dur: '3:54', tip: 'Coreografia em câmera única — sincronia 100%.' },
+  { song: 'Call Me Baby',     artist: 'EXO',           year: 2015, diff: 4, style: 'sensual pop',     dur: '3:30', tip: 'Body roll famoso. Footwork suave.' },
+  { song: 'Monster',          artist: 'EXO',           year: 2016, diff: 5, style: 'dark powerful',   dur: '3:50', tip: 'Coreografia bestial. Pulsos intensos.' },
+  { song: 'Ko Ko Bop',        artist: 'EXO',           year: 2017, diff: 3, style: 'reggae pop',      dur: '3:30', tip: 'Vibe reggae descontraída. Quadril solto.' },
+  { song: 'Love Shot',        artist: 'EXO',           year: 2018, diff: 4, style: 'mature',          dur: '3:39', tip: 'Vibe adulta. Atitude noturna.' },
+  { song: 'Power',            artist: 'EXO',           year: 2017, diff: 4, style: 'edm power',       dur: '3:20', tip: 'Energia explosiva. Coreografia em formação.' },
+  { song: 'Obsession',        artist: 'EXO',           year: 2019, diff: 5, style: 'dark electronic', dur: '3:21', tip: 'Coreografia em V. Mantém eye contact.' },
+  { song: 'Tempo',            artist: 'EXO',           year: 2018, diff: 5, style: 'fast',            dur: '3:11', tip: 'Tempo acelerado. Coreografia técnica.' },
+  { song: 'Wolf',             artist: 'EXO',           year: 2013, diff: 5, style: 'aggressive',      dur: '3:50', tip: 'Coreografia "lobo". Rugido facial.' },
+  { song: 'Overdose',         artist: 'EXO',           year: 2014, diff: 4, style: 'electronic',      dur: '3:21', tip: 'Sincronia milimétrica. Movimentos angulares.' },
+
+  // ===== BIGBANG =====
+  { song: 'Bang Bang Bang',   artist: 'BIGBANG',       year: 2015, diff: 4, style: 'edm',             dur: '3:40', tip: 'Saltos icônicos. Energia festival.' },
+  { song: 'Fantastic Baby',   artist: 'BIGBANG',       year: 2012, diff: 4, style: 'wow trap',        dur: '3:51', tip: 'Coreografia geração. Dab antes do dab.' },
+  { song: 'Last Dance',       artist: 'BIGBANG',       year: 2016, diff: 2, style: 'emotional',       dur: '4:12', tip: 'Coreografia lírica. Despedida.' },
+  { song: 'Loser',            artist: 'BIGBANG',       year: 2015, diff: 2, style: 'pop ballad',      dur: '4:10', tip: 'Coreografia introspectiva. Mãos no bolso.' },
+  { song: 'Bae Bae',          artist: 'BIGBANG',       year: 2015, diff: 3, style: 'electro pop',     dur: '3:13', tip: 'Vibe lover. Body roll suave.' },
+  { song: 'FXXK IT',          artist: 'BIGBANG',       year: 2016, diff: 3, style: 'attitude pop',    dur: '3:33', tip: 'Atitude libertária. Erre com confiança.' },
+
+  // ===== Girls' Generation / SNSD =====
+  { song: 'Gee',              artist: 'Girls\' Generation', year: 2009, diff: 3, style: 'cute pop',   dur: '3:25', tip: 'Coreografia clássica icônica. Gestos amplos.' },
+  { song: 'Genie',            artist: 'Girls\' Generation', year: 2009, diff: 3, style: 'sailor pop', dur: '3:48', tip: 'Saudação militar. Pernas soltas.' },
+  { song: 'Run Devil Run',    artist: 'Girls\' Generation', year: 2010, diff: 3, style: 'attitude',   dur: '3:30', tip: 'Vibe vingança. Body wave.' },
+  { song: 'The Boys',         artist: 'Girls\' Generation', year: 2011, diff: 4, style: 'fierce',     dur: '4:10', tip: 'Coreografia poderosa. Pose de gun.' },
+  { song: 'I Got a Boy',      artist: 'Girls\' Generation', year: 2013, diff: 5, style: 'medley',     dur: '4:31', tip: 'Coreografia em 4 fases — atenção total.' },
+  { song: 'Catch Me If You Can', artist: 'Girls\' Generation', year: 2015, diff: 4, style: 'edm pop', dur: '3:28', tip: 'Coreografia técnica. Sincronia.' },
+  { song: 'Lion Heart',       artist: 'Girls\' Generation', year: 2015, diff: 3, style: 'retro',      dur: '3:34', tip: 'Vibe retrô. Footwork swing.' },
+  { song: 'Forever 1',        artist: 'Girls\' Generation', year: 2022, diff: 3, style: 'feel-good',  dur: '3:21', tip: 'Comeback após anos. Vibe nostalgia.' },
+
+  // ===== SHINee =====
+  { song: 'Ring Ding Dong',   artist: 'SHINee',        year: 2009, diff: 4, style: 'electro pop',     dur: '3:39', tip: 'Coreografia icônica. Footwork robotic.' },
+  { song: 'Sherlock',         artist: 'SHINee',        year: 2012, diff: 4, style: 'pop',             dur: '3:43', tip: 'Coreografia em V. Linhas precisas.' },
+  { song: 'Dream Girl',       artist: 'SHINee',        year: 2013, diff: 3, style: 'funky pop',       dur: '3:32', tip: 'Vibe sonho. Body roll.' },
+  { song: 'View',             artist: 'SHINee',        year: 2015, diff: 3, style: 'house pop',       dur: '3:36', tip: 'Vibe leve verão. Footwork casual.' },
+  { song: 'Lucifer',          artist: 'SHINee',        year: 2010, diff: 5, style: 'aggressive',      dur: '3:38', tip: 'Coreografia famosa pela dificuldade. Pernas resistentes.' },
+  { song: 'Don\'t Call Me',   artist: 'SHINee',        year: 2021, diff: 4, style: 'hip-hop',         dur: '3:24', tip: 'Atitude. Energia urbana.' },
+  { song: 'Atlantis',         artist: 'SHINee',        year: 2021, diff: 3, style: 'tropical',        dur: '3:27', tip: 'Vibe oceano. Movimentos fluidos.' },
+  { song: 'Hard',             artist: 'SHINee',        year: 2023, diff: 4, style: 'powerful pop',    dur: '3:18', tip: 'Volta forte. Sincronia precisa.' },
+
+  // ===== Super Junior =====
+  { song: 'Sorry Sorry',      artist: 'Super Junior',  year: 2009, diff: 3, style: 'cute pop',        dur: '3:51', tip: 'Coreografia da mão clássica. Sincronia.' },
+  { song: 'Mr. Simple',       artist: 'Super Junior',  year: 2011, diff: 3, style: 'pop',             dur: '3:42', tip: 'Vibe leve. Footwork descontraído.' },
+  { song: 'Bonamana',         artist: 'Super Junior',  year: 2010, diff: 3, style: 'electro',         dur: '3:55', tip: 'Coreografia em fila. Energia constante.' },
+  { song: 'Devil',            artist: 'Super Junior',  year: 2015, diff: 4, style: 'attitude',        dur: '4:01', tip: 'Vibe edgy. Atitude no rosto.' },
+
+  // ===== 2NE1 =====
+  { song: 'I Am the Best',    artist: '2NE1',          year: 2011, diff: 4, style: 'attitude',        dur: '3:24', tip: 'Atitude legendária. Pisadas marcantes.' },
+  { song: 'Fire',             artist: '2NE1',          year: 2009, diff: 4, style: 'attitude',        dur: '3:25', tip: 'Energia debut. Saltos firmes.' },
+  { song: 'Come Back Home',   artist: '2NE1',          year: 2014, diff: 3, style: 'urban',           dur: '4:35', tip: 'Vibe urbana. Footwork suave.' },
+  { song: 'Lonely',           artist: '2NE1',          year: 2011, diff: 2, style: 'ballad',          dur: '3:32', tip: 'Coreografia íntima. Sentimento.' },
+  { song: 'Don\'t Stop the Music', artist: '2NE1',     year: 2012, diff: 3, style: 'pop',             dur: '3:34', tip: 'Coreografia festa. Energia leve.' },
+
+  // ===== f(x) =====
+  { song: 'Pinocchio',        artist: 'f(x)',          year: 2011, diff: 3, style: 'cute pop',        dur: '3:24', tip: 'Vibe brincalhona. Gestos exagerados.' },
+  { song: 'Hot Summer',       artist: 'f(x)',          year: 2011, diff: 3, style: 'tropical',        dur: '3:01', tip: 'Vibe verão. Quadril solto.' },
+  { song: 'Electric Shock',   artist: 'f(x)',          year: 2012, diff: 4, style: 'electro pop',     dur: '3:15', tip: 'Coreografia elétrica. Pulsos rápidos.' },
+  { song: '4 Walls',          artist: 'f(x)',          year: 2015, diff: 4, style: 'deep house',      dur: '3:30', tip: 'Coreografia minimalista. Atmosfera.' },
+  { song: 'NU ABO',           artist: 'f(x)',          year: 2010, diff: 4, style: 'quirky pop',      dur: '3:18', tip: 'Vibe peculiar. Movimentos angulares.' },
+
+  // ===== TVXQ / DBSK =====
+  { song: 'Mirotic',          artist: 'TVXQ',          year: 2008, diff: 4, style: 'sensual pop',     dur: '4:13', tip: 'Coreografia clássica. Body wave intenso.' },
+  { song: 'Catch Me',         artist: 'TVXQ',          year: 2012, diff: 4, style: 'pop',             dur: '3:39', tip: 'Coreografia dinâmica. Footwork.' },
+  { song: 'Something',        artist: 'TVXQ',          year: 2014, diff: 3, style: 'swing pop',       dur: '3:42', tip: 'Vibe swing. Movimentos circulares.' },
+
+  // ===== 2PM =====
+  { song: 'Hands Up',         artist: '2PM',           year: 2011, diff: 3, style: 'edm pop',         dur: '3:13', tip: 'Coreografia festa. Mãos pra cima.' },
+  { song: 'Heartbeat',        artist: '2PM',           year: 2009, diff: 4, style: 'beast pop',       dur: '3:31', tip: 'Vibe beast. Pisadas pesadas.' },
+  { song: 'A.D.T.O.Y.',       artist: '2PM',           year: 2013, diff: 3, style: 'pop',             dur: '3:13', tip: 'Vibe maduro. Linhas longas.' },
+
+  // ===== INFINITE =====
+  { song: 'The Chaser',       artist: 'INFINITE',      year: 2012, diff: 5, style: 'powerful',        dur: '3:33', tip: 'Coreografia sincronizada perfeita.' },
+  { song: 'Last Romeo',       artist: 'INFINITE',      year: 2014, diff: 4, style: 'pop',             dur: '3:27', tip: 'Vibe drama. Linhas amplas.' },
+  { song: 'Be Mine',          artist: 'INFINITE',      year: 2011, diff: 4, style: 'pop',             dur: '3:35', tip: 'Coreografia clássica K-pop.' },
+
+  // ===== ITZY =====
+  { song: 'DALLA DALLA',      artist: 'ITZY',          year: 2019, diff: 4, style: 'attitude',        dur: '3:14', tip: 'Vibe debut. Atitude maxima.' },
+  { song: 'ICY',              artist: 'ITZY',          year: 2019, diff: 3, style: 'cool pop',        dur: '3:15', tip: 'Vibe gelada. Pose icy.' },
+  { song: 'Wannabe',          artist: 'ITZY',          year: 2020, diff: 4, style: 'powerful girl',   dur: '3:14', tip: 'Coreografia poderosa. Pulsações.' },
+  { song: 'Not Shy',          artist: 'ITZY',          year: 2020, diff: 3, style: 'attitude',        dur: '3:09', tip: 'Confiança no rosto. Footwork firme.' },
+  { song: 'In the Morning',   artist: 'ITZY',          year: 2021, diff: 3, style: 'edgy pop',        dur: '2:51', tip: 'Vibe matinal. Energia gradual.' },
+  { song: 'LOCO',             artist: 'ITZY',          year: 2021, diff: 3, style: 'latin pop',       dur: '2:51', tip: 'Vibe latina. Quadril solto.' },
+  { song: 'Cheshire',         artist: 'ITZY',          year: 2022, diff: 3, style: 'mysterious',      dur: '3:00', tip: 'Vibe gato sorrindo. Atitude.' },
+  { song: 'Cake',             artist: 'ITZY',          year: 2023, diff: 3, style: 'sweet pop',       dur: '3:00', tip: 'Vibe festa. Gestos doces.' },
+  { song: 'Born to Be',       artist: 'ITZY',          year: 2024, diff: 4, style: 'powerful',        dur: '3:39', tip: 'Atitude máxima. Coreografia técnica.' },
+  { song: 'Untouchable',      artist: 'ITZY',          year: 2024, diff: 3, style: 'edgy pop',        dur: '2:53', tip: 'Vibe intocável. Confiança.' },
+
+  // ===== TXT (Tomorrow X Together) =====
+  { song: 'Crown',            artist: 'TXT',           year: 2019, diff: 3, style: 'school pop',      dur: '3:35', tip: 'Vibe debut. Gestos suaves.' },
+  { song: 'Cat & Dog',        artist: 'TXT',           year: 2019, diff: 3, style: 'cute pop',        dur: '2:53', tip: 'Vibe brincalhona. Gestos animais.' },
+  { song: '9 and Three Quarters', artist: 'TXT',       year: 2019, diff: 3, style: 'fantasy pop',     dur: '3:21', tip: 'Vibe magia. Linhas longas.' },
+  { song: 'Can\'t You See Me', artist: 'TXT',          year: 2020, diff: 4, style: 'darker pop',      dur: '3:18', tip: 'Vibe sombria. Footwork preciso.' },
+  { song: '0X1=LOVESONG',     artist: 'TXT',           year: 2021, diff: 3, style: 'emo rock',        dur: '3:53', tip: 'Vibe emo. Gestos de coração.' },
+  { song: 'LO$ER=LO♡ER',      artist: 'TXT',           year: 2022, diff: 4, style: 'rock pop',        dur: '3:31', tip: 'Energia rebelde. Saltos.' },
+  { song: 'Sugar Rush Ride',  artist: 'TXT',           year: 2023, diff: 4, style: 'dance pop',       dur: '2:50', tip: 'Vibe doce viciante. Quadril solto.' },
+  { song: 'Chasing That Feeling', artist: 'TXT',       year: 2023, diff: 3, style: 'pop bounce',      dur: '3:00', tip: 'Coreografia em V. Energia leve.' },
+  { song: 'Deja Vu',          artist: 'TXT',           year: 2024, diff: 4, style: 'edgy pop',        dur: '3:18', tip: 'Vibe deja vu. Movimentos repetitivos intencionais.' },
+
+  // ===== ATEEZ =====
+  { song: 'Pirate King',      artist: 'ATEEZ',         year: 2018, diff: 4, style: 'tribal pop',      dur: '3:08', tip: 'Vibe pirata. Saltos pesados.' },
+  { song: 'Hala Hala',        artist: 'ATEEZ',         year: 2019, diff: 4, style: 'tribal',          dur: '3:14', tip: 'Energia explosiva. Pisadas firmes.' },
+  { song: 'Wonderland',       artist: 'ATEEZ',         year: 2019, diff: 5, style: 'powerful',        dur: '3:51', tip: 'Coreografia bestial. Sincronia 100%.' },
+  { song: 'Answer',           artist: 'ATEEZ',         year: 2020, diff: 4, style: 'pop',             dur: '3:31', tip: 'Coreografia em V. Energia constante.' },
+  { song: 'Inception',        artist: 'ATEEZ',         year: 2020, diff: 4, style: 'house pop',       dur: '3:22', tip: 'Vibe sonho. Movimentos fluidos.' },
+  { song: 'Thanxx',           artist: 'ATEEZ',         year: 2020, diff: 4, style: 'attitude',        dur: '2:55', tip: 'Atitude gratidão. Pose firme.' },
+  { song: 'Fireworks',        artist: 'ATEEZ',         year: 2021, diff: 5, style: 'aggressive pop',  dur: '3:18', tip: 'Energia fogos. Saltos.' },
+  { song: 'Deja Vu',          artist: 'ATEEZ',         year: 2021, diff: 4, style: 'r&b pop',         dur: '3:25', tip: 'Vibe noir. Body roll suave.' },
+  { song: 'Bouncy',           artist: 'ATEEZ',         year: 2023, diff: 4, style: 'powerful pop',    dur: '3:00', tip: 'Bounce o tempo todo. Cardio puro.' },
+  { song: 'Crazy Form',       artist: 'ATEEZ',         year: 2023, diff: 5, style: 'aggressive',      dur: '3:21', tip: 'Form bestial. Resistência alta.' },
+  { song: 'Work',             artist: 'ATEEZ',         year: 2024, diff: 4, style: 'tribal pop',      dur: '2:42', tip: 'Pisadas marcantes. Atitude.' },
+
+  // ===== ENHYPEN =====
+  { song: 'Given-Taken',      artist: 'ENHYPEN',       year: 2020, diff: 4, style: 'dark pop',        dur: '3:33', tip: 'Vibe vampiresca. Linhas longas.' },
+  { song: 'Drunk-Dazed',      artist: 'ENHYPEN',       year: 2021, diff: 4, style: 'pop rock',        dur: '3:00', tip: 'Atmosfera. Body wave.' },
+  { song: 'FEVER',            artist: 'ENHYPEN',       year: 2021, diff: 4, style: 'house pop',       dur: '3:30', tip: 'Vibe febre. Energia.' },
+  { song: 'Tamed-Dashed',     artist: 'ENHYPEN',       year: 2021, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe selvagem. Footwork.' },
+  { song: 'Polaroid Love',    artist: 'ENHYPEN',       year: 2022, diff: 3, style: 'sweet pop',       dur: '2:51', tip: 'Vibe foto. Gestos com mão.' },
+  { song: 'Future Perfect',   artist: 'ENHYPEN',       year: 2022, diff: 4, style: 'pop',             dur: '3:18', tip: 'Energia poderosa. Saltos.' },
+  { song: 'Sweet Venom',      artist: 'ENHYPEN',       year: 2023, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe venenosa doce. Movimentos cíclicos.' },
+  { song: 'Bite Me',          artist: 'ENHYPEN',       year: 2023, diff: 4, style: 'edgy pop',        dur: '3:14', tip: 'Vibe vampírica. Atitude.' },
+  { song: 'XO',               artist: 'ENHYPEN',       year: 2024, diff: 4, style: 'pop',             dur: '2:54', tip: 'Vibe abraço-beijo. Suave.' },
+
+  // ===== Stray Kids extras =====
+  { song: 'Back Door',        artist: 'Stray Kids',    year: 2020, diff: 4, style: 'house pop',       dur: '3:32', tip: 'Vibe vegas. Energia ascendente.' },
+  { song: 'Thunderous',       artist: 'Stray Kids',    year: 2021, diff: 4, style: 'traditional pop', dur: '3:23', tip: 'Vibe tradicional coreana + trap.' },
+  { song: 'Domino',           artist: 'Stray Kids',    year: 2021, diff: 4, style: 'house',           dur: '3:00', tip: 'Efeito dominó. Movimentos em cascata.' },
+  { song: 'Case 143',         artist: 'Stray Kids',    year: 2022, diff: 3, style: 'pop',             dur: '3:15', tip: 'Vibe leve. Coreografia romântica.' },
+  { song: 'Hellevator',       artist: 'Stray Kids',    year: 2017, diff: 4, style: 'dark pop',        dur: '3:34', tip: 'Vibe sombria. Atmosfera.' },
+  { song: 'S-Class',          artist: 'Stray Kids',    year: 2023, diff: 4, style: 'aggressive',      dur: '3:08', tip: 'Energia s-class. Atitude.' },
+  { song: 'Megaverse',        artist: 'Stray Kids',    year: 2023, diff: 5, style: 'epic',            dur: '3:30', tip: 'Coreografia épica. Saltos.' },
+  { song: 'Chk Chk Boom',     artist: 'Stray Kids',    year: 2024, diff: 4, style: 'pop boom',        dur: '2:46', tip: 'Pisadas marcantes. Bouncy.' },
+  { song: 'MIROH',            artist: 'Stray Kids',    year: 2019, diff: 4, style: 'edm',             dur: '3:24', tip: 'Coreografia debut. Pulsações.' },
+  { song: 'Side Effects',     artist: 'Stray Kids',    year: 2019, diff: 4, style: 'aggressive',      dur: '2:51', tip: 'Vibe colateral. Atitude.' },
+
+  // ===== aespa extras =====
+  { song: 'Black Mamba',      artist: 'aespa',         year: 2020, diff: 4, style: 'electronic',      dur: '3:09', tip: 'Coreografia debut. Movimentos cibernéticos.' },
+  { song: 'Next Level',       artist: 'aespa',         year: 2021, diff: 4, style: 'experimental',    dur: '3:39', tip: 'Coreografia técnica. Sincronia precisa.' },
+  { song: 'Savage',           artist: 'aespa',         year: 2021, diff: 4, style: 'pop',             dur: '3:34', tip: 'Atitude savage. Linhas amplas.' },
+  { song: 'Girls',            artist: 'aespa',         year: 2022, diff: 4, style: 'pop rock',        dur: '3:20', tip: 'Energia girl power. Saltos.' },
+  { song: 'Better Things',    artist: 'aespa',         year: 2023, diff: 3, style: 'r&b pop',         dur: '3:01', tip: 'Vibe melhor. Linhas longas.' },
+  { song: 'Supernova',        artist: 'aespa',         year: 2024, diff: 4, style: 'experimental',    dur: '2:58', tip: 'Vibe estelar. Movimentos cósmicos.' },
+  { song: 'Armageddon',       artist: 'aespa',         year: 2024, diff: 4, style: 'apocalyptic',     dur: '2:55', tip: 'Vibe fim do mundo. Atitude.' },
+  { song: 'Whiplash',         artist: 'aespa',         year: 2024, diff: 4, style: 'edgy pop',        dur: '2:38', tip: 'Movimento chicote. Pulso.' },
+
+  // ===== IVE extras =====
+  { song: 'Off The Record',   artist: 'IVE',           year: 2023, diff: 3, style: 'pop',             dur: '2:51', tip: 'Vibe leve secreta. Atitude.' },
+  { song: 'Baddie',           artist: 'IVE',           year: 2023, diff: 3, style: 'urban pop',       dur: '2:54', tip: 'Vibe badass. Atitude.' },
+  { song: 'Heya',             artist: 'IVE',           year: 2024, diff: 3, style: 'tribal pop',      dur: '2:54', tip: 'Vibe tribal. Saltos.' },
+  { song: 'Accendio',         artist: 'IVE',           year: 2024, diff: 3, style: 'pop',             dur: '2:51', tip: 'Vibe mágica. Gestos amplos.' },
+  { song: 'Royal',            artist: 'IVE',           year: 2024, diff: 3, style: 'pop',             dur: '2:53', tip: 'Vibe real. Postura régia.' },
+
+  // ===== (G)I-DLE extras =====
+  { song: 'LATATA',           artist: '(G)I-DLE',      year: 2018, diff: 3, style: 'tropical pop',    dur: '3:20', tip: 'Coreografia debut. Quadril solto.' },
+  { song: 'Senorita',         artist: '(G)I-DLE',      year: 2019, diff: 3, style: 'latin pop',       dur: '3:21', tip: 'Vibe latina. Movimentos sensuais.' },
+  { song: 'Oh My God',        artist: '(G)I-DLE',      year: 2020, diff: 4, style: 'dark pop',        dur: '3:30', tip: 'Atmosfera. Atitude.' },
+  { song: 'Hwaa',             artist: '(G)I-DLE',      year: 2021, diff: 3, style: 'oriental pop',    dur: '3:15', tip: 'Vibe oriental. Linhas longas.' },
+  { song: 'Nxde',             artist: '(G)I-DLE',      year: 2022, diff: 3, style: 'pop',             dur: '3:11', tip: 'Coreografia provocativa. Atitude.' },
+  { song: 'Allergy',          artist: '(G)I-DLE',      year: 2023, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe contagiante. Footwork.' },
+  { song: 'Super Lady',       artist: '(G)I-DLE',      year: 2024, diff: 4, style: 'powerful',        dur: '2:54', tip: 'Atitude super. Pose firme.' },
+  { song: 'Klaxon',           artist: '(G)I-DLE',      year: 2024, diff: 4, style: 'edgy pop',        dur: '2:54', tip: 'Vibe alerta. Pulsos.' },
+  { song: 'Wife',             artist: '(G)I-DLE',      year: 2024, diff: 3, style: 'pop',             dur: '2:50', tip: 'Vibe esposa. Movimentos suaves.' },
+
+  // ===== LE SSERAFIM extras =====
+  { song: 'Fearless',         artist: 'LE SSERAFIM',   year: 2022, diff: 3, style: 'pop',             dur: '3:00', tip: 'Coreografia debut. Confiança.' },
+  { song: 'Unforgiven',       artist: 'LE SSERAFIM',   year: 2023, diff: 4, style: 'western pop',     dur: '2:54', tip: 'Vibe faroeste. Atitude.' },
+  { song: 'Perfect Night',    artist: 'LE SSERAFIM',   year: 2023, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe perfeita. Footwork suave.' },
+  { song: 'Pierrot',          artist: 'LE SSERAFIM',   year: 2025, diff: 3, style: 'circus pop',      dur: '3:00', tip: 'Vibe palhaço. Gestos teatrais.' },
+
+  // ===== NewJeans extras =====
+  { song: 'Attention',        artist: 'NewJeans',      year: 2022, diff: 2, style: 'casual pop',      dur: '3:00', tip: 'Coreografia leve. Vibe natural.' },
+  { song: 'Cookie',           artist: 'NewJeans',      year: 2022, diff: 2, style: 'r&b pop',         dur: '3:10', tip: 'Movimentos suaves. Foco no quadril.' },
+  { song: 'Ditto',            artist: 'NewJeans',      year: 2022, diff: 2, style: 'nostalgic pop',   dur: '3:05', tip: 'Vibe nostálgica. Linhas longas.' },
+  { song: 'ETA',              artist: 'NewJeans',      year: 2023, diff: 3, style: 'casual pop',      dur: '2:31', tip: 'Vibe casual. Footwork natural.' },
+  { song: 'Cool With You',    artist: 'NewJeans',      year: 2023, diff: 3, style: 'r&b pop',         dur: '2:42', tip: 'Vibe verão. Body roll.' },
+  { song: 'New Jeans',        artist: 'NewJeans',      year: 2023, diff: 3, style: 'jazz pop',        dur: '2:37', tip: 'Vibe pop divertida. Saltinhos.' },
+  { song: 'ASAP',             artist: 'NewJeans',      year: 2024, diff: 3, style: 'r&b pop',         dur: '2:53', tip: 'Vibe leve. Movimentos fluidos.' },
+  { song: 'How Sweet',        artist: 'NewJeans',      year: 2024, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe doce. Gestos amplos.' },
+  { song: 'Supernatural',     artist: 'NewJeans',      year: 2024, diff: 3, style: 'r&b pop',         dur: '2:53', tip: 'Vibe sobrenatural. Linhas suaves.' },
+
+  // ===== TREASURE =====
+  { song: 'Boy',              artist: 'TREASURE',      year: 2020, diff: 3, style: 'school pop',      dur: '3:24', tip: 'Coreografia debut. Energia juvenil.' },
+  { song: 'Jikjin',           artist: 'TREASURE',      year: 2022, diff: 4, style: 'pop',             dur: '3:08', tip: 'Vibe direta. Saltos.' },
+  { song: 'Hello',            artist: 'TREASURE',      year: 2022, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe saudação. Gestos amplos.' },
+  { song: 'MOVE',             artist: 'TREASURE',      year: 2024, diff: 4, style: 'pop',             dur: '3:00', tip: 'Movimento constante. Cardio.' },
+
+  // ===== The Boyz =====
+  { song: 'Reveal',           artist: 'The Boyz',      year: 2020, diff: 4, style: 'powerful pop',    dur: '3:00', tip: 'Vibe reveal. Atitude.' },
+  { song: 'Right Here',       artist: 'The Boyz',      year: 2018, diff: 3, style: 'school pop',      dur: '3:21', tip: 'Vibe estudante. Energia.' },
+  { song: 'Maverick',         artist: 'The Boyz',      year: 2021, diff: 4, style: 'powerful',        dur: '3:20', tip: 'Vibe rebelde. Pisadas.' },
+  { song: 'Phantasy',         artist: 'The Boyz',      year: 2023, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe fantasia. Movimentos.' },
+
+  // ===== MONSTA X =====
+  { song: 'DRAMARAMA',        artist: 'MONSTA X',      year: 2017, diff: 4, style: 'dark pop',        dur: '3:30', tip: 'Vibe drama. Atitude.' },
+  { song: 'GOT IT',           artist: 'MONSTA X',      year: 2018, diff: 4, style: 'pop',             dur: '3:23', tip: 'Vibe got it. Pose.' },
+  { song: 'ALLIGATOR',        artist: 'MONSTA X',      year: 2019, diff: 5, style: 'aggressive',      dur: '3:11', tip: 'Vibe predator. Movimentos amplos.' },
+  { song: 'FOLLOW',           artist: 'MONSTA X',      year: 2019, diff: 4, style: 'dark pop',        dur: '3:23', tip: 'Vibe follow. Linhas.' },
+  { song: 'Beautiful Liar',   artist: 'MONSTA X',      year: 2021, diff: 4, style: 'pop',             dur: '3:24', tip: 'Vibe mentira. Body roll.' },
+
+  // ===== MAMAMOO =====
+  { song: 'Hip',              artist: 'MAMAMOO',       year: 2019, diff: 3, style: 'sass pop',        dur: '3:18', tip: 'Atitude hip. Quadril solto.' },
+  { song: 'Decalcomanie',     artist: 'MAMAMOO',       year: 2016, diff: 3, style: 'soul pop',        dur: '3:23', tip: 'Vibe soul. Body roll.' },
+  { song: 'Egotistic',        artist: 'MAMAMOO',       year: 2018, diff: 3, style: 'latin pop',       dur: '3:24', tip: 'Vibe latina. Quadril.' },
+  { song: 'Aya',              artist: 'MAMAMOO',       year: 2020, diff: 3, style: 'circus pop',      dur: '3:22', tip: 'Vibe circo. Gestos teatrais.' },
+  { song: 'Where Are We Now', artist: 'MAMAMOO',       year: 2021, diff: 2, style: 'ballad',          dur: '3:00', tip: 'Coreografia lírica.' },
+  { song: 'Starry Night',     artist: 'MAMAMOO',       year: 2018, diff: 2, style: 'pop',             dur: '3:35', tip: 'Vibe noite estrelada. Suave.' },
+
+  // ===== GFRIEND =====
+  { song: 'Me Gustas Tu',     artist: 'GFRIEND',       year: 2015, diff: 4, style: 'school pop',      dur: '3:31', tip: 'Coreografia famosa do tombo. Energia.' },
+  { song: 'Fingertip',        artist: 'GFRIEND',       year: 2017, diff: 4, style: 'pop',             dur: '3:14', tip: 'Vibe ponta dos dedos.' },
+  { song: 'Time For The Moon Night', artist: 'GFRIEND', year: 2018, diff: 3, style: 'fantasy pop',    dur: '3:34', tip: 'Vibe noite lua. Linhas longas.' },
+  { song: 'Mago',             artist: 'GFRIEND',       year: 2020, diff: 3, style: 'disco pop',       dur: '3:31', tip: 'Vibe disco. Quadril.' },
+  { song: 'Apple',            artist: 'GFRIEND',       year: 2020, diff: 3, style: 'fairy pop',       dur: '3:23', tip: 'Vibe maçã proibida. Gestos.' },
+  { song: 'Crossroads',       artist: 'GFRIEND',       year: 2020, diff: 3, style: 'pop',             dur: '3:18', tip: 'Vibe encruzilhada. Movimentos.' },
+
+  // ===== Solo: IU =====
+  { song: 'Eight',            artist: 'IU',            year: 2020, diff: 2, style: 'pop',             dur: '2:48', tip: 'Coreografia simples. Sentimento.' },
+  { song: 'Celebrity',        artist: 'IU',            year: 2021, diff: 3, style: 'pop',             dur: '3:13', tip: 'Vibe celebridade. Atitude.' },
+  { song: 'Lilac',            artist: 'IU',            year: 2021, diff: 3, style: 'sweet pop',       dur: '3:42', tip: 'Vibe lilás. Gestos suaves.' },
+  { song: 'Blueming',         artist: 'IU',            year: 2019, diff: 2, style: 'cute pop',        dur: '3:31', tip: 'Vibe blooming. Linhas.' },
+  { song: 'Strawberry Moon',  artist: 'IU',            year: 2021, diff: 2, style: 'dreamy pop',      dur: '3:24', tip: 'Vibe lua morango. Suave.' },
+  { song: 'Through the Night', artist: 'IU',           year: 2017, diff: 2, style: 'ballad',          dur: '3:36', tip: 'Coreografia íntima. Sentimento.' },
+
+  // ===== Solo: Taeyeon =====
+  { song: 'I',                artist: 'Taeyeon',       year: 2015, diff: 3, style: 'pop',             dur: '3:53', tip: 'Coreografia solo. Linhas amplas.' },
+  { song: 'Why',              artist: 'Taeyeon',       year: 2016, diff: 3, style: 'tropical pop',    dur: '3:15', tip: 'Vibe tropical. Quadril.' },
+  { song: 'Spark',            artist: 'Taeyeon',       year: 2019, diff: 3, style: 'pop',             dur: '3:13', tip: 'Vibe centelha. Energia.' },
+  { song: 'INVU',             artist: 'Taeyeon',       year: 2022, diff: 3, style: 'pop',             dur: '3:25', tip: 'Vibe inveja. Atitude.' },
+  { song: 'To. X',            artist: 'Taeyeon',       year: 2023, diff: 3, style: 'pop',             dur: '3:24', tip: 'Vibe para X. Atitude.' },
+
+  // ===== Solo: Sunmi =====
+  { song: 'Gashina',          artist: 'Sunmi',         year: 2017, diff: 3, style: 'pop',             dur: '3:34', tip: 'Vibe gun. Atitude.' },
+  { song: 'Heroine',          artist: 'Sunmi',         year: 2018, diff: 3, style: 'tango pop',       dur: '3:23', tip: 'Vibe tango. Dramatúrgico.' },
+  { song: 'Siren',            artist: 'Sunmi',         year: 2018, diff: 3, style: 'mystical pop',    dur: '3:18', tip: 'Vibe sereia. Linhas onduladas.' },
+  { song: 'Tail',             artist: 'Sunmi',         year: 2021, diff: 3, style: 'kitten pop',      dur: '2:50', tip: 'Vibe gato. Movimentos felinos.' },
+  { song: 'You Can\'t Sit With Us', artist: 'Sunmi',   year: 2022, diff: 3, style: 'attitude pop',    dur: '2:56', tip: 'Atitude clique. Gesto.' },
+
+  // ===== Solo: Jennie =====
+  { song: 'Solo',             artist: 'Jennie',        year: 2018, diff: 3, style: 'pop',             dur: '2:53', tip: 'Vibe solo. Atitude.' },
+  { song: 'You & Me',         artist: 'Jennie',        year: 2023, diff: 3, style: 'pop',             dur: '3:09', tip: 'Vibe vocês. Suave.' },
+  { song: 'Mantra',           artist: 'Jennie',        year: 2024, diff: 3, style: 'pop',             dur: '2:53', tip: 'Vibe mantra. Repetições.' },
+  { song: 'Like JENNIE',      artist: 'Jennie',        year: 2025, diff: 3, style: 'pop',             dur: '2:48', tip: 'Atitude JENNIE. Pose.' },
+  { song: 'ExtraL',           artist: 'Jennie',        year: 2025, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe extra. Atitude.' },
+
+  // ===== Solo: Lisa =====
+  { song: 'Lalisa',           artist: 'Lisa',          year: 2021, diff: 4, style: 'tribal pop',      dur: '3:18', tip: 'Vibe Lisa. Pisadas.' },
+  { song: 'Money',            artist: 'Lisa',          year: 2021, diff: 4, style: 'pop',             dur: '2:48', tip: 'Vibe dinheiro. Atitude.' },
+  { song: 'Rockstar',         artist: 'Lisa',          year: 2024, diff: 4, style: 'rock pop',        dur: '2:32', tip: 'Vibe rockstar. Atitude.' },
+  { song: 'NEW WOMAN',        artist: 'Lisa',          year: 2024, diff: 4, style: 'pop',             dur: '2:42', tip: 'Vibe nova mulher. Atitude.' },
+
+  // ===== Solo: Rosé =====
+  { song: 'On The Ground',    artist: 'Rosé',          year: 2021, diff: 3, style: 'pop',             dur: '2:50', tip: 'Vibe no chão. Linhas.' },
+  { song: 'Gone',             artist: 'Rosé',          year: 2021, diff: 2, style: 'ballad pop',      dur: '3:24', tip: 'Vibe perdida. Suave.' },
+  { song: 'APT.',             artist: 'Rosé & Bruno Mars', year: 2024, diff: 2, style: 'pop',         dur: '2:50', tip: 'Vibe brincadeira coreana. Gesto.' },
+  { song: 'Number One Girl',  artist: 'Rosé',          year: 2024, diff: 2, style: 'pop',             dur: '2:50', tip: 'Vibe número um. Atitude.' },
+
+  // ===== Solo: Jisoo =====
+  { song: 'Flower',           artist: 'Jisoo',         year: 2023, diff: 3, style: 'pop',             dur: '2:33', tip: 'Vibe flor. Suave.' },
+  { song: 'All Eyes On Me',   artist: 'Jisoo',         year: 2023, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe centro. Atitude.' },
+
+  // ===== Solo: Chungha =====
+  { song: 'Snapping',         artist: 'Chungha',       year: 2019, diff: 3, style: 'r&b pop',         dur: '3:18', tip: 'Vibe estalo. Quadril.' },
+  { song: 'Stay Tonight',     artist: 'Chungha',       year: 2020, diff: 3, style: 'pop',             dur: '3:14', tip: 'Vibe fica. Atitude.' },
+  { song: 'Roller Coaster',   artist: 'Chungha',       year: 2018, diff: 3, style: 'tropical pop',    dur: '3:09', tip: 'Vibe montanha russa. Energia.' },
+  { song: 'Bicycle',          artist: 'Chungha',       year: 2021, diff: 3, style: 'house pop',       dur: '3:15', tip: 'Vibe bike. Movimento.' },
+
+  // ===== Solo: Somi =====
+  { song: 'What You Waiting For', artist: 'Somi',      year: 2020, diff: 3, style: 'pop',             dur: '3:01', tip: 'Vibe espera. Atitude.' },
+  { song: 'Dumb Dumb',        artist: 'Somi',          year: 2021, diff: 3, style: 'pop',             dur: '3:30', tip: 'Vibe boba. Gestos.' },
+  { song: 'Fast Forward',     artist: 'Somi',          year: 2023, diff: 3, style: 'pop',             dur: '3:08', tip: 'Vibe acelera. Movimento.' },
+  { song: 'Birthday',         artist: 'Somi',          year: 2024, diff: 3, style: 'pop',             dur: '2:54', tip: 'Vibe aniversário.' },
+
+  // ===== Solo: HyunA =====
+  { song: 'Bubble Pop!',      artist: 'HyunA',         year: 2011, diff: 4, style: 'pop',             dur: '3:30', tip: 'Atitude clássica. Quadril.' },
+  { song: 'Red',              artist: 'HyunA',         year: 2014, diff: 4, style: 'pop',             dur: '3:24', tip: 'Vibe vermelha. Energia.' },
+  { song: 'How\'s This?',     artist: 'HyunA',         year: 2016, diff: 4, style: 'pop',             dur: '3:35', tip: 'Vibe assim. Atitude.' },
+
+  // ===== KISS OF LIFE =====
+  { song: 'Bad News',         artist: 'KISS OF LIFE',  year: 2023, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe notícia ruim. Atitude.' },
+  { song: 'Sticky',           artist: 'KISS OF LIFE',  year: 2024, diff: 3, style: 'sensual pop',     dur: '2:51', tip: 'Vibe grudenta. Sensual.' },
+  { song: 'Midas Touch',      artist: 'KISS OF LIFE',  year: 2024, diff: 3, style: 'pop',             dur: '2:54', tip: 'Vibe toque dourado. Atitude.' },
+  { song: 'Igloo',            artist: 'KISS OF LIFE',  year: 2023, diff: 3, style: 'r&b pop',         dur: '3:01', tip: 'Vibe iglu. Movimentos suaves.' },
+
+  // ===== ILLIT =====
+  { song: 'Lucky Girl Syndrome', artist: 'ILLIT',      year: 2024, diff: 2, style: 'cute pop',        dur: '2:53', tip: 'Vibe sorte. Sorriso.' },
+  { song: 'Cherish',          artist: 'ILLIT',         year: 2024, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe valor. Gestos amplos.' },
+  { song: 'Tick Tack',        artist: 'ILLIT',         year: 2024, diff: 3, style: 'pop',             dur: '2:56', tip: 'Vibe relógio. Movimento.' },
+  { song: 'Almond Chocolate', artist: 'ILLIT',         year: 2025, diff: 2, style: 'cute pop',        dur: '2:54', tip: 'Vibe doce.' },
+
+  // ===== BABYMONSTER =====
+  { song: 'Sheesh',           artist: 'BABYMONSTER',   year: 2024, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe sheesh. Atitude.' },
+  { song: 'Stuck in the Middle', artist: 'BABYMONSTER', year: 2024, diff: 4, style: 'pop',            dur: '2:53', tip: 'Vibe travada. Atitude.' },
+  { song: 'Drip',             artist: 'BABYMONSTER',   year: 2025, diff: 4, style: 'pop',             dur: '2:46', tip: 'Vibe drip. Atitude.' },
+  { song: 'Forever',          artist: 'BABYMONSTER',   year: 2024, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe para sempre.' },
+  { song: 'Batter Up',        artist: 'BABYMONSTER',   year: 2023, diff: 4, style: 'pop',             dur: '2:52', tip: 'Vibe taco. Energia.' },
+
+  // ===== NMIXX =====
+  { song: 'O.O',              artist: 'NMIXX',         year: 2022, diff: 5, style: 'experimental',    dur: '3:32', tip: 'Coreografia 2 partes. Atenção.' },
+  { song: 'Dice',             artist: 'NMIXX',         year: 2022, diff: 4, style: 'pop',             dur: '3:09', tip: 'Vibe dado. Energia.' },
+  { song: 'Love Me Like This', artist: 'NMIXX',        year: 2023, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe me ame. Atitude.' },
+  { song: 'DASH',             artist: 'NMIXX',         year: 2024, diff: 4, style: 'pop',             dur: '2:54', tip: 'Vibe corrida. Energia.' },
+
+  // ===== Kep1er =====
+  { song: 'Wa Da Da',         artist: 'Kep1er',        year: 2022, diff: 3, style: 'pop',             dur: '2:54', tip: 'Vibe debut. Energia.' },
+  { song: 'Up!',              artist: 'Kep1er',        year: 2022, diff: 3, style: 'pop',             dur: '2:53', tip: 'Vibe sobe. Saltos.' },
+  { song: 'Galileo',          artist: 'Kep1er',        year: 2023, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe galileu. Estrelas.' },
+  { song: 'Giddy',            artist: 'Kep1er',        year: 2023, diff: 3, style: 'pop',             dur: '2:51', tip: 'Vibe tonta.' },
+  { song: 'Magic Hour',       artist: 'Kep1er',        year: 2024, diff: 3, style: 'pop',             dur: '2:54', tip: 'Vibe hora mágica. Suave.' },
+
+  // ===== TripleS / triple S =====
+  { song: 'Rising',           artist: 'tripleS',       year: 2024, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe subindo. Energia.' },
+  { song: 'Girls Never Die',  artist: 'tripleS',       year: 2024, diff: 4, style: 'rock pop',        dur: '3:00', tip: 'Vibe garotas. Atitude.' },
+
+  // ===== Boys: BoyNextDoor =====
+  { song: 'But Sometimes',    artist: 'BOYNEXTDOOR',   year: 2023, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe casual. Energia.' },
+  { song: 'Earth, Wind & Fire', artist: 'BOYNEXTDOOR', year: 2024, diff: 3, style: 'funky pop',       dur: '2:38', tip: 'Vibe funk. Quadril.' },
+  { song: 'OBSESSED',         artist: 'BOYNEXTDOOR',   year: 2024, diff: 3, style: 'pop',             dur: '2:39', tip: 'Vibe obsessão.' },
+
+  // ===== RIIZE =====
+  { song: 'Get A Guitar',     artist: 'RIIZE',         year: 2023, diff: 3, style: 'pop rock',        dur: '3:00', tip: 'Vibe debut. Energia.' },
+  { song: 'Love 119',         artist: 'RIIZE',         year: 2024, diff: 3, style: 'pop',             dur: '2:51', tip: 'Vibe emergência amor.' },
+  { song: 'Boom Boom Bass',   artist: 'RIIZE',         year: 2024, diff: 4, style: 'pop',             dur: '2:51', tip: 'Vibe bass. Pisadas.' },
+
+  // ===== ZEROBASEONE =====
+  { song: 'In Bloom',         artist: 'ZEROBASEONE',   year: 2023, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe florescendo.' },
+  { song: 'Crush',            artist: 'ZEROBASEONE',   year: 2024, diff: 3, style: 'pop',             dur: '2:54', tip: 'Vibe paixão. Atitude.' },
+  { song: 'Feel the Pop',     artist: 'ZEROBASEONE',   year: 2024, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe sente o pop.' },
+  { song: 'You and I',        artist: 'ZEROBASEONE',   year: 2024, diff: 2, style: 'pop',             dur: '3:01', tip: 'Vibe vocês.' },
+
+  // ===== Various solo and older =====
+  { song: 'BoA Hurricane Venus', artist: 'BoA',        year: 2010, diff: 4, style: 'powerful pop',    dur: '3:15', tip: 'Coreografia lendária. Linhas técnicas.' },
+  { song: 'Number 1',         artist: 'BoA',           year: 2003, diff: 3, style: 'r&b pop',         dur: '3:46', tip: 'Vibe r&b clássica. Quadril.' },
+  { song: 'No.1',             artist: 'CL',            year: 2020, diff: 3, style: 'attitude',        dur: '3:35', tip: 'Vibe número 1. Atitude.' },
+  { song: 'HELLO BITCHES',    artist: 'CL',            year: 2015, diff: 4, style: 'attitude',        dur: '2:51', tip: 'Atitude bestial. Pose.' },
+  { song: 'POWER',            artist: 'G-Dragon',      year: 2024, diff: 4, style: 'pop rock',        dur: '3:00', tip: 'Vibe poder. Atitude.' },
+  { song: 'HOME SWEET HOME',  artist: 'G-Dragon',      year: 2024, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe lar. Suave.' },
+
+  // ===== EVERGLOW =====
+  { song: 'Bon Bon Chocolat', artist: 'EVERGLOW',      year: 2019, diff: 4, style: 'powerful pop',    dur: '3:18', tip: 'Vibe debut. Pulsos.' },
+  { song: 'Adios',            artist: 'EVERGLOW',      year: 2019, diff: 4, style: 'pop',             dur: '3:18', tip: 'Vibe adios. Atitude.' },
+  { song: 'La Di Da',         artist: 'EVERGLOW',      year: 2020, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe la di da.' },
+  { song: 'FIRST',            artist: 'EVERGLOW',      year: 2021, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe primeira.' },
+
+  // ===== DREAMCATCHER =====
+  { song: 'BEcause',          artist: 'Dreamcatcher',  year: 2021, diff: 4, style: 'rock pop',        dur: '3:31', tip: 'Vibe rock. Energia.' },
+  { song: 'MAISON',           artist: 'Dreamcatcher',  year: 2022, diff: 4, style: 'rock',            dur: '3:09', tip: 'Vibe casa. Atmosfera.' },
+  { song: 'OOTD',             artist: 'Dreamcatcher',  year: 2023, diff: 4, style: 'rock pop',        dur: '3:00', tip: 'Vibe outfit.' },
+
+  // ===== WJSN / Cosmic Girls =====
+  { song: 'As You Wish',      artist: 'WJSN',          year: 2019, diff: 3, style: 'fairy pop',       dur: '3:39', tip: 'Vibe desejo. Mágica.' },
+  { song: 'Boogie Up',        artist: 'WJSN',          year: 2019, diff: 3, style: 'pop',             dur: '3:25', tip: 'Vibe boogie. Quadril.' },
+  { song: 'Last Sequence',    artist: 'WJSN',          year: 2020, diff: 3, style: 'pop',             dur: '3:24', tip: 'Vibe última sequência.' },
+
+  // ===== Apink =====
+  { song: 'NoNoNo',           artist: 'Apink',         year: 2013, diff: 3, style: 'cute pop',        dur: '3:38', tip: 'Coreografia icônica nono. Gestos.' },
+  { song: 'Mr. Chu',          artist: 'Apink',         year: 2014, diff: 3, style: 'cute pop',        dur: '3:39', tip: 'Vibe Mr. Chu.' },
+  { song: 'I\'m so sick',     artist: 'Apink',         year: 2018, diff: 3, style: 'pop',             dur: '3:21', tip: 'Vibe enjoada.' },
+  { song: 'Dumhdurum',        artist: 'Apink',         year: 2020, diff: 3, style: 'pop',             dur: '3:27', tip: 'Vibe dumhdurum.' },
+
+  // ===== MISC POPULAR =====
+  { song: 'Knock',            artist: 'ASTRO',         year: 2020, diff: 4, style: 'pop',             dur: '3:10', tip: 'Vibe batida porta.' },
+  { song: 'ONE',              artist: 'ASTRO',         year: 2021, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe um.' },
+  { song: 'Candy Sugar Pop',  artist: 'ASTRO',         year: 2018, diff: 3, style: 'pop',             dur: '3:39', tip: 'Vibe doce. Energia.' },
+  { song: 'LIT',              artist: 'ONEUS',         year: 2020, diff: 4, style: 'tribal pop',      dur: '3:39', tip: 'Vibe sword. Atitude.' },
+  { song: 'Same Scent',       artist: 'ONEUS',         year: 2022, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe perfume.' },
+  { song: 'Now',              artist: 'ONEUS',         year: 2022, diff: 3, style: 'pop',             dur: '3:00', tip: 'Vibe agora.' },
+  { song: 'TEAR',             artist: 'SF9',           year: 2020, diff: 4, style: 'pop',             dur: '3:21', tip: 'Vibe lágrima. Atitude.' },
+  { song: 'RPM',              artist: 'SF9',           year: 2020, diff: 4, style: 'pop',             dur: '3:00', tip: 'Vibe velocidade.' },
+  { song: 'Voodoo Doll',      artist: 'VIXX',          year: 2013, diff: 4, style: 'dark pop',        dur: '3:21', tip: 'Vibe voodoo. Atitude.' },
+  { song: 'Chained Up',       artist: 'VIXX',          year: 2015, diff: 4, style: 'powerful',        dur: '3:25', tip: 'Vibe acorrentado.' },
+  { song: 'Shine',            artist: 'Pentagon',      year: 2018, diff: 3, style: 'pop',             dur: '3:36', tip: 'Vibe brilho. Energia.' },
+  { song: 'Naughty Boy',      artist: 'Pentagon',      year: 2019, diff: 3, style: 'pop',             dur: '3:15', tip: 'Vibe travesso.' },
+  { song: 'Daisy',            artist: 'Pentagon',      year: 2020, diff: 3, style: 'pop',             dur: '3:39', tip: 'Vibe margarida.' },
+
+  // ===== Old school iconic =====
+  { song: 'Gangnam Style',    artist: 'PSY',           year: 2012, diff: 2, style: 'novelty',         dur: '3:39', tip: 'Coreografia mundialmente famosa. Cavalinho.' },
+  { song: 'Gentleman',        artist: 'PSY',           year: 2013, diff: 2, style: 'novelty',         dur: '3:14', tip: 'Vibe cavalheiro. Gestos.' },
+  { song: 'Daddy',            artist: 'PSY',           year: 2015, diff: 2, style: 'novelty',         dur: '3:48', tip: 'Vibe pai. Energia.' },
+  { song: 'Sorry Sorry',      artist: 'Super Junior',  year: 2009, diff: 3, style: 'pop classic',     dur: '3:51', tip: 'Hand wash legendary.' },
+  { song: 'Nobody',           artist: 'Wonder Girls',  year: 2008, diff: 2, style: 'retro pop',       dur: '3:32', tip: 'Vibe retrô. Dedinhos.' },
+  { song: 'Tell Me',          artist: 'Wonder Girls',  year: 2007, diff: 2, style: 'retro pop',       dur: '3:32', tip: 'Vibe tell me.' },
+  { song: 'Abracadabra',      artist: 'Brown Eyed Girls', year: 2009, diff: 4, style: 'sensual',      dur: '3:36', tip: 'Vibe arrow dance. Sensual.' },
+  { song: 'Bo Peep Bo Peep',  artist: 'T-ara',         year: 2009, diff: 3, style: 'cute pop',        dur: '3:23', tip: 'Vibe gatinha. Cute.' },
+  { song: 'Roly-Poly',        artist: 'T-ara',         year: 2011, diff: 3, style: 'retro pop',       dur: '3:34', tip: 'Vibe retrô anos 80.' },
+
+  // ===== EXTRA 2024-2025 =====
+  { song: 'Whiplash',         artist: 'aespa',         year: 2024, diff: 4, style: 'edgy pop',        dur: '2:38', tip: 'Movimento chicote rápido.' },
+  { song: 'Mantra',           artist: 'Jennie',        year: 2024, diff: 3, style: 'pop',             dur: '2:55', tip: 'Repetição é a mantra.' },
+  { song: 'Born to Be',       artist: 'ITZY',          year: 2024, diff: 4, style: 'powerful',        dur: '3:39', tip: 'Atitude. Coreografia técnica.' },
+  { song: 'Easy',             artist: 'LE SSERAFIM',   year: 2024, diff: 3, style: 'sensual pop',     dur: '2:50', tip: 'Movimento contínuo.' },
+  { song: 'Magnetic',         artist: 'ILLIT',         year: 2024, diff: 2, style: 'pop bounce',      dur: '2:35', tip: 'Foco no isolamento de quadril.' },
 ];
 
 // Objetivos visuais (Goals) — "como eu quero ficar".
@@ -3836,6 +4299,153 @@ const EXERCISE_LIBRARY = {
       description: 'Volume e pump.', technique: 'Abra a corda no fim.', mistakes: 'Cotovelo subindo.', tip: 'Drop set no fim.' },
     { name: 'Tríceps francês', target: '3×10', muscles: 'tríceps cabeça longa',
       description: 'Alongamento profundo.', technique: 'Halter atrás da cabeça, cotovelos apontando pro teto.', mistakes: 'Cotovelo abrindo.', tip: 'Use halter de peso médio com amplitude total.' },
+  ],
+  // ===== Splits combinados extras =====
+  'Costas + Ombros + Bíceps': [
+    { name: 'Barra fixa (pull-up)', target: '4×AMRAP', muscles: 'dorsal, bíceps',
+      description: 'Composto pesado de tração vertical.', technique: 'Pegada pronada, queixo passa a barra.',
+      mistakes: 'Subir só com bíceps. Sub-amplitude.', tip: 'Negativas + assistida se ainda não tira.' },
+    { name: 'Remada curvada barra', target: '4×6–10', muscles: 'dorsal, romboides, trapézio médio',
+      description: 'Espessura de dorsal.', technique: 'Tronco ~45°, puxa até umbigo.',
+      mistakes: 'Tronco subindo a cada rep.', tip: 'Aperta escápulas no topo.' },
+    { name: 'Desenvolvimento halteres sentado', target: '4×8–12', muscles: 'deltóide ant+médio',
+      description: 'Pressão vertical com mais amplitude.', technique: 'Halteres na altura das orelhas.',
+      mistakes: 'Travar cotovelos.', tip: 'Pegada neutra é ombro-amigável.' },
+    { name: 'Elevação lateral', target: '4×12–15', muscles: 'deltóide médio',
+      description: 'Largura de ombro.', technique: 'Cotovelo guia o movimento.',
+      mistakes: 'Trapézio subindo.', tip: 'Pulso ligeiramente abaixado no topo.' },
+    { name: 'Face pull', target: '3×15', muscles: 'deltóide posterior, manguito',
+      description: 'Antídoto da postura cifótica.', technique: 'Puxa até as mãos chegarem nas orelhas.',
+      mistakes: 'Carga pesada (perde forma).', tip: 'Faz no fim de todo treino.' },
+    { name: 'Rosca direta barra', target: '3×8–12', muscles: 'bíceps braquial',
+      description: 'Hipertrofia clássica.', technique: 'Cotovelos colados ao corpo.',
+      mistakes: 'Balanço de quadril.', tip: 'Encoste as costas na parede pra travar.' },
+    { name: 'Rosca martelo', target: '3×10–12', muscles: 'bíceps + braquiorradial',
+      description: 'Braquial e antebraço.', technique: 'Pegada neutra, cotovelo fixo.',
+      mistakes: 'Cotovelo indo pra frente.', tip: 'Superset com rosca direta.' },
+  ],
+  'Peito + Ombros + Tríceps': [
+    { name: 'Supino reto barra', target: '4×6–10', muscles: 'peitoral, tríceps, deltóide ant.',
+      description: 'Composto principal de peito.', technique: 'Escápula retraída, descida controlada.',
+      mistakes: 'Levantar bunda do banco.', tip: 'Pés firmes no chão.' },
+    { name: 'Supino inclinado halteres', target: '4×8–12', muscles: 'peito superior, deltóide ant.',
+      description: 'Foca peito alto.', technique: 'Banco 30–45°, halteres na largura dos ombros.',
+      mistakes: 'Banco íngreme demais.', tip: 'Sem encostar halteres no topo.' },
+    { name: 'Desenvolvimento militar', target: '4×6–10', muscles: 'deltóide anterior, tríceps',
+      description: 'Pressão vertical pesada.', technique: 'Core travado, sobe a barra em linha reta.',
+      mistakes: 'Hiperestender lombar.', tip: 'Imagine atravessar uma janela com a cabeça.' },
+    { name: 'Elevação lateral', target: '4×12–15', muscles: 'deltóide médio',
+      description: 'Largura de ombro.', technique: 'Cotovelo guia o movimento.',
+      mistakes: 'Polegar pra cima (vira ant.).', tip: 'Halteres leves.' },
+    { name: 'Crucifixo polia', target: '3×10–15', muscles: 'peitoral (alongamento)',
+      description: 'Pump de peito.', technique: 'Cotovelos semi-flex fixos, junta no centro.',
+      mistakes: 'Esticar cotovelo no fim.', tip: 'Aperta 1s no centro.' },
+    { name: 'Tríceps corda', target: '3×12–15', muscles: 'tríceps (todas cabeças)',
+      description: 'Volume e pump.', technique: 'Abra a corda no fim do movimento.',
+      mistakes: 'Cotovelo subindo.', tip: 'Drop set no fim — pump absurdo.' },
+    { name: 'Tríceps testa', target: '3×8–12', muscles: 'tríceps cabeça longa',
+      description: 'Alongamento profundo.', technique: 'Cotovelos travados apontando pro teto.',
+      mistakes: 'Cotovelo abrindo (vira pullover).', tip: 'Use barra W.' },
+  ],
+  'Perna completo': [
+    { name: 'Agachamento livre', target: '5×5–8', muscles: 'quadríceps, glúteo, posterior, core',
+      description: 'Rei dos exercícios — perna inteira.', technique: 'Pés largura dos ombros, profundidade até paralelo.',
+      mistakes: 'Joelho valgo. Calcanhar levantando.', tip: '"Rosqueie" os pés no chão pra fora.' },
+    { name: 'Stiff (RDL)', target: '4×8–10', muscles: 'isquiotibiais, glúteo, lombar',
+      description: 'Cadeia posterior via hip hinge.', technique: 'Joelhos quase travados, empurra quadril pra trás.',
+      mistakes: 'Agachar. Lombar arredondando.', tip: '"Fechar a porta com a bunda" — quadril pra trás.' },
+    { name: 'Hip thrust', target: '4×6–10', muscles: 'glúteo máximo, isquio',
+      description: 'Mais eficiente pra glúteo.', technique: 'Escápula no banco, aperta 1s no topo.',
+      mistakes: 'Hiperestender lombar.', tip: 'Olhar fixo num ponto à frente.' },
+    { name: 'Leg press 45°', target: '3×10–12', muscles: 'quadríceps, glúteo',
+      description: 'Volume sem fadigar core.', technique: 'Pés meio do apoio, desce até joelho ~90°.',
+      mistakes: 'Soltar a lombar.', tip: 'Pés mais altos = mais glúteo.' },
+    { name: 'Cadeira flexora sentado', target: '3×10–15', muscles: 'isquiotibiais',
+      description: 'Isolamento de posterior.', technique: 'Flexiona joelho ao máximo, segura 1s.',
+      mistakes: 'Levantar quadril.', tip: 'Conte 3s na volta.' },
+    { name: 'Cadeira extensora', target: '3×10–15', muscles: 'quadríceps isolado',
+      description: 'Isolamento puro de quad.', technique: 'Eixo alinhado com joelho.',
+      mistakes: 'Travar joelho com chute.', tip: 'Ponta do pé pra fora pra vasto medial.' },
+    { name: 'Panturrilha em pé', target: '4×12–15', muscles: 'gastrocnêmio',
+      description: 'Volume de panturrilha.', technique: 'Amplitude completa, antepé na borda.',
+      mistakes: 'Amplitude curta.', tip: 'Faz 1 dropset por treino.' },
+  ],
+  'Glúteo focus': [
+    { name: 'Hip thrust', target: '5×8–12', muscles: 'glúteo máximo',
+      description: 'Exercício rei do glúteo.', technique: 'Escápula no banco, sobe até alinhar tronco-coxa.',
+      mistakes: 'Hiperestender lombar.', tip: 'Aperta 1s no topo.' },
+    { name: 'Agachamento sumô', target: '4×10–12', muscles: 'glúteo, adutor, quad',
+      description: 'Pé aberto recruta glúteo interno.', technique: 'Pés mais largos que ombros, ponta a 30°.',
+      mistakes: 'Joelho pra dentro.', tip: 'Empurre o joelho na direção do dedinho do pé.' },
+    { name: 'Afundo búlgaro', target: '3×8–10/perna', muscles: 'glúteo, quad, posterior',
+      description: 'Unilateral pesado em glúteo.', technique: 'Pé de trás elevado num banco.',
+      mistakes: 'Curvar pra frente.', tip: 'Tronco ligeiramente inclinado = mais glúteo.' },
+    { name: 'Cadeira abdutora', target: '4×15–20', muscles: 'glúteo médio, abdutor',
+      description: 'Foco lateral do glúteo.', technique: 'Abre lentamente, aperta 1s no fim.',
+      mistakes: 'Carga excessiva.', tip: 'Inclinar tronco pra frente pega mais glúteo.' },
+    { name: 'Stiff (RDL)', target: '3×10–12', muscles: 'glúteo, isquio',
+      description: 'Posterior + glúteo combinados.', technique: 'Quadril pra trás, barra colada à perna.',
+      mistakes: 'Lombar arredondando.', tip: 'Sensação de "esticar" no isquio é o foco.' },
+    { name: 'Glute bridge unilateral', target: '3×10–12/perna', muscles: 'glúteo isolado',
+      description: 'Unilateral leve, ótimo finalizador.', technique: 'Pé apoiado no chão, outra perna elevada.',
+      mistakes: 'Não isolar glúteo (vira posterior).', tip: 'Pausa 2s no topo.' },
+  ],
+  'Full Body A': [
+    { name: 'Agachamento livre', target: '4×6–10', muscles: 'perna inteira, core',
+      description: 'Movimento composto pesado.', technique: 'Pés largura dos ombros, profundidade até paralelo.',
+      mistakes: 'Joelho valgo.', tip: '"Rosqueie" os pés no chão.' },
+    { name: 'Supino reto', target: '4×6–10', muscles: 'peito, tríceps, ombro',
+      description: 'Composto horizontal de empurrar.', technique: 'Escápula retraída, descida controlada.',
+      mistakes: 'Cotovelos a 90°.', tip: 'Sopre na subida.' },
+    { name: 'Remada curvada', target: '4×6–10', muscles: 'dorsal, bíceps',
+      description: 'Composto horizontal de puxar.', technique: 'Tronco ~45°, puxa até umbigo.',
+      mistakes: 'Tronco subindo a cada rep.', tip: 'Aperta escápulas.' },
+    { name: 'Desenvolvimento militar', target: '3×8–10', muscles: 'ombro, tríceps',
+      description: 'Pressão vertical.', technique: 'Core travado, sobe em linha reta.',
+      mistakes: 'Hiperestender lombar.', tip: 'Cabeça atravessa janela.' },
+    { name: 'Prancha frontal', target: '3×60s', muscles: 'core profundo',
+      description: 'Estabilidade anti-extensão.', technique: 'Corpo reto, glúteo travado.',
+      mistakes: 'Bumbum alto/baixo.', tip: 'Respiração ativa.' },
+  ],
+  'Full Body B': [
+    { name: 'Levantamento terra', target: '4×3–5', muscles: 'cadeia posterior inteira',
+      description: 'Composto mais completo de força.', technique: 'Tronco neutro, peito alto.',
+      mistakes: 'Lombar arredondando.', tip: 'Faz só 1x/sem.' },
+    { name: 'Supino inclinado halteres', target: '3×8–12', muscles: 'peito alto, ombro',
+      description: 'Variação com mais amplitude.', technique: 'Banco 30°, halteres na altura do peito.',
+      mistakes: 'Encostar halteres no topo.', tip: 'Pausa no ponto baixo.' },
+    { name: 'Pull-up / barra fixa', target: '3×AMRAP', muscles: 'dorsal, bíceps',
+      description: 'Tração vertical.', technique: 'Pegada pronada, queixo passa a barra.',
+      mistakes: 'Balanço excessivo.', tip: 'Negativas se não tira.' },
+    { name: 'Afundo passada', target: '3×10/perna', muscles: 'quad, glúteo, estabilidade',
+      description: 'Unilateral funcional.', technique: 'Passada longa, joelho atrás quase toca.',
+      mistakes: 'Joelho da frente passa do pé.', tip: 'Empurra com calcanhar.' },
+    { name: 'Hanging leg raise', target: '3×10–12', muscles: 'reto abdominal inferior',
+      description: 'Abdominal pendurado.', technique: 'Sem balanço, retrai pelve no topo.',
+      mistakes: 'Balanço.', tip: 'Joelho flex se reto for difícil.' },
+  ],
+  'Upper completo': [
+    { name: 'Supino reto barra', target: '4×6–10', muscles: 'peito, tríceps, ombro',
+      description: 'Composto horizontal pesado.', technique: 'Escápula retraída, peito alto.',
+      mistakes: 'Cotovelos abertos demais.', tip: 'Pés firmes no chão.' },
+    { name: 'Remada curvada barra', target: '4×6–10', muscles: 'dorsal, romboides',
+      description: 'Composto horizontal de puxar.', technique: 'Tronco ~45°, puxa até umbigo.',
+      mistakes: 'Cheating com tronco.', tip: '"Cotovelo pro bolso de trás".' },
+    { name: 'Desenvolvimento militar', target: '4×6–10', muscles: 'ombro, tríceps',
+      description: 'Pressão vertical.', technique: 'Core travado, barra em linha reta.',
+      mistakes: 'Empurrar pra frente.', tip: 'Cabeça atravessa janela.' },
+    { name: 'Pull-up', target: '3×AMRAP', muscles: 'dorsal, bíceps',
+      description: 'Tração vertical.', technique: 'Queixo passa a barra.',
+      mistakes: 'Subir só com bíceps.', tip: 'Pega largura ombro+10cm.' },
+    { name: 'Rosca direta', target: '3×10–12', muscles: 'bíceps',
+      description: 'Isolamento de bíceps.', technique: 'Cotovelos colados.',
+      mistakes: 'Balanço.', tip: 'Encoste a parede.' },
+    { name: 'Tríceps corda', target: '3×12–15', muscles: 'tríceps',
+      description: 'Pump de tríceps.', technique: 'Abre a corda no fim.',
+      mistakes: 'Cotovelo subindo.', tip: 'Drop set finaliza.' },
+    { name: 'Face pull', target: '3×15', muscles: 'deltóide posterior, manguito',
+      description: 'Equilibra postura.', technique: 'Cotovelos altos.',
+      mistakes: 'Carga pesada.', tip: 'Abertura de cortina na cabeça.' },
   ],
   '🆓 Treino livre': [], // modo aberto — você adiciona exercícios e o app detecta o split
   'Outro':           [],
@@ -5517,6 +6127,12 @@ function viewWorkout() {
     'Core/Abs': 'núcleo de combate',             'Cardio HIIT': 'queima · resistência',
     'Caminhada': 'LISS · passos · trilha',
     'Calistenia': 'sem peso · só corpo',         'Dança K-pop': 'cardio + coordenação',
+    'Costas + Ombros + Bíceps': 'V-taper · puxar tudo',
+    'Peito + Ombros + Tríceps': 'empurrar completo',
+    'Perna completo': 'quad · post · glúteo',
+    'Glúteo focus': 'foco no glúteo',
+    'Full Body A':   'corpo todo · pesado',      'Full Body B': 'corpo todo · técnico',
+    'Upper completo': 'tronco inteiro',
     'Outro': 'modo aberto',
   };
   const icons = {
@@ -5528,6 +6144,10 @@ function viewWorkout() {
     'Push': I.flame, 'Pull': I.dumb, 'Core/Abs': I.skull,
     'Cardio HIIT': I.bolt, 'Caminhada': I.fighter,
     'Calistenia': I.fighter, 'Dança K-pop': I.spark,
+    'Costas + Ombros + Bíceps': I.dumb, 'Peito + Ombros + Tríceps': I.flame,
+    'Perna completo': I.bolt, 'Glúteo focus': I.bolt,
+    'Full Body A': I.fighter, 'Full Body B': I.fighter,
+    'Upper completo': I.fist,
     'Outro': I.sword,
   };
   // Sugestão de descanso ativo: rotaciona por dia
@@ -6301,18 +6921,19 @@ function lastSessionsFor(exName, n) {
 // ----- 6.3b Nutrition view (식단) --------------------------
 
 function viewNutrition() {
-  const today = todayISO();
-  let log = state.dailyLogs.find((l) => l.date === today);
+  const todayReal = todayISO();
+  // Data sendo visualizada/editada — guardada em state.user.currentNutriDate
+  const viewDate = state.user.currentNutriDate || todayReal;
+  let log = state.dailyLogs.find((l) => l.date === viewDate);
   if (!log) {
     log = {
-      date: today,
+      date: viewDate,
       training: { type: 'descanso', done: false },
       protein: { grams: 0, hit: false },
       sleep: { hours: 0 }, reading: { minutes: 0 },
       steps: 0, buffs: [], notes: '', meals: [], xp: 0,
     };
-    state.dailyLogs.push(log);
-    saveState();
+    if (viewDate === todayReal) { state.dailyLogs.push(log); saveState(); }
   }
   if (!log.meals) log.meals = [];
   const totals = log.meals.reduce(
@@ -6326,11 +6947,36 @@ function viewNutrition() {
   const kcalPct  = Math.min(100, (totals.kcal / kcalGoal) * 100);
   const pPct     = Math.min(100, (totals.p / pGoal) * 100);
 
+  // ===== Histórico — últimos 14 dias com macros agregados =====
+  const recentLogs = state.dailyLogs
+    .filter((l) => Array.isArray(l.meals) && l.meals.length)
+    .sort((a, b) => (a.date < b.date ? 1 : -1))
+    .slice(0, 14);
+  const historyHtml = recentLogs.map((l) => {
+    const t = (l.meals || []).reduce((a, m) => ({ kcal: a.kcal + m.kcal, p: a.p + m.p }), { kcal: 0, p: 0 });
+    const proteinHit = t.p >= pGoal;
+    const isViewing = l.date === viewDate;
+    return `
+      <button class="nutri-hist-row w-full p-3 flex items-center gap-2 text-left ${isViewing ? 'is-mint bg-mint/10' : ''}" data-date="${l.date}">
+        <div class="flex-1 min-w-0">
+          <div class="font-semibold text-sm">${formatDateBR(l.date)}${isViewing ? ' <span class="text-[10px] text-mint">(vendo)</span>' : ''}</div>
+          <div class="text-[10px] text-ink/55 dark:text-paper/55">${l.meals.length} refeições · ${Math.round(t.kcal)}kcal · P ${Math.round(t.p)}g${proteinHit ? ' ✓' : ''}</div>
+        </div>
+        <span class="text-[10px] ${proteinHit ? 'text-mint' : 'text-pink'}">${proteinHit ? '✓' : '○'}</span>
+      </button>`;
+  }).join('');
+
+  const isRetro = viewDate !== todayReal;
+
   return `
   <header class="pt-7 pb-3 px-5 kombat-hero">
     <div class="kombat-tagline text-xs">${getTheme(state).tags.nutri}</div>
-    <h1 class="text-2xl font-extrabold mt-1">Nutrição</h1>
+    <h1 class="text-2xl font-extrabold mt-1">Nutrição${isRetro ? ` <span class="text-xs text-pink">(retroativo)</span>` : ''}</h1>
     <p class="text-sm text-ink/55 dark:text-paper/55">Toque em um alimento pra adicionar.</p>
+    <label class="block mt-2 text-[10px] text-ink/55 dark:text-paper/55">
+      Data <input type="date" id="nutri-date" class="q-input p-1 text-xs ml-1" style="width:auto;display:inline-block" value="${viewDate}" max="${todayReal}" />
+      ${isRetro ? `<button id="nutri-go-today" class="ml-2 text-[10px] text-lavender underline">voltar pra hoje</button>` : ''}
+    </label>
   </header>
 
   <section class="px-4 mb-4">
@@ -6380,7 +7026,7 @@ function viewNutrition() {
   </section>
 
   <section class="px-4 mb-4">
-    <h2 class="font-extrabold mb-2">Refeições de hoje</h2>
+    <h2 class="font-extrabold mb-2">Refeições · ${isRetro ? formatDateBR(viewDate) : 'hoje'}</h2>
     <div class="q-card divide-y divide-ink/5 dark:divide-paper/5">
       ${log.meals.length ? log.meals.slice().reverse().map((m, idx) => `
         <div class="p-3 flex items-center gap-3 text-sm">
@@ -6392,6 +7038,15 @@ function viewNutrition() {
         </div>`).join('') : `<div class="p-4 text-sm text-ink/55 dark:text-paper/55">Nada registrado ainda. Adicione abaixo.</div>`}
     </div>
   </section>
+
+  ${recentLogs.length ? `
+  <section class="px-4 mb-4">
+    <h2 class="font-extrabold mb-2">Histórico · últimos 14 dias</h2>
+    <div class="q-card divide-y divide-ink/5 dark:divide-paper/5">
+      ${historyHtml}
+    </div>
+    <p class="text-[10px] text-ink/45 dark:text-paper/45 mt-1 italic">Toque numa data pra ver/editar as refeições daquele dia.</p>
+  </section>` : ''}
   `;
 }
 
@@ -6439,13 +7094,19 @@ function categoryLabel(c) {
 function modalFoodPortion(foodName) {
   const f = FOOD_DB.find((x) => x.name === foodName);
   if (!f) return;
+  const todayReal = todayISO();
+  const targetDate = state.user.currentNutriDate || todayReal;
   // Sugestões de porções comuns
   const presets = f.cat === 'prato' ? [100, 250, 500] : [50, 100, 150, 200];
   openModal(`
     <header class="flex items-center justify-between p-4 border-b border-ink/5 dark:border-paper/5">
-      <div>
+      <div class="min-w-0 flex-1">
         <h2 class="font-extrabold text-lg">${f.name}</h2>
         ${f.ko ? `<div class="font-display text-xs text-ink/45 dark:text-paper/45">${f.ko}</div>` : ''}
+        <label class="block mt-1 text-[10px] text-ink/55 dark:text-paper/55">
+          Adicionar em <input type="date" name="meal-date" class="q-input p-1 text-xs ml-1" style="width:auto;display:inline-block" value="${targetDate}" max="${todayReal}" />
+          ${targetDate !== todayReal ? '<span class="text-pink ml-1">(retroativo)</span>' : ''}
+        </label>
       </div>
       <button class="modal-close p-1"><span class="w-5 h-5">${I.close}</span></button>
     </header>
@@ -6487,9 +7148,12 @@ function modalFoodPortion(foodName) {
   document.getElementById('add-meal').onclick = () => {
     const g = +input.value || 0;
     if (g <= 0) { toast('Quantidade inválida'); return; }
-    let log = state.dailyLogs.find((l) => l.date === todayISO());
+    // Lê a data do picker (pode ser retroativa)
+    const dateInput = document.querySelector('input[name="meal-date"]')?.value;
+    const useDate = (dateInput && /^\d{4}-\d{2}-\d{2}$/.test(dateInput) && dateInput <= todayReal) ? dateInput : targetDate;
+    let log = state.dailyLogs.find((l) => l.date === useDate);
     if (!log) {
-      log = { date: todayISO(), training: { type: 'descanso', done: false },
+      log = { date: useDate, training: { type: 'descanso', done: false },
               protein: { grams: 0, hit: false }, sleep: { hours: 0 },
               reading: { minutes: 0 }, steps: 0, buffs: [], notes: '', meals: [], xp: 0 };
       state.dailyLogs.push(log);
@@ -9383,9 +10047,11 @@ function attachHandlers() {
     refreshFoods();
   });
   bindFoodRows();
+  // Remove meal — usa a data sendo visualizada (currentNutriDate ou hoje)
   document.querySelectorAll('.meal-rm').forEach(b => b.onclick = () => {
     const idx = +b.dataset.idx;
-    const log = state.dailyLogs.find((l) => l.date === todayISO());
+    const viewDate = state.user.currentNutriDate || todayISO();
+    const log = state.dailyLogs.find((l) => l.date === viewDate);
     if (log && log.meals) {
       log.meals.splice(idx, 1);
       const totalP = log.meals.reduce((a, m) => a + m.p, 0);
@@ -9393,6 +10059,25 @@ function attachHandlers() {
       log.xp = computeDayXP(log);
       saveState(); render();
     }
+  });
+  // Date picker da aba Nutri
+  document.getElementById('nutri-date')?.addEventListener('change', (e) => {
+    const v = e.target.value;
+    if (v && /^\d{4}-\d{2}-\d{2}$/.test(v)) {
+      state.user.currentNutriDate = v === todayISO() ? null : v;
+      render();
+    }
+  });
+  document.getElementById('nutri-go-today')?.addEventListener('click', () => {
+    state.user.currentNutriDate = null;
+    render();
+  });
+  // Clicar numa linha do histórico carrega aquele dia
+  document.querySelectorAll('.nutri-hist-row').forEach((b) => b.onclick = () => {
+    const d = b.dataset.date;
+    if (!d) return;
+    state.user.currentNutriDate = d === todayISO() ? null : d;
+    render();
   });
 
   document.getElementById('open-library')?.addEventListener('click', modalLibrary);
