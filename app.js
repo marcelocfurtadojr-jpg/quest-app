@@ -5210,6 +5210,63 @@ function mergeWithLocalMedia(cloudState, localState) {
   cloudState.photos = localState.photos || [];
   cloudState.user = cloudState.user || {};
   cloudState.user.goalImages = localState.user?.goalImages || {};
+
+  // ===== Smart merge — protege contra perda de dados locais =====
+  // Se o usuário fez entradas locais que ainda não foram sincronizadas com
+  // a nuvem (timeout de rede, app fechou rápido demais, etc.), a versão
+  // cloud podia simplesmente sobrescrever — esse bloco une os dois.
+
+  // dailyLogs: union por data. Para mesma data, fica com o que tem mais
+  // refeições / xp maior (mais provável de ser o mais recente).
+  function pickBetterLog(a, b) {
+    const ma = (a?.meals || []).length, mb = (b?.meals || []).length;
+    if (ma !== mb) return ma > mb ? a : b;
+    if ((a?.xp || 0) !== (b?.xp || 0)) return (a?.xp || 0) > (b?.xp || 0) ? a : b;
+    return a; // empate → mantém cloud (a)
+  }
+  const logMap = new Map();
+  for (const l of (cloudState.dailyLogs || [])) logMap.set(l.date, l);
+  for (const l of (localState.dailyLogs || [])) {
+    const existing = logMap.get(l.date);
+    logMap.set(l.date, existing ? pickBetterLog(existing, l) : l);
+  }
+  cloudState.dailyLogs = Array.from(logMap.values()).sort((a, b) => (a.date < b.date ? -1 : 1));
+
+  // workouts: union por date+type
+  const workoutKey = (w) => `${w.date}|${w.type}`;
+  const wMap = new Map();
+  for (const w of (cloudState.workouts || [])) wMap.set(workoutKey(w), w);
+  for (const w of (localState.workouts || [])) {
+    const k = workoutKey(w);
+    const existing = wMap.get(k);
+    // Mantém o que tem mais exercícios
+    if (!existing || (w.exercises?.length || 0) > (existing.exercises?.length || 0)) {
+      wMap.set(k, w);
+    }
+  }
+  cloudState.workouts = Array.from(wMap.values()).sort((a, b) => (a.date < b.date ? -1 : 1));
+
+  // bodyMeasurements: union por data
+  const mMap = new Map();
+  for (const m of (cloudState.bodyMeasurements || [])) mMap.set(m.date, m);
+  for (const m of (localState.bodyMeasurements || [])) {
+    if (!mMap.has(m.date)) mMap.set(m.date, m);
+  }
+  cloudState.bodyMeasurements = Array.from(mMap.values()).sort((a, b) => (a.date < b.date ? -1 : 1));
+
+  // sleepSessions: union por data (mais entradas é melhor)
+  const sMap = new Map();
+  for (const s of (cloudState.sleepSessions || [])) sMap.set(s.date, s);
+  for (const s of (localState.sleepSessions || [])) {
+    if (!sMap.has(s.date)) sMap.set(s.date, s);
+  }
+  cloudState.sleepSessions = Array.from(sMap.values()).sort((a, b) => (a.date < b.date ? -1 : 1));
+
+  // user.totalXP/rankXP/questsCompleted: pega o MAIOR (atividade acumulada)
+  cloudState.user.totalXP        = Math.max(cloudState.user.totalXP || 0, localState.user?.totalXP || 0);
+  cloudState.user.rankXP         = Math.max(cloudState.user.rankXP || 0, localState.user?.rankXP || 0);
+  cloudState.user.questsCompleted = Math.max(cloudState.user.questsCompleted || 0, localState.user?.questsCompleted || 0);
+
   return cloudState;
 }
 
@@ -5628,6 +5685,11 @@ function migrateState(s) {
   if (s.user.theme === 'kpop')  s.user.theme = 'kpop_anime';
   if (s.user.theme === 'clean') s.user.theme = 'inside_out';
   if (!s.user.theme || !THEMES[s.user.theme]) s.user.theme = 'kpop_anime';
+
+  // Limpa currentNutriDate persistido (bug v1.12 — agora é module-level só).
+  // Se usuário tinha ficado preso vendo um dia passado, a próxima sessão
+  // volta pra hoje automaticamente.
+  if ('currentNutriDate' in s.user) delete s.user.currentNutriDate;
 
   // Marca quests específicas de K-pop no pool já salvo (idempotente).
   // Tudo com tag 'k-pop' ou id começando 't1_kp' (do tema kpop_anime) vira kpopOnly.
@@ -6200,6 +6262,9 @@ function levelUpOverlay(fromRank, toRank, promoted = true) {
 // ===== 6. VIEWS ==============================================
 
 let currentTab = 'home';
+// Data sendo visualizada na aba Nutri. Module-level (NÃO persistido) —
+// se persistisse, refeições adicionadas iam pro dia errado em sessões futuras.
+let _currentNutriDate = null;
 const app = () => document.getElementById('app');
 
 function render() {
@@ -7523,8 +7588,9 @@ function lastSessionsFor(exName, n) {
 
 function viewNutrition() {
   const todayReal = todayISO();
-  // Data sendo visualizada/editada — guardada em state.user.currentNutriDate
-  const viewDate = state.user.currentNutriDate || todayReal;
+  // Data sendo visualizada/editada — module-level (não persiste entre sessões,
+  // pra evitar refeições irem pro dia errado por engano).
+  const viewDate = _currentNutriDate || todayReal;
   let log = state.dailyLogs.find((l) => l.date === viewDate);
   if (!log) {
     log = {
@@ -7548,11 +7614,12 @@ function viewNutrition() {
   const kcalPct  = Math.min(100, (totals.kcal / kcalGoal) * 100);
   const pPct     = Math.min(100, (totals.p / pGoal) * 100);
 
-  // ===== Histórico — últimos 14 dias com macros agregados =====
+  // ===== Histórico — TODOS os dias com refeições registradas =====
+  // (era 14 dias; ampliado pra ajudar recuperação se algo foi pro dia errado).
   const recentLogs = state.dailyLogs
     .filter((l) => Array.isArray(l.meals) && l.meals.length)
     .sort((a, b) => (a.date < b.date ? 1 : -1))
-    .slice(0, 14);
+    .slice(0, 60);
   const historyHtml = recentLogs.map((l) => {
     const t = (l.meals || []).reduce((a, m) => ({ kcal: a.kcal + m.kcal, p: a.p + m.p }), { kcal: 0, p: 0 });
     const proteinHit = t.p >= pGoal;
@@ -7642,11 +7709,11 @@ function viewNutrition() {
 
   ${recentLogs.length ? `
   <section class="px-4 mb-4">
-    <h2 class="font-extrabold mb-2">Histórico · últimos 14 dias</h2>
+    <h2 class="font-extrabold mb-2">Histórico de refeições</h2>
     <div class="q-card divide-y divide-ink/5 dark:divide-paper/5">
       ${historyHtml}
     </div>
-    <p class="text-[10px] text-ink/45 dark:text-paper/45 mt-1 italic">Toque numa data pra ver/editar as refeições daquele dia.</p>
+    <p class="text-[10px] text-ink/45 dark:text-paper/45 mt-1 italic">Toque numa data pra ver/editar as refeições daquele dia. Se não encontrar registros de hoje, eles podem estar num dia adjacente.</p>
   </section>` : ''}
   `;
 }
@@ -7696,7 +7763,7 @@ function modalFoodPortion(foodName) {
   const f = FOOD_DB.find((x) => x.name === foodName);
   if (!f) return;
   const todayReal = todayISO();
-  const targetDate = state.user.currentNutriDate || todayReal;
+  const targetDate = _currentNutriDate || todayReal;
   // Sugestões de porções comuns
   const presets = f.cat === 'prato' ? [100, 250, 500] : [50, 100, 150, 200];
   openModal(`
@@ -10648,10 +10715,10 @@ function attachHandlers() {
     refreshFoods();
   });
   bindFoodRows();
-  // Remove meal — usa a data sendo visualizada (currentNutriDate ou hoje)
+  // Remove meal — usa a data sendo visualizada (module-level)
   document.querySelectorAll('.meal-rm').forEach(b => b.onclick = () => {
     const idx = +b.dataset.idx;
-    const viewDate = state.user.currentNutriDate || todayISO();
+    const viewDate = _currentNutriDate || todayISO();
     const log = state.dailyLogs.find((l) => l.date === viewDate);
     if (log && log.meals) {
       log.meals.splice(idx, 1);
@@ -10665,19 +10732,19 @@ function attachHandlers() {
   document.getElementById('nutri-date')?.addEventListener('change', (e) => {
     const v = e.target.value;
     if (v && /^\d{4}-\d{2}-\d{2}$/.test(v)) {
-      state.user.currentNutriDate = v === todayISO() ? null : v;
+      _currentNutriDate = v === todayISO() ? null : v;
       render();
     }
   });
   document.getElementById('nutri-go-today')?.addEventListener('click', () => {
-    state.user.currentNutriDate = null;
+    _currentNutriDate = null;
     render();
   });
   // Clicar numa linha do histórico carrega aquele dia
   document.querySelectorAll('.nutri-hist-row').forEach((b) => b.onclick = () => {
     const d = b.dataset.date;
     if (!d) return;
-    state.user.currentNutriDate = d === todayISO() ? null : d;
+    _currentNutriDate = d === todayISO() ? null : d;
     render();
   });
 
