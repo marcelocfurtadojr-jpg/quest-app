@@ -4495,19 +4495,24 @@ window.tryNextGoalExt = function (img) {
 function goalImageHtml(g, { className = '' } = {}) {
   const svg = focusSvg(g.focus);
   const customSrc = state?.user?.goalImages?.[g.key];
+  // Quando o usuário sobe foto custom, NÃO renderiza o placeholder
+  // (SVG + nome overlay). Antes ficava por trás vazando o nome por cima.
+  if (customSrc) {
+    return `
+      <div class="goal-img-wrap ${className}">
+        <img src="${customSrc}"
+             alt="${g.name}"
+             class="goal-img loaded"
+             loading="lazy"
+             data-gkey="${g.key}" />
+      </div>`;
+  }
   return `
     <div class="goal-img-wrap ${className}">
       <div class="goal-placeholder">
         <div class="goal-svg">${svg}</div>
         <div class="goal-name-overlay">${g.name}</div>
       </div>
-      ${customSrc ? `
-        <img src="${customSrc}"
-             alt="${g.name}"
-             class="goal-img loaded"
-             loading="lazy"
-             data-gkey="${g.key}" />
-      ` : ''}
     </div>`;
 }
 
