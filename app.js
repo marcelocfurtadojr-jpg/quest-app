@@ -72,6 +72,9 @@ function baseRankIndex(rankKey) {
 // Diamante I (2860) → 286 XP/sem. Ouro IV (510) → 51 XP/sem (semana decente).
 const RANK_DECAY = 0.10;
 
+// Quantas daily quests aparecem na home por padrão.
+const DAILY_QUEST_COUNT = 5;
+
 // Pool de daily quests — 35 opções com sabor coreano (일일 미션).
 // XP varia conforme dificuldade. Tag determina o ícone/cor.
 const DEFAULT_QUEST_POOL = [
@@ -173,6 +176,61 @@ const DEFAULT_QUEST_POOL = [
   { id: 'q78', text: 'Aprender 5 palavras novas (qualquer idioma)',     xp: 1, tag: 'foco' },
   { id: 'q79', text: 'Não usar celular durante refeição',               xp: 1, tag: 'mente' },
   { id: 'q80', text: 'Acordar até as 7h (mesmo no fim de semana)',      xp: 2, tag: 'sono' },
+  // ===== Expansão v3 — vida prática, saúde mental, hobbies =====
+  // Hidratação / saúde básica
+  { id: 'q81', text: 'Comer 1 fonte de gordura boa (abacate, castanha, azeite)', xp: 1, tag: 'nutri' },
+  { id: 'q82', text: 'Fio dental + escovação noturna',                  xp: 1, tag: 'saúde' },
+  { id: 'q83', text: 'Banho frio de manhã (60s no fim)',                xp: 2, tag: 'mente' },
+  { id: 'q84', text: 'Tomar magnésio antes de dormir',                  xp: 1, tag: 'sono' },
+  { id: 'q85', text: 'Refeição equilibrada (P + C + V + G)',            xp: 2, tag: 'nutri' },
+  { id: 'q86', text: 'Pausa de 5 min sem celular a cada 2h',            xp: 1, tag: 'foco' },
+  // Treino/recuperação
+  { id: 'q87', text: 'Aquecer ombros 5min antes do treino',             xp: 1, tag: 'treino' },
+  { id: 'q88', text: 'Massagem com foam roller 10 min',                 xp: 1, tag: 'treino' },
+  { id: 'q89', text: 'Treino de mobilidade torácica',                   xp: 1, tag: 'treino' },
+  { id: 'q90', text: 'Sessão de yoga 20 min',                           xp: 2, tag: 'treino' },
+  { id: 'q91', text: 'Drop set no último exercício do treino',          xp: 2, tag: 'treino' },
+  { id: 'q92', text: 'Treino com música nova (descoberta sonora)',      xp: 1, tag: 'treino' },
+  // Cardio variado
+  { id: 'q93', text: 'Subir 5 lances de escada (sem elevador)',         xp: 1, tag: 'cardio' },
+  { id: 'q94', text: 'Pedalar 20 min (bike ou ergométrica)',            xp: 2, tag: 'cardio' },
+  { id: 'q95', text: 'Andar/correr ao ar livre (não esteira)',          xp: 2, tag: 'cardio' },
+  { id: 'q96', text: '5 sprints de 30s (HIIT curto)',                   xp: 2, tag: 'cardio' },
+  { id: 'q97', text: 'Caminhada com peso/mochila 30 min',               xp: 2, tag: 'cardio' },
+  // Foco / produtividade extra
+  { id: 'q98', text: 'Estudar 1h sem celular ao alcance',               xp: 2, tag: 'foco' },
+  { id: 'q99', text: 'Revisar metas da semana',                         xp: 1, tag: 'foco' },
+  { id: 'q100', text: 'Planejar amanhã na noite anterior',              xp: 1, tag: 'foco' },
+  { id: 'q101', text: 'Time-boxing: dividir tarefa grande em blocos',   xp: 2, tag: 'foco' },
+  { id: 'q102', text: 'Modo avião 1h durante trabalho profundo',        xp: 2, tag: 'foco' },
+  { id: 'q103', text: 'Aprender 1 atalho de teclado novo',              xp: 1, tag: 'foco' },
+  // Mente / regulação emocional
+  { id: 'q104', text: 'Respiração coerente 5min (resp. 6/min)',         xp: 1, tag: 'mente' },
+  { id: 'q105', text: 'Body scan deitado 10 min',                       xp: 1, tag: 'mente' },
+  { id: 'q106', text: '5 min escrevendo o que está pensando (brain dump)', xp: 1, tag: 'mente' },
+  { id: 'q107', text: 'Identificar 1 emoção difícil + nome dela',       xp: 1, tag: 'mente' },
+  { id: 'q108', text: 'Falar não pra algo que não quer fazer',          xp: 2, tag: 'mente' },
+  // Social / criatividade
+  { id: 'q109', text: 'Mandar mensagem de carinho pra alguém da família', xp: 1, tag: 'mente' },
+  { id: 'q110', text: 'Almoçar/jantar com alguém (sem fone)',           xp: 1, tag: 'mente' },
+  { id: 'q111', text: 'Fazer algo gentil com um desconhecido',          xp: 1, tag: 'mente' },
+  { id: 'q112', text: 'Tirar foto de algo bonito do dia',               xp: 1, tag: 'foco' },
+  { id: 'q113', text: 'Escrever 1 ideia/insight no caderno',            xp: 1, tag: 'foco' },
+  { id: 'q114', text: 'Cozinhar pra alguém (não só pra você)',          xp: 2, tag: 'nutri' },
+  // Casa / organização
+  { id: 'q115', text: 'Fazer a cama de manhã',                          xp: 1, tag: 'mente' },
+  { id: 'q116', text: 'Lavar a louça antes de dormir',                  xp: 1, tag: 'mente' },
+  { id: 'q117', text: 'Doar/jogar fora 3 coisas sem uso',               xp: 2, tag: 'mente' },
+  { id: 'q118', text: 'Limpar a tela do celular',                       xp: 1, tag: 'mente' },
+  // Aprendizado em alta
+  { id: 'q119', text: 'Ver palestra TED de 15 min',                     xp: 2, tag: 'foco' },
+  { id: 'q120', text: 'Aprender 1 truque/skill manual (origami, nó, etc)', xp: 2, tag: 'foco' },
+  { id: 'q121', text: 'Resolver 5 problemas de raciocínio (math/lógica)', xp: 2, tag: 'foco' },
+  // Auto-cuidado
+  { id: 'q122', text: 'Hidratante no corpo após o banho',               xp: 1, tag: 'saúde' },
+  { id: 'q123', text: 'Protetor solar facial pela manhã',               xp: 1, tag: 'saúde' },
+  { id: 'q124', text: 'Tomar sol de chinelo no chão (grounding) 5min',  xp: 1, tag: 'saúde' },
+  { id: 'q125', text: 'Tomar banho de imersão / spa caseiro',           xp: 1, tag: 'mente' },
 ];
 
 // Pool de weekly quests. Cada quest tem `target` = quantos "checks" precisa
@@ -6166,16 +6224,24 @@ function sample(arr, n) {
 function ensureDailyQuests() {
   const today = todayISO();
   const da = state.quests.dailyAssigned;
+  const isKpop = state.user.theme === 'kpop_anime' || !state.user.theme;
+  const pool = state.quests.pool.filter((q) => isKpop || !q.kpopOnly);
   if (da.date !== today) {
-    // Filtra quests específicas de K-pop quando o tema não é kpop_anime
-    const isKpop = state.user.theme === 'kpop_anime' || !state.user.theme;
-    const pool = state.quests.pool.filter((q) => isKpop || !q.kpopOnly);
+    // Novo dia: sorteio completo
     state.quests.dailyAssigned = {
       date: today,
-      items: sample(pool, 3),
+      items: sample(pool, DAILY_QUEST_COUNT),
       rerolled: false,
       completed: [],
     };
+    saveState();
+  } else if ((da.items?.length || 0) < DAILY_QUEST_COUNT) {
+    // Mesmo dia, mas tem menos quests do que o novo cap (ex: bump de 3 → 5).
+    // Preenche os slots faltantes sem mexer no que já está em andamento.
+    const assignedIds = new Set(da.items.map((q) => q.id));
+    const candidates = pool.filter((q) => !assignedIds.has(q.id));
+    const extra = sample(candidates, DAILY_QUEST_COUNT - da.items.length);
+    da.items = [...da.items, ...extra];
     saveState();
   }
 }
@@ -10427,7 +10493,7 @@ function attachHandlers() {
     const keep = (da.items || []).filter((q) => completedIds.has(q.id));
     const assignedIds = new Set((da.items || []).map((q) => q.id));
     const pool = state.quests.pool.filter((q) => (isKpop || !q.kpopOnly) && !assignedIds.has(q.id));
-    const needed = Math.max(0, 3 - keep.length);
+    const needed = Math.max(0, DAILY_QUEST_COUNT - keep.length);
     if (needed === 0) { toast('Tudo já completado — não tem o que sortear'); return; }
     const fresh = sample(pool, needed);
     if (!fresh.length) { toast('Sem novas quests no pool — adiciona mais na config'); return; }
