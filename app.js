@@ -7582,8 +7582,10 @@ function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
     else state.workouts.push(start);
 
     // XP direto pelo treino — só na primeira vez que salva pra esse dia/tipo
-    // (editar não dá XP de novo). Base 3 + 1 por exercício (cap 8) + PR bônus.
-    let xpChange = { changed: false };
+    // (editar não dá XP de novo, pra evitar abuso). Base 3 + 1 por exercício
+    // (cap 8) + PR bônus.
+    let xpChange = { changed: false, finalAmt: 0 };
+    let xpBreakdown = '';
     if (isNewWorkout) {
       const baseXP = 3;
       const exBonus = Math.min(5, start.exercises.length);
@@ -7593,6 +7595,7 @@ function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
       const cats = start.exercises.map(e => exerciseCategory(e));
       const cardioMajor = cats.filter(c => ['walking','hiit','cardio','dance'].includes(c)).length > cats.length / 2;
       xpChange = addQuestXP(totalXP, cardioMajor ? 'cardio' : 'treino');
+      xpBreakdown = `base ${baseXP} + ${exBonus} ex${prBonus ? ` + ${prBonus} PR` : ''}${xpChange.mult > 1 ? ` × combo ${xpChange.mult.toFixed(1)}` : ''}`;
     }
 
     // Atualiza o log do dia: marca training.done = true (também pra retroativo,
@@ -7612,17 +7615,26 @@ function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
     saveState();
     closeModal();
     confetti(700);
+
+    // ===== Feedback de XP claro em TODOS os cenários =====
+    const finalXP = xpChange.finalAmt || 0;
     if (prDetected) {
       kombatOverlay('brutality');
       addAttributeXP('forca', 5);
+      // Toast com XP detalhado vem depois do overlay
+      setTimeout(() => {
+        toast(`🔥 PR DETECTADO! +${finalXP} XP (${xpBreakdown})`, 3800);
+      }, 500);
     } else if (isNewWorkout) {
-      const xpMsg = `Treino salvo 💪 +${(xpChange.finalAmt || 0)} XP`;
-      toast(detectedMsg ? `${xpMsg} · ${detectedMsg}` : xpMsg, detectedMsg ? 3600 : 2400);
+      const xpMsg = `Treino salvo 💪 +${finalXP} XP`;
+      const detail = xpBreakdown ? ` · ${xpBreakdown}` : '';
+      toast(detectedMsg ? `${xpMsg}${detail} · ${detectedMsg}` : `${xpMsg}${detail}`, detectedMsg ? 3800 : 2800);
     } else {
-      toast(detectedMsg || 'Treino atualizado 💪', detectedMsg ? 3600 : 2200);
+      // Edit — não dá XP de novo, mas avisa pra não confundir
+      toast(detectedMsg || 'Treino atualizado · sem XP novo (edição)', detectedMsg ? 3000 : 2400);
     }
     if (xpChange.changed) {
-      setTimeout(() => levelUpOverlay(xpChange.from, xpChange.to, xpChange.promoted), 1200);
+      setTimeout(() => levelUpOverlay(xpChange.from, xpChange.to, xpChange.promoted), 1400);
     }
     render();
   });
@@ -7981,25 +7993,50 @@ function modalFoodPortion(foodName) {
       name: f.name, ko: f.ko || '', grams: g, cat: f.cat,
       kcal: f.kcal * g / 100, p: f.p * g / 100, c: f.c * g / 100, f: f.f * g / 100,
     });
+
+    // ===== XP por refeição =====
+    // Comida saudável dá XP direto, mostrado no toast.
+    // Junk (erro/doce/snack) não dá XP.
+    const HEALTHY_CATS = new Set(['proteina', 'veg', 'fruta', 'prato', 'carb']);
+    const PROTEIN_HEAVY = (f.p * g / 100) >= 15; // refeição com 15g+ proteína = +1 extra
+    let mealXP = 0;
+    if (HEALTHY_CATS.has(f.cat)) {
+      mealXP = 1 + (PROTEIN_HEAVY && f.cat === 'proteina' ? 1 : 0);
+    }
+    const mealChange = mealXP > 0 ? addQuestXP(mealXP, 'nutri') : { changed: false, finalAmt: 0 };
+
     // Sincroniza proteína total no log
     const totalP = log.meals.reduce((a, m) => a + m.p, 0);
     const oldHit = log.protein?.hit;
     log.protein = { grams: Math.round(totalP), hit: totalP >= getProteinGoal() };
     log.xp = computeDayXP(log);
-    // upsertDailyLog calcula o delta de XP e chama gainXP — assim bater meta de
-    // proteína AGORA dá XP de rank na hora (sem precisar do FINISH IT!).
-    upsertDailyLog(log);
-    // Se bateu meta pela primeira vez, ganha bônus de atributo + celebração
+
+    // Bônus se bateu meta de proteína AGORA pela primeira vez
+    let bonusXP = 0;
     if (!oldHit && log.protein.hit) {
       addAttributeXP('disciplina', 3);
+      const bonusChange = addQuestXP(5, 'nutri'); // bônus dedicado
+      bonusXP = bonusChange.finalAmt || 5;
       confetti(1000);
-      toast(`🥩 Meta de proteína batida! +bônus`);
     }
+
     saveState();
     checkAchievements();
     closeModal();
-    if (!(!oldHit && log.protein.hit)) toast(`+ ${f.name} adicionado`);
+
+    // Toast com XP detalhado
+    const totalGained = (mealChange.finalAmt || 0) + bonusXP;
+    if (!oldHit && log.protein.hit) {
+      toast(`🥩 Meta de proteína batida! +${totalGained} XP`, 3000);
+    } else if (mealXP > 0) {
+      toast(`+ ${f.name} · +${mealChange.finalAmt || mealXP} XP 🟢`, 2200);
+    } else {
+      toast(`+ ${f.name} · sem XP (não é saudável)`, 2200);
+    }
     vibrate(10);
+    if (mealChange.changed || bonusXP > 0) {
+      setTimeout(() => levelUpOverlay(mealChange.from, mealChange.to, mealChange.promoted), 1200);
+    }
     render();
   };
 }
