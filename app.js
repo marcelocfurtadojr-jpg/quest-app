@@ -6612,19 +6612,24 @@ function viewDashboard() {
     const displayName = state?.user?.goalNames?.[g.key] || g.name;
     return `
     <section class="px-4 mt-3">
-      <button class="q-card w-full overflow-hidden text-left tile-btn goal-of-day-btn relative" data-target="goals" data-kind="tab" style="border-left:3px solid #FFD341">
-        <div class="flex items-stretch">
-          <div class="goal-of-day-thumb relative shrink-0" style="width:88px; height:88px; overflow:hidden; background:linear-gradient(160deg, #B7B5FF 0%, #FFB7C5 50%, #A8E6CF 100%)">
-            ${customSrc
-              ? `<img src="${customSrc}" alt="${displayName}" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover" />`
-              : `<div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#FFF; opacity:.85">
-                   <div style="width:55%; height:55%">${focusSvg(g.focus)}</div>
-                 </div>`}
+      <button class="q-card w-full overflow-hidden text-left tile-btn goal-of-day-btn relative block" data-target="goals" data-kind="tab" style="border-top:3px solid #FFD341">
+        <!-- Imagem grande full-width como hero -->
+        <div class="relative w-full" style="aspect-ratio: 16 / 10; background: linear-gradient(160deg, #B7B5FF 0%, #FFB7C5 50%, #A8E6CF 100%)">
+          ${customSrc
+            ? `<img src="${customSrc}" alt="${displayName}" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover" />`
+            : `<div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#FFF; opacity:.9">
+                 <div style="width:42%; height:42%">${focusSvg(g.focus)}</div>
+               </div>`}
+          <!-- Gradiente preto na base pra contraste do texto -->
+          <div style="position:absolute; left:0; right:0; bottom:0; height:55%; background:linear-gradient(to bottom, transparent, rgba(0,0,0,0.78))"></div>
+          <!-- Tag dourada no topo -->
+          <div class="absolute top-2 left-2 text-[10px] uppercase tracking-widest font-bold px-2 py-1 rounded-full" style="background:rgba(0,0,0,0.55); color:#FFD341">
+            ⭐ Meta do dia${activeKeys.length ? '' : ' · sugestão'}
           </div>
-          <div class="flex-1 min-w-0 p-3">
-            <div class="text-[10px] uppercase tracking-widest text-kgold font-semibold">⭐ Meta do dia${activeKeys.length ? '' : ' (sugestão)'}</div>
-            <div class="font-extrabold text-base mt-0.5 truncate">${displayName}</div>
-            <div class="text-[10px] text-ink/55 dark:text-paper/55 leading-tight mt-0.5 line-clamp-2">${g.why || ''}</div>
+          <!-- Título + porquê no rodapé da imagem -->
+          <div class="absolute left-3 right-3 bottom-2.5 text-white">
+            <div class="font-extrabold text-lg leading-tight drop-shadow">${displayName}</div>
+            ${g.why ? `<div class="text-[11px] opacity-90 leading-snug mt-0.5 line-clamp-2 drop-shadow">${g.why}</div>` : ''}
           </div>
         </div>
       </button>
