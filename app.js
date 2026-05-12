@@ -5881,6 +5881,30 @@ function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
     })),
   };
 
+  // Opções de "técnica" e labels de coluna variam por tipo de treino.
+  // Musculação usa rest-pause/drop-set/etc; cardio/caminhada usam outra coisa.
+  const isWalking = type === 'Caminhada';
+  const isHIIT    = type === 'Cardio HIIT';
+  const isDance   = type === 'Dança K-pop';
+  const isCardio  = isWalking || isHIIT || isDance;
+
+  const techOptions =
+      isWalking ? ['','ritmo leve','moderado','power walk','intervalado','inclinação','com peso','escadas']
+    : isHIIT    ? ['','aquecimento','alta intensidade','recuperação ativa','sprint','finisher']
+    : isDance   ? ['','aquecimento','coreografia','repetição','cooldown']
+    :             ['','rest-pause','drop-set','myo-reps','AMRAP'];
+
+  const cols =
+      isWalking ? { tech: 'Modo',    reps: 'Min',    weight: 'km/h' }
+    : isHIIT    ? { tech: 'Bloco',   reps: 'Reps/s', weight: 'kg'   }
+    : isDance   ? { tech: 'Bloco',   reps: 'Min',    weight: 'BPM'  }
+    :             { tech: 'Técnica', reps: 'Reps',   weight: 'kg'   };
+
+  // Cardio precisa aceitar valores maiores (minutos ≥ 50). Musculação fica em 50.
+  const repsMax    = isCardio ? 500 : 50;
+  const weightMax  = 500;
+  const weightStep = isCardio ? 0.1 : 0.5;
+
   openModal(`
     <header class="flex items-center justify-between p-4 border-b border-ink/5 dark:border-paper/5">
       <div>
@@ -5921,15 +5945,15 @@ function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
             <div class="text-xs font-bold ${progClass}">${progLabel}</div>
           </div>
           <div class="q-grid mt-3 font-semibold text-xs text-ink/55 dark:text-paper/55">
-            <span>Técnica</span><span>Reps</span><span>kg</span><span></span>
+            <span>${cols.tech}</span><span>${cols.reps}</span><span>${cols.weight}</span><span></span>
           </div>
           ${ex.sets.map((s, sIdx) => `
             <div class="q-grid mt-1" data-set-idx="${sIdx}">
               <select class="q-input p-1 text-xs set-tech">
-                ${['','rest-pause','drop-set','myo-reps','AMRAP'].map(t => `<option ${s.technique===t?'selected':''}>${t}</option>`).join('')}
+                ${techOptions.map(t => `<option ${s.technique===t?'selected':''}>${t}</option>`).join('')}
               </select>
-              <input type="number" min="0" max="50" class="q-input p-1 set-reps" value="${s.reps}" />
-              <input type="number" step="0.5" min="0" max="500" class="q-input p-1 set-weight" value="${s.weight}" />
+              <input type="number" min="0" max="${repsMax}" class="q-input p-1 set-reps" value="${s.reps}" />
+              <input type="number" step="${weightStep}" min="0" max="${weightMax}" class="q-input p-1 set-weight" value="${s.weight}" />
               <button class="q-btn q-btn-ghost px-2 py-1 text-xs add-set" data-action="${sIdx===ex.sets.length-1?'add':'rm'}">${sIdx===ex.sets.length-1?'+':'−'}</button>
             </div>`).join('')}
           ${lastSessions.length ? `
