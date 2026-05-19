@@ -5111,6 +5111,94 @@ const EXERCISE_LIBRARY = {
       description: 'Equilibra postura.', technique: 'Cotovelos altos.',
       mistakes: 'Carga pesada.', tip: 'Abertura de cortina na cabeça.' },
   ],
+  // ===== Splits ABC clássico =====
+  'A · Peito + Tríceps + Abs': [
+    { name: 'Supino reto barra', target: '4×6–10', muscles: 'peitoral, tríceps, deltóide anterior',
+      description: 'Composto principal de peito. Comece com força.', technique: 'Escápula retraída, pés firmes, descida controlada.',
+      mistakes: 'Cotovelos a 90°. Levantar bunda.', tip: 'Sopre na subida.' },
+    { name: 'Supino inclinado halteres', target: '4×8–12', muscles: 'peito superior, deltóide ant.',
+      description: 'Foca peito alto.', technique: 'Banco 30–45°, amplitude profunda.',
+      mistakes: 'Banco íngreme demais (vira ombro).', tip: 'Não encoste halteres no topo.' },
+    { name: 'Crucifixo polia (cross-over)', target: '3×10–15', muscles: 'peito interno, alongamento',
+      description: 'Pump de peito.', technique: 'Cotovelos semi-flex, fecha no centro com 1s.',
+      mistakes: 'Esticar cotovelo no fim.', tip: 'Drop set no último.', defaultTech: 'drop-set' },
+    { name: 'Tríceps testa barra W', target: '3×8–12', muscles: 'tríceps cabeça longa',
+      description: 'Alongamento profundo de tríceps.', technique: 'Cotovelos travados pro teto, só antebraço move.',
+      mistakes: 'Cotovelos abrindo.', tip: 'Barra W salva o punho.' },
+    { name: 'Tríceps corda', target: '3×12–15', muscles: 'tríceps todas cabeças',
+      description: 'Volume e pump.', technique: 'Cotovelos colados, abra a corda no fim.',
+      mistakes: 'Cotovelo subindo.', tip: 'Finaliza com drop set.', defaultTech: 'drop-set' },
+    { name: 'Mergulho em paralelas (assistido se precisar)', target: '3×AMRAP', muscles: 'tríceps, peito inferior',
+      description: 'Composto pesado pra tríceps.', technique: 'Tronco vertical = mais tríceps; inclinado = mais peito.',
+      mistakes: 'Subir devagar até travar cotovelo.', tip: 'Faça AMRAP no último set.', defaultTech: 'AMRAP' },
+    { name: 'Prancha abdominal', target: '3×45–60s', muscles: 'core, transverso',
+      description: 'Estabilidade anti-extensão.', technique: 'Glúteo travado, costas neutras.',
+      mistakes: 'Bumbum alto/baixo.', tip: 'Respiração ativa, não prende.' },
+    { name: 'Ab wheel (rodinha)', target: '3×8–12', muscles: 'core profundo, reto abdominal',
+      description: 'Exercício avançado de core.', technique: 'Joelho no chão, role devagar.',
+      mistakes: 'Lombar curva.', tip: 'Substitua por dead bug se difícil.' },
+  ],
+  'B · Costas + Ombros + Bíceps + Abs': [
+    { name: 'Barra fixa (pull-up) ou assistida', target: '4×AMRAP', muscles: 'dorsal, bíceps',
+      description: 'Tração vertical clássica.', technique: 'Pegada pronada, queixo passa a barra.',
+      mistakes: 'Balanço excessivo.', tip: 'Negativas se ainda não tira.', defaultTech: 'AMRAP' },
+    { name: 'Remada curvada barra', target: '4×6–10', muscles: 'dorsal, romboides, trapézio médio',
+      description: 'Espessura de dorsal.', technique: 'Tronco ~45°, puxa até umbigo.',
+      mistakes: 'Tronco subindo a cada rep.', tip: 'Aperte escápulas no topo.' },
+    { name: 'Pulldown pegada neutra', target: '3×10–12', muscles: 'dorsal, bíceps',
+      description: 'Acessório pra dorsal.', technique: 'Cotovelos descem em direção ao bolso lateral.',
+      mistakes: 'Inclinar tronco demais.', tip: 'Pegada neutra é ombro-amigável.' },
+    { name: 'Desenvolvimento militar barra', target: '4×6–10', muscles: 'deltóide anterior, tríceps',
+      description: 'Pressão vertical pesada.', technique: 'Core travado, barra em linha reta.',
+      mistakes: 'Hiperestender lombar.', tip: 'Imagine atravessar uma janela.' },
+    { name: 'Elevação lateral halter', target: '4×12–15', muscles: 'deltóide médio',
+      description: 'Largura de ombro.', technique: 'Cotovelo guia o movimento.',
+      mistakes: 'Trapézio subindo.', tip: 'Pulso ligeiramente abaixado no topo.', defaultTech: 'rest-pause' },
+    { name: 'Face pull corda', target: '3×15', muscles: 'deltóide posterior, manguito rotador',
+      description: 'Antídoto da postura cifótica.', technique: 'Puxa até as mãos chegarem nas orelhas.',
+      mistakes: 'Carga pesada.', tip: 'Faz no fim de todo treino.' },
+    { name: 'Rosca direta barra', target: '3×8–12', muscles: 'bíceps braquial',
+      description: 'Hipertrofia clássica.', technique: 'Cotovelos colados ao corpo.',
+      mistakes: 'Balanço de quadril.', tip: 'Encoste as costas na parede pra travar.' },
+    { name: 'Rosca martelo halteres', target: '3×10–12', muscles: 'bíceps + braquiorradial',
+      description: 'Braquial e antebraço.', technique: 'Pegada neutra, cotovelo fixo.',
+      mistakes: 'Cotovelo indo pra frente.', tip: 'Superset com rosca direta.', defaultTech: 'drop-set' },
+    { name: 'Prancha lateral', target: '3×30–45s/lado', muscles: 'oblíquos, core lateral',
+      description: 'Estabilidade lateral.', technique: 'Cotovelo sob o ombro, quadril travado pro alto.',
+      mistakes: 'Bumbum caindo.', tip: 'Mão de cima na cintura ou estendida.' },
+    { name: 'Hanging leg raise', target: '3×8–12', muscles: 'reto abdominal inferior',
+      description: 'Abdominal pendurado.', technique: 'Sem balanço, retrai pelve no topo.',
+      mistakes: 'Balanço com perna.', tip: 'Joelho flex se reto for difícil.' },
+  ],
+  'C · Pernas completo + Abs': [
+    { name: 'Agachamento livre barra', target: '5×5–8', muscles: 'quadríceps, glúteo, posterior, core',
+      description: 'Rei dos exercícios.', technique: 'Pés largura dos ombros, profundidade até paralelo.',
+      mistakes: 'Joelho valgo.', tip: 'Empurre o chão pra fora com os pés.' },
+    { name: 'Stiff barra (RDL)', target: '4×8–10', muscles: 'isquiotibiais, glúteo, lombar',
+      description: 'Cadeia posterior pesada.', technique: 'Quadril pra trás, joelhos quase travados.',
+      mistakes: 'Lombar arredondando.', tip: 'Sensação de "esticar" no isquio.' },
+    { name: 'Hip thrust com barra', target: '4×6–10', muscles: 'glúteo máximo, isquio',
+      description: 'O melhor pra glúteo.', technique: 'Escápula no banco, aperta 1s no topo.',
+      mistakes: 'Hiperestender lombar.', tip: 'Olha pra frente, não pra cima.' },
+    { name: 'Leg press 45°', target: '3×10–12', muscles: 'quadríceps, glúteo',
+      description: 'Volume sem fadigar core.', technique: 'Pés meio do apoio, joelho ~90°.',
+      mistakes: 'Soltar a lombar.', tip: 'Pés altos = mais glúteo.', defaultTech: 'drop-set' },
+    { name: 'Cadeira flexora', target: '3×10–15', muscles: 'isquiotibiais isolado',
+      description: 'Isolamento de posterior.', technique: 'Flexiona joelho ao máximo, 1s no fim.',
+      mistakes: 'Levantar quadril.', tip: 'Conte 3s na volta.', defaultTech: 'rest-pause' },
+    { name: 'Cadeira extensora', target: '3×10–15', muscles: 'quadríceps isolado',
+      description: 'Isolamento puro.', technique: 'Eixo alinhado com joelho.',
+      mistakes: 'Travar joelho no chute.', tip: 'Ponta do pé pra fora pega vasto medial.', defaultTech: 'drop-set' },
+    { name: 'Panturrilha em pé (smith ou máquina)', target: '4×12–15', muscles: 'gastrocnêmio',
+      description: 'Volume de panturrilha.', technique: 'Amplitude completa, antepé na borda.',
+      mistakes: 'Amplitude curta.', tip: 'Pausa 1s no topo.', defaultTech: 'myo-reps' },
+    { name: 'Abdominal infra na máquina ou banco', target: '3×12–15', muscles: 'reto abdominal inferior',
+      description: 'Foco no abs inferior.', technique: 'Pelve sobe primeiro, depois as pernas.',
+      mistakes: 'Balanço.', tip: 'Lento na descida.' },
+    { name: 'Russian twist com peso', target: '3×20 (10/lado)', muscles: 'oblíquos, core rotacional',
+      description: 'Rotação anti-resistência.', technique: 'Pés no chão, tronco a 45°, toca o chão dos dois lados.',
+      mistakes: 'Mexer só os braços.', tip: 'Use halter ou anilha 5-10kg.' },
+  ],
   '🆓 Treino livre': [], // modo aberto — você adiciona exercícios e o app detecta o split
   'Outro':           [],
 };
@@ -6432,6 +6520,97 @@ let currentTab = 'home';
 // Data sendo visualizada na aba Nutri. Module-level (NÃO persistido) —
 // se persistisse, refeições adicionadas iam pro dia errado em sessões futuras.
 let _currentNutriDate = null;
+
+// ===== Rest timer (módulo-level) — sobrevive a re-renders e troca de tab =====
+// Em vez de setInterval que conta segundos, guardamos o TIMESTAMP em que o
+// timer termina. A cada tick calculamos `endTs - Date.now()` — assim mesmo
+// se a tab pausar o JS no background, ao voltar mostra o tempo correto
+// (ou "✓ descanso completo" se já passou). Modal pode fechar/reabrir e o
+// timer continua. Adicionando/removendo set não reinicia.
+let _restEndTs = 0;       // Date.now() do fim — 0 = sem timer ativo
+let _restNotified = false; // já vibrou + toast quando chegou em zero?
+let _restTickInt = null;   // intervalo global do tick
+
+/** Inicia/reinicia o timer de descanso. */
+function startRestTimer(sec) {
+  _restEndTs = Date.now() + sec * 1000;
+  _restNotified = false;
+  ensureRestTick();
+  updateRestTimerDisplay();
+}
+
+/** Garante que o setInterval do tick está rodando se o timer está ativo. */
+function ensureRestTick() {
+  if (_restTickInt) return;
+  _restTickInt = setInterval(() => {
+    const remaining = _restEndTs - Date.now();
+    updateRestTimerDisplay();
+    if (_restEndTs && remaining <= 0 && !_restNotified) {
+      _restNotified = true;
+      try { vibrate([60, 40, 80]); } catch {}
+      try { toast('Descanso completo'); } catch {}
+    }
+    // Para o tick depois de 5 min do fim (deixa o display visível, mas
+    // economiza CPU). Usuário pode iniciar novo timer pra reativar.
+    if (_restEndTs && remaining < -5 * 60 * 1000) {
+      _restEndTs = 0;
+      clearInterval(_restTickInt);
+      _restTickInt = null;
+      updateRestTimerDisplay();
+    }
+  }, 1000);
+}
+
+/** Atualiza display dentro do modal (#timer-display) e o chip flutuante global. */
+function updateRestTimerDisplay() {
+  const remaining = _restEndTs - Date.now();
+  const isActive = _restEndTs > 0;
+  const isDone   = isActive && remaining <= 0;
+  const minSec = isActive && !isDone
+    ? `${Math.floor(remaining/60000)}:${String(Math.floor((remaining%60000)/1000)).padStart(2,'0')}`
+    : '✓ descanso completo';
+
+  // Display dentro do modal de treino
+  const disp = document.getElementById('timer-display');
+  if (disp) {
+    if (isActive) {
+      disp.classList.remove('hidden');
+      disp.textContent = minSec;
+      disp.style.color = isDone ? '#3FBF7F' : '';
+    } else {
+      disp.classList.add('hidden');
+    }
+  }
+
+  // Chip flutuante GLOBAL (visível em qualquer aba) ----
+  let chip = document.getElementById('rest-timer-chip');
+  if (isActive) {
+    if (!chip) {
+      chip = document.createElement('div');
+      chip.id = 'rest-timer-chip';
+      chip.style.cssText = 'position:fixed; bottom:80px; right:14px; z-index:60; background:rgba(15,23,41,0.92); color:#FFF; padding:8px 14px; border-radius:999px; font-weight:800; font-size:14px; box-shadow:0 4px 18px rgba(0,0,0,.35); display:flex; align-items:center; gap:6px; cursor:pointer; backdrop-filter:blur(6px); border:1px solid rgba(255,255,255,.08)';
+      chip.innerHTML = `<span>⏱</span><span class="rest-chip-text"></span><button class="rest-chip-stop" style="background:transparent; color:#FFB7C5; border:0; cursor:pointer; padding:0 0 0 6px; font-size:16px">×</button>`;
+      document.body.appendChild(chip);
+      chip.querySelector('.rest-chip-stop').onclick = (e) => {
+        e.stopPropagation();
+        stopRestTimer();
+      };
+    }
+    chip.querySelector('.rest-chip-text').textContent = minSec;
+    if (isDone) chip.style.background = 'rgba(63,191,127,0.95)';
+    else        chip.style.background = 'rgba(15,23,41,0.92)';
+  } else if (chip) {
+    chip.remove();
+  }
+}
+
+/** Para o timer manualmente. */
+function stopRestTimer() {
+  _restEndTs = 0;
+  _restNotified = false;
+  if (_restTickInt) { clearInterval(_restTickInt); _restTickInt = null; }
+  updateRestTimerDisplay();
+}
 const app = () => document.getElementById('app');
 
 function render() {
@@ -6452,6 +6631,8 @@ function render() {
   renderTabbar();
   attachHandlers();
   app().firstElementChild?.classList.add('animate-fade-up');
+  // Re-renderiza o chip do rest timer (sobrevive em qualquer aba)
+  updateRestTimerDisplay();
 }
 
 function go(tab) {
@@ -7013,6 +7194,9 @@ function viewWorkout() {
     'Glúteo focus': 'foco no glúteo',
     'Full Body A':   'corpo todo · pesado',      'Full Body B': 'corpo todo · técnico',
     'Upper completo': 'tronco inteiro',
+    'A · Peito + Tríceps + Abs':  'ABC split · dia A',
+    'B · Costas + Ombros + Bíceps + Abs': 'ABC split · dia B',
+    'C · Pernas completo + Abs':  'ABC split · dia C',
     'Outro': 'modo aberto',
   };
   const icons = {
@@ -7028,6 +7212,9 @@ function viewWorkout() {
     'Perna completo': I.bolt, 'Glúteo focus': I.bolt,
     'Full Body A': I.fighter, 'Full Body B': I.fighter,
     'Upper completo': I.fist,
+    'A · Peito + Tríceps + Abs': I.flame,
+    'B · Costas + Ombros + Bíceps + Abs': I.dumb,
+    'C · Pernas completo + Abs': I.bolt,
     'Outro': I.sword,
   };
   // Sugestão de descanso ativo: rotaciona por dia
@@ -7362,10 +7549,19 @@ function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
   const start = prebuiltStart || editing || {
     date: todayISO(),
     type,
-    exercises: lib.map((e) => ({
-      name: e.name,
-      sets: [{ reps: '', weight: '', technique: '' }, { reps: '', weight: '', technique: '' }, { reps: '', weight: '', technique: '' }],
-    })),
+    exercises: lib.map((e) => {
+      // Se o exercício declarar defaultTech, pré-preenche em TODAS as séries
+      // — usuário pode mudar uma e a auto-propagação cuida do resto.
+      const t = e.defaultTech || '';
+      return {
+        name: e.name,
+        sets: [
+          { reps: '', weight: '', technique: t },
+          { reps: '', weight: '', technique: t },
+          { reps: '', weight: '', technique: t },
+        ],
+      };
+    }),
   };
 
   // Categoria por exercício individual — cada exercício decide suas técnicas
@@ -7425,6 +7621,7 @@ function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
           Data <input type="date" id="workout-date" class="q-input p-1 text-xs ml-1" style="width:auto;display:inline-block" value="${start.date}" max="${todayISO()}" />
         </label>
       </div>
+      <button id="open-glossary" class="text-[10px] text-lavender font-semibold px-2 py-1 rounded-full bg-lavender/10 hover:bg-lavender/20 mr-2" aria-label="Glossário de técnicas">ℹ Técnicas</button>
       <button class="modal-close p-1"><span class="w-5 h-5">${I.close}</span></button>
     </header>
 
@@ -7500,6 +7697,23 @@ function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
   `, { persistent: true });
 
   // Date picker: sincroniza start.date sempre que muda
+  // Glossário de técnicas
+  document.getElementById('open-glossary')?.addEventListener('click', () => {
+    // Mantém o modal de treino aberto por baixo (glossário só sobrepõe)
+    const root = document.getElementById('modal-root');
+    const prevInner = root.innerHTML;
+    modalTechniqueGlossary();
+    // Quando fechar o glossário, restaura o modal de treino
+    const closeGlos = () => {
+      root.innerHTML = prevInner;
+      // Reata handlers do treino reaplicando todo o modalWorkoutSession
+      closeModal();
+      setTimeout(() => modalWorkoutSession(type, dateISO, start), 30);
+    };
+    root.querySelectorAll('.modal-close').forEach((b) => b.onclick = closeGlos);
+    root.querySelector('[data-close]')?.addEventListener('click', closeGlos);
+  });
+
   document.getElementById('workout-date')?.addEventListener('change', (e) => {
     const v = e.target.value;
     if (v && /^\d{4}-\d{2}-\d{2}$/.test(v)) start.date = v;
@@ -7555,31 +7769,17 @@ function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
   });
 
   // Timer de descanso ------------------------------------------------
-  let timerInt = null;
+  // Hooks pros botões de iniciar timer — toda lógica do timer roda em
+  // módulo (vide startRestTimer / _restEndTs) pra sobreviver re-renders,
+  // troca de tab e modal closes.
   document.querySelectorAll('.rest-btn').forEach((btn) => {
     btn.addEventListener('click', () => {
       const sec = +btn.dataset.sec;
       startRestTimer(sec);
     });
   });
-  function startRestTimer(sec) {
-    if (timerInt) clearInterval(timerInt);
-    const disp = document.getElementById('timer-display');
-    disp.classList.remove('hidden');
-    let left = sec;
-    const tick = () => {
-      disp.textContent = `${Math.floor(left/60)}:${String(left%60).padStart(2,'0')}`;
-      if (left <= 0) {
-        clearInterval(timerInt);
-        disp.textContent = '✓ descanso completo';
-        vibrate([60,40,80]);
-        toast('Descanso completo');
-      }
-      left--;
-    };
-    tick();
-    timerInt = setInterval(tick, 1000);
-  }
+  // Renderiza display inicial se timer já está rodando (modal reabriu)
+  updateRestTimerDisplay();
 
   // Add/remove set + preset de séries ---------------------------------
   // Quando adiciona set novo, a técnica é HERDADA do set anterior (não precisa
@@ -9606,6 +9806,89 @@ function recordReadingMinutes(min) {
 
 // ----- 6.7b Exercise Library / Achievements modals ---------
 
+// Glossário de técnicas de treino — usado pelo botão "ℹ Técnicas explicadas"
+// dentro do modal de treino. Cobre todas as opções que aparecem nos dropdowns
+// (musculação + cardio + caminhada + dança).
+const TECHNIQUE_GLOSSARY = [
+  // Força / hipertrofia
+  { tech: 'rest-pause',  cat: 'força', desc: 'Vai até quase a falha, descansa 15s, faz mais reps. Repete 1-2x. Maximiza fibras musculares cansando o que sobrou.' },
+  { tech: 'drop-set',    cat: 'força', desc: 'Termina a série na falha, reduz 20-30% da carga IMEDIATAMENTE e continua. Pode dropar 1-3x. Pump absurdo.' },
+  { tech: 'myo-reps',    cat: 'força', desc: 'Série de ativação (12-20 reps) até deixar ~2 na reserva, descansa 5-15s, faz mini-séries de 3-5 reps até falhar. Estilo dinamarquês de hipertrofia.' },
+  { tech: 'AMRAP',       cat: 'força', desc: '"As Many Reps As Possible" — fazer o máximo de reps que aguentar, com forma. Usado pra medir progresso ou pra finalizar com força máxima.' },
+  { tech: 'tempo',       cat: 'força', desc: 'Controlar a velocidade da rep. Exemplo: 3-1-1 = 3s descendo, 1s pausa, 1s subindo. Aumenta tempo sob tensão.' },
+  { tech: 'pause-rep',   cat: 'força', desc: 'Pausa 2-3 segundos no ponto mais difícil (ex: no peito do supino). Quebra o reflexo elástico e força tensão pura.' },
+  { tech: 'eccentric',   cat: 'força', desc: 'Foca a fase NEGATIVA do movimento (descida) lenta — 4 a 6 segundos. Causa muito micro-dano = mais hipertrofia.' },
+  { tech: 'touch-and-go',cat: 'força', desc: 'No supino/terra: barra encosta no peito/chão e sobe SEM pausa. Aproveita reflexo elástico — mais força explosiva.' },
+  { tech: 'paused',      cat: 'força', desc: 'Pausa 2s no ponto baixo (agachamento paused, supino paused). Equivalente ao pause-rep em compostos.' },
+  { tech: 'box',         cat: 'força', desc: 'Box squat — agacha sentando num box/banco. Treina força no ângulo mais difícil e remove reflexo elástico.' },
+  { tech: 'negativas',   cat: 'força', desc: 'Foca SÓ na descida (3-5s). Útil em pull-up: peça ajuda pra subir e desça sozinho lentamente.' },
+  { tech: '21s',         cat: 'força', desc: 'Método de rosca: 7 reps na metade inferior + 7 na metade superior + 7 completas. Total 21. Brutal pra bíceps.' },
+  // Core / isometria
+  { tech: 'hold',                cat: 'core',   desc: 'Manter a posição de máxima contração por X segundos. Ex: prancha, hollow hold.' },
+  { tech: 'isometria 30s',       cat: 'core',   desc: 'Contração estática mantida por 30 segundos sem mover.' },
+  { tech: 'isometria 60s',       cat: 'core',   desc: 'Contração estática mantida por 60 segundos. Avançado.' },
+  { tech: 'com peso',            cat: 'core',   desc: 'Adicionar carga (halter, anilha) ao movimento normal.' },
+  // Cardio / caminhada
+  { tech: 'ritmo leve',          cat: 'cardio', desc: 'Andar/correr conversando confortável (Z2, ~60-70% FC máx). Queima gordura, recupera.' },
+  { tech: 'moderado',            cat: 'cardio', desc: 'Andar com propósito, leve falta de ar mas ainda dá pra falar frases.' },
+  { tech: 'power walk',          cat: 'cardio', desc: 'Caminhada acelerada (5.5-6.5 km/h), braços flexionados balançando.' },
+  { tech: 'intervalado',         cat: 'cardio', desc: 'Alterna intensidade alta e baixa. Ex: 1min rápido + 2min calmo, repetido 5x.' },
+  { tech: 'inclinação',          cat: 'cardio', desc: 'Esteira inclinada (8-15%). Foco em glúteo e posterior, baixo impacto.' },
+  { tech: 'escadas',             cat: 'cardio', desc: 'Subir e descer escadas. Quadríceps + cardio intenso.' },
+  // HIIT
+  { tech: 'aquecimento',         cat: 'hiit',   desc: '5-10 min em intensidade baixa pra preparar o corpo. Não pula!' },
+  { tech: 'alta intensidade',    cat: 'hiit',   desc: 'Trabalho 80-90% FC máx (não dá pra falar). Geralmente 30-90s por bloco.' },
+  { tech: 'recuperação ativa',   cat: 'hiit',   desc: 'Movimento leve entre blocos (caminhada, polichinelo lento). 60-90s.' },
+  { tech: 'sprint',              cat: 'hiit',   desc: '100% esforço por 10-30s. Recupera 3x esse tempo.' },
+  { tech: 'finisher',            cat: 'hiit',   desc: 'Último bloco bestial. Esvazia o tanque.' },
+  { tech: 'tabata',              cat: 'hiit',   desc: 'Protocolo 20s ON / 10s OFF × 8 rounds (4 min). Brutal e eficiente.' },
+  // Dança
+  { tech: 'coreografia',         cat: 'dance',  desc: 'Dançar a sequência aprendida no tempo original da música.' },
+  { tech: 'repetição',           cat: 'dance',  desc: 'Repetir um trecho específico até dominar.' },
+  { tech: 'freestyle',           cat: 'dance',  desc: 'Improvisar movimentos no compasso da música.' },
+  { tech: 'cooldown',            cat: 'dance',  desc: 'Movimentos lentos pra desacelerar coração e alongar.' },
+  { tech: 'ritmo forte',         cat: 'cardio', desc: 'Acima do moderado, abaixo do sprint. Sustentado por 5-15 min.' },
+];
+
+function modalTechniqueGlossary() {
+  const byCat = {};
+  for (const t of TECHNIQUE_GLOSSARY) {
+    (byCat[t.cat] = byCat[t.cat] || []).push(t);
+  }
+  const catLabels = {
+    força: '💪 Força / hipertrofia',
+    core:  '🧘 Core / isometria',
+    cardio:'🏃 Cardio / caminhada',
+    hiit:  '⚡ HIIT',
+    dance: '💃 Dança',
+  };
+  openModal(`
+    <header class="flex items-center justify-between p-4 border-b border-ink/5 dark:border-paper/5">
+      <div>
+        <div class="kombat-tagline text-[10px]">TÉCNICAS EXPLICADAS</div>
+        <h2 class="font-extrabold text-lg mt-0.5">Glossário de técnicas</h2>
+        <p class="text-[10px] text-ink/55 dark:text-paper/55">Toda opção do dropdown explicada.</p>
+      </div>
+      <button class="modal-close p-1"><span class="w-5 h-5">${I.close}</span></button>
+    </header>
+    <div class="p-4 overflow-y-auto space-y-4" style="max-height:75vh">
+      ${Object.entries(byCat).map(([cat, items]) => `
+        <div>
+          <h3 class="font-extrabold text-sm mb-2">${catLabels[cat] || cat}</h3>
+          <div class="space-y-2">
+            ${items.map(t => `
+              <div class="q-card p-3">
+                <div class="font-bold text-sm text-lavender">${t.tech}</div>
+                <div class="text-xs text-ink/70 dark:text-paper/70 leading-snug mt-1">${t.desc}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `);
+}
+
 function modalLibrary() {
   const types = Object.keys(EXERCISE_LIBRARY).filter(t => EXERCISE_LIBRARY[t].length);
   openModal(`
@@ -11499,6 +11782,13 @@ async function bootGameState() {
   checkWeeklyRollover();
   setTimeout(checkAchievements, 100);
   setTimeout(maybeNotifyMascot, 1500);
+  // Atualiza timer ao voltar pra tab (Page Visibility API)
+  if (!window._restVisHook) {
+    window._restVisHook = true;
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) updateRestTimerDisplay();
+    });
+  }
   render();
 }
 
