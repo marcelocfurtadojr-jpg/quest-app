@@ -6679,6 +6679,25 @@ function viewDashboard() {
   const attrs = state.user.attributes || { forca:0, resistencia:0, sabedoria:0, disciplina:0, vitalidade:0 };
   const unlockedCount = (state.user.achievementsUnlocked || []).length;
 
+  // ===== Vital Stats — barras estilo character sheet =====
+  // HP = baseado em sono ontem (saúde imediata)
+  // Stamina = baseado em recuperação (treinos vs descanso últimos 7 dias)
+  // Foco = baseado em leitura + meditação acumuladas hoje
+  const last7 = (state.dailyLogs || []).slice(-7);
+  const last30 = (state.dailyLogs || []).slice(-30);
+  const lastLog = state.dailyLogs.find(l => l.date === todayISO()) || state.dailyLogs[state.dailyLogs.length - 1];
+  const sleepHrs = lastLog?.sleep?.hours || 0;
+  const hpPct = Math.min(100, Math.max(0, Math.round((sleepHrs / 8) * 100)));
+  // Stamina: % de dias com treino na última semana (não deve ser 100% — precisa descanso)
+  const trainDays7 = last7.filter(l => l.training?.done).length;
+  const optimalTrains = 4; // 3-4 treinos/sem é ideal
+  const overtrained = trainDays7 > 6;
+  const undertrained = trainDays7 < 2;
+  const staminaPct = overtrained ? 30 : Math.min(100, Math.max(20, Math.round((trainDays7 / optimalTrains) * 100)));
+  // Foco: leitura + meditação hoje
+  const readMin = todayLog?.reading?.minutes || 0;
+  const focusPct = Math.min(100, Math.round((readMin / 30) * 100));
+
   // Quote do dia — rotaciona dentro do pool do tema atual
   const theme = getTheme(state);
   const q = dailyQuote();
@@ -6704,7 +6723,29 @@ function viewDashboard() {
     </div>
   </header>
 
-  <section class="px-4">
+  ${(() => {
+    // ===== Player Title Card — título do atributo dominante =====
+    const ranked = ATTRIBUTES
+      .map(a => ({ a, xp: attrs[a.key] || 0, info: attrInfo(attrs[a.key] || 0) }))
+      .filter(x => x.info.level > 0)
+      .sort((x, y) => y.info.level - x.info.level);
+    if (!ranked.length) return '';
+    const top = ranked[0];
+    const tier = attrTierFor(top.a.key, top.info.level);
+    const c1 = top.a.color;
+    const c2 = ranked[1]?.a.color || top.a.color;
+    return `
+    <section class="px-4 mt-2">
+      <div class="title-banner text-xs flex items-center gap-2" style="--title-c1:${c1}33; --title-c2:${c2}33">
+        <span class="text-base">⚔</span>
+        <span class="opacity-75 text-[10px] uppercase tracking-widest">${top.a.name}:</span>
+        <span class="font-bold flex-1 truncate">${tier.current}</span>
+        <span class="text-[10px] opacity-65">lvl ${top.info.level}</span>
+      </div>
+    </section>`;
+  })()}
+
+  <section class="px-4 mt-2">
     <div class="q-card p-4 flex items-center gap-4 ${baseRankIndex(r.key) >= 4 ? 'rank-elite' : ''} relative overflow-hidden" style="background: linear-gradient(135deg, ${r.color}11 0%, transparent 60%)">
       <div class="rank-badge text-paper relative" style="background:${r.color}; box-shadow: 0 4px 18px ${r.color}55">
         ${r.name.replace(/\s.*/, '').slice(0,1).toUpperCase()}
@@ -6727,13 +6768,51 @@ function viewDashboard() {
     </div>
   </section>
 
-  <section class="px-4 mt-4">
+  <!-- Vital Stats — barras estilo character sheet RPG -->
+  <section class="px-4 mt-3">
+    <div class="q-card p-3">
+      <div class="text-[10px] uppercase tracking-widest text-ink/45 dark:text-paper/45 mb-2 flex items-center justify-between">
+        <span>⚔ Status</span>
+        ${mult > 1 ? `<span class="pill is-sun text-[9px] py-0.5 px-2">⚡ COMBO ×${mult.toFixed(1)}</span>` : ''}
+      </div>
+      <div class="space-y-1.5">
+        <!-- HP -->
+        <div class="flex items-center gap-2">
+          <span class="text-base w-5 text-center">❤️</span>
+          <span class="text-[10px] font-bold w-12 text-pink">HP</span>
+          <div class="flex-1 vital-bar"><div class="vital-fill" style="width:${hpPct}%; background:linear-gradient(90deg,#B8242E,#E84A1A)"></div></div>
+          <span class="text-[10px] font-bold tabular-nums w-12 text-right">${sleepHrs}/8h</span>
+        </div>
+        <!-- Stamina -->
+        <div class="flex items-center gap-2">
+          <span class="text-base w-5 text-center">⚡</span>
+          <span class="text-[10px] font-bold w-12" style="color:#FFD341">STA</span>
+          <div class="flex-1 vital-bar"><div class="vital-fill" style="width:${staminaPct}%; background:linear-gradient(90deg,#A8E6CF,#FFD341)"></div></div>
+          <span class="text-[10px] font-bold tabular-nums w-12 text-right">${trainDays7}/${optimalTrains} tr</span>
+        </div>
+        <!-- Foco -->
+        <div class="flex items-center gap-2">
+          <span class="text-base w-5 text-center">🧠</span>
+          <span class="text-[10px] font-bold w-12 text-lavender">MP</span>
+          <div class="flex-1 vital-bar"><div class="vital-fill" style="width:${focusPct}%; background:linear-gradient(90deg,#B7B5FF,#7BB8FF)"></div></div>
+          <span class="text-[10px] font-bold tabular-nums w-12 text-right">${readMin}/30m</span>
+        </div>
+      </div>
+      ${overtrained || undertrained || hpPct < 50 ? `
+        <div class="mt-2 text-[10px] text-ink/60 dark:text-paper/60 leading-tight italic">
+          ${overtrained ? '⚠️ Risco de overtraining — meta 1-2 dias de descanso/sem.' :
+            undertrained ? '💤 Poucos treinos essa semana — STA baixa.' :
+            hpPct < 50 ? '🛌 HP baixa — durma mais hoje pra recuperar.' : ''}
+        </div>` : ''}
+    </div>
+  </section>
+
+  <section class="px-4 mt-3">
     <div class="flex flex-wrap gap-2 items-center">
       ${streakChip('🔥', 'Treino', s.treino, 'treino')}
       ${streakChip('🌙', 'Sono',   s.sono,   'sono')}
       ${streakChip('🥩', 'Proteína', s.proteina, 'proteina')}
       ${streakChip('📖', 'Leitura', s.leitura, 'leitura')}
-      ${mult > 1 ? `<span class="pill is-sun text-xs">⚡ Combo ×${mult.toFixed(1)}</span>` : ''}
     </div>
   </section>
 
@@ -6947,6 +7026,27 @@ function viewDashboard() {
       ${theme.labels?.register || 'Registrar dia'} · ${dayXP}/${DAILY_XP_CAP} XP capturados hoje
     </p>
   </section>
+
+  ${(() => {
+    // ===== Battle log — feed de eventos de XP recentes =====
+    const log = (state.user.battleLog || []).slice(0, 6);
+    if (!log.length) return '';
+    return `
+    <section class="px-4 mt-5">
+      <div class="flex items-center justify-between mb-2">
+        <h2 class="font-extrabold text-sm uppercase tracking-wider text-ink/55 dark:text-paper/55">⚔ Histórico de batalha</h2>
+        <span class="text-[10px] text-ink/45 dark:text-paper/45">últimos eventos</span>
+      </div>
+      <div class="space-y-1">
+        ${log.map((ev) => `
+          <div class="battle-log-entry ${ev.kind === 'pr' ? 'is-pr' : ev.kind === 'loss' ? 'is-loss' : ''}">
+            <span class="text-[9px] text-ink/45 dark:text-paper/45 tabular-nums whitespace-nowrap">${timeAgoShort(new Date(ev.ts))}</span>
+            <span class="flex-1 text-ink/80 dark:text-paper/80">${ev.text}</span>
+          </div>
+        `).join('')}
+      </div>
+    </section>`;
+  })()}
 
   <section class="px-4 mt-6">
     <div class="kombat-divider">${theme.labels?.arsenal || '⚔ ARSENAL ⚔'}</div>
@@ -7911,6 +8011,7 @@ function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
       const cardioMajor = cats.filter(c => ['walking','hiit','cardio','dance'].includes(c)).length > cats.length / 2;
       xpChange = addQuestXP(totalXP, cardioMajor ? 'cardio' : 'treino');
       xpBreakdown = `base ${baseXP} + ${exBonus} ex${prBonus ? ` + ${prBonus} PR` : ''}${xpChange.mult > 1 ? ` × combo ${xpChange.mult.toFixed(1)}` : ''}`;
+      logBattleEvent(`💪 Treino ${start.type.slice(0,18)} · +${xpChange.finalAmt} XP${prBonus ? ' 🏆 PR!' : ''}`, prBonus ? 'pr' : 'gain');
     }
 
     // Atualiza o log do dia: marca training.done = true (também pra retroativo,
@@ -11180,6 +11281,7 @@ function attachHandlers() {
       if (done) {
         state.quests.dailyAssigned.completed = state.quests.dailyAssigned.completed.filter((x) => x !== qid);
         change = addQuestXP(-(q?.xp || 1), q?.tag);
+        logBattleEvent(`✗ Desfez quest "${q?.text?.slice(0,30) || ''}" · -${q?.xp || 1} XP`, 'loss');
       } else {
         state.quests.dailyAssigned.completed.push(qid);
         confetti(500); vibrate(15);
@@ -11187,6 +11289,8 @@ function attachHandlers() {
         damageNumber(change.finalAmt, row);
         const mult = change.mult > 1 ? ` (combo ×${change.mult.toFixed(1)})` : '';
         if (change.mult > 1) toast(`COMBO ×${change.mult.toFixed(1)}!`);
+        const tagInfo = QUEST_TAG_INFO[q?.tag] || QUEST_TAG_INFO.default;
+        logBattleEvent(`${tagInfo.emoji} ${q?.text?.slice(0,32) || 'Quest'} · +${change.finalAmt || (q?.xp || 1)} XP${change.mult > 1 ? ` ×${change.mult.toFixed(1)}` : ''}`, 'gain');
         // Easter egg "TOASTY!" 5% das vezes
         if (Math.random() < 0.05) setTimeout(() => kombatOverlay('toasty'), 600);
       }
@@ -12101,6 +12205,61 @@ function showAuthLoading() {
     </div>`;
 }
 
+/** Adiciona um evento ao battle log em memória (state.user.battleLog).
+ *  Cap em 50 entries pra não inchar localStorage. */
+function logBattleEvent(text, kind = 'gain') {
+  if (!state?.user) return;
+  state.user.battleLog = state.user.battleLog || [];
+  state.user.battleLog.unshift({ ts: Date.now(), text, kind });
+  if (state.user.battleLog.length > 50) state.user.battleLog.length = 50;
+}
+
+/** Recompensa de login diário — primeira abertura do dia. XP escala com streak
+ *  consecutivo de dias logando (capped em 7). Mostra overlay celebrativo. */
+function checkDailyLoginBonus() {
+  if (!state?.user) return;
+  const today = todayISO();
+  const last = state.user.lastLoginDate;
+  if (last === today) return; // já recebeu hoje
+  // Calcula streak: se logou ONTEM, continua; senão zera.
+  const yesterday = new Date(today + 'T00:00:00'); yesterday.setDate(yesterday.getDate() - 1);
+  const yISO = isoDate(yesterday);
+  const prevStreak = state.user.loginStreak || 0;
+  const newStreak = last === yISO ? prevStreak + 1 : 1;
+  // XP escala: dia 1=2, dia 2=3, ..., dia 7+=10. Combo de 7 dias = +10 bônus extra.
+  const xp = Math.min(10, 1 + newStreak);
+  state.user.lastLoginDate = today;
+  state.user.loginStreak = newStreak;
+  const change = addQuestXP(xp, 'vitalidade');
+  logBattleEvent(`☀️ Login dia ${newStreak} · +${xp} XP`);
+  saveState();
+  // Overlay celebrativo
+  setTimeout(() => showLoginBonusOverlay(xp, newStreak), 600);
+  if (change.changed) setTimeout(() => levelUpOverlay(change.from, change.to, change.promoted), 2200);
+}
+
+function showLoginBonusOverlay(xp, streak) {
+  const overlay = document.createElement('div');
+  overlay.className = 'login-bonus-overlay';
+  overlay.innerHTML = `
+    <div class="login-bonus-card">
+      <div class="text-[10px] uppercase tracking-[0.3em] font-bold opacity-70">DAILY BONUS</div>
+      <div class="text-5xl mt-2">☀️</div>
+      <div class="text-2xl font-extrabold mt-2">+${xp} XP</div>
+      <div class="text-sm mt-1 opacity-80">Streak de login: <b>${streak} dia${streak === 1 ? '' : 's'}</b></div>
+      ${streak >= 7 ? '<div class="text-xs mt-2 text-kgold font-bold">🔥 7+ dias! Streak quente!</div>' : ''}
+      ${streak >= 30 ? '<div class="text-xs mt-1 text-mint font-bold">💎 30 dias — você é compromisso puro!</div>' : ''}
+      <button class="mt-4 px-4 py-2 rounded-full bg-paper text-ink text-sm font-bold dismiss-bonus">Continuar</button>
+    </div>`;
+  document.body.appendChild(overlay);
+  vibrate([30, 30, 60]);
+  confetti(1200);
+  const close = () => { overlay.classList.add('is-closing'); setTimeout(() => overlay.remove(), 250); };
+  overlay.querySelector('.dismiss-bonus').onclick = close;
+  overlay.onclick = (e) => { if (e.target === overlay) close(); };
+  setTimeout(close, 3500);
+}
+
 async function bootGameState() {
   // 1) Carrega cache local pra UI instantânea
   let local = loadState();
@@ -12135,6 +12294,8 @@ async function bootGameState() {
   checkWeeklyRollover();
   setTimeout(checkAchievements, 100);
   setTimeout(maybeNotifyMascot, 1500);
+  // Daily Login Bonus — primeira abertura do dia ganha XP de presença
+  setTimeout(checkDailyLoginBonus, 800);
   // Atualiza timer ao voltar pra tab (Page Visibility API)
   if (!window._restVisHook) {
     window._restVisHook = true;
