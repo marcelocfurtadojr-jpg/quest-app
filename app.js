@@ -6618,14 +6618,16 @@ function render() {
   ensureWeeklyQuest();
   applyTheme();
   const views = {
-    home:     viewDashboard,
-    workout:  viewWorkout,
-    nutri:    viewNutrition,
-    goals:    viewGoals,
-    reading:  viewReading,
-    body:     viewBody,
-    insights: viewInsights,
-    config:   viewConfig,
+    home:       viewDashboard,
+    workout:    viewWorkout,
+    calistenia: viewCalistenia,
+    nutri:      viewNutrition,
+    reading:    viewReading,
+    body:       viewBody,
+    insights:   viewInsights,
+    config:     viewConfig,
+    // 'goals' mantido pra retrocompat (botões antigos); não está no tabbar
+    goals:      viewGoals,
   };
   app().innerHTML = (views[currentTab] || viewDashboard)();
   renderTabbar();
@@ -6777,45 +6779,7 @@ function viewDashboard() {
     })()}
   </section>
 
-  ${(() => {
-    // ===== Meta do dia — rotaciona uma das metas ativas (ou todas se nada ativo) =====
-    // Usa allGoals() (builtin + custom) e respeita state.user.goalNames pra
-    // renomeações que o usuário fez na aba Metas.
-    const everyGoal = allGoals();
-    const activeKeys = (state.user.activeGoals || []);
-    const candidates = activeKeys.length
-      ? everyGoal.filter((g) => activeKeys.includes(g.key))
-      : everyGoal;
-    if (!candidates.length) return '';
-    const dayIdx = Math.floor(new Date(todayISO()).getTime() / 86400000) % candidates.length;
-    const g = candidates[dayIdx];
-    const customSrc = state?.user?.goalImages?.[g.key];
-    const displayName = state?.user?.goalNames?.[g.key] || g.name;
-    return `
-    <section class="px-4 mt-3">
-      <button class="q-card w-full overflow-hidden text-left tile-btn goal-of-day-btn relative block" data-target="goals" data-kind="tab" style="border-top:3px solid #FFD341">
-        <!-- Imagem grande full-width como hero -->
-        <div class="relative w-full" style="aspect-ratio: 16 / 10; background: linear-gradient(160deg, #B7B5FF 0%, #FFB7C5 50%, #A8E6CF 100%)">
-          ${customSrc
-            ? `<img src="${customSrc}" alt="${displayName}" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover" />`
-            : `<div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#FFF; opacity:.9">
-                 <div style="width:42%; height:42%">${focusSvg(g.focus)}</div>
-               </div>`}
-          <!-- Gradiente preto na base pra contraste do texto -->
-          <div style="position:absolute; left:0; right:0; bottom:0; height:55%; background:linear-gradient(to bottom, transparent, rgba(0,0,0,0.78))"></div>
-          <!-- Tag dourada no topo -->
-          <div class="absolute top-2 left-2 text-[10px] uppercase tracking-widest font-bold px-2 py-1 rounded-full" style="background:rgba(0,0,0,0.55); color:#FFD341">
-            ⭐ Meta do dia${activeKeys.length ? '' : ' · sugestão'}
-          </div>
-          <!-- Título + porquê no rodapé da imagem -->
-          <div class="absolute left-3 right-3 bottom-2.5 text-white">
-            <div class="font-extrabold text-lg leading-tight drop-shadow">${displayName}</div>
-            ${g.why ? `<div class="text-[11px] opacity-90 leading-snug mt-0.5 line-clamp-2 drop-shadow">${g.why}</div>` : ''}
-          </div>
-        </div>
-      </button>
-    </section>`;
-  })()}
+  <!-- (Meta do dia removida — aba Metas também desativada) -->
 
   ${theme.showKombatant ? `
   <!-- Lounge esportivo: Notícias de Vôlei (Brasil / Itália / Japão) -->
@@ -7176,7 +7140,18 @@ function upsertDailyLog(log) {
 // ----- 6.3 Workout view -------------------------------------
 
 function viewWorkout() {
-  const types = Object.keys(EXERCISE_LIBRARY);
+  // Prioriza splits ABC no topo, depois "🆓 Treino livre", depois o resto.
+  const PRIORITY_TYPES = [
+    'A · Peito + Tríceps + Abs',
+    'B · Costas + Ombros + Bíceps + Abs',
+    'C · Pernas completo + Abs',
+    '🆓 Treino livre',
+  ];
+  const allKeys = Object.keys(EXERCISE_LIBRARY);
+  const types = [
+    ...PRIORITY_TYPES.filter((t) => allKeys.includes(t)),
+    ...allKeys.filter((t) => !PRIORITY_TYPES.includes(t)),
+  ];
   const subtitles = {
     '🆓 Treino livre': 'detecta split sozinho',
     'Peito + Tríceps':  'pressão + isolamento', 'Costas + Bíceps':  'tração + isolamento',
@@ -10122,6 +10097,106 @@ const CALISTENIA_ROADMAP = [
   },
 ];
 
+/** View completa da aba Calistenia — roadmap interativo com nível atual,
+ *  movimentos detalhados e dicas de progressão. */
+function viewCalistenia() {
+  const userLevel = state.user.calisteniaLevel ?? 0;
+  const currentLv = CALISTENIA_ROADMAP[Math.min(userLevel, CALISTENIA_ROADMAP.length - 1)];
+  const nextLv = CALISTENIA_ROADMAP[Math.min(userLevel + 1, CALISTENIA_ROADMAP.length - 1)];
+  const movCount = CALISTENIA_ROADMAP.reduce((s, lv) => s + lv.movements.length, 0);
+
+  return `
+  <header class="pt-7 pb-3 px-5 kombat-hero">
+    <div class="kombat-tagline text-xs">CALISTHENICS PATH</div>
+    <h1 class="text-2xl font-extrabold mt-1">Calistenia</h1>
+    <p class="text-sm text-ink/55 dark:text-paper/55">Do iniciante absoluto ao mestre. ${movCount} movimentos com técnica completa.</p>
+  </header>
+
+  <!-- Card do nível atual -->
+  <section class="px-4 mt-2">
+    <div class="q-card p-4 relative" style="border-left:4px solid ${currentLv.color}">
+      <div class="flex items-center justify-between gap-2 mb-2">
+        <div>
+          <div class="text-[10px] uppercase tracking-widest font-semibold" style="color:${currentLv.color}">Seu nível atual</div>
+          <div class="font-extrabold text-lg mt-0.5">Nível ${currentLv.level} · ${currentLv.name}</div>
+        </div>
+        <span class="text-[10px] text-ink/45 dark:text-paper/45">${currentLv.weeks}</span>
+      </div>
+      <div class="text-xs text-ink/65 dark:text-paper/65 leading-snug">${currentLv.desc}</div>
+      <div class="mt-3 p-2.5 rounded text-[11px]" style="background:rgba(168,230,207,0.12); border-left:2px solid #3FBF7F">
+        <b>🎯 Critério pra avançar:</b> ${currentLv.criteria}
+      </div>
+      ${userLevel < CALISTENIA_ROADMAP.length - 1 ? `
+        <div class="mt-2 p-2.5 rounded text-[11px]" style="background:rgba(255,216,168,0.12); border-left:2px solid #FFD8A8">
+          <b>➡️ Próximo:</b> Nível ${nextLv.level} · ${nextLv.name}
+        </div>` : ''}
+      <div class="flex items-center gap-1 mt-3 flex-wrap">
+        <span class="text-[10px] text-ink/55 dark:text-paper/55">Marcar nível:</span>
+        ${CALISTENIA_ROADMAP.map((lv) => `
+          <button class="calist-level-btn pill text-[10px] ${lv.level === userLevel ? 'is-mint font-bold' : ''}" data-level="${lv.level}">
+            ${lv.level}
+          </button>
+        `).join('')}
+      </div>
+    </div>
+  </section>
+
+  <!-- Todos os níveis -->
+  <section class="px-4 mt-3 mb-2">
+    <h2 class="font-extrabold text-base mb-2">Roadmap completo</h2>
+    <div class="space-y-2">
+      ${CALISTENIA_ROADMAP.map((lv) => {
+        const isCurrent = lv.level === userLevel;
+        return `
+        <details class="q-card overflow-hidden" ${isCurrent ? 'open' : ''} style="border-left:4px solid ${lv.color}">
+          <summary class="cursor-pointer list-none p-3">
+            <div class="flex items-center justify-between gap-2">
+              <div class="min-w-0 flex-1">
+                <div class="text-[10px] uppercase tracking-widest font-semibold" style="color:${lv.color}">
+                  Nível ${lv.level} · ${lv.weeks}${isCurrent ? ' · <span class="text-mint">você está aqui</span>' : ''}
+                </div>
+                <div class="font-extrabold text-base mt-0.5">${lv.name}</div>
+              </div>
+              <span class="text-[10px] text-ink/45 dark:text-paper/45">▼</span>
+            </div>
+            <div class="text-xs text-ink/65 dark:text-paper/65 leading-snug mt-2">${lv.desc}</div>
+          </summary>
+          <div class="px-3 pb-3">
+            <div class="p-2 mt-1 rounded text-[11px]" style="background:rgba(168,230,207,0.12); border-left:2px solid #3FBF7F">
+              <b>🎯 Critério pra avançar:</b> ${lv.criteria}
+            </div>
+            <div class="mt-3 space-y-2">
+              ${lv.movements.map((m) => `
+                <details class="q-card p-2.5">
+                  <summary class="cursor-pointer list-none">
+                    <div class="flex items-center justify-between gap-2">
+                      <div class="min-w-0 flex-1">
+                        <div class="font-bold text-sm truncate">${m.name}</div>
+                        <div class="text-[10px] text-ink/55 dark:text-paper/55">${m.muscles}</div>
+                      </div>
+                      <span class="pill is-mint text-[10px] whitespace-nowrap">${m.target}</span>
+                    </div>
+                  </summary>
+                  <div class="mt-2 text-[11px] space-y-1.5 leading-snug">
+                    <div><b class="text-lavender">Técnica:</b> ${m.technique}</div>
+                    ${m.mistakes ? `<div><b class="text-pink">Erros comuns:</b> ${m.mistakes}</div>` : ''}
+                    ${m.next ? `<div><b class="text-mint">Próximo passo:</b> ${m.next}</div>` : ''}
+                  </div>
+                </details>
+              `).join('')}
+            </div>
+          </div>
+        </details>`;
+      }).join('')}
+    </div>
+    <p class="text-[10px] text-ink/45 dark:text-paper/45 mt-3 italic">
+      ⚠️ Não pule níveis — forçar progressões avançadas sem base = lesão garantida.
+      Frequência ideal: 3-4×/sem, descanso de 48h em grupos muito treinados.
+    </p>
+  </section>
+  `;
+}
+
 function modalCalisteniaRoadmap() {
   openModal(`
     <header class="flex items-center justify-between p-4 border-b border-ink/5 dark:border-paper/5">
@@ -11005,12 +11080,12 @@ function viewConfig() {
 
 function renderTabbar() {
   const items = [
-    { key: 'home',     icon: I.home,   label: 'Início' },
-    { key: 'workout',  icon: I.dumb,   label: 'Treino' },
-    { key: 'nutri',    icon: I.bowl,   label: 'Nutri' },
-    { key: 'goals',    icon: I.trophy, label: 'Metas' },
-    { key: 'reading',  icon: I.book,   label: 'Leitura' },
-    { key: 'body',     icon: I.body,   label: 'Corpo' },
+    { key: 'home',       icon: I.home,    label: 'Início' },
+    { key: 'workout',    icon: I.dumb,    label: 'Treino' },
+    { key: 'calistenia', icon: I.fighter, label: 'Calist.' },
+    { key: 'nutri',      icon: I.bowl,    label: 'Nutri' },
+    { key: 'reading',    icon: I.book,    label: 'Leitura' },
+    { key: 'body',       icon: I.body,    label: 'Corpo' },
   ];
   document.getElementById('tabbar').innerHTML = `
     <div class="flex gap-1">
@@ -11622,6 +11697,17 @@ function attachHandlers() {
 
   document.getElementById('open-library')?.addEventListener('click', modalLibrary);
   document.getElementById('open-calisthenics-roadmap')?.addEventListener('click', modalCalisteniaRoadmap);
+
+  // Botões de nível na aba Calistenia
+  document.querySelectorAll('.calist-level-btn').forEach((b) => b.onclick = () => {
+    const lv = +b.dataset.level;
+    if (lv >= 0 && lv <= 5) {
+      state.user.calisteniaLevel = lv;
+      saveState();
+      render();
+      toast(`Nível atualizado: ${lv}`);
+    }
+  });
   document.querySelectorAll('.workout-start').forEach((b) => b.onclick = () => modalWorkoutSession(b.dataset.type));
   document.querySelectorAll('.workout-view').forEach((b) => b.onclick = () => {
     const w = state.workouts.find(x => x.date === b.dataset.date);
