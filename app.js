@@ -7225,9 +7225,14 @@ function viewWorkout() {
     <div class="kombat-tagline text-xs">${getTheme(state).tags.workout}</div>
     <h1 class="text-2xl font-extrabold mt-1">Treino</h1>
     <p class="text-sm text-ink/55 dark:text-paper/55">Escolha um split, registre manualmente, ou descreva o que você quer.</p>
-    <button id="open-library" class="q-btn q-btn-ghost mt-3 text-sm">
-      <span class="w-4 h-4">${I.brain}</span> Biblioteca completa
-    </button>
+    <div class="flex flex-wrap gap-2 mt-3">
+      <button id="open-library" class="q-btn q-btn-ghost text-sm">
+        <span class="w-4 h-4">${I.brain}</span> Biblioteca completa
+      </button>
+      <button id="open-calisthenics-roadmap" class="q-btn q-btn-ghost text-sm">
+        <span class="w-4 h-4">${I.fighter}</span> Roadmap Calistenia
+      </button>
+    </div>
   </header>
 
   <section class="px-4 space-y-3">
@@ -9889,6 +9894,292 @@ function modalTechniqueGlossary() {
   `);
 }
 
+// ===== Roadmap Calistenia — progressão completa do iniciante ao avançado =====
+// Cada nível tem critério de "domínio" antes de passar pro próximo. Movimentos
+// trazem técnica, erros comuns e o próximo passo na progressão.
+const CALISTENIA_ROADMAP = [
+  {
+    level: 0,
+    name: 'Base · Iniciante absoluto',
+    weeks: '4-8 semanas',
+    color: '#7BB8FF',
+    desc: 'Você nunca treinou ou tá voltando depois de muito tempo. Objetivo: construir resistência ligamentar, padrões de movimento e confiança. Treine 3×/sem, dia sim dia não.',
+    criteria: 'Você passa de nível quando: faz 10 flexões de joelho boas, 10 inverted rows na mesa, 20 agachamentos livres e segura prancha 30s.',
+    movements: [
+      { name: 'Wall push-up', target: '3×15', muscles: 'peito, ombro',
+        technique: 'Pés a 1 passo da parede, mãos na altura do ombro, encosta o peito sem balançar.',
+        mistakes: 'Quadril caindo. Não encostar o peito.', next: 'Incline push-up' },
+      { name: 'Incline push-up (em mesa/sofá)', target: '3×10', muscles: 'peito, tríceps, ombro',
+        technique: 'Mãos numa superfície elevada (mesa baixa, sofá). Corpo reto. Quanto mais baixa a superfície, mais difícil.',
+        mistakes: 'Quadril alto. Cotovelos a 90°.', next: 'Knee push-up' },
+      { name: 'Knee push-up (joelho)', target: '3×8-12', muscles: 'peito, tríceps',
+        technique: 'Joelhos no chão (com toalha pra conforto). Corpo reto da cabeça aos joelhos.',
+        mistakes: 'Quadril dobrado pra cima.', next: 'Push-up regular' },
+      { name: 'Inverted row na mesa', target: '3×8-12', muscles: 'dorsal, bíceps',
+        technique: 'Deita debaixo de uma mesa firme. Segura a borda. Puxa o peito até a mesa.',
+        mistakes: 'Quadril caindo.', next: 'Inverted row baixa (barra ~1m)' },
+      { name: 'Bodyweight squat', target: '3×15-20', muscles: 'quadríceps, glúteo',
+        technique: 'Pés largura dos ombros. Quadril pra trás como se sentando numa cadeira invisível. Joelho na direção dos dedos do pé.',
+        mistakes: 'Joelho pra dentro. Calcanhar levantando.', next: 'Squat com pausa' },
+      { name: 'Glute bridge', target: '3×15', muscles: 'glúteo, posterior',
+        technique: 'Deitado, pés apoiados, sobe o quadril apertando glúteo. Pausa 1s no topo.',
+        mistakes: 'Hiperestender lombar.', next: 'Single-leg glute bridge' },
+      { name: 'Bird dog', target: '3×10/lado', muscles: 'core, estabilidade',
+        technique: '4 apoios. Estende braço direito + perna esquerda alinhados. Alterna lentamente.',
+        mistakes: 'Costas rodando.', next: 'Dead bug' },
+      { name: 'Dead bug', target: '3×10/lado', muscles: 'core anti-extensão',
+        technique: 'Deitado, braços/pernas no ar. Alterna estender braço esquerdo + perna direita sem deixar a lombar sair do chão.',
+        mistakes: 'Lombar arqueando.', next: 'Hollow body hold (knees bent)' },
+      { name: 'Prancha frontal', target: '3×30s', muscles: 'core',
+        technique: 'Cotovelos sob ombros, corpo reto, glúteo travado.',
+        mistakes: 'Bumbum alto/baixo. Prender respiração.', next: 'Prancha 60s' },
+      { name: 'Caminhada 20-30min', target: 'todo dia', muscles: 'cardio leve, recuperação',
+        technique: 'Ritmo confortável (Z2 — dá pra conversar).',
+        mistakes: 'Acelerar demais.', next: 'Power walk' },
+    ],
+  },
+  {
+    level: 1,
+    name: 'Fundação · Já consegue o básico',
+    weeks: '8-16 semanas',
+    color: '#A8E6CF',
+    desc: 'Você bate as metas do nível 0. Agora: dominar push-up, pull-up assistido, squat e core estático.',
+    criteria: 'Passa de nível quando: faz 12 push-ups completos, 5 pull-ups regulares (ou negativos lentos), 25 squats e segura hollow body 30s.',
+    movements: [
+      { name: 'Push-up regular', target: '3×8-12', muscles: 'peito, tríceps, ombro',
+        technique: 'Mãos largura ombros+10cm. Corpo reto da cabeça aos calcanhares. Desce até peito quase tocar.',
+        mistakes: 'Cotovelos a 90° (vira ombro). Quadril caído.', next: 'Diamond push-up' },
+      { name: 'Negative pull-up', target: '3×3-5', muscles: 'dorsal, bíceps',
+        technique: 'Pula pra cima da barra, queixo passa. Desce CONTROLADO em 3-5 segundos.',
+        mistakes: 'Descer rápido.', next: 'Pull-up assistido com banda' },
+      { name: 'Assisted pull-up (banda elástica)', target: '3×6-8', muscles: 'dorsal, bíceps',
+        technique: 'Banda elástica no joelho/pé pra reduzir peso. Queixo passa a barra.',
+        mistakes: 'Banda muito forte (perde o estímulo).', next: 'Pull-up sem assistência' },
+      { name: 'Inverted row (barra baixa)', target: '3×8-12', muscles: 'dorsal, bíceps',
+        technique: 'Barra na altura do quadril. Calcanhar no chão. Puxa peito até a barra.',
+        mistakes: 'Quadril caído.', next: 'Inverted row com pés elevados' },
+      { name: 'Bulgarian split squat', target: '3×8/perna', muscles: 'quad, glúteo, estabilidade',
+        technique: 'Pé de trás elevado num banco. Desce até joelho atrás quase tocar o chão.',
+        mistakes: 'Joelho da frente passar do pé.', next: 'Pistol squat assistida' },
+      { name: 'Pike push-up', target: '3×6-10', muscles: 'ombro, tríceps',
+        technique: 'Quadril alto (formato de "Λ"). Desce a cabeça em direção ao chão entre as mãos.',
+        mistakes: 'Cotovelo abrindo.', next: 'Pike push-up com pés elevados' },
+      { name: 'Hollow body hold (joelho flexionado)', target: '3×20-30s', muscles: 'core profundo',
+        technique: 'Deitado, lombar colada no chão, joelhos flex 90°, braços ao lado da cabeça.',
+        mistakes: 'Lombar saindo do chão.', next: 'Hollow body com pernas estendidas' },
+      { name: 'Prancha lateral', target: '3×30s/lado', muscles: 'oblíquos',
+        technique: 'Cotovelo sob ombro, quadril alto, linha reta.',
+        mistakes: 'Quadril caindo.', next: 'Star plank' },
+      { name: 'Glute bridge unilateral', target: '3×10/perna', muscles: 'glúteo',
+        technique: 'Uma perna no chão, outra estendida. Sobe o quadril.',
+        mistakes: 'Quadril rodando.', next: 'Hip thrust com peso' },
+    ],
+  },
+  {
+    level: 2,
+    name: 'Intermediário · Construindo força',
+    weeks: '12-24 semanas',
+    color: '#FFD8A8',
+    desc: 'Push-up básico já é fácil. Foco em variações harder + introduzir handstand e pistol.',
+    criteria: 'Passa de nível quando: faz 5 pull-ups limpos, 20 push-ups, 1 pistol squat por perna, segura wall handstand 30s e L-sit tucked 15s.',
+    movements: [
+      { name: 'Pull-up regular', target: '3×5-8', muscles: 'dorsal, bíceps',
+        technique: 'Pegada pronada, queixo passa a barra. Sem balanço.',
+        mistakes: 'Balanço (kipping involuntário).', next: 'Archer pull-up' },
+      { name: 'Chin-up', target: '3×6-10', muscles: 'bíceps, dorsal',
+        technique: 'Pegada supinada (palmas pra você). Mais bíceps.',
+        mistakes: 'Trapézio dominando.', next: 'L-sit pull-up' },
+      { name: 'Diamond push-up', target: '3×8-12', muscles: 'tríceps, peito interno',
+        technique: 'Mãos unidas formando diamante. Cotovelos colados.',
+        mistakes: 'Cotovelos abrindo (vira push-up normal).', next: 'Archer push-up' },
+      { name: 'Archer push-up', target: '3×4-6/lado', muscles: 'peito assimétrico',
+        technique: 'Mãos largas. Desce inclinando pra um lado, transferindo 80% do peso. Inverso na próxima.',
+        mistakes: 'Não transferir peso suficiente.', next: 'One-arm push-up negativo' },
+      { name: 'Pistol squat assistida (segurando porta)', target: '3×3-5/perna', muscles: 'quad, glúteo, mobilidade',
+        technique: 'Uma perna estendida à frente. Segura algo pra equilíbrio. Senta na perna apoiada até quase chão.',
+        mistakes: 'Joelho caindo pra dentro.', next: 'Pistol squat livre' },
+      { name: 'Shrimp squat assistido', target: '3×3-5/perna', muscles: 'quad, glúteo',
+        technique: 'Uma perna dobrada pra trás (segurando o pé). Agacha na outra.',
+        mistakes: 'Perda de equilíbrio.', next: 'Shrimp squat completo' },
+      { name: 'Wall handstand', target: '3×30s', muscles: 'ombro, core, equilíbrio',
+        technique: 'De cabeça pra baixo encostando peito/bumbum na parede. Braços travados.',
+        mistakes: 'Banana (lombar arqueada).', next: 'Wall handstand chest-to-wall' },
+      { name: 'Pike push-up pés elevados', target: '3×6-10', muscles: 'ombro, tríceps',
+        technique: 'Mãos no chão, pés num banco. Quadril alto. Desce a cabeça.',
+        mistakes: 'Empurrar pra frente em vez de pra cima.', next: 'Handstand push-up assistido' },
+      { name: 'L-sit tucked (joelho flex)', target: '3×10-15s', muscles: 'core, ombro',
+        technique: 'Sentado, mãos no chão. Eleva o corpo com joelhos flex 90° pro peito.',
+        mistakes: 'Ombros subindo.', next: 'L-sit one leg out' },
+      { name: 'Hollow body hold (pernas estendidas)', target: '3×30-45s', muscles: 'core',
+        technique: 'Pernas + braços estendidos. Lombar colada.',
+        mistakes: 'Lombar saindo.', next: 'Hollow rocks' },
+    ],
+  },
+  {
+    level: 3,
+    name: 'Avançado · Skills de força',
+    weeks: '24-52 semanas',
+    color: '#E84A1A',
+    desc: 'Você é forte. Agora vai pra movimentos icônicos: muscle-up, planche progressions, front lever, pistol limpa.',
+    criteria: 'Passa de nível quando: faz 10 pull-ups, 1 muscle-up, segura tuck planche 10s, segura tuck front lever 10s, 3 pistols limpas por perna.',
+    movements: [
+      { name: 'Archer pull-up', target: '3×3-5/lado', muscles: 'dorsal assimétrico',
+        technique: 'Pega larga. Puxa pra um lado, o outro braço fica estendido. Inverso na próxima.',
+        mistakes: 'Não transferir peso (vira pull-up normal).', next: 'Typewriter pull-up' },
+      { name: 'Muscle-up progressivo (explosive pull-up)', target: '3×3-5', muscles: 'dorsal, peito, tríceps',
+        technique: 'Pull-up explosivo trazendo o peito acima da barra. Ainda sem rotação do pulso.',
+        mistakes: 'Pulinho com perna (kipping).', next: 'Muscle-up assistido com banda' },
+      { name: 'One-arm push-up negativo', target: '3×3/lado', muscles: 'peito, tríceps unilateral',
+        technique: 'Posição one-arm push-up. Desce CONTROLADO em 5s. Sobe usando 2 braços ou descansa.',
+        mistakes: 'Quadril rodando.', next: 'One-arm push-up parcial' },
+      { name: 'Pistol squat livre', target: '3×3-5/perna', muscles: 'quad unilateral pesado',
+        technique: 'Sem apoio. Uma perna estendida à frente. Senta na outra até quase chão. Sobe sem cair.',
+        mistakes: 'Joelho valgo.', next: 'Pistol squat com peso' },
+      { name: 'Shrimp squat completo', target: '3×3-5/perna', muscles: 'quad, glúteo',
+        technique: 'Sem segurar nada. Tronco controlado.',
+        mistakes: 'Compensar com quadril.', next: 'Shrimp squat com peso' },
+      { name: 'Tuck planche', target: '3×8-15s', muscles: 'ombro anterior, escápula, core',
+        technique: 'Mãos no chão na frente do quadril (dedos pra fora). Pés saem do chão e joelhos vêm pro peito.',
+        mistakes: 'Ombros caindo.', next: 'Advanced tuck planche (costas planas)' },
+      { name: 'Tuck front lever', target: '3×8-15s', muscles: 'dorsal, core',
+        technique: 'Pendurado na barra, puxa o corpo até paralelo com o chão, joelhos no peito.',
+        mistakes: 'Cotovelos flex.', next: 'Advanced tuck front lever' },
+      { name: 'Wall walk', target: '3×3-5', muscles: 'ombro, core',
+        technique: 'Em prancha de cabeça pra baixo. Anda pés pela parede subindo, mãos andam em direção à parede.',
+        mistakes: 'Não chegar perto da parede.', next: 'Handstand freestanding' },
+      { name: 'Handstand push-up assistido (banda/parede)', target: '3×5-8', muscles: 'ombro, tríceps',
+        technique: 'Em wall handstand, desce a cabeça até quase o chão, sobe.',
+        mistakes: 'Banana.', next: 'Handstand push-up livre' },
+      { name: 'L-sit completo', target: '3×15-30s', muscles: 'core, ombro',
+        technique: 'Pernas totalmente estendidas paralelas ao chão.',
+        mistakes: 'Joelho flex.', next: 'V-sit' },
+    ],
+  },
+  {
+    level: 4,
+    name: 'Elite · Skills icônicos',
+    weeks: '1-3 anos',
+    color: '#B8242E',
+    desc: 'Você é forte que dói. Trabalha pra entregar movimentos clássicos: planche straddle, front lever full, muscle-up limpo, handstand freestanding.',
+    criteria: 'Passa de nível quando: muscle-up limpo, straddle planche 10s, full front lever 5s, handstand freestanding 30s.',
+    movements: [
+      { name: 'Muscle-up limpo (strict)', target: '3×3-5', muscles: 'dorsal, peito, tríceps',
+        technique: 'Sem kipping. False grip ajuda no início. Transição passa pulso de baixo pra cima do barra.',
+        mistakes: 'Kip de perna.', next: 'Slow muscle-up' },
+      { name: 'Front lever (tuck advanced ou one-leg)', target: '3×5-10s', muscles: 'dorsal, core',
+        technique: 'Pernas estendidas ou uma só. Quadril alinhado com tronco.',
+        mistakes: 'Quadril caído.', next: 'Full front lever' },
+      { name: 'Back lever (tuck)', target: '3×8-15s', muscles: 'peito, ombro, dorsal',
+        technique: 'Pendurado de costas pra baixo. Joelhos no peito.',
+        mistakes: 'Não controlar ombro.', next: 'Back lever straddle' },
+      { name: 'Straddle planche progression', target: '3×5-10s', muscles: 'ombro, core',
+        technique: 'Pernas abertas em V (mais leverage). Costas paralelas ao chão.',
+        mistakes: 'Ombros caindo.', next: 'Full planche' },
+      { name: 'Handstand freestanding', target: '3×30-60s', muscles: 'ombro, core, equilíbrio',
+        technique: 'Sem apoio. Pequenos ajustes com dedos pra manter equilíbrio.',
+        mistakes: 'Banana.', next: 'Handstand push-up livre' },
+      { name: 'Handstand push-up livre', target: '3×3-5', muscles: 'ombro, tríceps',
+        technique: 'Handstand freestanding, desce a cabeça, sobe.',
+        mistakes: 'Sair da posição vertical.', next: 'Single-arm handstand assistido' },
+      { name: 'One-arm pull-up assistido', target: '3×2-3/lado', muscles: 'dorsal extremo',
+        technique: 'Segura no pulso oposto ou usa banda fina pra reduzir 30% do peso.',
+        mistakes: 'Balanço.', next: 'One-arm pull-up livre' },
+      { name: 'V-sit', target: '3×10-15s', muscles: 'core elite',
+        technique: 'L-sit com pernas elevadas em V, formando quase 90° com o chão.',
+        mistakes: 'Joelhos flex.', next: 'Manna' },
+    ],
+  },
+  {
+    level: 5,
+    name: 'Mestre · Anos de prática',
+    weeks: '3-10+ anos',
+    color: '#D6A93E',
+    desc: 'Movimentos que requerem anos de força específica, mobilidade e prática diária. Realisticamente: vida de calistênico.',
+    criteria: 'Não passa — você é mestre. Mantém os skills, aperfeiçoa transições, dá aula.',
+    movements: [
+      { name: 'Full planche', target: 'isometria 5-15s', muscles: 'ombro, core, antebraço',
+        technique: 'Corpo totalmente reto paralelo ao chão. Pernas juntas.',
+        mistakes: 'Ombros caindo.', next: 'Maltese' },
+      { name: 'One-arm pull-up', target: '1-3 reps/lado', muscles: 'dorsal extremo',
+        technique: 'Pendurado com 1 braço. Pula sozinho até queixo passar.',
+        mistakes: 'Pull-up assimétrico fingido.', next: 'One-arm muscle-up' },
+      { name: 'Human flag', target: 'isometria 5-15s', muscles: 'oblíquos, ombro, dorsal',
+        technique: 'Segura barra vertical com 2 mãos. Corpo paralelo ao chão lateral.',
+        mistakes: 'Não usar core.', next: 'Touch & go human flag' },
+      { name: 'Iron cross (nas argolas)', target: 'isometria 3-8s', muscles: 'peito, ombro, escápula',
+        technique: 'Argolas. Braços estendidos pros lados, corpo vertical entre elas.',
+        mistakes: 'Inviável sem anos de prática específica.', next: 'Maltese' },
+      { name: 'Maltese (nas argolas)', target: 'isometria 3-5s', muscles: 'peito, escápula',
+        technique: 'Argolas. Corpo paralelo ao chão, braços estendidos.',
+        mistakes: '—', next: 'Victorian' },
+      { name: 'Front lever pulls', target: '3×3-5', muscles: 'dorsal extremo + core',
+        technique: 'Vai do dead hang até full front lever, mantém 1s, desce.',
+        mistakes: 'Não chegar na posição.', next: 'Front lever raises' },
+      { name: 'Planche push-up', target: '3×3-5', muscles: 'ombro, peito',
+        technique: 'Em planche, desce o corpo até quase o chão, sobe sem perder posição.',
+        mistakes: 'Quebrar planche na descida.', next: '—' },
+    ],
+  },
+];
+
+function modalCalisteniaRoadmap() {
+  openModal(`
+    <header class="flex items-center justify-between p-4 border-b border-ink/5 dark:border-paper/5">
+      <div>
+        <div class="kombat-tagline text-[10px]">CALISTHENICS PATH</div>
+        <h2 class="font-extrabold text-lg mt-0.5">Roadmap Calistenia</h2>
+        <p class="text-[10px] text-ink/55 dark:text-paper/55">Do iniciante absoluto até skills de mestre. Cada nível tem critério pra avançar.</p>
+      </div>
+      <button class="modal-close p-1"><span class="w-5 h-5">${I.close}</span></button>
+    </header>
+    <div class="p-4 overflow-y-auto space-y-3" style="max-height:75vh">
+      ${CALISTENIA_ROADMAP.map((lv) => `
+        <details class="q-card overflow-hidden" ${lv.level === 0 ? 'open' : ''} style="border-left:4px solid ${lv.color}">
+          <summary class="cursor-pointer list-none p-3">
+            <div class="flex items-center justify-between gap-2">
+              <div class="min-w-0 flex-1">
+                <div class="text-[10px] uppercase tracking-widest font-semibold" style="color:${lv.color}">Nível ${lv.level} · ${lv.weeks}</div>
+                <div class="font-extrabold text-base mt-0.5">${lv.name}</div>
+              </div>
+              <span class="text-[10px] text-ink/45 dark:text-paper/45">▼</span>
+            </div>
+            <div class="text-xs text-ink/65 dark:text-paper/65 leading-snug mt-2">${lv.desc}</div>
+          </summary>
+          <div class="px-3 pb-3">
+            <div class="p-2 mt-2 rounded text-[11px]" style="background:rgba(168,230,207,0.12); border-left:2px solid #3FBF7F">
+              <b>🎯 Critério pra avançar:</b> ${lv.criteria}
+            </div>
+            <div class="mt-3 space-y-2">
+              ${lv.movements.map((m) => `
+                <details class="q-card p-2.5">
+                  <summary class="cursor-pointer list-none">
+                    <div class="flex items-center justify-between gap-2">
+                      <div class="min-w-0 flex-1">
+                        <div class="font-bold text-sm truncate">${m.name}</div>
+                        <div class="text-[10px] text-ink/55 dark:text-paper/55">${m.muscles}</div>
+                      </div>
+                      <span class="pill is-mint text-[10px] whitespace-nowrap">${m.target}</span>
+                    </div>
+                  </summary>
+                  <div class="mt-2 text-[11px] space-y-1.5 leading-snug">
+                    <div><b class="text-lavender">Técnica:</b> ${m.technique}</div>
+                    ${m.mistakes ? `<div><b class="text-pink">Erros comuns:</b> ${m.mistakes}</div>` : ''}
+                    ${m.next ? `<div><b class="text-mint">Próximo passo:</b> ${m.next}</div>` : ''}
+                  </div>
+                </details>
+              `).join('')}
+            </div>
+          </div>
+        </details>
+      `).join('')}
+      <p class="text-[10px] text-ink/45 dark:text-paper/45 mt-2 italic px-2">
+        ⚠️ Não pule níveis. Forçar progressões avançadas sem base pronta = lesão garantida.
+        Frequência ideal: 3-4×/sem. Descanso de 48h em grupos muito treinados.
+      </p>
+    </div>
+  `);
+}
+
 function modalLibrary() {
   const types = Object.keys(EXERCISE_LIBRARY).filter(t => EXERCISE_LIBRARY[t].length);
   openModal(`
@@ -11330,6 +11621,7 @@ function attachHandlers() {
   });
 
   document.getElementById('open-library')?.addEventListener('click', modalLibrary);
+  document.getElementById('open-calisthenics-roadmap')?.addEventListener('click', modalCalisteniaRoadmap);
   document.querySelectorAll('.workout-start').forEach((b) => b.onclick = () => modalWorkoutSession(b.dataset.type));
   document.querySelectorAll('.workout-view').forEach((b) => b.onclick = () => {
     const w = state.workouts.find(x => x.date === b.dataset.date);
