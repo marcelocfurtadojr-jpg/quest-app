@@ -75,6 +75,19 @@ const RANK_DECAY = 0.10;
 // Quantas daily quests aparecem na home por padrão.
 const DAILY_QUEST_COUNT = 5;
 
+// Mapa de tag → emoji/cor/label pra UI de quests (mais visual e divertido).
+const QUEST_TAG_INFO = {
+  saúde:   { emoji: '💧', color: '#7BB8FF', label: 'saúde' },
+  treino:  { emoji: '💪', color: '#B8242E', label: 'treino' },
+  cardio:  { emoji: '🏃', color: '#E84A1A', label: 'cardio' },
+  nutri:   { emoji: '🥩', color: '#3FBF7F', label: 'nutrição' },
+  sono:    { emoji: '🌙', color: '#9B7BFF', label: 'sono' },
+  foco:    { emoji: '🎯', color: '#FFD341', label: 'foco' },
+  mente:   { emoji: '🧠', color: '#B7B5FF', label: 'mente' },
+  'k-pop': { emoji: '🎵', color: '#FFB7C5', label: 'k-pop' },
+  default: { emoji: '⭐', color: '#A8E6CF', label: 'quest' },
+};
+
 // Pool de daily quests — 35 opções com sabor coreano (일일 미션).
 // XP varia conforme dificuldade. Tag determina o ícone/cor.
 const DEFAULT_QUEST_POOL = [
@@ -6692,19 +6705,20 @@ function viewDashboard() {
   </header>
 
   <section class="px-4">
-    <div class="q-card p-4 flex items-center gap-4 ${RANKS.indexOf(r) >= 6 ? 'rank-elite' : ''}">
-      <div class="rank-badge text-paper" style="background:${r.color}">
-        ${r.name[0].toUpperCase()}
+    <div class="q-card p-4 flex items-center gap-4 ${baseRankIndex(r.key) >= 4 ? 'rank-elite' : ''} relative overflow-hidden" style="background: linear-gradient(135deg, ${r.color}11 0%, transparent 60%)">
+      <div class="rank-badge text-paper relative" style="background:${r.color}; box-shadow: 0 4px 18px ${r.color}55">
+        ${r.name.replace(/\s.*/, '').slice(0,1).toUpperCase()}
+        <span class="absolute -bottom-1 -right-1 text-[9px] font-bold px-1 rounded" style="background:${r.color}; color:#FFF; border:1.5px solid var(--bg, #FBFAF7)">${r.div || ''}</span>
       </div>
       <div class="flex-1 min-w-0">
         <div class="flex items-baseline justify-between gap-2">
-          <div class="font-kombat text-lg uppercase tracking-wider" style="color:${r.color}">${r.name}</div>
-          <div class="text-xs text-ink/50 dark:text-paper/50">
-            ${next ? `→ ${next.name} em ${next.threshold - rxp} XP` : '👑 CHALLENGER'}
+          <div class="font-kombat text-lg uppercase tracking-wider truncate" style="color:${r.color}">${r.name}</div>
+          <div class="text-[10px] text-ink/50 dark:text-paper/50 whitespace-nowrap">
+            ${next ? `→ ${next.name.replace(/\s.*/, '')} em <b>${next.threshold - rxp}</b> XP` : '👑 TOPO'}
           </div>
         </div>
         <div class="xp-track is-kombat mt-2"><div class="xp-fill" style="width:${progress}%"></div></div>
-        <div class="flex justify-between text-xs mt-1 text-ink/55 dark:text-paper/55">
+        <div class="flex justify-between text-[11px] mt-1 text-ink/55 dark:text-paper/55">
           <span>Rank: <b>${rxp} XP</b></span>
           <span>Semana: <b>${wxp}</b></span>
           <span>Hoje: <b>${dayXP}/${DAILY_XP_CAP}</b></span>
@@ -6781,31 +6795,7 @@ function viewDashboard() {
 
   <!-- (Meta do dia removida — aba Metas também desativada) -->
 
-  ${theme.showKombatant ? `
-  <!-- Lounge esportivo: Notícias de Vôlei (Brasil / Itália / Japão) -->
-  <section class="px-4 mt-3">
-    <div class="q-card overflow-hidden">
-      <div class="flex items-center gap-2 px-3 pt-3 pb-2 border-b border-ink/5 dark:border-paper/5">
-        <span class="text-base">🏐</span>
-        <div class="flex-1 min-w-0">
-          <div class="text-xs uppercase tracking-wider text-ink/45 dark:text-paper/45">Vôlei mundial</div>
-          <div class="text-[10px] text-ink/55 dark:text-paper/55">Manchetes de Superliga, SuperLega e V.League</div>
-        </div>
-        <button id="kpop-lounge-refresh" class="text-[10px] text-lavender px-2 py-1 rounded-full bg-lavender/10 hover:bg-lavender/20" aria-label="atualizar">🔄 atualizar</button>
-      </div>
-      <!-- Tabs de liga -->
-      <div class="grid grid-cols-3 gap-0 border-b border-ink/5 dark:border-paper/5">
-        ${Object.entries(VOLLEY_FEEDS).map(([k, f], i) =>
-          `<button class="volley-tab text-[10px] py-2 px-1 font-semibold ${i===0?'is-active':''}" data-league="${k}">${f.label}</button>`
-        ).join('')}
-      </div>
-      <div id="volley-feed" class="text-xs p-3">
-        <div class="space-y-2">
-          ${[0,1,2].map(() => `<div class="h-10 rounded bg-ink/5 dark:bg-paper/5 animate-pulse"></div>`).join('')}
-        </div>
-      </div>
-    </div>
-  </section>` : ''}
+  <!-- (Notícias de vôlei removidas da home a pedido do usuário) -->
 
   ${(() => {
     const dailies = (state.rewards.available || [])
@@ -6846,25 +6836,54 @@ function viewDashboard() {
   })()}
 
   <section class="px-4 mt-5">
-    <div class="flex items-center justify-between mb-2">
-      <h2 class="font-extrabold text-lg">Daily quests</h2>
-      <button id="reroll" class="text-xs flex items-center gap-1 text-lavender font-semibold">
-        <span class="w-4 h-4 inline-block">${I.reroll}</span> Sortear
-      </button>
-    </div>
-    <div class="q-card divide-y divide-ink/5 dark:divide-paper/5">
+    ${(() => {
+      const totalQ = da.items.length;
+      const doneQ = da.completed.length;
+      const xpEarned = da.items.filter(q => da.completed.includes(q.id)).reduce((s, q) => s + (q.xp || 0), 0);
+      const xpTotal  = da.items.reduce((s, q) => s + (q.xp || 0), 0);
+      const pct = totalQ ? Math.round((doneQ / totalQ) * 100) : 0;
+      const allDone = doneQ === totalQ && totalQ > 0;
+      // Identifica a "boss quest" — a de maior XP
+      const bossXP = Math.max(...da.items.map(q => q.xp || 0));
+      return `
+      <div class="flex items-end justify-between mb-2">
+        <div>
+          <h2 class="font-extrabold text-lg flex items-center gap-2">
+            <span>Daily quests</span>
+            ${allDone ? '<span class="text-base">🔥</span>' : ''}
+          </h2>
+          <div class="text-[10px] text-ink/55 dark:text-paper/55 mt-0.5">
+            ${doneQ}/${totalQ} completas · <b class="text-mint">+${xpEarned}</b>/${xpTotal} XP capturados
+          </div>
+        </div>
+        <button id="reroll" class="text-xs flex items-center gap-1 text-lavender font-semibold px-2 py-1 rounded-full bg-lavender/10 active:bg-lavender/20">
+          <span class="w-4 h-4 inline-block">${I.reroll}</span> Sortear
+        </button>
+      </div>
+      <!-- Barra de progresso da missão diária -->
+      <div class="xp-track mb-2" style="height:6px"><div class="xp-fill" style="width:${pct}%; background:linear-gradient(90deg, #A8E6CF, #FFD341)"></div></div>`;
+    })()}
+    <div class="q-card divide-y divide-ink/5 dark:divide-paper/5 overflow-hidden">
       ${da.items.map((q) => {
         const done = da.completed.includes(q.id);
+        const tagInfo = QUEST_TAG_INFO[q.tag] || QUEST_TAG_INFO.default;
+        const bossXP = Math.max(...da.items.map(x => x.xp || 0));
+        const isBoss = q.xp === bossXP && bossXP > 1;
         return `
-        <div class="p-3 flex items-center gap-3 quest-row" data-quest="${q.id}">
-          <button class="q-check ${done ? 'is-checked' : ''}" aria-label="completar">
+        <div class="p-3 flex items-center gap-3 quest-row relative ${done ? 'is-done' : ''} ${isBoss && !done ? 'is-boss' : ''}" data-quest="${q.id}" style="${done ? `background:linear-gradient(90deg, ${tagInfo.color}11, transparent)` : ''}">
+          ${isBoss && !done ? `<span class="absolute top-1 right-2 text-[9px] uppercase tracking-widest font-bold" style="color:#FFD341">★ boss</span>` : ''}
+          <button class="q-check ${done ? 'is-checked' : ''}" aria-label="completar" style="${done ? `border-color:${tagInfo.color}; background:${tagInfo.color}` : ''}">
             <span class="w-4 h-4">${I.check}</span>
           </button>
-          <div class="flex-1">
-            <div class="${done ? 'line-through opacity-50' : 'font-semibold'}">${q.text}</div>
-            <div class="text-xs text-ink/45 dark:text-paper/45 mt-0.5">${q.tag || ''}</div>
+          <span class="text-xl shrink-0" aria-hidden>${tagInfo.emoji}</span>
+          <div class="flex-1 min-w-0">
+            <div class="${done ? 'line-through opacity-50 text-sm' : 'font-semibold text-sm leading-tight'}">${q.text}</div>
+            <div class="flex items-center gap-1.5 mt-0.5">
+              <span class="text-[9px] uppercase tracking-wider font-bold" style="color:${tagInfo.color}">${tagInfo.label}</span>
+              ${q.ko ? `<span class="font-display text-[9px] text-ink/40 dark:text-paper/40">${q.ko}</span>` : ''}
+            </div>
           </div>
-          <div class="pill is-mint">+${q.xp} XP</div>
+          <div class="pill ${done ? 'is-sun' : 'is-mint'} shrink-0">+${q.xp} XP</div>
         </div>`;
       }).join('')}
     </div>
@@ -6955,8 +6974,13 @@ function viewDashboard() {
 function streakChip(emoji, label, count, dataKey) {
   const dataAttr = dataKey ? ` data-quick="${dataKey}"` : '';
   const cls = dataKey ? 'streak-chip is-clickable' : 'streak-chip';
-  if (count <= 0) return `<button class="${cls} opacity-50"${dataAttr}>${emoji} ${label} 0</button>`;
-  return `<button class="${cls}"${dataAttr}>${emoji} ${label} <b>${count}d</b></button>`;
+  // Visual progressivo: 0 = dim, 1-3 = normal, 4-7 = warm, 8+ = hot
+  const hotness = count >= 8 ? 'is-hot' : count >= 4 ? 'is-warm' : count > 0 ? 'is-active' : '';
+  return `<button class="${cls} ${hotness}"${dataAttr}>
+    <span class="streak-emoji">${emoji}</span>
+    <span class="streak-label">${label}</span>
+    <b class="streak-count">${count}d</b>
+  </button>`;
 }
 
 function quickTile(key, label, icon, kind = 'tab') {
@@ -11123,55 +11147,6 @@ function closeModal() {
 function attachHandlers() {
   document.getElementById('open-log')?.addEventListener('click', () => { vibrate(15); modalDailyLog(); });
   document.getElementById('open-rewards-daily')?.addEventListener('click', () => { vibrate(8); modalRewards(); });
-
-  // ===== Lounge esportivo: notícias de vôlei =====
-  async function renderVolleyFeed(league, force = false) {
-    const feed = document.getElementById('volley-feed');
-    if (!feed) return;
-    feed.innerHTML = `
-      <div class="space-y-2">
-        ${[0,1,2].map(() => `<div class="h-10 rounded bg-ink/5 dark:bg-paper/5 animate-pulse"></div>`).join('')}
-      </div>`;
-    const items = await fetchVolleyNews(league, force);
-    if (!items.length) {
-      feed.innerHTML = `
-        <div class="text-center py-4">
-          <div class="text-xl mb-1">📭</div>
-          <div class="text-xs italic text-ink/55 dark:text-paper/55">Sem notícias dessa liga agora. Tenta de novo em alguns minutos.</div>
-        </div>`;
-      return;
-    }
-    feed.innerHTML = items.map((it) => {
-      const title = it.title.replace(/\s*-\s*[^-]+$/, '');
-      const ago = timeAgoShort(new Date(it.pubDate));
-      return `
-        <a href="${it.link}" target="_blank" rel="noopener" class="volley-item flex items-start gap-2 py-2 border-b border-ink/5 dark:border-paper/5 last:border-0">
-          <span class="text-base mt-0.5">📰</span>
-          <div class="flex-1 min-w-0">
-            <div class="text-xs font-semibold leading-tight">${title}</div>
-            <div class="flex items-center gap-2 mt-1">
-              <span class="text-[9px] uppercase tracking-wider text-lavender font-semibold">${it.source || 'Google News'}</span>
-              <span class="text-[9px] text-ink/45 dark:text-paper/45">· ${ago}</span>
-            </div>
-          </div>
-          <span class="w-3 h-3 text-ink/30 dark:text-paper/30 mt-1 flex-shrink-0">${I.chev}</span>
-        </a>`;
-    }).join('');
-  }
-  document.querySelectorAll('.volley-tab').forEach((b) => b.onclick = () => {
-    document.querySelectorAll('.volley-tab').forEach((x) => x.classList.remove('is-active'));
-    b.classList.add('is-active');
-    renderVolleyFeed(b.dataset.league);
-  });
-  // Auto-carrega o feed da liga ativa (primeira por padrão)
-  const activeVolley = document.querySelector('.volley-tab.is-active');
-  if (activeVolley) renderVolleyFeed(activeVolley.dataset.league);
-
-  document.getElementById('kpop-lounge-refresh')?.addEventListener('click', async () => {
-    Object.keys(VOLLEY_CACHE).forEach((k) => delete VOLLEY_CACHE[k]);
-    const active = document.querySelector('.volley-tab.is-active');
-    if (active) renderVolleyFeed(active.dataset.league, true);
-  });
 
   document.getElementById('toggle-dark')?.addEventListener('click', () => {
     state.user.darkMode = !state.user.darkMode;

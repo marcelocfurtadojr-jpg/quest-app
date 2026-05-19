@@ -103,6 +103,23 @@ body {
   100% { transform: scale(1); }
 }
 
+/* Quest rows ------------------------------------------------- */
+.quest-row { transition: background .35s ease, transform .15s ease; }
+.quest-row.is-done { opacity: .85; }
+.quest-row.is-boss::before {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0; left: 0; width: 3px;
+  background: linear-gradient(180deg, #FFD341, #E8C56B);
+  border-radius: 0 2px 2px 0;
+}
+.quest-row:active { transform: scale(0.985); }
+.quest-row .q-check { transition: all .2s ease, transform .2s ease; }
+.quest-row:hover .q-check:not(.is-checked) {
+  border-color: rgba(168, 230, 207, 0.6);
+  background: rgba(168, 230, 207, 0.06);
+}
+
 /* Barra de XP ----------------------------------------------- */
 .xp-track {
   position: relative;
@@ -140,18 +157,46 @@ body {
 /* Streak chip ----------------------------------------------- */
 .streak-chip {
   display: inline-flex; align-items: center; gap: .35rem;
-  padding: .35rem .7rem;
+  padding: .4rem .8rem;
   border-radius: 999px;
-  background: rgba(255,183,197,0.18);
-  color: #7A2E3A;
+  background: rgba(142,142,147,0.12);
+  color: rgba(26,26,46,0.55);
   font-weight: 600; font-size: .82rem;
   border: 1px solid transparent;
   cursor: default;
+  transition: all .2s ease;
 }
-.streak-chip.is-clickable { cursor: pointer; transition: transform .12s ease, border-color .12s ease; }
-.streak-chip.is-clickable:hover { border-color: rgba(255,183,197,0.5); transform: translateY(-1px); }
+.streak-chip .streak-emoji { font-size: 1rem; filter: grayscale(0.6) opacity(0.6); transition: filter .25s ease; }
+.streak-chip .streak-count { font-weight: 800; }
+.streak-chip.is-active {
+  background: rgba(183,181,255,0.18);
+  color: #5D5BBF;
+  border-color: rgba(183,181,255,0.3);
+}
+.streak-chip.is-active .streak-emoji { filter: none; }
+.streak-chip.is-warm {
+  background: linear-gradient(135deg, rgba(255,183,197,0.22), rgba(255,216,168,0.22));
+  color: #B8242E;
+  border-color: rgba(255,183,197,0.4);
+}
+.streak-chip.is-warm .streak-emoji { filter: none; transform: scale(1.05); }
+.streak-chip.is-hot {
+  background: linear-gradient(135deg, #FFD341 0%, #E84A1A 100%);
+  color: #1A1A2E;
+  border-color: rgba(255,211,65,0.6);
+  box-shadow: 0 3px 12px rgba(232,74,26,0.35);
+}
+.streak-chip.is-hot .streak-emoji { filter: none; animation: streakPulse 1.4s ease-in-out infinite; }
+@keyframes streakPulse {
+  0%,100% { transform: scale(1) rotate(-3deg); }
+  50%     { transform: scale(1.15) rotate(3deg); }
+}
+.streak-chip.is-clickable { cursor: pointer; }
+.streak-chip.is-clickable:hover { transform: translateY(-1px); }
 .streak-chip.is-clickable:active { transform: scale(0.97); }
-.dark .streak-chip { background: rgba(255,183,197,0.18); color: #FFD3D9; }
+.dark .streak-chip { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.45); }
+.dark .streak-chip.is-active { background: rgba(183,181,255,0.18); color: #B7B5FF; }
+.dark .streak-chip.is-warm { background: linear-gradient(135deg, rgba(255,183,197,0.18), rgba(255,216,168,0.18)); color: #FFB7C5; }
 
 /* Toast / feedback ------------------------------------------ */
 .q-toast {
