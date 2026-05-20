@@ -7329,10 +7329,13 @@ function viewWorkout() {
     <p class="text-sm text-ink/55 dark:text-paper/55">Escolha um split, registre manualmente, ou descreva o que você quer.</p>
     <div class="flex flex-wrap gap-2 mt-3">
       <button id="open-library" class="q-btn q-btn-ghost text-sm">
-        <span class="w-4 h-4">${I.brain}</span> Biblioteca completa
+        <span class="w-4 h-4">${I.brain}</span> Biblioteca
       </button>
       <button id="open-calisthenics-roadmap" class="q-btn q-btn-ghost text-sm">
-        <span class="w-4 h-4">${I.fighter}</span> Roadmap Calistenia
+        <span class="w-4 h-4">${I.fighter}</span> Calistenia
+      </button>
+      <button id="open-external-import" class="q-btn q-btn-ghost text-sm">
+        ⌚ Importar (Polar/Garmin)
       </button>
     </div>
   </header>
@@ -10325,6 +10328,284 @@ function viewCalistenia() {
   `;
 }
 
+// ===== Import de treino externo (Polar Flow / Garmin / Strava / Apple Watch) =====
+// Aceita 2 caminhos:
+// 1. Upload de arquivo TCX/GPX (formato padrão exportado pelos apps).
+// 2. Paste do texto-resumo da atividade (formato livre — extrai com regex).
+
+/** Parser TCX (XML). Extrai duração, kcal, FC média, esporte. */
+function parseTcxFile(xmlText) {
+  try {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(xmlText, 'text/xml');
+    const activity = doc.querySelector('Activity');
+    if (!activity) return null;
+    const sport = activity.getAttribute('Sport') || 'Outro';
+    let totalSec = 0;
+    let totalKcal = 0;
+    let totalDistM = 0;
+    let hrSamples = [];
+    activity.querySelectorAll('Lap').forEach((lap) => {
+      const t = +(lap.getAttribute('TotalTimeSeconds') || lap.querySelector('TotalTimeSeconds')?.textContent || 0);
+      const kcal = +(lap.querySelector('Calories')?.textContent || 0);
+      const dist = +(lap.querySelector('DistanceMeters')?.textContent || 0);
+      totalSec += t;
+      totalKcal += kcal;
+      totalDistM += dist;
+      lap.querySelectorAll('HeartRateBpm > Value').forEach((v) => {
+        const n = +v.textContent;
+        if (n > 0) hrSamples.push(n);
+      });
+    });
+    const avgHr = hrSamples.length ? Math.round(hrSamples.reduce((a, b) => a + b, 0) / hrSamples.length) : 0;
+    const startTime = activity.querySelector('Id')?.textContent || '';
+    const date = startTime ? startTime.slice(0, 10) : todayISO();
+    return {
+      sport, durationMin: Math.round(totalSec / 60), kcal: Math.round(totalKcal),
+      distanceKm: +(totalDistM / 1000).toFixed(2), avgHr, date,
+    };
+  } catch (e) {
+    console.warn('TCX parse failed:', e);
+    return null;
+  }
+}
+
+/** Parser GPX (mais simples — só GPS + tempo). */
+function parseGpxFile(xmlText) {
+  try {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(xmlText, 'text/xml');
+    const pts = doc.querySelectorAll('trkpt');
+    if (!pts.length) return null;
+    const firstT = pts[0].querySelector('time')?.textContent;
+    const lastT  = pts[pts.length - 1].querySelector('time')?.textContent;
+    let totalSec = 0;
+    if (firstT && lastT) totalSec = (new Date(lastT) - new Date(firstT)) / 1000;
+    // Distância via haversine entre pontos consecutivos
+    function hav(p1, p2) {
+      const toRad = (d) => d * Math.PI / 180;
+      const lat1 = toRad(+p1.getAttribute('lat')), lat2 = toRad(+p2.getAttribute('lat'));
+      const dLat = lat2 - lat1;
+      const dLon = toRad(+p2.getAttribute('lon') - +p1.getAttribute('lon'));
+      const a = Math.sin(dLat/2)**2 + Math.cos(lat1)*Math.cos(lat2)*Math.sin(dLon/2)**2;
+      return 6371000 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    }
+    let totalM = 0;
+    for (let i = 1; i < pts.length; i++) totalM += hav(pts[i-1], pts[i]);
+    const name = doc.querySelector('trk > name')?.textContent || 'GPX import';
+    return {
+      sport: /run|corrida/i.test(name) ? 'Running' : /bike|cycl/i.test(name) ? 'Biking' : 'Walking',
+      durationMin: Math.round(totalSec / 60), kcal: 0,
+      distanceKm: +(totalM / 1000).toFixed(2), avgHr: 0,
+      date: firstT ? firstT.slice(0, 10) : todayISO(),
+    };
+  } catch (e) {
+    console.warn('GPX parse failed:', e);
+    return null;
+  }
+}
+
+/** Parser de texto-resumo (formato livre). Extrai duração, distância, FC, kcal. */
+function parsePastedSummary(text) {
+  const out = { sport: '', durationMin: 0, distanceKm: 0, avgHr: 0, kcal: 0, date: todayISO() };
+  // Duração: "31:25", "1h 12min", "45 min", "0:31:25"
+  const hms = text.match(/(\d+):(\d{2}):(\d{2})/);
+  const ms  = text.match(/(\d{1,2}):(\d{2})(?!\d)/);
+  const hmin = text.match(/(\d+)\s*h\s*(\d+)\s*min/i);
+  const minOnly = text.match(/(\d+)\s*min(?:utos)?/i);
+  if (hms) out.durationMin = +hms[1] * 60 + +hms[2] + Math.round(+hms[3] / 60);
+  else if (hmin) out.durationMin = +hmin[1] * 60 + +hmin[2];
+  else if (ms) out.durationMin = +ms[1] + Math.round(+ms[2] / 60);
+  else if (minOnly) out.durationMin = +minOnly[1];
+  // Distância: "5.2 km", "10,3km", "5200 m"
+  const km = text.match(/(\d+[\.,]\d+|\d+)\s*km/i);
+  if (km) out.distanceKm = +km[1].replace(',', '.');
+  // FC: "FC 156", "156 bpm", "HR 156"
+  const hr = text.match(/(?:fc|hr|bpm.*?média|fcmédia)[:\s]*(\d{2,3})|(\d{2,3})\s*bpm/i);
+  if (hr) out.avgHr = +(hr[1] || hr[2]);
+  // Calorias: "412 kcal", "300 cal"
+  const kcal = text.match(/(\d+)\s*k?cal/i);
+  if (kcal) out.kcal = +kcal[1];
+  // Esporte por keywords
+  const lower = text.toLowerCase();
+  if (/corrida|corri|run|trote/.test(lower)) out.sport = 'Corrida';
+  else if (/bike|cycl|pedalei|ciclis/.test(lower)) out.sport = 'Bike';
+  else if (/caminh|walk|andar/.test(lower)) out.sport = 'Caminhada';
+  else if (/natação|natacao|swim|piscina/.test(lower)) out.sport = 'Natação';
+  else if (/dança|dance|coreo/.test(lower)) out.sport = 'Dança';
+  else out.sport = 'Cardio';
+  return out;
+}
+
+/** Mapeia esporte do TCX → tipo de treino do QUEST. */
+function tcxSportToQuestType(sport) {
+  const s = (sport || '').toLowerCase();
+  if (/run/.test(s) || /corrida/.test(s)) return 'Cardio HIIT';
+  if (/bik/.test(s) || /cycl/.test(s))    return 'Cardio HIIT';
+  if (/walk/.test(s) || /walking/.test(s) || /caminh/.test(s)) return 'Caminhada';
+  if (/swim/.test(s) || /natac/.test(s) || /natação/.test(s))  return 'Cardio HIIT';
+  return 'Cardio HIIT';
+}
+
+function modalExternalImport() {
+  openModal(`
+    <header class="flex items-center justify-between p-4 border-b border-ink/5 dark:border-paper/5">
+      <div>
+        <div class="kombat-tagline text-[10px]">EXTERNAL IMPORT</div>
+        <h2 class="font-extrabold text-lg mt-0.5">Importar de Polar / Garmin / Strava</h2>
+        <p class="text-[10px] text-ink/55 dark:text-paper/55">Carrega TCX/GPX ou cola o resumo da atividade.</p>
+      </div>
+      <button class="modal-close p-1"><span class="w-5 h-5">${I.close}</span></button>
+    </header>
+    <div class="p-4 overflow-y-auto space-y-4" style="max-height:75vh">
+
+      <!-- Opção 1: Upload arquivo -->
+      <div class="q-card p-3">
+        <div class="font-bold text-sm mb-1">📁 Upload arquivo TCX/GPX</div>
+        <p class="text-[11px] text-ink/55 dark:text-paper/55 mb-2 leading-snug">
+          No Polar Flow web: Diário → toca na atividade → menu (⋯) → <b>Exportar como TCX</b>.
+          No Garmin/Strava também é Export → TCX/GPX.
+        </p>
+        <label class="q-btn q-btn-ghost w-full text-sm cursor-pointer">
+          <input type="file" id="ext-file-input" accept=".tcx,.gpx,.xml" class="hidden" />
+          📂 Escolher arquivo
+        </label>
+        <div id="ext-file-result" class="mt-2 text-xs"></div>
+      </div>
+
+      <div class="text-center text-[10px] uppercase tracking-widest text-ink/40 dark:text-paper/40">— ou —</div>
+
+      <!-- Opção 2: Paste texto -->
+      <div class="q-card p-3">
+        <div class="font-bold text-sm mb-1">📋 Colar resumo</div>
+        <p class="text-[11px] text-ink/55 dark:text-paper/55 mb-2 leading-snug">
+          Cola o texto da atividade. Detecta automaticamente duração, distância, FC e calorias.
+        </p>
+        <textarea id="ext-paste-input" class="q-input text-xs" rows="3"
+          placeholder="ex: Corrida · 5.2 km · 31:25 · FC média 156 bpm · 412 kcal"></textarea>
+        <button id="ext-paste-parse" class="q-btn q-btn-ghost w-full mt-2 text-sm">Analisar</button>
+        <div id="ext-paste-result" class="mt-2 text-xs"></div>
+      </div>
+
+      <!-- Form de confirmação -->
+      <div class="q-card p-3 hidden" id="ext-confirm">
+        <div class="font-bold text-sm mb-2">✓ Pronto pra salvar</div>
+        <div class="space-y-2">
+          <label class="block text-xs">Esporte
+            <input id="ext-sport" class="q-input mt-1 text-sm" placeholder="ex: Corrida" />
+          </label>
+          <div class="grid grid-cols-2 gap-2">
+            <label class="block text-xs">Duração (min)
+              <input id="ext-duration" class="q-input mt-1 text-sm" type="number" min="0" />
+            </label>
+            <label class="block text-xs">Distância (km)
+              <input id="ext-distance" class="q-input mt-1 text-sm" type="number" step="0.01" min="0" />
+            </label>
+            <label class="block text-xs">FC média (bpm)
+              <input id="ext-hr" class="q-input mt-1 text-sm" type="number" min="0" max="220" />
+            </label>
+            <label class="block text-xs">Calorias
+              <input id="ext-kcal" class="q-input mt-1 text-sm" type="number" min="0" />
+            </label>
+          </div>
+          <label class="block text-xs">Data
+            <input id="ext-date" class="q-input mt-1 text-sm" type="date" max="${todayISO()}" />
+          </label>
+        </div>
+        <button id="ext-save" class="q-btn q-btn-primary w-full mt-3">Salvar como treino</button>
+      </div>
+    </div>
+  `, { persistent: true });
+
+  function showConfirm(data) {
+    const card = document.getElementById('ext-confirm');
+    card.classList.remove('hidden');
+    document.getElementById('ext-sport').value    = data.sport || 'Cardio';
+    document.getElementById('ext-duration').value = data.durationMin || '';
+    document.getElementById('ext-distance').value = data.distanceKm  || '';
+    document.getElementById('ext-hr').value       = data.avgHr || '';
+    document.getElementById('ext-kcal').value     = data.kcal || '';
+    document.getElementById('ext-date').value     = (data.date && data.date <= todayISO()) ? data.date : todayISO();
+    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  document.getElementById('ext-file-input').addEventListener('change', async (e) => {
+    const file = e.target.files?.[0];
+    const result = document.getElementById('ext-file-result');
+    if (!file) return;
+    result.innerHTML = '<span class="text-ink/55 dark:text-paper/55">📖 Lendo arquivo...</span>';
+    try {
+      const text = await file.text();
+      let data;
+      if (/\.gpx$/i.test(file.name) || /<gpx/i.test(text.slice(0, 200))) data = parseGpxFile(text);
+      else data = parseTcxFile(text);
+      if (!data) { result.innerHTML = '<span class="text-pink">❌ Arquivo não reconhecido. Use TCX ou GPX.</span>'; return; }
+      result.innerHTML = `<span class="text-mint">✓ ${data.sport} · ${data.durationMin}min · ${data.distanceKm || 0}km${data.avgHr ? ` · ${data.avgHr}bpm` : ''}${data.kcal ? ` · ${data.kcal}kcal` : ''}</span>`;
+      showConfirm(data);
+    } catch (err) {
+      result.innerHTML = `<span class="text-pink">❌ Erro lendo: ${err.message}</span>`;
+    }
+  });
+
+  document.getElementById('ext-paste-parse').addEventListener('click', () => {
+    const text = document.getElementById('ext-paste-input').value.trim();
+    const result = document.getElementById('ext-paste-result');
+    if (!text) { result.innerHTML = '<span class="text-pink">Cole o resumo primeiro.</span>'; return; }
+    const data = parsePastedSummary(text);
+    if (!data.durationMin) { result.innerHTML = '<span class="text-pink">Não consegui detectar duração. Confere o formato.</span>'; return; }
+    result.innerHTML = `<span class="text-mint">✓ ${data.sport} · ${data.durationMin}min${data.distanceKm ? ` · ${data.distanceKm}km` : ''}${data.avgHr ? ` · ${data.avgHr}bpm` : ''}${data.kcal ? ` · ${data.kcal}kcal` : ''}</span>`;
+    showConfirm(data);
+  });
+
+  document.getElementById('ext-save').addEventListener('click', () => {
+    const sport      = document.getElementById('ext-sport').value.trim() || 'Cardio';
+    const duration   = +document.getElementById('ext-duration').value || 0;
+    const distance   = +document.getElementById('ext-distance').value || 0;
+    const hr         = +document.getElementById('ext-hr').value || 0;
+    const kcal       = +document.getElementById('ext-kcal').value || 0;
+    const date       = document.getElementById('ext-date').value || todayISO();
+    if (!duration) { toast('Duração obrigatória'); return; }
+    // Salva como workout cardio: 1 exercício com técnica = sport, reps = minutos, weight = km
+    const workout = {
+      date,
+      type: tcxSportToQuestType(sport),
+      exercises: [{
+        name: `${sport} (import)`,
+        sets: [{
+          reps: String(duration),
+          weight: String(distance || ''),
+          technique: hr ? `${hr}bpm` : '',
+          notes: kcal ? `${kcal} kcal` : '',
+        }],
+      }],
+      importedFrom: 'external',
+    };
+    const idx = state.workouts.findIndex(w => w.date === workout.date && w.type === workout.type && w.exercises[0]?.name === workout.exercises[0].name);
+    if (idx >= 0) state.workouts[idx] = workout;
+    else state.workouts.push(workout);
+    // XP: base 3 + 1 por 15min de duração (cap 8)
+    const xp = Math.min(11, 3 + Math.floor(duration / 15));
+    const change = addQuestXP(xp, 'cardio');
+    logBattleEvent(`⌚ Import: ${sport} ${duration}min · +${change.finalAmt || xp} XP`, 'gain');
+    // Marca treino do dia no log
+    if (date === todayISO()) {
+      let log = state.dailyLogs.find(l => l.date === date);
+      if (!log) {
+        log = { date, training: { type: workout.type, done: true }, protein:{grams:0,hit:false},
+                sleep:{hours:0}, reading:{minutes:0}, steps:0, buffs:[], notes:'', meals:[], xp:0 };
+        state.dailyLogs.push(log);
+      } else { log.training = { type: workout.type, done: true }; }
+      log.xp = Math.max(log.xp || 0, computeDayXP(log));
+    }
+    saveState();
+    closeModal();
+    confetti(900);
+    toast(`✓ Importado: ${sport} ${duration}min · +${change.finalAmt || xp} XP`, 3000);
+    if (change.changed) setTimeout(() => levelUpOverlay(change.from, change.to, change.promoted), 800);
+    render();
+  });
+}
+
 function modalCalisteniaRoadmap() {
   openModal(`
     <header class="flex items-center justify-between p-4 border-b border-ink/5 dark:border-paper/5">
@@ -11779,6 +12060,7 @@ function attachHandlers() {
 
   document.getElementById('open-library')?.addEventListener('click', modalLibrary);
   document.getElementById('open-calisthenics-roadmap')?.addEventListener('click', modalCalisteniaRoadmap);
+  document.getElementById('open-external-import')?.addEventListener('click', modalExternalImport);
 
   // Botões de nível na aba Calistenia
   document.querySelectorAll('.calist-level-btn').forEach((b) => b.onclick = () => {
