@@ -134,14 +134,15 @@ body {
 .title-banner {
   background: linear-gradient(135deg, var(--title-c1, #B7B5FF) 0%, var(--title-c2, #FFB7C5) 100%);
   color: #1A1A2E;
-  padding: .5rem 1rem;
-  border-radius: .8rem;
-  font-weight: 800;
+  padding: .35rem .7rem;
+  border-radius: .7rem;
+  font-weight: 700;
   font-family: 'Russo One', sans-serif;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.03em;
   position: relative;
   overflow: hidden;
 }
+.dark .title-banner { color: #FFF; }
 .title-banner::before {
   content: '';
   position: absolute; inset: 0;
@@ -248,18 +249,21 @@ body {
 
 /* Streak chip ----------------------------------------------- */
 .streak-chip {
-  display: inline-flex; align-items: center; gap: .35rem;
-  padding: .4rem .8rem;
+  display: flex; align-items: center; justify-content: center; gap: .2rem;
+  padding: .3rem .35rem;
   border-radius: 999px;
   background: rgba(142,142,147,0.12);
   color: rgba(26,26,46,0.55);
-  font-weight: 600; font-size: .82rem;
+  font-weight: 600; font-size: .7rem;
   border: 1px solid transparent;
   cursor: default;
   transition: all .2s ease;
+  white-space: nowrap;
+  min-width: 0;
 }
-.streak-chip .streak-emoji { font-size: 1rem; filter: grayscale(0.6) opacity(0.6); transition: filter .25s ease; }
-.streak-chip .streak-count { font-weight: 800; }
+.streak-chip .streak-emoji { font-size: .9rem; filter: grayscale(0.6) opacity(0.6); transition: filter .25s ease; }
+.streak-chip .streak-label { font-size: .7rem; }
+.streak-chip .streak-count { font-weight: 800; font-size: .72rem; }
 .streak-chip.is-active {
   background: rgba(183,181,255,0.18);
   color: #5D5BBF;

@@ -6736,32 +6736,31 @@ function viewDashboard() {
     const c2 = ranked[1]?.a.color || top.a.color;
     return `
     <section class="px-4 mt-2">
-      <div class="title-banner text-xs flex items-center gap-2" style="--title-c1:${c1}33; --title-c2:${c2}33">
-        <span class="text-base">⚔</span>
-        <span class="opacity-75 text-[10px] uppercase tracking-widest">${top.a.name}:</span>
-        <span class="font-bold flex-1 truncate">${tier.current}</span>
-        <span class="text-[10px] opacity-65">lvl ${top.info.level}</span>
+      <div class="title-banner text-[11px] flex items-center gap-1.5" style="--title-c1:${c1}33; --title-c2:${c2}33">
+        <span>⚔</span>
+        <span class="opacity-75 text-[9px] uppercase tracking-widest shrink-0">${top.a.name}</span>
+        <span class="font-bold flex-1 truncate min-w-0">${tier.current}</span>
+        <span class="text-[9px] opacity-65 shrink-0">lvl ${top.info.level}</span>
       </div>
     </section>`;
   })()}
 
   <section class="px-4 mt-2">
-    <div class="q-card p-4 flex items-center gap-4 ${baseRankIndex(r.key) >= 4 ? 'rank-elite' : ''} relative overflow-hidden" style="background: linear-gradient(135deg, ${r.color}11 0%, transparent 60%)">
-      <div class="rank-badge text-paper relative" style="background:${r.color}; box-shadow: 0 4px 18px ${r.color}55">
-        ${r.name.replace(/\s.*/, '').slice(0,1).toUpperCase()}
-        <span class="absolute -bottom-1 -right-1 text-[9px] font-bold px-1 rounded" style="background:${r.color}; color:#FFF; border:1.5px solid var(--bg, #FBFAF7)">${r.div || ''}</span>
+    <div class="q-card p-3 flex items-center gap-3 ${baseRankIndex(r.key) >= 4 ? 'rank-elite' : ''} relative overflow-hidden" style="background: linear-gradient(135deg, ${r.color}11 0%, transparent 60%)">
+      <div class="rank-badge text-paper shrink-0" style="background:${r.color}; box-shadow: 0 4px 18px ${r.color}55; width:54px; height:54px; border-radius:14px; font-size:1rem;">
+        ${r.name.replace(/\s.*/, '').slice(0,1).toUpperCase()}${r.div ? `<sub style="font-size:.6em; opacity:.85; margin-left:1px">${r.div}</sub>` : ''}
       </div>
       <div class="flex-1 min-w-0">
-        <div class="flex items-baseline justify-between gap-2">
-          <div class="font-kombat text-lg uppercase tracking-wider truncate" style="color:${r.color}">${r.name}</div>
-          <div class="text-[10px] text-ink/50 dark:text-paper/50 whitespace-nowrap">
-            ${next ? `→ ${next.name.replace(/\s.*/, '')} em <b>${next.threshold - rxp}</b> XP` : '👑 TOPO'}
+        <div class="flex items-baseline justify-between gap-2 min-w-0">
+          <div class="font-kombat text-base uppercase tracking-wider truncate min-w-0" style="color:${r.color}">${r.name}</div>
+          <div class="text-[9px] text-ink/50 dark:text-paper/50 whitespace-nowrap shrink-0">
+            ${next ? `→ <b>${next.threshold - rxp}</b> XP` : '👑 TOPO'}
           </div>
         </div>
-        <div class="xp-track is-kombat mt-2"><div class="xp-fill" style="width:${progress}%"></div></div>
-        <div class="flex justify-between text-[11px] mt-1 text-ink/55 dark:text-paper/55">
-          <span>Rank: <b>${rxp} XP</b></span>
-          <span>Semana: <b>${wxp}</b></span>
+        <div class="xp-track is-kombat mt-1.5"><div class="xp-fill" style="width:${progress}%"></div></div>
+        <div class="flex justify-between text-[10px] mt-1 text-ink/55 dark:text-paper/55 gap-1">
+          <span>Total: <b>${rxp}</b></span>
+          <span>Sem: <b>${wxp}</b></span>
           <span>Hoje: <b>${dayXP}/${DAILY_XP_CAP}</b></span>
         </div>
       </div>
@@ -6808,11 +6807,11 @@ function viewDashboard() {
   </section>
 
   <section class="px-4 mt-3">
-    <div class="flex flex-wrap gap-2 items-center">
-      ${streakChip('🔥', 'Treino', s.treino, 'treino')}
-      ${streakChip('🌙', 'Sono',   s.sono,   'sono')}
-      ${streakChip('🥩', 'Proteína', s.proteina, 'proteina')}
-      ${streakChip('📖', 'Leitura', s.leitura, 'leitura')}
+    <div class="grid grid-cols-4 gap-1.5">
+      ${streakChip('🔥', 'Trein',  s.treino,   'treino')}
+      ${streakChip('🌙', 'Sono',   s.sono,     'sono')}
+      ${streakChip('🥩', 'Prot',   s.proteina, 'proteina')}
+      ${streakChip('📖', 'Leit',   s.leitura,  'leitura')}
     </div>
   </section>
 
@@ -6943,12 +6942,15 @@ function viewDashboard() {
       <div class="xp-track mb-2" style="height:6px"><div class="xp-fill" style="width:${pct}%; background:linear-gradient(90deg, #A8E6CF, #FFD341)"></div></div>`;
     })()}
     <div class="q-card divide-y divide-ink/5 dark:divide-paper/5 overflow-hidden">
-      ${da.items.map((q) => {
-        const done = da.completed.includes(q.id);
-        const tagInfo = QUEST_TAG_INFO[q.tag] || QUEST_TAG_INFO.default;
+      ${(() => {
+        // Boss = APENAS UMA quest do dia (a primeira com xp máximo, e só se for >1).
         const bossXP = Math.max(...da.items.map(x => x.xp || 0));
-        const isBoss = q.xp === bossXP && bossXP > 1;
-        return `
+        const bossId = bossXP > 1 ? da.items.find(x => x.xp === bossXP)?.id : null;
+        return da.items.map((q) => {
+          const done = da.completed.includes(q.id);
+          const tagInfo = QUEST_TAG_INFO[q.tag] || QUEST_TAG_INFO.default;
+          const isBoss = q.id === bossId;
+          return `
         <div class="p-3 flex items-center gap-3 quest-row relative ${done ? 'is-done' : ''} ${isBoss && !done ? 'is-boss' : ''}" data-quest="${q.id}" style="${done ? `background:linear-gradient(90deg, ${tagInfo.color}11, transparent)` : ''}">
           ${isBoss && !done ? `<span class="absolute top-1 right-2 text-[9px] uppercase tracking-widest font-bold" style="color:#FFD341">★ boss</span>` : ''}
           <button class="q-check ${done ? 'is-checked' : ''}" aria-label="completar" style="${done ? `border-color:${tagInfo.color}; background:${tagInfo.color}` : ''}">
@@ -6964,7 +6966,8 @@ function viewDashboard() {
           </div>
           <div class="pill ${done ? 'is-sun' : 'is-mint'} shrink-0">+${q.xp} XP</div>
         </div>`;
-      }).join('')}
+        }).join('');
+      })()}
     </div>
   </section>
 
