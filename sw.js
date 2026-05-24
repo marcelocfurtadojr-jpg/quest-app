@@ -1,6 +1,6 @@
 // Service Worker do QUEST
 // Estratégia: app shell em cache + network-first com fallback de cache.
-const CACHE_VERSION = 'quest-v1.37.0';
+const CACHE_VERSION = 'quest-v1.38.0';
 const APP_SHELL = [
   './',
   './index.html',

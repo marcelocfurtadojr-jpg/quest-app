@@ -7614,6 +7614,7 @@ function suggestExercises(query) {
 // quando o foco da imagem NÃO está no topo. Default = "center top".
 const WORKOUT_HERO_POSITIONS = {
   'icons/workouts/pernas.webp': 'center 45%', // personagem em squat fica no meio-baixo
+  'icons/workouts/core.webp':   'center 40%', // foca no abdômen, evita corte no L-sit
 };
 const WORKOUT_HERO_IMAGES = {
   'A · Peito + Tríceps + Abs':  'icons/workouts/peito.webp',
