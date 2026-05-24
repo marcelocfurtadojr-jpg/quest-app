@@ -290,7 +290,6 @@ const THEMES = {
       { primary: '오늘의 나는 어제보다 강하다', secondary: '"Hoje sou mais forte que ontem"' },
       { primary: '시작이 반이다',            secondary: '"Começar já é metade"' },
       { primary: 'TEST YOUR MIGHT.',        secondary: '"Hoje você é seu adversário." — MK' },
-      { primary: 'YOUR SOUL IS MINE.',      secondary: '"Seu progresso é seu — ninguém tira." — Shang Tsung' },
       { primary: 'GET OVER HERE!',          secondary: '"Levanta. Hoje é dia de luta." — Scorpion' },
       { primary: '꾸준함이 답이다',          secondary: '"Consistência é a resposta"' },
     ],
@@ -4801,7 +4800,86 @@ const CHARACTERS = [
       'icons/characters/dhano/calistenia.webp': 'center 50%',
     },
   },
+  { id: 'matthew', slot: '8P', name: 'MATTHEW', title: 'THE STAGE SPARK',
+    img: 'icons/characters/matthew.webp', unlocked: true,
+    stats: { ATAQUE: 70, VELOCIDADE: 80, DEFESA: 65, TÉCNICA: 85, CARISMA: 94 },
+    desc: 'Performer cinético. Carisma que vira combustível e disciplina visível no espelho.',
+    buff: 'disciplina',
+    accent: '#C4B5FD', accentDeep: '#5B4DD6', accentGlow: '#E3DBFF',
+    lore: 'Estrela em ascensão da Stage District. Acordou um dia decidido que o palco e o espelho iam ser o mesmo lugar. Hoje, cada refeição e cada série conta — o corpo dele responde em tempo real.',
+    age: 24, origin: 'Neo-Hollywood · Stage District', style: 'Performer · Body-Sculptor',
+    passives: [
+      { icon: '🪞', text: '+15% XP em consistência de nutrição (sem junk)' },
+      { icon: '🎭', text: '+10% XP em treinos completos (todos os exercícios marcados)' },
+    ],
+    signature: { name: 'Stage Spark · 무대의 불꽃', icon: '✨',
+      desc: 'Seu corpo no app reflete o que você come e treina hoje — magrelo, lean, athletic, bulked ou fat. A faísca do palco é literal.' },
+    workouts: {
+      'icons/workouts/peito.webp':      'icons/characters/matthew/peito.webp',
+      'icons/workouts/dorsal.webp':     'icons/characters/matthew/costas.webp',
+      'icons/workouts/abs.webp':        'icons/characters/matthew/abs.webp',
+      'icons/workouts/pernas.webp':     'icons/characters/matthew/pernas.webp',
+      'icons/workouts/caminhada.webp':  'icons/characters/matthew/caminhada.webp',
+      'icons/workouts/calistenia.webp': 'icons/characters/matthew/calistenia.webp',
+      'icons/workouts/bracos.webp':     'icons/characters/matthew/costas.webp',
+      'icons/workouts/core.webp':       'icons/characters/matthew/abs.webp',
+      'icons/workouts/ombros.webp':     'icons/characters/matthew/costas.webp',
+      'icons/workouts/ombros2.webp':    'icons/characters/matthew/peito.webp',
+    },
+    workoutPositions: {
+      'icons/characters/matthew/peito.webp':      'center 30%',
+      'icons/characters/matthew/costas.webp':     'center 35%',
+      'icons/characters/matthew/abs.webp':        'center 40%',
+      'icons/characters/matthew/pernas.webp':     'center 50%',
+      'icons/characters/matthew/caminhada.webp':  'center 30%',
+      'icons/characters/matthew/calistenia.webp': 'center 50%',
+    },
+    // Matthew tem 5 estados de corpo dinâmicos baseados na nutrição/treino
+    bodyStates: {
+      magrelo:  'icons/bodies/magrelo.webp',
+      lean:     'icons/bodies/lean.webp',
+      athletic: 'icons/bodies/athletic.webp',
+      bulked:   'icons/bodies/bulked.webp',
+      fat:      'icons/bodies/fat.webp',
+    },
+  },
 ];
+
+/** Computa o estado do corpo do Matthew baseado na nutrição/treino de hoje.
+ *  Retorna 'magrelo' | 'lean' | 'athletic' | 'bulked' | 'fat'. */
+function computeBodyState() {
+  const log = state.dailyLogs.find((l) => l.date === todayISO());
+  if (!log || !log.meals || log.meals.length === 0) return 'magrelo';
+  const totalKcal = log.meals.reduce((s, m) => s + (m.kcal || 0), 0);
+  if (totalKcal === 0) return 'magrelo';
+  const JUNK = new Set(['erro', 'doce', 'snack']);
+  const junkKcal = log.meals
+    .filter((m) => JUNK.has(m.cat))
+    .reduce((s, m) => s + (m.kcal || 0), 0);
+  const junkRatio = junkKcal / totalKcal;
+  const kcalGoal = (typeof getKcalGoal === 'function') ? getKcalGoal() : 2200;
+  const trainedToday = !!log.training?.done;
+  // Limiares:
+  // - fat: >=30% junk OU overshoot grande (>30% da meta)
+  // - athletic: treinou + saudável
+  // - bulked: comeu muito (>=85% da meta) saudável, sem treino
+  // - lean: comeu pouco e saudável
+  if (junkRatio >= 0.3 || totalKcal > kcalGoal * 1.3) return 'fat';
+  if (trainedToday) return 'athletic';
+  if (totalKcal >= kcalGoal * 0.85) return 'bulked';
+  return 'lean';
+}
+
+/** Label PT do estado pra exibir abaixo da imagem. */
+function bodyStateLabel(state) {
+  return ({
+    magrelo:  'MAGRELO',
+    lean:     'LEAN',
+    athletic: 'ATHLETIC',
+    bulked:   'BULKED',
+    fat:      'FAT',
+  })[state] || 'MAGRELO';
+}
 
 // Resolve a hero image de um tipo de treino considerando o personagem ativo.
 // Retorna { img, position } ou null se o tipo não tem hero default.
@@ -6815,23 +6893,6 @@ function viewDashboard() {
     </section>`;
   })()}
 
-  ${(() => {
-    // Daily Spin button — só aparece se ainda não girou hoje (ou mostra "já girou")
-    const todayD = todayISO();
-    const alreadySpun = state.user.lastSpinDate === todayD;
-    return `
-    <section class="px-4 mt-2">
-      <button id="daily-spin-btn" class="spin-button ${alreadySpun ? 'is-done' : ''}">
-        <span class="text-2xl">🎰</span>
-        <div class="flex-1 text-left">
-          <div class="text-[10px] uppercase tracking-widest opacity-80">${alreadySpun ? 'Já girou hoje' : 'DAILY SPIN DISPONÍVEL'}</div>
-          <div class="text-base">${alreadySpun ? 'Volta amanhã pra outro' : 'GIRAR ROLETA · 1 prêmio'}</div>
-        </div>
-        <span class="text-xl">${alreadySpun ? '✓' : '→'}</span>
-      </button>
-    </section>`;
-  })()}
-
   <section class="px-4 mt-2">
     ${(() => {
       const ch = activeCharacter();
@@ -6887,40 +6948,53 @@ function viewDashboard() {
 
   <!-- Vital Stats — barras estilo character sheet RPG -->
   <section class="px-4 mt-3">
-    <div class="q-card p-3">
-      <div class="text-[10px] uppercase tracking-widest text-ink/45 dark:text-paper/45 mb-2 flex items-center justify-between">
-        <span>⚔ Status</span>
-        ${mult > 1 ? `<span class="pill is-sun text-[9px] py-0.5 px-2">⚡ COMBO ×${mult.toFixed(1)}</span>` : ''}
+    <div class="q-card p-3 status-card">
+      ${(() => {
+        // Corpo do Matthew à esquerda — muda conforme nutrição/treino de hoje.
+        // Mostra mesmo se outro personagem está ativo (é um espelho global do dia).
+        const bs = computeBodyState();
+        const bsLabel = bodyStateLabel(bs);
+        return `
+        <div class="status-body" title="Estado do corpo hoje: ${bsLabel}">
+          <img src="icons/bodies/${bs}.webp" alt="${bsLabel}" loading="lazy" />
+          <div class="status-body-label">${bsLabel}</div>
+        </div>`;
+      })()}
+      <div class="status-content">
+        <div class="text-[10px] uppercase tracking-widest text-ink/45 dark:text-paper/45 mb-2 flex items-center justify-between">
+          <span>⚔ Status</span>
+          ${mult > 1 ? `<span class="pill is-sun text-[9px] py-0.5 px-2">⚡ COMBO ×${mult.toFixed(1)}</span>` : ''}
+        </div>
+        <div class="space-y-1.5">
+          <!-- HP -->
+          <div class="flex items-center gap-2">
+            <span class="text-base w-5 text-center">❤️</span>
+            <span class="text-[10px] font-bold w-12 text-pink">HP</span>
+            <div class="flex-1 vital-bar"><div class="vital-fill" style="width:${hpPct}%; background:linear-gradient(90deg,#B8242E,#E84A1A)"></div></div>
+            <span class="text-[10px] font-bold tabular-nums w-12 text-right">${sleepHrs}/8h</span>
+          </div>
+          <!-- Stamina -->
+          <div class="flex items-center gap-2">
+            <span class="text-base w-5 text-center">⚡</span>
+            <span class="text-[10px] font-bold w-12" style="color:#FFD341">STA</span>
+            <div class="flex-1 vital-bar"><div class="vital-fill" style="width:${staminaPct}%; background:linear-gradient(90deg,#A8E6CF,#FFD341)"></div></div>
+            <span class="text-[10px] font-bold tabular-nums w-12 text-right">${trainDays7}/${optimalTrains} tr</span>
+          </div>
+          <!-- Foco -->
+          <div class="flex items-center gap-2">
+            <span class="text-base w-5 text-center">🧠</span>
+            <span class="text-[10px] font-bold w-12 text-lavender">MP</span>
+            <div class="flex-1 vital-bar"><div class="vital-fill" style="width:${focusPct}%; background:linear-gradient(90deg,#B7B5FF,#7BB8FF)"></div></div>
+            <span class="text-[10px] font-bold tabular-nums w-12 text-right">${readMin}/30m</span>
+          </div>
+        </div>
+        ${overtrained || undertrained || hpPct < 50 ? `
+          <div class="mt-2 text-[10px] text-ink/60 dark:text-paper/60 leading-tight italic">
+            ${overtrained ? '⚠️ Risco de overtraining — meta 1-2 dias de descanso/sem.' :
+              undertrained ? '💤 Poucos treinos essa semana — STA baixa.' :
+              hpPct < 50 ? '🛌 HP baixa — durma mais hoje pra recuperar.' : ''}
+          </div>` : ''}
       </div>
-      <div class="space-y-1.5">
-        <!-- HP -->
-        <div class="flex items-center gap-2">
-          <span class="text-base w-5 text-center">❤️</span>
-          <span class="text-[10px] font-bold w-12 text-pink">HP</span>
-          <div class="flex-1 vital-bar"><div class="vital-fill" style="width:${hpPct}%; background:linear-gradient(90deg,#B8242E,#E84A1A)"></div></div>
-          <span class="text-[10px] font-bold tabular-nums w-12 text-right">${sleepHrs}/8h</span>
-        </div>
-        <!-- Stamina -->
-        <div class="flex items-center gap-2">
-          <span class="text-base w-5 text-center">⚡</span>
-          <span class="text-[10px] font-bold w-12" style="color:#FFD341">STA</span>
-          <div class="flex-1 vital-bar"><div class="vital-fill" style="width:${staminaPct}%; background:linear-gradient(90deg,#A8E6CF,#FFD341)"></div></div>
-          <span class="text-[10px] font-bold tabular-nums w-12 text-right">${trainDays7}/${optimalTrains} tr</span>
-        </div>
-        <!-- Foco -->
-        <div class="flex items-center gap-2">
-          <span class="text-base w-5 text-center">🧠</span>
-          <span class="text-[10px] font-bold w-12 text-lavender">MP</span>
-          <div class="flex-1 vital-bar"><div class="vital-fill" style="width:${focusPct}%; background:linear-gradient(90deg,#B7B5FF,#7BB8FF)"></div></div>
-          <span class="text-[10px] font-bold tabular-nums w-12 text-right">${readMin}/30m</span>
-        </div>
-      </div>
-      ${overtrained || undertrained || hpPct < 50 ? `
-        <div class="mt-2 text-[10px] text-ink/60 dark:text-paper/60 leading-tight italic">
-          ${overtrained ? '⚠️ Risco de overtraining — meta 1-2 dias de descanso/sem.' :
-            undertrained ? '💤 Poucos treinos essa semana — STA baixa.' :
-            hpPct < 50 ? '🛌 HP baixa — durma mais hoje pra recuperar.' : ''}
-        </div>` : ''}
     </div>
   </section>
 
