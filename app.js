@@ -4729,6 +4729,13 @@ const CHARACTERS = [
       'icons/characters/marklee/caminhada.webp':  'center 30%',
       'icons/characters/marklee/calistenia.webp': 'center 50%',
     },
+    bodyStates: {
+      magrelo:  'icons/characters/marklee/bodies/magrelo.webp',
+      lean:     'icons/characters/marklee/bodies/lean.webp',
+      athletic: 'icons/characters/marklee/bodies/athletic.webp',
+      bulked:   'icons/characters/marklee/bodies/bulked.webp',
+      fat:      'icons/characters/marklee/bodies/fat.webp',
+    },
   },
   { id: 'jeno', slot: '6P', name: 'LEE JENO', title: 'THE MOON DRIVE',
     img: 'icons/characters/jeno.webp', unlocked: true,
@@ -4763,6 +4770,13 @@ const CHARACTERS = [
       'icons/characters/jeno/pernas.webp':     'center 50%',
       'icons/characters/jeno/caminhada.webp':  'center 30%',
       'icons/characters/jeno/calistenia.webp': 'center 50%',
+    },
+    bodyStates: {
+      magrelo:  'icons/characters/jeno/bodies/magrelo.webp',
+      lean:     'icons/characters/jeno/bodies/lean.webp',
+      athletic: 'icons/characters/jeno/bodies/athletic.webp',
+      bulked:   'icons/characters/jeno/bodies/bulked.webp',
+      fat:      'icons/characters/jeno/bodies/fat.webp',
     },
   },
   { id: 'dhano', slot: '7P', name: 'DHANO', title: 'THE RUTHLESS EYE',
@@ -4799,6 +4813,13 @@ const CHARACTERS = [
       'icons/characters/dhano/caminhada.webp':  'center 30%',
       'icons/characters/dhano/calistenia.webp': 'center 50%',
     },
+    bodyStates: {
+      magrelo:  'icons/characters/dhano/bodies/magrelo.webp',
+      lean:     'icons/characters/dhano/bodies/lean.webp',
+      athletic: 'icons/characters/dhano/bodies/athletic.webp',
+      bulked:   'icons/characters/dhano/bodies/bulked.webp',
+      fat:      'icons/characters/dhano/bodies/fat.webp',
+    },
   },
   { id: 'matthew', slot: '8P', name: 'MATTHEW', title: 'THE STAGE SPARK',
     img: 'icons/characters/matthew.webp', unlocked: true,
@@ -4813,7 +4834,7 @@ const CHARACTERS = [
       { icon: '🎭', text: '+10% XP em treinos completos (todos os exercícios marcados)' },
     ],
     signature: { name: 'Stage Spark · 무대의 불꽃', icon: '✨',
-      desc: 'Seu corpo no app reflete o que você come e treina hoje — magrelo, lean, athletic, bulked ou fat. A faísca do palco é literal.' },
+      desc: 'Foi o primeiro a ter o corpo do dia espelhado em tempo real — magrelo, lean, athletic, bulked ou fat. Outros lutadores seguiram. A faísca do palco virou padrão.' },
     workouts: {
       'icons/workouts/peito.webp':      'icons/characters/matthew/peito.webp',
       'icons/workouts/dorsal.webp':     'icons/characters/matthew/costas.webp',
@@ -6950,13 +6971,17 @@ function viewDashboard() {
   <section class="px-4 mt-3">
     <div class="q-card p-3 status-card">
       ${(() => {
-        // Corpo do Matthew à esquerda — muda conforme nutrição/treino de hoje.
-        // Mostra mesmo se outro personagem está ativo (é um espelho global do dia).
+        // Corpo do personagem ativo à esquerda — muda conforme nutrição/treino.
+        // Se o personagem ativo tem .bodyStates próprio (Matthew, Mark Lee, Jeno, Dhano),
+        // usa o dele. Senão cai no set default (Matthew) — assim TODOS os personagens
+        // mostram um corpo no status, mesmo os que ainda não têm set próprio.
         const bs = computeBodyState();
         const bsLabel = bodyStateLabel(bs);
+        const ch = activeCharacter();
+        const bodyImg = ch?.bodyStates?.[bs] || `icons/bodies/${bs}.webp`;
         return `
         <div class="status-body" title="Espelho do seu dia">
-          <img src="icons/bodies/${bs}.webp" alt="${bsLabel}" loading="lazy" />
+          <img src="${bodyImg}" alt="${bsLabel}" loading="lazy" />
           <div class="status-body-label">${bsLabel}</div>
         </div>`;
       })()}
