@@ -4902,6 +4902,215 @@ function bodyStateLabel(state) {
   })[state] || 'MAGRELO';
 }
 
+/** Metadata dos 5 estados — descrição e critérios pra atingir cada um.
+ *  Usado pela modal de "Jornada do corpo". */
+const BODY_STATE_INFO = {
+  magrelo: {
+    label: 'MAGRELO',
+    icon: '🌱',
+    desc: 'Ainda não comeu nada hoje. Sem combustível, sem combate.',
+    criteria: (kcalGoal) => ['Nenhuma refeição registrada hoje'],
+    color: '#A0A0B0',
+  },
+  lean: {
+    label: 'LEAN',
+    icon: '🦌',
+    desc: 'Comeu pouco e saudável. Definido, mas com pouca reserva.',
+    criteria: (kcalGoal) => [
+      `Kcal < ${Math.round(kcalGoal * 0.85)} (até 85% da meta)`,
+      'Junk food abaixo de 30% das kcal',
+      'Sem treino registrado hoje',
+    ],
+    color: '#A8E6CF',
+  },
+  athletic: {
+    label: 'ATHLETIC',
+    icon: '⚡',
+    desc: 'Comeu E treinou. Estado ideal — saúde + performance.',
+    criteria: (kcalGoal) => [
+      'Treino do dia registrado',
+      'Junk food abaixo de 30% das kcal',
+    ],
+    color: '#7BB8FF',
+  },
+  bulked: {
+    label: 'BULKED',
+    icon: '🍖',
+    desc: 'Comeu muito e saudável, mas não treinou. Massa sem ativação.',
+    criteria: (kcalGoal) => [
+      `Kcal ≥ ${Math.round(kcalGoal * 0.85)} (85% ou mais da meta)`,
+      'Junk food abaixo de 30%',
+      'Sem treino registrado',
+    ],
+    color: '#FFD8A8',
+  },
+  fat: {
+    label: 'FAT',
+    icon: '🍩',
+    desc: 'Muito junk ou comeu além da conta. Cuidado com cortisol/insulina.',
+    criteria: (kcalGoal) => [
+      `Junk food ≥ 30% das kcal OU kcal acima de ${Math.round(kcalGoal * 1.3)}`,
+    ],
+    color: '#E8A0A0',
+  },
+};
+
+/** Define o caminho ideal: a partir do estado atual, qual é o próximo "alvo"
+ *  e o que falta pra chegar lá. Athletic é o ápice (sem next). */
+function bodyNextTarget(currentState, ctx) {
+  const { kcalGoal, totalKcal, junkPct, trained, hasMeals } = ctx;
+  switch (currentState) {
+    case 'magrelo':
+      return { next: 'lean', steps: [
+        { done: hasMeals, text: 'Registre pelo menos uma refeição' },
+        { done: hasMeals && junkPct < 30, text: 'Refeição saudável (junk < 30%)' },
+      ] };
+    case 'lean':
+      return { next: 'athletic', steps: [
+        { done: trained, text: 'Registre um treino hoje' },
+        { done: junkPct < 30, text: `Mantenha junk food abaixo de 30% (atual: ${junkPct}%)` },
+      ] };
+    case 'bulked':
+      return { next: 'athletic', steps: [
+        { done: trained, text: 'Registre um treino hoje' },
+        { done: junkPct < 30, text: `Mantenha junk food abaixo de 30% (atual: ${junkPct}%)` },
+      ] };
+    case 'fat':
+      return { next: 'lean', steps: [
+        { done: junkPct < 30, text: `Reduza junk food pra menos de 30% (atual: ${junkPct}%)` },
+        { done: totalKcal <= kcalGoal * 1.3, text: `Mantenha kcal abaixo de ${Math.round(kcalGoal * 1.3)}` },
+      ] };
+    case 'athletic':
+      return { next: null, steps: [
+        { done: true, text: 'Você está no estado ideal — mantenha o ritmo!' },
+      ] };
+  }
+}
+
+/** Modal "Jornada do corpo" — abre ao tocar na imagem do corpo no Status. */
+function modalBodyJourney() {
+  vibrate(10);
+  const log = state.dailyLogs.find((l) => l.date === todayISO()) || { meals: [], training: {} };
+  const meals = log.meals || [];
+  const totalKcal = meals.reduce((s, m) => s + (m.kcal || 0), 0);
+  const JUNK = new Set(['erro', 'doce', 'snack']);
+  const junkKcal = meals.filter((m) => JUNK.has(m.cat)).reduce((s, m) => s + (m.kcal || 0), 0);
+  const junkPct = totalKcal > 0 ? Math.round((junkKcal / totalKcal) * 100) : 0;
+  const proteinG = Math.round(meals.reduce((s, m) => s + (m.p || 0), 0));
+  const kcalGoal = (typeof getKcalGoal === 'function') ? getKcalGoal() : 2200;
+  const proteinGoal = (typeof getProteinGoal === 'function') ? getProteinGoal() : 145;
+  const trained = !!log.training?.done;
+  const hasMeals = meals.length > 0;
+  const bs = computeBodyState();
+  const ch = activeCharacter();
+  const bodyImg = ch?.bodyStates?.[bs] || `icons/bodies/${bs}.webp`;
+  const info = BODY_STATE_INFO[bs];
+
+  const target = bodyNextTarget(bs, { kcalGoal, totalKcal, junkPct, trained, hasMeals });
+  const targetInfo = target.next ? BODY_STATE_INFO[target.next] : null;
+
+  // Renderiza os 5 estados como cards de referência
+  const stateOrder = ['magrelo', 'lean', 'athletic', 'bulked', 'fat'];
+  const reference = stateOrder.map((key) => {
+    const i = BODY_STATE_INFO[key];
+    const isCurrent = key === bs;
+    const isTarget = key === target.next;
+    const img = ch?.bodyStates?.[key] || `icons/bodies/${key}.webp`;
+    return `
+      <div class="bj-state ${isCurrent ? 'is-current' : ''} ${isTarget ? 'is-target' : ''}" style="--state-color:${i.color}">
+        <div class="bj-state-thumb"><img src="${img}" alt="${i.label}" loading="lazy" /></div>
+        <div class="bj-state-body">
+          <div class="bj-state-title">
+            <span class="bj-state-icon">${i.icon}</span>
+            <span>${i.label}</span>
+            ${isCurrent ? '<span class="bj-state-badge">VOCÊ ESTÁ AQUI</span>' : ''}
+            ${isTarget ? '<span class="bj-state-badge bj-state-badge-target">PRÓXIMO</span>' : ''}
+          </div>
+          <div class="bj-state-desc">${i.desc}</div>
+          <ul class="bj-state-criteria">
+            ${i.criteria(kcalGoal).map((c) => `<li>${c}</li>`).join('')}
+          </ul>
+        </div>
+      </div>`;
+  }).join('');
+
+  openModal(`
+    <div class="body-journey">
+      <div class="bj-hero" style="background: linear-gradient(180deg, ${info.color}33 0%, transparent 70%)">
+        <button class="workout-hero-btn workout-hero-btn-right modal-close" aria-label="Fechar jornada do corpo">✕</button>
+        <div class="bj-hero-inner">
+          <div class="bj-hero-img" style="border-color:${info.color}">
+            <img src="${bodyImg}" alt="${info.label}" />
+          </div>
+          <div class="bj-hero-text">
+            <div class="bj-hero-eyebrow">ESTADO DO CORPO · HOJE</div>
+            <h2 class="bj-hero-title" style="color:${info.color}">${info.icon} ${info.label}</h2>
+            <div class="bj-hero-desc">${info.desc}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bj-body">
+        <!-- Métricas atuais -->
+        <div class="bj-section">
+          <div class="bj-section-title">📊 Hoje</div>
+          <div class="bj-metrics">
+            <div class="bj-metric">
+              <div class="bj-metric-label">Kcal</div>
+              <div class="bj-metric-val">${Math.round(totalKcal)}<span class="bj-metric-goal"> / ${kcalGoal}</span></div>
+            </div>
+            <div class="bj-metric">
+              <div class="bj-metric-label">Proteína</div>
+              <div class="bj-metric-val">${proteinG}g<span class="bj-metric-goal"> / ${proteinGoal}g</span></div>
+            </div>
+            <div class="bj-metric">
+              <div class="bj-metric-label">Junk</div>
+              <div class="bj-metric-val" style="color:${junkPct >= 30 ? '#E8A0A0' : '#A8E6CF'}">${junkPct}%</div>
+            </div>
+            <div class="bj-metric">
+              <div class="bj-metric-label">Treino</div>
+              <div class="bj-metric-val" style="color:${trained ? '#A8E6CF' : 'rgba(244,233,200,0.5)'}">${trained ? '✓ Feito' : '— Pendente'}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Próximo objetivo -->
+        ${target.next ? `
+        <div class="bj-section bj-next">
+          <div class="bj-section-title" style="color:${targetInfo.color}">🎯 PRÓXIMO: ${targetInfo.label} ${targetInfo.icon}</div>
+          <ul class="bj-next-steps">
+            ${target.steps.map((s) => `
+              <li class="${s.done ? 'is-done' : 'is-pending'}">
+                <span class="bj-step-check">${s.done ? '✓' : '○'}</span>
+                <span>${s.text}</span>
+              </li>
+            `).join('')}
+          </ul>
+        </div>
+        ` : `
+        <div class="bj-section bj-next bj-next-apex">
+          <div class="bj-section-title" style="color:#7BB8FF">⚡ ESTADO IDEAL</div>
+          <p class="bj-apex-text">Você está no topo da jornada do dia. Mantenha junk baixo e treino registrado pra continuar aqui amanhã.</p>
+        </div>
+        `}
+
+        <!-- Referência: todos os 5 estados -->
+        <div class="bj-section">
+          <div class="bj-section-title">📖 TODOS OS ESTADOS</div>
+          <div class="bj-reference">${reference}</div>
+        </div>
+
+        <button class="q-btn q-btn-primary w-full mt-2 modal-close" aria-label="Fechar">
+          ← Voltar
+        </button>
+        <p class="text-[10px] text-center text-ink/45 dark:text-paper/45 italic mt-1">
+          Os 5 corpos refletem nutrição e treino do dia — sem aversividade, só feedback visual.
+        </p>
+      </div>
+    </div>
+  `);
+}
+
 // Resolve a hero image de um tipo de treino considerando o personagem ativo.
 // Retorna { img, position } ou null se o tipo não tem hero default.
 function resolveWorkoutHero(workoutType) {
@@ -6975,15 +7184,16 @@ function viewDashboard() {
         // Se o personagem ativo tem .bodyStates próprio (Matthew, Mark Lee, Jeno, Dhano),
         // usa o dele. Senão cai no set default (Matthew) — assim TODOS os personagens
         // mostram um corpo no status, mesmo os que ainda não têm set próprio.
+        // Clique → abre modalBodyJourney() com critérios pra mudar de estado.
         const bs = computeBodyState();
         const bsLabel = bodyStateLabel(bs);
         const ch = activeCharacter();
         const bodyImg = ch?.bodyStates?.[bs] || `icons/bodies/${bs}.webp`;
         return `
-        <div class="status-body" title="Espelho do seu dia">
+        <button class="status-body" title="Toque pra ver a jornada" data-action="open-body-journey">
           <img src="${bodyImg}" alt="${bsLabel}" loading="lazy" />
           <div class="status-body-label">${bsLabel}</div>
-        </div>`;
+        </button>`;
       })()}
       <div class="status-content">
         <div class="text-[10px] uppercase tracking-widest text-ink/45 dark:text-paper/45 mb-2 flex items-center justify-between">
@@ -12220,6 +12430,11 @@ function attachHandlers() {
       vibrate(8);
       modalCharacterSheet(btn.dataset.id);
     };
+  });
+
+  // Corpo do Matthew no Status → abre jornada do corpo (5 estados + próximo)
+  document.querySelectorAll('[data-action="open-body-journey"]').forEach((btn) => {
+    btn.onclick = modalBodyJourney;
   });
 
   // Spotify (card no header + bind direto)
