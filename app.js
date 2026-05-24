@@ -10458,6 +10458,149 @@ function tcxSportToQuestType(sport) {
   return 'Cardio HIIT';
 }
 
+// ===== Dicas pra subir cada atributo =====
+const ATTR_LEVEL_UP_TIPS = {
+  forca: {
+    title: 'Como subir Força',
+    subtitle: 'Treinos pesados, compostos e PRs sobem esse atributo.',
+    tips: [
+      { icon: '🏋️', text: 'Salvar treino na aba Treino — base 3 XP + 1 por exercício (cap 8).' },
+      { icon: '🏆', text: 'Bater PR (peso > sessão anterior) em compostos = +5 XP bônus.' },
+      { icon: '💪', text: 'Splits ABC (peito/costas/pernas) entregam mais XP que isolamentos curtos.' },
+      { icon: '🎯', text: 'Completar quests com tag "treino" da daily — cada uma cai aqui.' },
+      { icon: '📈', text: 'Adicionar séries reais nos sets (não deixa em branco) — o sistema usa isso pra detectar PR.' },
+    ],
+  },
+  resistencia: {
+    title: 'Como subir Resistência',
+    subtitle: 'Cardio, caminhada, passos e dança sobem esse atributo.',
+    tips: [
+      { icon: '🏃', text: 'Treino tipo Cardio HIIT / Caminhada / Dança K-pop salvo = XP nesse atributo.' },
+      { icon: '⌚', text: 'Importar do Polar/Garmin/Strava (botão no header de Treino) conta cardio.' },
+      { icon: '👣', text: 'Bater 8.000 passos no dia (FINISH IT!) = +1 XP + atributo.' },
+      { icon: '🎯', text: 'Quests com tag "cardio" (q11, q57, q93, q94, q95, q96, q97).' },
+      { icon: '🕺', text: 'Dança K-pop (sortear no Arsenal e marcar como aprendido) também sobe.' },
+    ],
+  },
+  sabedoria: {
+    title: 'Como subir Sabedoria',
+    subtitle: 'Leitura, estudo e foco profundo sobem esse atributo.',
+    tips: [
+      { icon: '📖', text: 'Bater ≥15min de leitura no dia (FINISH IT!) = +1 XP + atributo.' },
+      { icon: '📚', text: 'Sessão de leitura via timer (na aba Leitura) — cada minuto conta.' },
+      { icon: '🎯', text: 'Quests com tag "foco" (Pomodoro, estudar coreano, deep work, ler artigo).' },
+      { icon: '🧠', text: 'Aprender uma habilidade nova (q39), TED de 15min (q119), problemas de lógica (q121).' },
+      { icon: '✍️', text: 'Journaling 10min (q41) e brain dump (q106) também caem em sabedoria.' },
+    ],
+  },
+  disciplina: {
+    title: 'Como subir Disciplina',
+    subtitle: 'Proteína na meta, sono regular e rotina batem esse atributo.',
+    tips: [
+      { icon: '🥩', text: 'Bater meta de proteína no dia (na aba Nutri ou FINISH IT!) = +1 XP + bônus.' },
+      { icon: '🌙', text: 'Dormir 7h+ na noite — registrar via FINISH IT! ou modal de Sono.' },
+      { icon: '🎯', text: 'Quests com tag "nutri" ou "sono" — cada uma cai aqui.' },
+      { icon: '⏰', text: 'Dormir antes de 23:30 (q20), sem celular 30min antes (q21), cortar cafeína (q22).' },
+      { icon: '🍽️', text: 'Comer só comida real (q43), refeição equilibrada P+C+V+G (q85), não pular café (q19).' },
+    ],
+  },
+  vitalidade: {
+    title: 'Como subir Vitalidade',
+    subtitle: 'Streaks, daily login e quests gerais sobem esse atributo.',
+    tips: [
+      { icon: '☀️', text: 'Daily Login Bonus (abrir o app todo dia) — XP escala com streak (cap 10).' },
+      { icon: '🎰', text: 'Daily Spin entrega XP de vitalidade quando o prêmio é XP direto.' },
+      { icon: '🎯', text: 'Quests com tag "saúde" e "mente" — cada uma cai aqui.' },
+      { icon: '🔥', text: 'Manter streaks ativos (Treino/Sono/Proteína/Leitura) ganha multiplier de combo.' },
+      { icon: '🌿', text: 'Atividades de auto-cuidado: protetor solar (q123), hidratante (q122), grounding (q124).' },
+    ],
+  },
+};
+
+function modalAttributeDetail(attrKey) {
+  const a = ATTRIBUTES.find((x) => x.key === attrKey);
+  if (!a) return;
+  const attrs = state.user.attributes || {};
+  const xp = attrs[attrKey] || 0;
+  const info = attrInfo(xp);
+  const tier = attrTierFor(attrKey, info.level);
+  const tipsBlock = ATTR_LEVEL_UP_TIPS[attrKey] || { title: 'Dicas', subtitle: '', tips: [] };
+  // Últimos eventos do battle log filtrados pelas tags dessa categoria
+  const tagsByAttr = {
+    forca:       ['treino'],
+    resistencia: ['cardio'],
+    sabedoria:   ['foco'],
+    disciplina:  ['nutri', 'sono'],
+    vitalidade:  ['saúde', 'mente', 'k-pop'],
+  };
+  const myTags = new Set(tagsByAttr[attrKey] || []);
+  const log = (state.user.battleLog || []).filter((ev) => {
+    const txt = ev.text || '';
+    return [...myTags].some((t) => {
+      const ti = QUEST_TAG_INFO[t];
+      return ti && txt.includes(ti.emoji);
+    });
+  }).slice(0, 5);
+
+  openModal(`
+    <div class="attr-hero" style="background-image: url('icons/attrs/${attrKey}.webp')">
+      <button class="workout-hero-btn workout-hero-btn-right modal-close" aria-label="Fechar">✕</button>
+      <div class="workout-hero-overlay">
+        <div class="font-display text-[10px] uppercase tracking-[0.3em] text-white/70">atributo · ${a.name}</div>
+        <h2 class="font-extrabold text-3xl text-white mt-0.5 drop-shadow-lg">${tier.current}</h2>
+        <div class="text-[11px] text-white/80 mt-0.5">nível <b class="text-white">${info.level}</b> · ${a.desc}</div>
+      </div>
+    </div>
+
+    <div class="p-4 overflow-y-auto space-y-4" style="max-height:50vh">
+
+      <!-- Progresso pro próximo nível + tier -->
+      <div class="q-card p-3" style="border-left:3px solid ${a.color}">
+        <div class="flex items-baseline justify-between mb-1">
+          <div class="text-[10px] uppercase tracking-widest text-ink/55 dark:text-paper/55">Progresso</div>
+          <div class="text-[10px] text-ink/55 dark:text-paper/55">${info.intoLevel.toFixed(1)} / ${info.nextCost.toFixed(1)} XP</div>
+        </div>
+        <div class="xp-track mt-1" style="height:8px"><div class="xp-fill" style="width:${info.pctToNext}%; background:${a.color}"></div></div>
+        ${tier.next ? `
+          <div class="text-[11px] mt-2 leading-snug">
+            Próximo tier: <b style="color:${a.color}">${tier.next}</b> em nível <b>${tier.nextMin}</b>
+            <span class="text-ink/55 dark:text-paper/55">(faltam ${tier.nextMin - info.level} níveis)</span>
+          </div>` : `
+          <div class="text-[11px] mt-2 text-ink/55 dark:text-paper/55">Tier máximo atingido. Você é lenda.</div>`}
+      </div>
+
+      <!-- Dicas pra subir -->
+      <div>
+        <div class="text-[10px] uppercase tracking-widest text-ink/55 dark:text-paper/55 mb-2">⚔ ${tipsBlock.title}</div>
+        <p class="text-[11px] text-ink/65 dark:text-paper/65 leading-snug mb-2">${tipsBlock.subtitle}</p>
+        <div class="space-y-1.5">
+          ${tipsBlock.tips.map((t) => `
+            <div class="q-card p-2.5 flex items-start gap-2 text-[12px]">
+              <span class="text-base shrink-0">${t.icon}</span>
+              <span class="leading-snug text-ink/85 dark:text-paper/85">${t.text}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      <!-- Battle log recente desse atributo -->
+      ${log.length ? `
+        <div>
+          <div class="text-[10px] uppercase tracking-widest text-ink/55 dark:text-paper/55 mb-2">⚔ XP recente desse atributo</div>
+          <div class="space-y-1">
+            ${log.map((ev) => `
+              <div class="battle-log-entry ${ev.kind === 'pr' ? 'is-pr' : ev.kind === 'loss' ? 'is-loss' : ''}">
+                <span class="text-[9px] text-ink/45 dark:text-paper/45 tabular-nums whitespace-nowrap">${timeAgoShort(new Date(ev.ts))}</span>
+                <span class="flex-1 text-ink/80 dark:text-paper/80">${ev.text}</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>` : ''}
+
+    </div>
+  `, { persistent: true });
+}
+
 function modalExternalImport() {
   openModal(`
     <header class="flex items-center justify-between p-4 border-b border-ink/5 dark:border-paper/5">
@@ -11535,6 +11678,14 @@ function attachHandlers() {
   document.getElementById('open-rewards-daily')?.addEventListener('click', () => { vibrate(8); modalRewards(); });
 
   document.getElementById('daily-spin-btn')?.addEventListener('click', () => spinDailyWheel());
+
+  // Atributo tile → abre modal com hero image + dicas pra subir
+  document.querySelectorAll('.attr-tile').forEach((tile) => {
+    tile.onclick = () => {
+      vibrate(8);
+      modalAttributeDetail(tile.dataset.attr);
+    };
+  });
 
   document.getElementById('toggle-dark')?.addEventListener('click', () => {
     state.user.darkMode = !state.user.darkMode;
