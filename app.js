@@ -4626,6 +4626,13 @@ const CHARACTERS = [
       'icons/characters/cagemorgan/caminhada.webp':  'center 30%',
       'icons/characters/cagemorgan/calistenia.webp': 'center 50%',
     },
+    bodyStates: {
+      magrelo:  'icons/characters/cagemorgan/bodies/magrelo.webp',
+      lean:     'icons/characters/cagemorgan/bodies/lean.webp',
+      athletic: 'icons/characters/cagemorgan/bodies/athletic.webp',
+      bulked:   'icons/characters/cagemorgan/bodies/bulked.webp',
+      fat:      'icons/characters/cagemorgan/bodies/fat.webp',
+    },
   },
   { id: 'sanji', slot: '3P', name: 'SANJI', title: 'THE BLACK LEG',
     img: 'icons/characters/sanji.webp', unlocked: true,
