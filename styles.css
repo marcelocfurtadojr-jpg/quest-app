@@ -13,6 +13,29 @@ body {
   font-feature-settings: 'cv11', 'ss01';
   text-rendering: optimizeLegibility;
   overscroll-behavior-y: contain;
+  /* Background do app — dojo neon coreano fixo (não scrolla com conteúdo).
+     Overlay translúcido por cima do bg pra manter legibilidade. */
+  background-image: url('icons/bg/dojo.webp');
+  background-size: cover;
+  background-position: center top;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-color: #1A1A2E;
+}
+/* Overlay translúcido ajusta intensidade conforme tema */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  /* Light mode: 88% opaque pra dar foco no conteúdo, bg vira textura sutil */
+  background: rgba(251, 250, 247, 0.88);
+  pointer-events: none;
+}
+.dark body::before,
+html.dark body::before {
+  /* Dark mode: 75% opaque, deixa o neon do dojo aparecer um pouco mais */
+  background: rgba(15, 23, 41, 0.78);
 }
 
 /* Tipografia display (Noto Sans KR para títulos coreanos) ---- */
