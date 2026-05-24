@@ -5844,11 +5844,9 @@ function loadState() {
  *  Idempotente — chame quantas vezes quiser sem efeito colateral. */
 function migrateState(s) {
   if (!s) return;
-  // Tema legado → tema novo
+  // Tema fixo no kpop_anime (MK + K-pop). Themes alternativos removidos da UI.
   s.user = s.user || {};
-  if (s.user.theme === 'kpop')  s.user.theme = 'kpop_anime';
-  if (s.user.theme === 'clean') s.user.theme = 'inside_out';
-  if (!s.user.theme || !THEMES[s.user.theme]) s.user.theme = 'kpop_anime';
+  s.user.theme = 'kpop_anime';
 
   // Limpa currentNutriDate persistido (bug v1.12 — agora é module-level só).
   // Se usuário tinha ficado preso vendo um dia passado, a próxima sessão
@@ -6710,15 +6708,16 @@ function viewDashboard() {
   return `
   <header class="pt-7 pb-3 px-5 kombat-hero">
     <div class="flex items-center justify-between relative">
-      <div>
+      <div class="min-w-0 flex-1">
         <div class="font-display text-xs uppercase tracking-widest text-ink/40 dark:text-paper/40">${greetingTop}</div>
-        <h1 class="text-2xl font-extrabold mt-0.5">${g.pt}, ${u.name}.</h1>
+        <h1 class="text-2xl font-extrabold mt-0.5 truncate">${g.pt}, ${u.name}.</h1>
       </div>
-      <button id="toggle-dark" class="q-btn q-btn-ghost px-3 py-2" aria-label="modo escuro">
+      <button id="toggle-dark" class="q-btn q-btn-ghost px-3 py-2 shrink-0" aria-label="modo escuro">
         ${state.user.darkMode ? '☀️' : '🌙'}
       </button>
     </div>
-    <div class="mt-3 pl-3 border-l-2 ${borderClass} relative">
+    <!-- Quote card — agora é uma "scroll" de pergaminho com hangul/secondary -->
+    <div class="quote-scroll mt-3">
       ${quoteHtml}
     </div>
   </header>
@@ -6742,6 +6741,23 @@ function viewDashboard() {
         <span class="font-bold flex-1 truncate min-w-0">${tier.current}</span>
         <span class="text-[9px] opacity-65 shrink-0">lvl ${top.info.level}</span>
       </div>
+    </section>`;
+  })()}
+
+  ${(() => {
+    // Daily Spin button — só aparece se ainda não girou hoje (ou mostra "já girou")
+    const todayD = todayISO();
+    const alreadySpun = state.user.lastSpinDate === todayD;
+    return `
+    <section class="px-4 mt-2">
+      <button id="daily-spin-btn" class="spin-button ${alreadySpun ? 'is-done' : ''}">
+        <span class="text-2xl">🎰</span>
+        <div class="flex-1 text-left">
+          <div class="text-[10px] uppercase tracking-widest opacity-80">${alreadySpun ? 'Já girou hoje' : 'DAILY SPIN DISPONÍVEL'}</div>
+          <div class="text-base">${alreadySpun ? 'Volta amanhã pra outro' : 'GIRAR ROLETA · 1 prêmio'}</div>
+        </div>
+        <span class="text-xl">${alreadySpun ? '✓' : '→'}</span>
+      </button>
     </section>`;
   })()}
 
@@ -6913,7 +6929,8 @@ function viewDashboard() {
     </section>`;
   })()}
 
-  <section class="px-4 mt-5">
+  <div class="px-4"><div class="section-divider">⚔ 일일 미션 · DAILY MISSIONS ⚔</div></div>
+  <section class="px-4">
     ${(() => {
       const totalQ = da.items.length;
       const doneQ = da.completed.length;
@@ -11398,22 +11415,12 @@ function viewConfig() {
           </details>`;
         })()}
       </div>
-      <div class="block mt-3">
-        <div class="text-sm font-semibold mb-2">Estética</div>
-        <div class="grid grid-cols-2 gap-2">
-          ${Object.entries(THEMES).map(([key, t]) => {
-            const isCurrent = (state.user.theme || 'kpop_anime') === key;
-            return `
-            <label class="q-card p-2 cursor-pointer ${isCurrent ? 'is-selected' : ''} cfg-theme-choice" data-theme="${key}">
-              <input type="radio" name="cfgTheme" value="${key}" class="hidden" ${isCurrent ? 'checked' : ''} />
-              <div class="text-[9px] tracking-widest uppercase" style="color:${t.accent}">${t.short}</div>
-              <div class="font-bold text-xs mt-1">${t.name}</div>
-              <div class="text-[10px] text-ink/55 dark:text-paper/55 leading-tight mt-0.5">${t.sub}</div>
-            </label>`;
-          }).join('')}
-        </div>
-        <p class="text-[10px] text-ink/45 dark:text-paper/45 mt-2 leading-relaxed">
-          Trocar tema atualiza apenas a estética. Suas quests, rewards e desafios temáticos permanecem (ajuste no pool abaixo).
+      <!-- Theme picker removido — app fixo no tema K-POP × ANIME × GAMES (MK overlays) -->
+      <div class="block mt-3 q-card p-3" style="border-left:3px solid #FFB7C5">
+        <div class="text-[10px] uppercase tracking-widest font-bold" style="color:#FFB7C5">⚔ TEMA ATIVO</div>
+        <div class="font-extrabold mt-0.5">K-POP × ANIME × GAMES</div>
+        <p class="text-[10px] text-ink/55 dark:text-paper/55 mt-1 leading-relaxed">
+          Estética coreana + overlays Mortal Kombat. Tema fixo nesta versão pra manter consistência visual e identidade do app.
         </p>
       </div>
       <button id="cfg-save" class="q-btn q-btn-primary w-full mt-3">Salvar</button>
@@ -11532,6 +11539,8 @@ function closeModal() {
 function attachHandlers() {
   document.getElementById('open-log')?.addEventListener('click', () => { vibrate(15); modalDailyLog(); });
   document.getElementById('open-rewards-daily')?.addEventListener('click', () => { vibrate(8); modalRewards(); });
+
+  document.getElementById('daily-spin-btn')?.addEventListener('click', () => spinDailyWheel());
 
   document.getElementById('toggle-dark')?.addEventListener('click', () => {
     state.user.darkMode = !state.user.darkMode;
@@ -12225,8 +12234,8 @@ function attachHandlers() {
     const pOver = document.getElementById('cfg-protein-override')?.value?.trim();
     if (kOver) state.user.kcalGoalOverride = +kOver; else delete state.user.kcalGoalOverride;
     if (pOver) state.user.proteinGoalOverride = +pOver; else delete state.user.proteinGoalOverride;
-    const themePicked = document.querySelector('input[name="cfgTheme"]:checked')?.value;
-    if (themePicked && THEMES[themePicked]) state.user.theme = themePicked;
+    // Theme picker removido — app fixo no kpop_anime
+    state.user.theme = 'kpop_anime';
     saveState(); toast('Configurações salvas'); render();
   });
   document.getElementById('cfg-clear-override')?.addEventListener('click', () => {
@@ -12501,6 +12510,93 @@ function logBattleEvent(text, kind = 'gain') {
 
 /** Recompensa de login diário — primeira abertura do dia. XP escala com streak
  *  consecutivo de dias logando (capped em 7). Mostra overlay celebrativo. */
+// ===== Daily Spin — gacha estilo wheel of fortune 1x/dia =====
+// Cada prêmio tem rarity (común/raro/épico/lendário) com taxa de drop
+// e efeito real (XP, buff visual, título).
+const DAILY_SPIN_PRIZES = [
+  { id: 'xp_small',   label: '+3 XP',      kind: 'xp',    value: 3,  rarity: 'common',    color: '#A8E6CF', weight: 30 },
+  { id: 'xp_med',     label: '+5 XP',      kind: 'xp',    value: 5,  rarity: 'common',    color: '#A8E6CF', weight: 20 },
+  { id: 'xp_big',     label: '+10 XP',     kind: 'xp',    value: 10, rarity: 'rare',      color: '#7BB8FF', weight: 12 },
+  { id: 'combo_x2',   label: '⚡ Combo ×2 (1h)', kind: 'combo', value: 2,  rarity: 'rare',      color: '#FFD341', weight: 10 },
+  { id: 'combo_x3',   label: '⚡ Combo ×3 (30min)', kind: 'combo', value: 3,  rarity: 'epic',  color: '#C77BFF', weight: 5 },
+  { id: 'xp_huge',    label: '+25 XP',     kind: 'xp',    value: 25, rarity: 'epic',      color: '#C77BFF', weight: 4 },
+  { id: 'title_lucky',label: '🍀 Título: Lucky', kind: 'title', value: 'Lucky', rarity: 'epic', color: '#3FBF7F', weight: 3 },
+  { id: 'xp_jackpot', label: '🎰 JACKPOT +50 XP', kind: 'xp', value: 50, rarity: 'legendary', color: '#FFD341', weight: 1 },
+  { id: 'rerollfree', label: '🎲 Re-roll grátis', kind: 'reroll', value: 1, rarity: 'common',  color: '#A8E6CF', weight: 15 },
+];
+
+function weightedRandomPrize() {
+  const total = DAILY_SPIN_PRIZES.reduce((s, p) => s + p.weight, 0);
+  let r = Math.random() * total;
+  for (const p of DAILY_SPIN_PRIZES) {
+    r -= p.weight;
+    if (r <= 0) return p;
+  }
+  return DAILY_SPIN_PRIZES[0];
+}
+
+function spinDailyWheel() {
+  if (!state?.user) return;
+  const today = todayISO();
+  if (state.user.lastSpinDate === today) {
+    toast('Você já girou hoje. Volta amanhã!');
+    return;
+  }
+  const prize = weightedRandomPrize();
+  state.user.lastSpinDate = today;
+
+  // Aplica o prêmio
+  let xpGained = 0;
+  if (prize.kind === 'xp') {
+    const change = addQuestXP(prize.value, 'vitalidade');
+    xpGained = change.finalAmt || prize.value;
+    if (change.changed) setTimeout(() => levelUpOverlay(change.from, change.to, change.promoted), 2200);
+  } else if (prize.kind === 'combo') {
+    state.user.spinCombo = { mult: prize.value, until: Date.now() + (prize.value === 2 ? 60 : 30) * 60 * 1000 };
+  } else if (prize.kind === 'title') {
+    state.user.spinTitle = prize.value;
+  } else if (prize.kind === 'reroll') {
+    state.user.bonusRerolls = (state.user.bonusRerolls || 0) + 1;
+  }
+  logBattleEvent(`🎰 Spin: ${prize.label} (${prize.rarity})`, prize.rarity === 'legendary' ? 'pr' : 'gain');
+  saveState();
+  showSpinResultOverlay(prize, xpGained);
+}
+
+function showSpinResultOverlay(prize, xpGained) {
+  const rarityLabel = {
+    common:    'COMUM',
+    rare:      'RARO ✦',
+    epic:      'ÉPICO ✦✦',
+    legendary: 'LENDÁRIO ✦✦✦',
+  }[prize.rarity];
+  const rarityGlow = {
+    common:    'rgba(168,230,207,0.6)',
+    rare:      'rgba(123,184,255,0.7)',
+    epic:      'rgba(199,123,255,0.8)',
+    legendary: 'rgba(255,211,65,1)',
+  }[prize.rarity];
+  const overlay = document.createElement('div');
+  overlay.className = 'spin-overlay';
+  overlay.innerHTML = `
+    <div class="spin-card" style="border-color:${prize.color}; box-shadow: 0 0 80px ${rarityGlow}, 0 0 0 3px ${prize.color}55 inset">
+      <div class="text-[10px] uppercase tracking-[0.3em] font-bold opacity-65">DAILY SPIN</div>
+      <div class="text-[11px] uppercase tracking-widest mt-1 font-extrabold" style="color:${prize.color}">${rarityLabel}</div>
+      <div class="text-6xl mt-3">🎰</div>
+      <div class="text-2xl font-extrabold mt-2" style="color:${prize.color}">${prize.label}</div>
+      ${xpGained ? `<div class="text-sm mt-1 opacity-80">+${xpGained} XP recebido</div>` : ''}
+      <button class="mt-5 px-5 py-2 rounded-full text-sm font-bold dismiss-spin" style="background:${prize.color}; color:#1A1A2E">Continuar</button>
+    </div>`;
+  document.body.appendChild(overlay);
+  vibrate([40, 30, 60, 30, 100]);
+  if (prize.rarity === 'legendary' || prize.rarity === 'epic') confetti(2200);
+  else confetti(1200);
+  const close = () => { overlay.classList.add('is-closing'); setTimeout(() => { overlay.remove(); render(); }, 250); };
+  overlay.querySelector('.dismiss-spin').onclick = close;
+  overlay.onclick = (e) => { if (e.target === overlay) close(); };
+  setTimeout(close, 4500);
+}
+
 function checkDailyLoginBonus() {
   if (!state?.user) return;
   const today = todayISO();
