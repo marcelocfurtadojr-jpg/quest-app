@@ -4574,8 +4574,48 @@ const CHARACTERS = [
     img: 'icons/characters/marklee.webp', unlocked: true,
     stats: { ATAQUE: 55, VELOCIDADE: 78, DEFESA: 52, TÉCNICA: 82, CARISMA: 96 },
     desc: 'Chama azul do palco. Rap, ritmo e energia que não apaga.',
-    buff: 'resistencia' },
+    buff: 'resistencia',
+    // Hero images dedicadas (mapeia defaultImg → versão do personagem).
+    // Quando esse personagem está ativo, esses overrides assumem nos heros
+    // de treino. Workouts sem match direto caem em fallback temático.
+    workouts: {
+      'icons/workouts/peito.webp':      'icons/characters/marklee/peito.webp',
+      'icons/workouts/dorsal.webp':     'icons/characters/marklee/costas.webp',
+      'icons/workouts/abs.webp':        'icons/characters/marklee/abs.webp',
+      'icons/workouts/pernas.webp':     'icons/characters/marklee/pernas.webp',
+      'icons/workouts/caminhada.webp':  'icons/characters/marklee/caminhada.webp',
+      'icons/workouts/calistenia.webp': 'icons/characters/marklee/calistenia.webp',
+      // Fallbacks temáticos pra cobrir TODOS os treinos:
+      'icons/workouts/bracos.webp':     'icons/characters/marklee/costas.webp',
+      'icons/workouts/core.webp':       'icons/characters/marklee/abs.webp',
+      'icons/workouts/ombros.webp':     'icons/characters/marklee/costas.webp',
+      'icons/workouts/ombros2.webp':    'icons/characters/marklee/peito.webp',
+    },
+    // Background-position por crop quadrado 512x512 do Mark Lee.
+    workoutPositions: {
+      'icons/characters/marklee/peito.webp':      'center 30%',
+      'icons/characters/marklee/costas.webp':     'center 35%',
+      'icons/characters/marklee/abs.webp':        'center 40%',
+      'icons/characters/marklee/pernas.webp':     'center 50%',
+      'icons/characters/marklee/caminhada.webp':  'center 30%',
+      'icons/characters/marklee/calistenia.webp': 'center 50%',
+    },
+  },
 ];
+
+// Resolve a hero image de um tipo de treino considerando o personagem ativo.
+// Retorna { img, position } ou null se o tipo não tem hero default.
+function resolveWorkoutHero(workoutType) {
+  const defaultImg = WORKOUT_HERO_IMAGES?.[workoutType] || null;
+  if (!defaultImg) return null;
+  const active = CHARACTERS.find((c) => c.id === state.user?.activeCharacter);
+  if (!active || !active.workouts || !active.workouts[defaultImg]) {
+    return { img: defaultImg, position: WORKOUT_HERO_POSITIONS?.[defaultImg] || 'center top' };
+  }
+  const img = active.workouts[defaultImg];
+  const position = active.workoutPositions?.[img] || 'center 35%';
+  return { img, position };
+}
 
 const ATTRIBUTES = [
   { key: 'forca',       name: 'Força',       ko: '힘',     color: '#B8242E', icon: '💪', fighter: 'kano',
@@ -6185,6 +6225,11 @@ let currentTab = 'home';
 // Data sendo visualizada na aba Nutri. Module-level (NÃO persistido) —
 // se persistisse, refeições adicionadas iam pro dia errado em sessões futuras.
 let _currentNutriDate = null;
+// Flag de sessão: a tela "Choose Your Fighter" aparece em CADA abertura do
+// app (refresh / abrir PWA do zero). Como é module-level, reseta naturalmente
+// a cada carregamento. O usuário precisa confirmar (mesmo o último escolhido)
+// pra entrar no app — assim dá pra trocar de lutador todo dia.
+let _characterPickedThisSession = false;
 
 // ===== Rest timer (módulo-level) — sobrevive a re-renders e troca de tab =====
 // Em vez de setInterval que conta segundos, guardamos o TIMESTAMP em que o
@@ -6282,9 +6327,11 @@ function render() {
   ensureDailyQuests();
   ensureWeeklyQuest();
   applyTheme();
-  // Se ainda não escolheu personagem, mostra a tela de "Choose Your Fighter"
-  // sem tabbar (não há contexto de tab pré-onboarding).
-  if (!state.user.activeCharacter) {
+  // Choose Your Fighter aparece em TODA abertura do app — não só na primeira
+  // vez. O flag _characterPickedThisSession reseta a cada page load (porque é
+  // module-level let), forçando confirmação. Já dentro da sessão, o usuário
+  // pode trocar via Config → Trocar.
+  if (!_characterPickedThisSession) {
     app().innerHTML = viewCharacterSelect();
     document.getElementById('tabbar').innerHTML = '';
     attachCharacterSelectHandlers();
@@ -6323,6 +6370,7 @@ function viewCharacterSelect() {
   // Cada imagem JÁ é uma carta "Choose Your Fighter" completa (slot, título,
   // stats e PRESS START desenhados na arte). Mostro full-bleed em coluna única
   // e adiciono apenas o overlay de tap + variante travada para slots vazios.
+  const lastPick = state.user?.activeCharacter || null;
   const cards = CHARACTERS.map((c) => {
     if (!c.unlocked) {
       return `
@@ -6336,11 +6384,13 @@ function viewCharacterSelect() {
           </div>
         </button>`;
     }
+    const isLast = c.id === lastPick;
     return `
-      <button class="cs-card cs-unlocked" data-id="${c.id}">
+      <button class="cs-card cs-unlocked ${isLast ? 'cs-last' : ''}" data-id="${c.id}">
+        ${isLast ? '<div class="cs-last-badge">★ ÚLTIMO ESCOLHIDO</div>' : ''}
         <img src="${c.img}" alt="${c.name} — ${c.title}" loading="lazy" />
         <div class="cs-tap-overlay">
-          <span>▶ SELECIONAR ${c.slot}</span>
+          <span>▶ ${isLast ? 'CONTINUAR COM' : 'SELECIONAR'} ${c.slot}</span>
         </div>
       </button>`;
   }).join('');
@@ -6380,6 +6430,7 @@ function attachCharacterSelectHandlers() {
       // Confirma seleção
       state.user.activeCharacter = ch.id;
       saveState();
+      _characterPickedThisSession = true;
       toast(`${ch.name} entrou em combate!`);
       // Pequeno efeito antes de carregar a home
       btn.classList.add('cs-chosen');
@@ -7078,11 +7129,12 @@ function viewWorkout() {
       // Quick start: último treino registrado
       const last = state.workouts.slice().reverse()[0];
       if (!last || !EXERCISE_LIBRARY[last.type]) return '';
-      const hero = WORKOUT_HERO_IMAGES[last.type];
+      const heroResolved = resolveWorkoutHero(last.type);
+      const hero = heroResolved?.img;
       return `
       <div class="kombat-divider">REPETIR ÚLTIMO</div>
       <button class="workout-quickstart workout-start" data-type="${last.type}">
-        ${hero ? `<div class="workout-quickstart-thumb" style="background-image:url('${hero}')"></div>` : ''}
+        ${hero ? `<div class="workout-quickstart-thumb" style="background-image:url('${hero}'); background-position:${heroResolved.position}"></div>` : ''}
         <div class="workout-quickstart-text">
           <div class="text-[10px] uppercase tracking-widest text-white/70 font-bold">↻ Quick start</div>
           <div class="font-extrabold text-base text-white truncate">${last.type}</div>
@@ -7108,12 +7160,13 @@ function viewWorkout() {
         <div class="kombat-divider">${groupName}</div>
         <div class="grid grid-cols-2 gap-2">
           ${valid.map(t => {
-            const hero = WORKOUT_HERO_IMAGES[t];
+            const heroResolved = resolveWorkoutHero(t);
+            const hero = heroResolved?.img;
             const moveCount = (EXERCISE_LIBRARY[t] || []).length;
             return `
             <button class="workout-pick workout-start" data-type="${t}">
               ${hero
-                ? `<div class="workout-pick-thumb" style="background-image:url('${hero}'); background-position:${WORKOUT_HERO_POSITIONS[hero] || 'center top'}"></div>`
+                ? `<div class="workout-pick-thumb" style="background-image:url('${hero}'); background-position:${heroResolved.position}"></div>`
                 : `<div class="workout-pick-thumb workout-pick-thumb-placeholder">${icons[t] || I.dumb}</div>`}
               <div class="workout-pick-text">
                 <div class="font-kombat text-[9px] text-blood/70 dark:text-ember/70 tracking-widest uppercase">${moveCount} moves</div>
@@ -7401,7 +7454,9 @@ function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
     ? state.workouts.find((w) => w.date === dateISO && w.type === type)
     : null;
   const lib = EXERCISE_LIBRARY[type] || [];
-  const heroImg = WORKOUT_HERO_IMAGES[type] || null;
+  const heroResolvedSession = resolveWorkoutHero(type);
+  const heroImg = heroResolvedSession?.img || null;
+  const heroPos = heroResolvedSession?.position || 'center top';
   const start = prebuiltStart || editing || {
     date: todayISO(),
     type,
@@ -7468,7 +7523,7 @@ function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
 
   openModal(`
     ${heroImg ? `
-    <div class="workout-hero" style="background-image: url('${heroImg}'); background-position: ${WORKOUT_HERO_POSITIONS[heroImg] || 'center top'}">
+    <div class="workout-hero" style="background-image: url('${heroImg}'); background-position: ${heroPos}">
       <!-- Botões flutuantes sobre a imagem -->
       <button id="open-glossary" class="workout-hero-btn workout-hero-btn-left" aria-label="Glossário de técnicas">ℹ Técnicas</button>
       <button id="workout-shuffle" class="workout-hero-btn workout-hero-btn-center" aria-label="Variar treino" title="Embaralha a ordem dos exercícios e varia técnicas">🎲 Variar</button>
@@ -12303,8 +12358,9 @@ function attachHandlers() {
   });
   document.getElementById('cfg-switch-fighter')?.addEventListener('click', () => {
     if (!confirm('Trocar de personagem? Você volta pra tela de seleção.')) return;
-    delete state.user.activeCharacter;
-    saveState();
+    // Mantém activeCharacter como "último escolhido" (vira destaque na tela)
+    // mas reabre Choose Your Fighter pra confirmação.
+    _characterPickedThisSession = false;
     currentTab = 'home';
     render();
   });

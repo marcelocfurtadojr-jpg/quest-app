@@ -1655,6 +1655,35 @@ input[type=number] { -moz-appearance: textfield; }
   51%, 100% { opacity: 0.25; }
 }
 
+/* Destaque pro último personagem escolhido (continua disponível na tela) */
+.cs-card.cs-last {
+  outline: 2px solid #D6A93E;
+  outline-offset: 2px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    0 14px 36px rgba(0,0,0,0.6),
+    0 0 30px rgba(214,169,62,0.45);
+}
+.cs-last-badge {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #FFE9A8 0%, #D6A93E 100%);
+  color: #2B1A05;
+  font-family: "Russo One", Impact, system-ui, sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  white-space: nowrap;
+  box-shadow:
+    0 4px 12px rgba(214,169,62,0.55),
+    inset 0 -2px 0 rgba(0,0,0,0.18);
+  animation: csBlink 1.4s steps(2, end) infinite;
+}
+
 .cs-foot {
   position: relative;
   z-index: 1;
