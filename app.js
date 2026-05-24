@@ -7550,6 +7550,7 @@ function suggestExercises(query) {
 const WORKOUT_HERO_POSITIONS = {
   'icons/workouts/pernas.webp': 'center 45%', // personagem em squat fica no meio-baixo
   'icons/workouts/core.webp':   'center 40%', // foca no abdômen, evita corte no L-sit
+  'icons/workouts/ombros.webp': 'center 25%', // foca em ombros/peito (não só cabeça)
 };
 const WORKOUT_HERO_IMAGES = {
   'A · Peito + Tríceps + Abs':  'icons/workouts/peito.webp',
@@ -7568,7 +7569,7 @@ const WORKOUT_HERO_IMAGES = {
   'Lower A':                    'icons/workouts/pernas.webp',
   'Push':                       'icons/workouts/peito.webp',
   'Pull':                       'icons/workouts/dorsal.webp',
-  'Upper completo':             'icons/workouts/peito.webp',
+  'Upper completo':             'icons/workouts/ombros.webp',
   'Core/Abs':                   'icons/workouts/core.webp',
   'Caminhada':                  'icons/workouts/caminhada.webp',
   'Calistenia':                 'icons/workouts/calistenia.webp',
