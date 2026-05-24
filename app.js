@@ -4563,38 +4563,6 @@ const ATTRIBUTES = [
 // de movimento — funciona como mini-manual integrado.
 // 운동 = treino. 모든 동작에는 이유가 있다 (todo movimento tem razão).
 const EXERCISE_LIBRARY = {
-  'Upper A': [
-    { name: 'Supino reto barra', target: '3×5–8', muscles: 'peitoral, tríceps, deltóide anterior', ko: '벤치 프레스',
-      description: 'Movimento-rei do peito. Construtor de massa torácica e força horizontal.',
-      technique: 'Retraia escápulas (junte omoplatas), arco lombar leve, pés firmes no chão. Desça controlado até tocar o mamilo, explode pra cima sem trancar cotovelo.',
-      mistakes: 'Cotovelos a 90° (lesão de ombro) — mantenha ~75°. Descer rápido. Levantar a bunda do banco. Não tocar o peito.',
-      tip: 'Pense em "afastar o chão de você", não em "empurrar a barra". 화이팅!' },
-    { name: 'Remada curvada barra', target: '3×6–10', muscles: 'dorsal, romboides, trapézio médio', ko: '바벨 로우',
-      description: 'Espessura do dorsal e back-thickness. Antagonista direto do supino.',
-      technique: 'Joelhos semi-flex, tronco ~45°, barra na altura dos joelhos. Puxe até a base do umbigo, apertando escápulas no topo. Desça controlado.',
-      mistakes: 'Tronco subindo a cada rep (vira hip hinge). Cotovelos abertos demais (vira trapézio). Pegada curta demais.',
-      tip: 'Empurre o peito pra frente enquanto puxa o cotovelo pra trás. Imagine partir uma noz entre as escápulas.' },
-    { name: 'Desenvolvimento militar', target: '3×6–10', muscles: 'deltóide anterior, tríceps, trapézio', ko: '오버헤드 프레스',
-      description: 'Pressão vertical — constrói ombros e core ao mesmo tempo.',
-      technique: 'Barra na frente, na altura das clavículas. Glúteos e core travados. Suba a barra em linha reta vertical, retraindo a cabeça pra trás na passagem.',
-      mistakes: 'Hiperestender lombar (fica supino em pé). Empurrar pra frente em vez de pra cima. Não travar core.',
-      tip: 'Imagine sua cabeça atravessando uma janela quando a barra passa pela linha do queixo.' },
-    { name: 'Pull-up / barra fixa', target: '3×AMRAP', muscles: 'dorsal, bíceps, antebraço', ko: '턱걸이',
-      description: 'O rei da largura de dorsal. Sem máquina substitui de verdade.',
-      technique: 'Pegada pronada, largura ombros + 10cm. Suba até queixo passar a barra, escápula retraída e peito empurrando pra frente.',
-      mistakes: 'Subir só com bíceps (sem ativar dorsal). Balançar (kipping desnecessário). Não passar o queixo.',
-      tip: 'Inicie cada rep "puxando o cotovelo pra baixo no bolso de trás". Se não consegue: negativas + assistida elástica.' },
-    { name: 'Rosca direta barra', target: '2×8–12', muscles: 'bíceps braquial', ko: '바벨 컬',
-      description: 'Hipertrofia clássica de bíceps.',
-      technique: 'Cotovelos colados ao corpo, pulso neutro. Suba sem balançar tronco, aperta no topo, desce em 2-3 segundos.',
-      mistakes: 'Balanço de quadril (cheating). Cotovelos indo pra frente. Não controlar a fase excêntrica.',
-      tip: 'Encoste as costas numa parede — se a parede sente movimento, você está chuteando.' },
-    { name: 'Tríceps testa', target: '2×8–12', muscles: 'tríceps (cabeça longa)', ko: '라잉 트라이셉스',
-      description: 'Alongamento de tríceps em pico — ótimo pra hipertrofia.',
-      technique: 'Deitado, barra acima da testa. Só o antebraço se move; cotovelos travados apontando pro teto. Desce até quase encostar na testa.',
-      mistakes: 'Cotovelos abrindo (vira pullover). Movimentar ombro. Carga excessiva.',
-      tip: 'Use barra W ou halteres se a barra reta incomodar o cotovelo.' },
-  ],
   'Upper B': [
     { name: 'Supino inclinado halteres', target: '4×8–12', muscles: 'peito superior (clavicular), deltóide ant.', ko: '인클라인 덤벨',
       description: 'Mira o peito alto — região esteticamente decisiva pra ficar "preenchido".',
@@ -4627,38 +4595,6 @@ const EXERCISE_LIBRARY = {
       mistakes: 'Carga pesada (perde forma). Cotovelo abaixo da altura do ombro (vira remada alta).',
       tip: 'Faz parecer uma "abertura de cortina" na cabeça.' },
   ],
-  'Lower A': [
-    { name: 'Agachamento livre', target: '4×5–8', muscles: 'quadríceps, glúteo, posterior, core', ko: '스쿼트',
-      description: 'O rei dos exercícios. Força global, hipertrofia de perna inteira, core travado.',
-      technique: 'Barra no trapézio (high-bar), pés largura dos ombros, ponta levemente pra fora. Senta entre as pernas, joelho na linha do pé, profundidade até paralelo.',
-      mistakes: 'Joelho colapsando pra dentro (valgo). Calcanhar levantando. Lombar arredondada ("butt wink").',
-      tip: 'Antes de descer, "rosqueie" os pés no chão pra fora — ativa glúteo e estabiliza joelho.' },
-    { name: 'Stiff (RDL)', target: '3×8–10', muscles: 'isquiotibiais, glúteo, lombar', ko: '루마니안 데드리프트',
-      description: 'Posterior de coxa e glúteo via hip hinge. Treina cadeia posterior.',
-      technique: 'Joelhos quase travados, barra colada à perna. Empurra quadril pra trás, desce barra até meio da canela, sente alongamento de isquio, sobe.',
-      mistakes: 'Agachar (vira squat). Barra distante da perna. Lombar arredondando.',
-      tip: 'Pense em "fechar uma porta com a bunda" — quadril vai pra trás, não pra baixo.' },
-    { name: 'Leg press 45°', target: '3×10–12', muscles: 'quadríceps, glúteo', ko: '레그 프레스',
-      description: 'Volume de perna sem fadigar core. Bom finalizador de quad.',
-      technique: 'Pés meio do apoio, largura dos ombros. Desce até joelho ~90°. Não solte a coluna do banco.',
-      mistakes: 'Solto a coluna (lombar arredonda). Trancar joelho no topo. Pés muito baixos (joelho passa do pé).',
-      tip: 'Pés mais altos = mais glúteo/posterior; mais baixos = mais quad.' },
-    { name: 'Mesa flexora', target: '3×10–12', muscles: 'isquiotibiais', ko: '레그 컬',
-      description: 'Isolamento de posterior — completa o trabalho do stiff.',
-      technique: 'Quadril apoiado, joelhos fora do banco. Puxa calcanhar até quase tocar o glúteo. Aperta no pico.',
-      mistakes: 'Levantar quadril (cheat). Voltar rápido (perde excêntrica).',
-      tip: 'Conte 3 segundos na fase de volta — excêntrica é onde isquio cresce.' },
-    { name: 'Panturrilha em pé', target: '4×12–15', muscles: 'gastrocnêmio', ko: '카프 레이즈',
-      description: 'Joelho estendido = foca gastrocnêmio (a "cabeça" da panturrilha).',
-      technique: 'Antepé na borda, calcanhar abaixo da linha do degrau. Sobe forte, segura 1s no topo, desce profundo.',
-      mistakes: 'Amplitude curta. Carga sem controle (mola elástica).',
-      tip: 'Faça 1 série dropset por treino — panturrilha responde a volume alto.' },
-    { name: 'Abdominal infra (elevação pernas)', target: '3×15', muscles: 'reto abdominal inferior', ko: '리버스 크런치',
-      description: 'Foca a parte baixa do abdômen, área teimosa.',
-      technique: 'Deitado, pernas semi-flex. Sobe pernas e leva joelho ao peito, retraindo pelve. Não joga as pernas.',
-      mistakes: 'Usar inércia. Lombar levantando.',
-      tip: 'Pense "enrolar a pelve" em vez de "subir as pernas".' },
-  ],
   'Push': [
     { name: 'Supino inclinado barra', target: '4×6–10', muscles: 'peito superior, deltóide, tríceps', ko: '인클라인 바벨',
       description: 'Push pesado focado no peito alto. Excelente para construir massa torácica visível.',
@@ -4685,33 +4621,6 @@ const EXERCISE_LIBRARY = {
       technique: 'Halteres na frente das coxas. Sobe até linha do ombro, alternado ou junto. Controle na descida.',
       mistakes: 'Subir acima do ombro (vira trapézio). Balanço.',
       tip: 'Se já faz muito supino, pode pular — o anterior já é bem estimulado.' },
-  ],
-  'Pull': [
-    { name: 'Levantamento terra (Deadlift)', target: '4×3–5', muscles: 'cadeia posterior inteira', ko: '데드리프트',
-      description: 'O exercício mais completo de força — recruta praticamente o corpo todo.',
-      technique: 'Barra sobre meio do pé, mãos fora dos joelhos. Tronco neutro, peito alto. Empurra o chão com os pés enquanto puxa a barra colada ao corpo.',
-      mistakes: 'Lombar arredondando (causa #1 de lesão). Barra distante da canela. Hiperestender no topo.',
-      tip: 'Faz só 1x por semana. Pesa muito no SNC — não combine com squat pesado no mesmo dia.' },
-    { name: 'Barra fixa pegada supinada', target: '3×AMRAP', muscles: 'bíceps, dorsal inferior', ko: '친업',
-      description: 'Variação que dá mais bíceps que pull-up tradicional.',
-      technique: 'Pegada supinada largura dos ombros. Sobe até queixo passar a barra. Desça controlado.',
-      mistakes: 'Sub-amplitude. Balanço.',
-      tip: 'Se barra fixa é difícil, faz 5 negativas (suba ajudado, desça em 5s) — destrava a força em ~4 semanas.' },
-    { name: 'Remada unilateral halter', target: '3×8–12/lado', muscles: 'dorsal, romboides', ko: '원암 덤벨 로우',
-      description: 'Mais amplitude que a remada barra, sem fadiga lombar.',
-      technique: 'Joelho e mão no banco, costas planas. Puxa o halter até a costela inferior, cotovelo perto do corpo.',
-      mistakes: 'Rotação de tronco (puxa com costas). Ombro caindo no fim.',
-      tip: 'Imagine "guardando o cotovelo no bolso de trás".' },
-    { name: 'Pulldown pegada fechada', target: '3×10–12', muscles: 'dorsal inferior, bíceps', ko: '클로즈 그립',
-      description: 'Pega o dorsal de baixo e dá largura central.',
-      technique: 'Pegada fechada (mãos quase se tocando), supinada ou neutra. Puxa até clavícula com leve inclinação de tronco.',
-      mistakes: 'Puxar com bíceps. Inclinar tronco demais.',
-      tip: 'Use quando o pulldown tradicional virou trapézio — fecha pegada e foca dorsal.' },
-    { name: 'Rosca martelo', target: '3×10–12', muscles: 'bíceps braquial + braquiorradial', ko: '해머 컬',
-      description: 'Hipertrofia de bíceps + antebraço. Faz braço parecer mais grosso.',
-      technique: 'Pegada neutra (polegares pra cima). Cotovelo fixo, sobe controlado, aperta no topo.',
-      mistakes: 'Balanço de quadril. Cotovelo indo pra frente.',
-      tip: 'Alterne reto + martelo na mesma série em superset.' },
   ],
   'Core/Abs': [
     { name: 'Prancha frontal', target: '3×60s', muscles: 'core profundo', ko: '플랭크',
@@ -4799,84 +4708,6 @@ const EXERCISE_LIBRARY = {
       mistakes: 'Pernas dobradas (versão progressão). Ombros encolhidos.',
       tip: 'Começa com joelhos flex (tuck L-sit), evolui pra perna reta em ~8 semanas.' },
   ],
-  'Peito + Tríceps': [
-    { name: 'Supino reto barra', target: '4×6–10', muscles: 'peitoral, tríceps, deltóide ant.',
-      description: 'Compoosto principal pra construir peito.', technique: 'Escápula retraída, descida controlada até o mamilo, sobe explosivo.',
-      mistakes: 'Cotovelos a 90°. Levantar bunda. Não tocar o peito.', tip: 'Pés firmes no chão, glúteo levemente apertado.' },
-    { name: 'Supino inclinado halteres', target: '4×8–12', muscles: 'peito superior, deltóide ant.',
-      description: 'Foca peito alto — região "preenchida" esteticamente.', technique: 'Banco 30–45°, halteres na largura dos ombros, desce profundo.',
-      mistakes: 'Banco muito íngreme (vira ombro). Encostar halteres no topo.', tip: 'Use o cabo se quiser mais tensão constante.' },
-    { name: 'Crucifixo halteres', target: '3×10–15', muscles: 'peitoral (alongamento)',
-      description: 'Alongamento intenso de peito.', technique: 'Cotovelos semi-flex fixos, abre como abraçando um barril.',
-      mistakes: 'Esticar cotovelo no fim (vira supino).', tip: 'Pausa 1s no ponto mais aberto.' },
-    { name: 'Tríceps testa', target: '3×8–12', muscles: 'tríceps (cabeça longa)',
-      description: 'Alongamento máximo de tríceps.', technique: 'Cotovelos travados apontando pro teto, só antebraço move.',
-      mistakes: 'Cotovelo abrindo (vira pullover).', tip: 'Use barra W pra poupar punho.' },
-    { name: 'Tríceps corda', target: '3×12–15', muscles: 'tríceps (todas cabeças)',
-      description: 'Volume e pump.', technique: 'Cotovelos colados ao corpo, abra a corda no fim do movimento.',
-      mistakes: 'Cotovelo subindo (vira ombro).', tip: 'Termina com drop set — pump absurdo.' },
-    { name: 'Mergulho em paralelas', target: '3×AMRAP', muscles: 'tríceps, peito inferior',
-      description: 'Composto pesado de tríceps.', technique: 'Corpo ereto pra focar tríceps; levemente inclinado pra focar peito.',
-      mistakes: 'Descer demais (estressa ombro).', tip: 'Adicione carga com cinto quando bater 12 reps.' },
-  ],
-  'Costas + Bíceps': [
-    { name: 'Barra fixa (pull-up)', target: '4×AMRAP', muscles: 'dorsal, bíceps',
-      description: 'O rei da largura de dorsal.', technique: 'Pegada pronada, queixo passa a barra, escápula retraída.',
-      mistakes: 'Subir só com bíceps. Sub-amplitude.', tip: 'Negativas + assistida elástica se ainda não tira.' },
-    { name: 'Remada curvada barra', target: '4×6–10', muscles: 'dorsal, romboides, trapézio médio',
-      description: 'Espessura de dorsal.', technique: 'Tronco ~45°, puxa até umbigo, escápula aperta.',
-      mistakes: 'Tronco subindo a cada rep.', tip: 'Imagine "partir uma noz" entre as escápulas.' },
-    { name: 'Pulldown pegada neutra', target: '4×10–12', muscles: 'dorsal, bíceps',
-      description: 'Substituto/complemento do pull-up.', technique: 'Coxas travadas, leve inclinação (15°), puxa até a clavícula.',
-      mistakes: 'Puxar com bíceps. Deitar demais.', tip: 'Empurre o peito pra cima durante a fase concêntrica.' },
-    { name: 'Remada unilateral halter', target: '3×8–12/lado', muscles: 'dorsal, romboides',
-      description: 'Amplitude maior + sem fadiga lombar.', technique: 'Joelho e mão no banco, costas planas, cotovelo perto do corpo.',
-      mistakes: 'Rotação de tronco (cheating).', tip: '"Cotovelo pro bolso de trás".' },
-    { name: 'Rosca direta barra', target: '3×8–12', muscles: 'bíceps braquial',
-      description: 'Hipertrofia clássica de bíceps.', technique: 'Cotovelos colados ao corpo, pulso neutro.',
-      mistakes: 'Balanço de quadril.', tip: 'Encosta as costas na parede pra remover o cheating.' },
-    { name: 'Rosca martelo', target: '3×10–12', muscles: 'bíceps + braquiorradial',
-      description: 'Bíceps mais grosso + antebraço.', technique: 'Pegada neutra (polegares pra cima), cotovelo fixo.',
-      mistakes: 'Cotovelo indo pra frente.', tip: 'Alterne reto + martelo em superset.' },
-  ],
-  'Ombros': [
-    { name: 'Desenvolvimento militar barra', target: '4×6–10', muscles: 'deltóide anterior, tríceps',
-      description: 'Pressão vertical pesada.', technique: 'Core travado, sobe a barra em linha reta, retraia cabeça na passagem.',
-      mistakes: 'Hiperestender lombar.', tip: 'Imagine atravessar uma janela com a cabeça.' },
-    { name: 'Desenvolvimento halteres sentado', target: '4×8–12', muscles: 'deltóide ant+médio',
-      description: 'Mais amplitude e equilíbrio bilateral.', technique: 'Halteres na altura das orelhas, palma virada pra frente.',
-      mistakes: 'Travar cotovelos.', tip: 'Pegada neutra (palmas se olhando) é mais "ombro-amigável".' },
-    { name: 'Elevação lateral', target: '4×12–15', muscles: 'deltóide médio',
-      description: 'O exercício mais importante pra ombro largo.', technique: 'Cotovelo guia o movimento, sobe até linha do ombro.',
-      mistakes: 'Polegar pra cima (vira ant.). Trapézio subindo.', tip: 'Imagine derramar uma jarra de café — pulso ligeiramente abaixado no topo.' },
-    { name: 'Elevação frontal', target: '3×12', muscles: 'deltóide anterior',
-      description: 'Isolamento se ombro anterior estiver fraco.', technique: 'Halteres na frente das coxas, sobe até linha do ombro.',
-      mistakes: 'Subir acima do ombro (vira trapézio).', tip: 'Se já faz muito supino, pode pular.' },
-    { name: 'Face pull', target: '4×15', muscles: 'deltóide posterior, manguito',
-      description: 'Antídoto da postura cifótica.', technique: 'Polia alta com corda, puxa até as mãos chegarem nas orelhas.',
-      mistakes: 'Carga pesada (perde forma).', tip: 'Faz no fim de todo treino — postura agradece.' },
-    { name: 'Encolhimento de ombros (shrug)', target: '4×12', muscles: 'trapézio superior',
-      description: 'Trapézio em volume.', technique: 'Halteres ao lado do corpo, sobe ombro até a orelha, pausa 1s.',
-      mistakes: 'Rolar o ombro (não rola).', tip: 'Carga vai longe — trapézio aguenta muito.' },
-  ],
-  'Pernas (quadríceps)': [
-    { name: 'Agachamento livre', target: '5×5–8', muscles: 'quadríceps, glúteo, posterior',
-      description: 'O rei dos exercícios.', technique: 'Pés largura dos ombros, ponta leve pra fora, profundidade até paralelo.',
-      mistakes: 'Joelho valgo. Calcanhar levantando.', tip: '"Rosqueie" os pés no chão pra fora antes de descer.' },
-    { name: 'Leg press 45°', target: '4×8–12', muscles: 'quadríceps, glúteo',
-      description: 'Volume sem fadigar core.', technique: 'Pés meio do apoio, desce até joelho ~90°.', mistakes: 'Soltar a lombar.', tip: 'Pés mais baixos = mais quad.' },
-    { name: 'Cadeira extensora', target: '4×10–15', muscles: 'quadríceps isolado',
-      description: 'Isolamento puro de quad.', technique: 'Eixo alinhado com joelho, estende até quase travar, aperta no topo.',
-      mistakes: 'Travar com chute.', tip: 'Ponta do pé pra fora recruta vasto medial (gota acima do joelho).' },
-    { name: 'Hack squat', target: '4×8–12', muscles: 'quadríceps (mais que glúteo)',
-      description: 'Variação focada em quad.', technique: 'Pés meio do apoio, desce profundo.', mistakes: 'Joelhos pra dentro.', tip: 'Pés mais baixos = mais quad ainda.' },
-    { name: 'Afundo passada', target: '3×10/perna', muscles: 'quad, glúteo, estabilizador',
-      description: 'Unilateral — corrige assimetrias.', technique: 'Passada longa, desce até joelho de trás quase tocar.',
-      mistakes: 'Joelho da frente passando do pé.', tip: 'Passada longa = mais glúteo. Curta = mais quad.' },
-    { name: 'Panturrilha em pé', target: '4×12–15', muscles: 'gastrocnêmio',
-      description: 'Joelho estendido = gastrocnêmio.', technique: 'Antepé na borda, calcanhar abaixo da linha.',
-      mistakes: 'Amplitude curta.', tip: 'Faz 1 dropset por treino — panturrilha responde a volume alto.' },
-  ],
   'Braços (bíceps + tríceps)': [
     { name: 'Rosca direta barra', target: '4×8–10', muscles: 'bíceps braquial',
       description: 'Hipertrofia clássica.', technique: 'Cotovelos colados, pulso neutro.', mistakes: 'Balanço.', tip: 'Encoste a parede.' },
@@ -4892,109 +4723,6 @@ const EXERCISE_LIBRARY = {
       description: 'Alongamento profundo.', technique: 'Halter atrás da cabeça, cotovelos apontando pro teto.', mistakes: 'Cotovelo abrindo.', tip: 'Use halter de peso médio com amplitude total.' },
   ],
   // ===== Splits combinados extras =====
-  'Costas + Ombros + Bíceps': [
-    { name: 'Barra fixa (pull-up)', target: '4×AMRAP', muscles: 'dorsal, bíceps',
-      description: 'Composto pesado de tração vertical.', technique: 'Pegada pronada, queixo passa a barra.',
-      mistakes: 'Subir só com bíceps. Sub-amplitude.', tip: 'Negativas + assistida se ainda não tira.' },
-    { name: 'Remada curvada barra', target: '4×6–10', muscles: 'dorsal, romboides, trapézio médio',
-      description: 'Espessura de dorsal.', technique: 'Tronco ~45°, puxa até umbigo.',
-      mistakes: 'Tronco subindo a cada rep.', tip: 'Aperta escápulas no topo.' },
-    { name: 'Desenvolvimento halteres sentado', target: '4×8–12', muscles: 'deltóide ant+médio',
-      description: 'Pressão vertical com mais amplitude.', technique: 'Halteres na altura das orelhas.',
-      mistakes: 'Travar cotovelos.', tip: 'Pegada neutra é ombro-amigável.' },
-    { name: 'Elevação lateral', target: '4×12–15', muscles: 'deltóide médio',
-      description: 'Largura de ombro.', technique: 'Cotovelo guia o movimento.',
-      mistakes: 'Trapézio subindo.', tip: 'Pulso ligeiramente abaixado no topo.' },
-    { name: 'Face pull', target: '3×15', muscles: 'deltóide posterior, manguito',
-      description: 'Antídoto da postura cifótica.', technique: 'Puxa até as mãos chegarem nas orelhas.',
-      mistakes: 'Carga pesada (perde forma).', tip: 'Faz no fim de todo treino.' },
-    { name: 'Rosca direta barra', target: '3×8–12', muscles: 'bíceps braquial',
-      description: 'Hipertrofia clássica.', technique: 'Cotovelos colados ao corpo.',
-      mistakes: 'Balanço de quadril.', tip: 'Encoste as costas na parede pra travar.' },
-    { name: 'Rosca martelo', target: '3×10–12', muscles: 'bíceps + braquiorradial',
-      description: 'Braquial e antebraço.', technique: 'Pegada neutra, cotovelo fixo.',
-      mistakes: 'Cotovelo indo pra frente.', tip: 'Superset com rosca direta.' },
-  ],
-  'Peito + Ombros + Tríceps': [
-    { name: 'Supino reto barra', target: '4×6–10', muscles: 'peitoral, tríceps, deltóide ant.',
-      description: 'Composto principal de peito.', technique: 'Escápula retraída, descida controlada.',
-      mistakes: 'Levantar bunda do banco.', tip: 'Pés firmes no chão.' },
-    { name: 'Supino inclinado halteres', target: '4×8–12', muscles: 'peito superior, deltóide ant.',
-      description: 'Foca peito alto.', technique: 'Banco 30–45°, halteres na largura dos ombros.',
-      mistakes: 'Banco íngreme demais.', tip: 'Sem encostar halteres no topo.' },
-    { name: 'Desenvolvimento militar', target: '4×6–10', muscles: 'deltóide anterior, tríceps',
-      description: 'Pressão vertical pesada.', technique: 'Core travado, sobe a barra em linha reta.',
-      mistakes: 'Hiperestender lombar.', tip: 'Imagine atravessar uma janela com a cabeça.' },
-    { name: 'Elevação lateral', target: '4×12–15', muscles: 'deltóide médio',
-      description: 'Largura de ombro.', technique: 'Cotovelo guia o movimento.',
-      mistakes: 'Polegar pra cima (vira ant.).', tip: 'Halteres leves.' },
-    { name: 'Crucifixo polia', target: '3×10–15', muscles: 'peitoral (alongamento)',
-      description: 'Pump de peito.', technique: 'Cotovelos semi-flex fixos, junta no centro.',
-      mistakes: 'Esticar cotovelo no fim.', tip: 'Aperta 1s no centro.' },
-    { name: 'Tríceps corda', target: '3×12–15', muscles: 'tríceps (todas cabeças)',
-      description: 'Volume e pump.', technique: 'Abra a corda no fim do movimento.',
-      mistakes: 'Cotovelo subindo.', tip: 'Drop set no fim — pump absurdo.' },
-    { name: 'Tríceps testa', target: '3×8–12', muscles: 'tríceps cabeça longa',
-      description: 'Alongamento profundo.', technique: 'Cotovelos travados apontando pro teto.',
-      mistakes: 'Cotovelo abrindo (vira pullover).', tip: 'Use barra W.' },
-  ],
-  'Perna completo': [
-    { name: 'Agachamento livre', target: '5×5–8', muscles: 'quadríceps, glúteo, posterior, core',
-      description: 'Rei dos exercícios — perna inteira.', technique: 'Pés largura dos ombros, profundidade até paralelo.',
-      mistakes: 'Joelho valgo. Calcanhar levantando.', tip: '"Rosqueie" os pés no chão pra fora.' },
-    { name: 'Stiff (RDL)', target: '4×8–10', muscles: 'isquiotibiais, glúteo, lombar',
-      description: 'Cadeia posterior via hip hinge.', technique: 'Joelhos quase travados, empurra quadril pra trás.',
-      mistakes: 'Agachar. Lombar arredondando.', tip: '"Fechar a porta com a bunda" — quadril pra trás.' },
-    { name: 'Hip thrust', target: '4×6–10', muscles: 'glúteo máximo, isquio',
-      description: 'Mais eficiente pra glúteo.', technique: 'Escápula no banco, aperta 1s no topo.',
-      mistakes: 'Hiperestender lombar.', tip: 'Olhar fixo num ponto à frente.' },
-    { name: 'Leg press 45°', target: '3×10–12', muscles: 'quadríceps, glúteo',
-      description: 'Volume sem fadigar core.', technique: 'Pés meio do apoio, desce até joelho ~90°.',
-      mistakes: 'Soltar a lombar.', tip: 'Pés mais altos = mais glúteo.' },
-    { name: 'Cadeira flexora sentado', target: '3×10–15', muscles: 'isquiotibiais',
-      description: 'Isolamento de posterior.', technique: 'Flexiona joelho ao máximo, segura 1s.',
-      mistakes: 'Levantar quadril.', tip: 'Conte 3s na volta.' },
-    { name: 'Cadeira extensora', target: '3×10–15', muscles: 'quadríceps isolado',
-      description: 'Isolamento puro de quad.', technique: 'Eixo alinhado com joelho.',
-      mistakes: 'Travar joelho com chute.', tip: 'Ponta do pé pra fora pra vasto medial.' },
-    { name: 'Panturrilha em pé', target: '4×12–15', muscles: 'gastrocnêmio',
-      description: 'Volume de panturrilha.', technique: 'Amplitude completa, antepé na borda.',
-      mistakes: 'Amplitude curta.', tip: 'Faz 1 dropset por treino.' },
-  ],
-  'Full Body A': [
-    { name: 'Agachamento livre', target: '4×6–10', muscles: 'perna inteira, core',
-      description: 'Movimento composto pesado.', technique: 'Pés largura dos ombros, profundidade até paralelo.',
-      mistakes: 'Joelho valgo.', tip: '"Rosqueie" os pés no chão.' },
-    { name: 'Supino reto', target: '4×6–10', muscles: 'peito, tríceps, ombro',
-      description: 'Composto horizontal de empurrar.', technique: 'Escápula retraída, descida controlada.',
-      mistakes: 'Cotovelos a 90°.', tip: 'Sopre na subida.' },
-    { name: 'Remada curvada', target: '4×6–10', muscles: 'dorsal, bíceps',
-      description: 'Composto horizontal de puxar.', technique: 'Tronco ~45°, puxa até umbigo.',
-      mistakes: 'Tronco subindo a cada rep.', tip: 'Aperta escápulas.' },
-    { name: 'Desenvolvimento militar', target: '3×8–10', muscles: 'ombro, tríceps',
-      description: 'Pressão vertical.', technique: 'Core travado, sobe em linha reta.',
-      mistakes: 'Hiperestender lombar.', tip: 'Cabeça atravessa janela.' },
-    { name: 'Prancha frontal', target: '3×60s', muscles: 'core profundo',
-      description: 'Estabilidade anti-extensão.', technique: 'Corpo reto, glúteo travado.',
-      mistakes: 'Bumbum alto/baixo.', tip: 'Respiração ativa.' },
-  ],
-  'Full Body B': [
-    { name: 'Levantamento terra', target: '4×3–5', muscles: 'cadeia posterior inteira',
-      description: 'Composto mais completo de força.', technique: 'Tronco neutro, peito alto.',
-      mistakes: 'Lombar arredondando.', tip: 'Faz só 1x/sem.' },
-    { name: 'Supino inclinado halteres', target: '3×8–12', muscles: 'peito alto, ombro',
-      description: 'Variação com mais amplitude.', technique: 'Banco 30°, halteres na altura do peito.',
-      mistakes: 'Encostar halteres no topo.', tip: 'Pausa no ponto baixo.' },
-    { name: 'Pull-up / barra fixa', target: '3×AMRAP', muscles: 'dorsal, bíceps',
-      description: 'Tração vertical.', technique: 'Pegada pronada, queixo passa a barra.',
-      mistakes: 'Balanço excessivo.', tip: 'Negativas se não tira.' },
-    { name: 'Afundo passada', target: '3×10/perna', muscles: 'quad, glúteo, estabilidade',
-      description: 'Unilateral funcional.', technique: 'Passada longa, joelho atrás quase toca.',
-      mistakes: 'Joelho da frente passa do pé.', tip: 'Empurra com calcanhar.' },
-    { name: 'Hanging leg raise', target: '3×10–12', muscles: 'reto abdominal inferior',
-      description: 'Abdominal pendurado.', technique: 'Sem balanço, retrai pelve no topo.',
-      mistakes: 'Balanço.', tip: 'Joelho flex se reto for difícil.' },
-  ],
   'Upper completo': [
     { name: 'Supino reto barra', target: '4×6–10', muscles: 'peito, tríceps, ombro',
       description: 'Composto horizontal pesado.', technique: 'Escápula retraída, peito alto.',
@@ -5877,7 +5605,7 @@ function saveState() {
 /** Popula dados de exemplo dos últimos 14 dias para tela "preenchida". */
 function seedSampleData() {
   const today = new Date();
-  const types = ['Upper A', 'Lower A', 'Upper B', 'Push', 'Pull', 'Caminhada'];
+  const types = ['Upper B', 'Push', 'Caminhada', 'Core/Abs', 'Braços (bíceps + tríceps)'];
   // Inclui hoje (i=0) para o estado inicial não ficar "Ferro 0 XP".
   for (let i = 13; i >= 0; i--) {
     const d = new Date(today); d.setDate(d.getDate() - i);
@@ -6959,7 +6687,7 @@ function modalDailyLog(dateISO = null) {
   const today = (dateISO && /^\d{4}-\d{2}-\d{2}$/.test(dateISO) && dateISO <= todayReal) ? dateISO : todayReal;
   const existing = state.dailyLogs.find((l) => l.date === today) || {
     date: today,
-    training: { type: 'Upper A', done: false },
+    training: { type: 'Upper B', done: false },
     protein: { grams: 0, hit: false },
     sleep: { hours: 0 },
     reading: { minutes: 0 },
@@ -7134,20 +6862,13 @@ function viewWorkout() {
   ];
   const subtitles = {
     '🆓 Treino livre': 'detecta split sozinho',
-    'Peito + Tríceps':  'pressão + isolamento', 'Costas + Bíceps':  'tração + isolamento',
-    'Ombros':           'deltóide completo',     'Braços (bíceps + tríceps)': 'dia de braço',
-    'Pernas (quadríceps)': 'quad isolado',
-    'Upper A': 'peito + dorsais',                'Upper B': 'peito alto + ombros',
-    'Lower A': 'compostos pesados',
-    'Push':    'peito · ombro · tríceps',        'Pull':    'dorsais · bíceps',
-    'Core/Abs': 'núcleo de combate',
-    'Caminhada': 'LISS · passos · trilha',
-    'Calistenia': 'sem peso · só corpo',
-    'Costas + Ombros + Bíceps': 'V-taper · puxar tudo',
-    'Peito + Ombros + Tríceps': 'empurrar completo',
-    'Perna completo': 'quad · post · glúteo',
-    'Full Body A':   'corpo todo · pesado',      'Full Body B': 'corpo todo · técnico',
+    'Push':       'peito · ombro · tríceps',
+    'Upper B':    'peito alto + ombros',
     'Upper completo': 'tronco inteiro',
+    'Braços (bíceps + tríceps)': 'dia de braço',
+    'Core/Abs':   'núcleo de combate',
+    'Caminhada':  'LISS · passos · trilha',
+    'Calistenia': 'sem peso · só corpo',
     'A · Peito + Tríceps + Abs':  'ABC split · dia A',
     'B · Costas + Ombros + Bíceps + Abs': 'ABC split · dia B',
     'C · Pernas completo + Abs':  'ABC split · dia C',
@@ -7155,16 +6876,10 @@ function viewWorkout() {
   };
   const icons = {
     '🆓 Treino livre': I.plus,
-    'Peito + Tríceps': I.flame, 'Costas + Bíceps': I.dumb,
-    'Ombros': I.fist,           'Braços (bíceps + tríceps)': I.fist,
-    'Pernas (quadríceps)': I.bolt,
-    'Upper A': I.fist, 'Upper B': I.fist, 'Lower A': I.bolt,
-    'Push': I.flame, 'Pull': I.dumb, 'Core/Abs': I.skull,
+    'Push': I.flame, 'Upper B': I.fist, 'Core/Abs': I.skull,
+    'Braços (bíceps + tríceps)': I.fist,
     'Caminhada': I.fighter,
     'Calistenia': I.fighter,
-    'Costas + Ombros + Bíceps': I.dumb, 'Peito + Ombros + Tríceps': I.flame,
-    'Perna completo': I.bolt,
-    'Full Body A': I.fighter, 'Full Body B': I.fighter,
     'Upper completo': I.fist,
     'A · Peito + Tríceps + Abs': I.flame,
     'B · Costas + Ombros + Bíceps + Abs': I.dumb,
@@ -7269,9 +6984,8 @@ function viewWorkout() {
       // Agrupa tipos por categoria visual
       const GROUPS = {
         'ABC SPLIT': ['A · Peito + Tríceps + Abs', 'B · Costas + Ombros + Bíceps + Abs', 'C · Pernas completo + Abs'],
-        'UPPER / LOWER': ['Upper A', 'Upper B', 'Lower A', 'Push', 'Pull', 'Upper completo', 'Full Body A', 'Full Body B'],
-        'POR FOCO': ['Peito + Tríceps', 'Peito + Ombros + Tríceps', 'Costas + Bíceps', 'Costas + Ombros + Bíceps',
-                     'Ombros', 'Braços (bíceps + tríceps)', 'Pernas (quadríceps)', 'Perna completo', 'Core/Abs'],
+        'UPPER / LOWER': ['Upper B', 'Push', 'Upper completo'],
+        'POR FOCO': ['Braços (bíceps + tríceps)', 'Core/Abs'],
         'CARDIO / FUNCIONAL': ['Caminhada', 'Calistenia'],
         'LIVRE': ['🆓 Treino livre', 'Outro'],
       };
@@ -7558,25 +7272,13 @@ const WORKOUT_HERO_IMAGES = {
   'A · Peito + Tríceps + Abs':  'icons/workouts/peito.webp',
   'B · Costas + Ombros + Bíceps + Abs': 'icons/workouts/dorsal.webp',
   'C · Pernas completo + Abs':  'icons/workouts/pernas.webp',
-  'Peito + Tríceps':            'icons/workouts/peito.webp',
-  'Peito + Ombros + Tríceps':   'icons/workouts/peito.webp',
-  'Costas + Bíceps':            'icons/workouts/dorsal.webp',
-  'Costas + Ombros + Bíceps':   'icons/workouts/dorsal.webp',
-  'Pernas (quadríceps)':        'icons/workouts/pernas.webp',
-  'Perna completo':             'icons/workouts/pernas.webp',
-  'Ombros':                     'icons/workouts/ombros.webp',
   'Braços (bíceps + tríceps)':  'icons/workouts/bracos.webp',
-  'Upper A':                    'icons/workouts/bracos.webp',
   'Upper B':                    'icons/workouts/ombros2.webp',
-  'Lower A':                    'icons/workouts/pernas.webp',
   'Push':                       'icons/workouts/abs.webp',
-  'Pull':                       'icons/workouts/dorsal.webp',
   'Upper completo':             'icons/workouts/ombros.webp',
   'Core/Abs':                   'icons/workouts/core.webp',
   'Caminhada':                  'icons/workouts/caminhada.webp',
   'Calistenia':                 'icons/workouts/calistenia.webp',
-  'Full Body A':                'icons/workouts/abs.webp',
-  'Full Body B':                'icons/workouts/dorsal.webp',
 };
 
 function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
@@ -7657,6 +7359,7 @@ function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
     <div class="workout-hero" style="background-image: url('${heroImg}'); background-position: ${WORKOUT_HERO_POSITIONS[heroImg] || 'center top'}">
       <!-- Botões flutuantes sobre a imagem -->
       <button id="open-glossary" class="workout-hero-btn workout-hero-btn-left" aria-label="Glossário de técnicas">ℹ Técnicas</button>
+      <button id="workout-shuffle" class="workout-hero-btn workout-hero-btn-center" aria-label="Variar treino" title="Embaralha a ordem dos exercícios e varia técnicas">🎲 Variar</button>
       <button class="workout-hero-btn workout-hero-btn-right modal-close" aria-label="Fechar">✕</button>
       <!-- Título e data sobrepostos na base da imagem -->
       <div class="workout-hero-overlay">
@@ -7751,6 +7454,38 @@ function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
       <button class="q-btn q-btn-primary w-full py-3" id="save-workout">Salvar treino</button>
     </div>
   `, { persistent: true });
+
+  // Sorteador interno — embaralha ordem dos exercícios e varia técnicas
+  document.getElementById('workout-shuffle')?.addEventListener('click', () => {
+    syncSetsFromDOM(start);
+    // 1) Shuffle de ordem dos exercícios (Fisher-Yates)
+    for (let i = start.exercises.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [start.exercises[i], start.exercises[j]] = [start.exercises[j], start.exercises[i]];
+    }
+    // 2) Pra cada exercício, sorteia 1-2 sets pra variar a técnica
+    //    (pega da lista de TECH_BY_CAT da categoria do exercício)
+    for (const ex of start.exercises) {
+      if (!ex.sets || ex.sets.length === 0) continue;
+      const cat = exerciseCategory(ex);
+      const opts = (TECH_BY_CAT[cat] || []).filter((t) => t); // remove o vazio
+      if (!opts.length) continue;
+      // Decide quantos sets vão receber técnica nova: 1 se 3 sets, 2 se 4+
+      const nToVary = Math.min(2, Math.max(1, Math.floor(ex.sets.length / 3)));
+      // Seleciona índices aleatórios distintos
+      const idxs = new Set();
+      while (idxs.size < nToVary && idxs.size < ex.sets.length) {
+        idxs.add(Math.floor(Math.random() * ex.sets.length));
+      }
+      for (const i of idxs) {
+        ex.sets[i].technique = opts[Math.floor(Math.random() * opts.length)];
+      }
+    }
+    closeModal();
+    setTimeout(() => modalWorkoutSession(type, dateISO, start), 30);
+    toast('🎲 Treino variado — nova ordem e técnicas');
+    vibrate(15);
+  });
 
   // Date picker: sincroniza start.date sempre que muda
   // Glossário de técnicas
@@ -8063,36 +7798,28 @@ function detectSplit(exercises) {
   const total = exercises.length;
   let type, confidence = 0.7;
   // Heurísticas, ordem importa (do mais específico ao mais genérico)
-  if (has('peito') && has('triceps') && !has('dorsal') && !has('biceps')) {
-    type = 'Peito + Tríceps';
-  } else if (has('dorsal') && has('biceps') && !has('peito')) {
-    type = 'Costas + Bíceps';
-  } else if (has('biceps') && has('triceps') && !has('peito') && !has('dorsal')) {
+  // Após dedup, todos os fallbacks que apontavam pra tipos removidos foram
+  // redirecionados pros mantidos. ABC splits têm prioridade quando casa.
+  if (has('biceps') && has('triceps') && !has('peito') && !has('dorsal')) {
     type = 'Braços (bíceps + tríceps)';
+  } else if (has('peito') && has('triceps') && has('core')) {
+    type = 'A · Peito + Tríceps + Abs';
   } else if (has('peito') && has('ombro') && has('triceps')) {
     type = 'Push';
-  } else if (has('dorsal') && has('biceps')) {
-    type = 'Pull';
-  } else if (has('ombro') && counts.ombro >= 2 && !has('peito') && !has('dorsal')) {
-    type = 'Ombros';
-  } else if (has('quad') && counts.post === 0) {
-    type = 'Pernas (quadríceps)';
-  } else if (has('post') && !has('quad')) {
-    type = 'Perna completo';
-  } else if (has('peito') && has('dorsal')) {
-    type = 'Upper A';
-  } else if (has('quad') && has('post')) {
-    type = 'Lower A';
+  } else if (has('dorsal') && (has('ombro') || has('biceps')) && has('core')) {
+    type = 'B · Costas + Ombros + Bíceps + Abs';
+  } else if (has('quad') && has('post') && has('core')) {
+    type = 'C · Pernas completo + Abs';
   } else if (has('core') && total === counts.core) {
     type = 'Core/Abs';
   } else if (has('cardio') && total === counts.cardio) {
     type = 'Caminhada';
-  } else if (has('peito')) {
+  } else if (has('peito') || has('triceps')) {
     type = 'Push'; confidence = 0.5;
-  } else if (has('dorsal')) {
-    type = 'Pull'; confidence = 0.5;
+  } else if (has('dorsal') || has('biceps') || (has('ombro') && total === counts.ombro)) {
+    type = 'Upper B'; confidence = 0.5;
   } else if (has('quad') || has('post')) {
-    type = 'Lower A'; confidence = 0.5;
+    type = 'C · Pernas completo + Abs'; confidence = 0.5;
   } else {
     type = 'Outro'; confidence = 0.3;
   }
@@ -8672,6 +8399,19 @@ function viewBody() {
         <button class="q-btn q-btn-primary text-sm" id="add-weight">+ registrar medidas</button>
       </div>
     </div>
+  </section>
+
+  <!-- Banner Cutting: clique abre modal com dicas pra cutting saudável -->
+  <section class="px-4 mt-3">
+    <button id="open-cutting" class="cutting-banner w-full text-left">
+      <div class="cutting-banner-img" style="background-image:url('icons/body/cutting.webp')"></div>
+      <div class="cutting-banner-text">
+        <div class="font-display text-[10px] uppercase tracking-[0.3em] text-white/70">CUTTING GUIDE</div>
+        <div class="font-extrabold text-lg text-white drop-shadow-lg">Cutting saudável</div>
+        <div class="text-[10px] text-white/80 leading-tight mt-0.5">Dicas pra perder gordura sem perder massa muscular</div>
+      </div>
+      <span class="text-white text-xl pr-3">→</span>
+    </button>
   </section>
 
   ${totalMeasures >= 1 ? `
@@ -10536,6 +10276,108 @@ function modalAttributeDetail(attrKey) {
   `, { persistent: true });
 }
 
+function modalCutting() {
+  openModal(`
+    <div class="attr-hero" style="background-image:url('icons/body/cutting.webp'); background-position:center 40%">
+      <button class="workout-hero-btn workout-hero-btn-right modal-close">✕</button>
+      <div class="workout-hero-overlay">
+        <div class="font-display text-[10px] uppercase tracking-[0.3em] text-white/70">cutting guide</div>
+        <h2 class="font-extrabold text-3xl text-white drop-shadow-lg">Cutting saudável</h2>
+        <div class="text-[11px] text-white/80 mt-0.5">Perder gordura preservando músculo</div>
+      </div>
+    </div>
+    <div class="p-4 overflow-y-auto space-y-4" style="max-height:55vh">
+
+      <!-- Princípios -->
+      <div>
+        <div class="text-[10px] uppercase tracking-widest text-ink/55 dark:text-paper/55 mb-2">⚔ Princípios</div>
+        <p class="text-[11px] text-ink/65 dark:text-paper/65 leading-snug mb-2">
+          Cutting = déficit calórico controlado. Objetivo: <b>perder gordura sem perder músculo</b>.
+          Mire em 0.5-1% do peso/semana. Mais rápido que isso, perde músculo junto.
+        </p>
+      </div>
+
+      <!-- Calorias -->
+      <div>
+        <div class="text-[10px] uppercase tracking-widest text-ink/55 dark:text-paper/55 mb-2">📊 Calorias</div>
+        <div class="space-y-1.5">
+          ${[
+            { icon: '🔢', text: 'Déficit de 300-500 kcal/dia (não mais). Calc TDEE em Config → Perfil físico.' },
+            { icon: '📉', text: 'Pesar diário, média semanal. Se perdeu >1% peso/sem, sobe 100 kcal.' },
+            { icon: '🍽️', text: 'Refeed 1x/sem (dia em manutenção) ajuda saúde mental e leptina.' },
+          ].map(t => `
+            <div class="q-card p-2.5 flex items-start gap-2 text-[12px]">
+              <span class="text-base shrink-0">${t.icon}</span>
+              <span class="leading-snug text-ink/85 dark:text-paper/85">${t.text}</span>
+            </div>`).join('')}
+        </div>
+      </div>
+
+      <!-- Macros -->
+      <div>
+        <div class="text-[10px] uppercase tracking-widest text-ink/55 dark:text-paper/55 mb-2">🥩 Macros</div>
+        <div class="space-y-1.5">
+          ${[
+            { icon: '🥩', text: 'Proteína: 1.8-2.2g/kg de peso. É o que MAIS importa pra preservar músculo.' },
+            { icon: '🥑', text: 'Gordura: ~0.8-1g/kg (não corta gordura abaixo de 20% das kcal — afeta hormônios).' },
+            { icon: '🍚', text: 'Carbo: o resto. Concentra perto dos treinos pra ter energia.' },
+            { icon: '🥦', text: 'Fibras: ≥30g/dia. Saciedade + saúde intestinal.' },
+          ].map(t => `
+            <div class="q-card p-2.5 flex items-start gap-2 text-[12px]">
+              <span class="text-base shrink-0">${t.icon}</span>
+              <span class="leading-snug text-ink/85 dark:text-paper/85">${t.text}</span>
+            </div>`).join('')}
+        </div>
+      </div>
+
+      <!-- Treino durante cutting -->
+      <div>
+        <div class="text-[10px] uppercase tracking-widest text-ink/55 dark:text-paper/55 mb-2">💪 Treino</div>
+        <div class="space-y-1.5">
+          ${[
+            { icon: '🏋️', text: 'MANTÉM as cargas. Reduzir peso = sinal pro corpo "pode soltar músculo".' },
+            { icon: '🔁', text: 'Volume igual ou levemente reduzido (10-15% menos series se cansaço bater).' },
+            { icon: '🚶', text: 'Cardio: caminhada 7-10k passos/dia. HIIT 1-2x/sem. Não substitui força.' },
+            { icon: '⏸️', text: 'Descanso entre séries pode aumentar — energia fica menor com déficit.' },
+          ].map(t => `
+            <div class="q-card p-2.5 flex items-start gap-2 text-[12px]">
+              <span class="text-base shrink-0">${t.icon}</span>
+              <span class="leading-snug text-ink/85 dark:text-paper/85">${t.text}</span>
+            </div>`).join('')}
+        </div>
+      </div>
+
+      <!-- Recuperação -->
+      <div>
+        <div class="text-[10px] uppercase tracking-widest text-ink/55 dark:text-paper/55 mb-2">🛌 Recuperação</div>
+        <div class="space-y-1.5">
+          ${[
+            { icon: '😴', text: 'Sono 7-9h é NÃO-NEGOCIÁVEL. Pouco sono = mais fome + menos músculo preservado.' },
+            { icon: '💧', text: '35-40ml de água/kg de peso. Hidratação afeta apetite e performance.' },
+            { icon: '🧂', text: 'Eletrólitos (sódio/potássio/magnésio) — cutting reduz retenção. Suplementar.' },
+            { icon: '🧘', text: 'Stress controlado. Cortisol alto sabota cutting (retenção + fome).' },
+          ].map(t => `
+            <div class="q-card p-2.5 flex items-start gap-2 text-[12px]">
+              <span class="text-base shrink-0">${t.icon}</span>
+              <span class="leading-snug text-ink/85 dark:text-paper/85">${t.text}</span>
+            </div>`).join('')}
+        </div>
+      </div>
+
+      <!-- Quando parar -->
+      <div class="q-card p-3" style="border-left:3px solid #FFD341">
+        <div class="text-[10px] uppercase tracking-widest font-bold mb-1" style="color:#FFD341">⚠️ Quando parar</div>
+        <p class="text-[11px] text-ink/75 dark:text-paper/75 leading-snug">
+          Cutting prolongado (>12 semanas) cai performance, libido e humor.
+          Faz <b>diet break</b> de 1-2 semanas em manutenção a cada 8-10 semanas
+          de déficit. Mais sustentável que cutting agressivo.
+        </p>
+      </div>
+
+    </div>
+  `);
+}
+
 function modalExternalImport() {
   openModal(`
     <header class="flex items-center justify-between p-4 border-b border-ink/5 dark:border-paper/5">
@@ -10858,17 +10700,17 @@ function modalChoreo() {
   const tiktokSearch = `https://www.tiktok.com/search?q=${encodeURIComponent(c.artist + ' ' + c.song + ' dance')}`;
 
   openModal(`
-    <header class="flex items-center justify-between p-4 border-b border-ink/5 dark:border-paper/5">
-      <div>
-        <div class="kombat-tagline text-[10px]">${getTheme(state).tags.dance}</div>
-        <h2 class="font-extrabold text-lg mt-0.5">Coreografia sorteada</h2>
+    <div class="dance-hero" style="background-image:url('icons/lounge/danca.webp')">
+      <button class="workout-hero-btn workout-hero-btn-right modal-close">✕</button>
+      <div class="workout-hero-overlay">
+        <div class="font-display text-[10px] uppercase tracking-[0.3em] text-white/70">${getTheme(state).tags.dance}</div>
+        <h2 class="font-extrabold text-2xl text-white drop-shadow-lg">Coreografia sorteada</h2>
+        <div class="text-[11px] text-white/80 mt-0.5">${c.artist} · ${c.year}</div>
       </div>
-      <button class="modal-close p-1"><span class="w-5 h-5">${I.close}</span></button>
-    </header>
-    <div class="p-4 space-y-3">
+    </div>
+    <div class="p-4 space-y-3 overflow-y-auto" style="max-height:50vh">
       <div class="q-card p-4 text-center" style="background: linear-gradient(135deg, rgba(255,183,197,0.15), rgba(183,181,255,0.15))">
-        <div class="text-xs uppercase tracking-widest text-ink/45 dark:text-paper/45">${c.artist} · ${c.year}</div>
-        <div class="font-extrabold text-2xl mt-1">${c.song}</div>
+        <div class="font-extrabold text-2xl">${c.song}</div>
         <div class="font-kombat text-xs text-ink/55 dark:text-paper/55 mt-2 tracking-widest">${c.style} · ${c.dur}</div>
         <div class="mt-2 text-lg" style="color:#E84A1A">${diffStars}</div>
         <div class="text-xs text-ink/55 dark:text-paper/55 mt-3 italic">"${c.tip}"</div>
@@ -12256,6 +12098,7 @@ function attachHandlers() {
   });
 
   document.getElementById('add-weight')?.addEventListener('click', modalWeightEntry);
+  document.getElementById('open-cutting')?.addEventListener('click', modalCutting);
 
   document.getElementById('photo-input')?.addEventListener('change', (e) => {
     const file = e.target.files[0]; if (!file) return;

@@ -199,6 +199,43 @@ html.dark body::before {
   padding: .7rem .8rem;
 }
 
+/* Cutting banner (aba Corpo) -------------------------------- */
+.cutting-banner {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  background: linear-gradient(135deg, #2A1F3D, #B8242E);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 18px rgba(184,36,46,0.30);
+  width: 100%;
+  cursor: pointer;
+  transition: transform .15s ease;
+  min-height: 90px;
+}
+.cutting-banner:active { transform: scale(0.98); }
+.cutting-banner-img {
+  width: 110px;
+  background-size: cover;
+  background-position: center 30%;
+  flex-shrink: 0;
+  position: relative;
+}
+.cutting-banner-img::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(to right, transparent, rgba(42,31,61,0.55));
+}
+.cutting-banner-text {
+  flex: 1;
+  padding: .9rem 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  color: #FFF;
+}
+
 /* Quick start (último treino) ------------------------------- */
 .workout-quickstart {
   position: relative;
@@ -234,6 +271,26 @@ html.dark body::before {
   justify-content: center;
   min-width: 0;
   color: #FFF;
+}
+
+/* Dance Kpop hero modal ------------------------------------ */
+.dance-hero {
+  position: relative;
+  width: 100%;
+  height: 38vh;
+  min-height: 240px;
+  max-height: 380px;
+  background-size: cover;
+  background-position: center 15%;
+  background-color: #1A1A2E;
+}
+.dance-hero::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 55%;
+  background: linear-gradient(to bottom, transparent 0%, rgba(255,183,197,0.35) 30%, rgba(15,23,41,0.92) 100%);
+  pointer-events: none;
 }
 
 /* Attribute detail modal hero ------------------------------ */
@@ -300,6 +357,18 @@ html.dark body::before {
 }
 .workout-hero-btn:hover { background: rgba(15,23,41,0.85); }
 .workout-hero-btn-left { left: .8rem; }
+.workout-hero-btn-center {
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #FFD341, #E84A1A);
+  color: #1A1A2E;
+  border-color: rgba(255,255,255,0.4);
+  box-shadow: 0 3px 10px rgba(232,74,26,0.4);
+}
+.workout-hero-btn-center:hover {
+  background: linear-gradient(135deg, #FFE08F, #FF5C2C);
+  transform: translateX(-50%) scale(1.05);
+}
 .workout-hero-btn-right {
   right: .8rem;
   width: 32px; height: 32px;
