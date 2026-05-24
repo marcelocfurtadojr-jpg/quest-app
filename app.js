@@ -5644,6 +5644,9 @@ function makeEmptyState() {
       attributes: { forca: 0, resistencia: 0, sabedoria: 0, disciplina: 0, vitalidade: 0 },
       achievementsUnlocked: [],
       questsCompleted: 0,
+      // Integração Spotify (OAuth PKCE). Client ID o user cola via Config.
+      // Tokens guardados em localStorage; refresh automático quando expira.
+      spotify: { clientId: '', accessToken: '', refreshToken: '', expiresAt: 0, scope: '' },
     },
     dailyLogs: [],          // [{date, training, protein, sleep, reading, steps, buffs, notes, xp}]
     workouts: [],           // [{date, type, exercises:[{name, sets:[{reps,weight,technique}]}]}]
@@ -5821,6 +5824,14 @@ function migrateState(s) {
       .filter((k) => validKeys.has(k));
     s.user.activeGoals = Array.from(new Set(s.user.activeGoals));
   }
+
+  // Spotify (v1.55+) — garante o objeto e seus campos pra states antigos
+  s.user.spotify = s.user.spotify || {};
+  s.user.spotify.clientId    = s.user.spotify.clientId    || '';
+  s.user.spotify.accessToken = s.user.spotify.accessToken || '';
+  s.user.spotify.refreshToken = s.user.spotify.refreshToken || '';
+  s.user.spotify.expiresAt   = s.user.spotify.expiresAt   || 0;
+  s.user.spotify.scope       = s.user.spotify.scope       || '';
 }
 
 function saveState() {
@@ -6521,6 +6532,12 @@ function render() {
   app().firstElementChild?.classList.add('animate-fade-up');
   // Re-renderiza o chip do rest timer (sobrevive em qualquer aba)
   updateRestTimerDisplay();
+  // Spotify polling — só roda quando estamos na home (onde o card aparece).
+  if (currentTab === 'home' && spotifyConnected()) {
+    spotifyStartPolling();
+  } else {
+    spotifyStopPolling();
+  }
 }
 
 function go(tab) {
@@ -6666,8 +6683,13 @@ function viewDashboard() {
         ${state.user.darkMode ? '☀️' : '🌙'}
       </button>
     </div>
-    <!-- Quote card — agora é uma "scroll" de pergaminho com hangul/secondary -->
-    <div class="quote-scroll mt-3">
+    <!-- Spotify card substitui a frase do dia.
+         Sem clientId / sem token / sem música tocando → estados próprios.
+         Frase do dia migra pra um pill discreto abaixo, pra não perder o ritual. -->
+    <div class="mt-3">
+      ${renderSpotifyCard()}
+    </div>
+    <div class="quote-mini mt-2" title="Frase do dia">
       ${quoteHtml}
     </div>
   </header>
@@ -11615,6 +11637,37 @@ function viewConfig() {
       </button>
     </div>`}
 
+    <!-- ===== Spotify (Now Playing + controles) ===== -->
+    ${(() => {
+      const sp = state.user.spotify || {};
+      const connected = !!sp.accessToken;
+      const redirect = spotifyRedirectURI();
+      return `
+      <div class="q-card p-4">
+        <div class="flex items-center justify-between mb-2">
+          <div>
+            <div class="text-xs uppercase tracking-wider text-ink/45 dark:text-paper/45">🎵 Spotify</div>
+            <div class="font-bold mt-0.5">${connected ? 'Conectado' : 'Conecte sua conta'}</div>
+          </div>
+          ${connected
+            ? `<button id="cfg-spotify-disconnect" class="q-btn q-btn-ghost text-xs">Desconectar</button>`
+            : `<button id="cfg-spotify-connect" class="q-btn q-btn-primary text-xs" ${sp.clientId ? '' : 'disabled'}>Conectar</button>`}
+        </div>
+        <p class="text-[10px] text-ink/55 dark:text-paper/55 leading-relaxed mb-2">
+          1) Crie um app em <b>developer.spotify.com/dashboard</b> · 2) Cole o <b>Client ID</b> abaixo · 3) Em "Redirect URIs" do dashboard, adicione exatamente:
+        </p>
+        <div class="cfg-spotify-redirect">${redirect}</div>
+        <label class="block mt-3">
+          <span class="text-xs font-semibold">Client ID</span>
+          <input id="cfg-spotify-cid" class="q-input mt-1 font-mono text-[11px]"
+                 value="${sp.clientId || ''}"
+                 placeholder="ex: a1b2c3d4e5f6..."
+                 spellcheck="false" autocomplete="off" />
+        </label>
+        <button id="cfg-spotify-save-cid" class="q-btn q-btn-ghost w-full mt-2 text-xs">Salvar Client ID</button>
+      </div>`;
+    })()}
+
     ${(() => {
       const cur = CHARACTERS.find((c) => c.id === state.user.activeCharacter);
       if (!cur) return '';
@@ -11861,6 +11914,9 @@ function attachHandlers() {
       modalCharacterSheet(btn.dataset.id);
     };
   });
+
+  // Spotify (card no header + bind direto)
+  attachSpotifyCardHandlers();
 
   document.getElementById('toggle-dark')?.addEventListener('click', () => {
     state.user.darkMode = !state.user.darkMode;
@@ -12578,6 +12634,25 @@ function attachHandlers() {
     currentTab = 'home';
     render();
   });
+
+  // ---- Spotify config ----
+  document.getElementById('cfg-spotify-save-cid')?.addEventListener('click', () => {
+    const v = document.getElementById('cfg-spotify-cid')?.value?.trim() || '';
+    state.user.spotify.clientId = v;
+    saveState();
+    toast(v ? 'Client ID salvo' : 'Client ID limpo');
+    render();
+  });
+  document.getElementById('cfg-spotify-connect')?.addEventListener('click', () => {
+    // Salva o Client ID atual antes (caso o user tenha mudado sem salvar)
+    const v = document.getElementById('cfg-spotify-cid')?.value?.trim();
+    if (v) { state.user.spotify.clientId = v; saveState(); }
+    spotifyConnect();
+  });
+  document.getElementById('cfg-spotify-disconnect')?.addEventListener('click', () => {
+    if (!confirm('Desconectar Spotify? O Client ID continua salvo.')) return;
+    spotifyDisconnect();
+  });
   document.getElementById('cfg-delete')?.addEventListener('click', async () => {
     const acc = currentAccount();
     if (!acc) return;
@@ -13013,6 +13088,11 @@ async function bootGameState() {
       if (!document.hidden) updateRestTimerDisplay();
     });
   }
+  // Spotify OAuth callback — se voltou de accounts.spotify.com com ?code=
+  // troca por token (state já carregado, então tem o clientId disponível).
+  if (new URLSearchParams(window.location.search).has('code')) {
+    await spotifyHandleCallback();
+  }
   render();
 }
 
@@ -13051,6 +13131,475 @@ function applyTheme() {
   const t = state?.user?.theme && THEMES[state.user.theme] ? state.user.theme : 'kpop_anime';
   document.documentElement.dataset.theme = t;
   applyCharacterTheme();
+}
+
+// ===== 5.5 SPOTIFY ============================================
+// OAuth PKCE flow (sem client_secret — perfeito pra apps client-only).
+// Tokens em state.user.spotify. Refresh automático ao expirar.
+// Polling do now-playing controlado por _spotifyPollInterval.
+
+const SPOTIFY_SCOPES = [
+  'user-read-currently-playing',
+  'user-read-playback-state',
+  'user-modify-playback-state',
+].join(' ');
+
+let _spotifyPollInterval = null;
+let _spotifyNowPlaying = null;       // cache da última resposta
+let _spotifyLastFetchAt = 0;         // throttle
+let _spotifyRefreshPromise = null;   // dedupe de refresh concorrente
+
+/** Retorna a redirect URI usada no auth (mesma página, sem hash/search). */
+function spotifyRedirectURI() {
+  return window.location.origin + window.location.pathname;
+}
+
+/** Gera string aleatória pro PKCE code_verifier (RFC 7636). */
+function spotifyRandomVerifier(length = 64) {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';
+  const arr = new Uint8Array(length);
+  crypto.getRandomValues(arr);
+  return Array.from(arr, (b) => chars[b % chars.length]).join('');
+}
+
+/** SHA-256 base64url do code_verifier → code_challenge. */
+async function spotifyChallenge(verifier) {
+  const data = new TextEncoder().encode(verifier);
+  const buf = await crypto.subtle.digest('SHA-256', data);
+  return btoa(String.fromCharCode(...new Uint8Array(buf)))
+    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+/** Inicia o fluxo OAuth — redireciona pro accounts.spotify.com/authorize. */
+async function spotifyConnect() {
+  const cid = state.user.spotify?.clientId;
+  if (!cid) {
+    toast('Cole o Client ID em Configurações primeiro');
+    return;
+  }
+  const verifier = spotifyRandomVerifier();
+  const challenge = await spotifyChallenge(verifier);
+  // Salva o verifier pra usar no callback (sobrevive ao redirect)
+  sessionStorage.setItem('spotify_verifier', verifier);
+  sessionStorage.setItem('spotify_state', Math.random().toString(36).slice(2));
+  const url = 'https://accounts.spotify.com/authorize?' + new URLSearchParams({
+    response_type: 'code',
+    client_id: cid,
+    redirect_uri: spotifyRedirectURI(),
+    scope: SPOTIFY_SCOPES,
+    code_challenge_method: 'S256',
+    code_challenge: challenge,
+    state: sessionStorage.getItem('spotify_state'),
+  });
+  window.location.assign(url);
+}
+
+/** Chamado no carregamento da página. Se há ?code= na URL, troca por token. */
+async function spotifyHandleCallback() {
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get('code');
+  const stt  = params.get('state');
+  const err  = params.get('error');
+  if (!code && !err) return false;
+
+  // Limpa URL imediatamente (não deixa code visível no histórico)
+  const cleanURL = window.location.origin + window.location.pathname + window.location.hash;
+  history.replaceState({}, '', cleanURL);
+
+  if (err) { toast('Spotify: ' + err); return false; }
+
+  const expectedState = sessionStorage.getItem('spotify_state');
+  if (!stt || stt !== expectedState) { toast('Spotify: state inválido'); return false; }
+  const verifier = sessionStorage.getItem('spotify_verifier');
+  if (!verifier) { toast('Spotify: code_verifier perdido'); return false; }
+
+  const cid = state.user.spotify?.clientId;
+  try {
+    const res = await fetch('https://accounts.spotify.com/api/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        grant_type: 'authorization_code',
+        code,
+        redirect_uri: spotifyRedirectURI(),
+        client_id: cid,
+        code_verifier: verifier,
+      }),
+    });
+    if (!res.ok) throw new Error('token exchange falhou (' + res.status + ')');
+    const j = await res.json();
+    state.user.spotify.accessToken  = j.access_token;
+    state.user.spotify.refreshToken = j.refresh_token || state.user.spotify.refreshToken;
+    state.user.spotify.expiresAt    = Date.now() + (j.expires_in - 30) * 1000;
+    state.user.spotify.scope        = j.scope || '';
+    saveState();
+    sessionStorage.removeItem('spotify_verifier');
+    sessionStorage.removeItem('spotify_state');
+    toast('Spotify conectado ✓');
+    return true;
+  } catch (e) {
+    console.error(e);
+    toast('Spotify: falha ao conectar');
+    return false;
+  }
+}
+
+/** Refresh do access token quando expira. Dedupe via promise compartilhada. */
+async function spotifyRefresh() {
+  if (_spotifyRefreshPromise) return _spotifyRefreshPromise;
+  const sp = state.user.spotify;
+  if (!sp.refreshToken || !sp.clientId) return false;
+  _spotifyRefreshPromise = (async () => {
+    try {
+      const res = await fetch('https://accounts.spotify.com/api/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          grant_type: 'refresh_token',
+          refresh_token: sp.refreshToken,
+          client_id: sp.clientId,
+        }),
+      });
+      if (!res.ok) throw new Error('refresh falhou');
+      const j = await res.json();
+      sp.accessToken = j.access_token;
+      if (j.refresh_token) sp.refreshToken = j.refresh_token;
+      sp.expiresAt = Date.now() + (j.expires_in - 30) * 1000;
+      saveState();
+      return true;
+    } catch (e) {
+      console.error('Spotify refresh:', e);
+      return false;
+    } finally {
+      _spotifyRefreshPromise = null;
+    }
+  })();
+  return _spotifyRefreshPromise;
+}
+
+/** Garante token válido. Faz refresh se expirado. Retorna access token ou null. */
+async function spotifyEnsureToken() {
+  const sp = state.user.spotify;
+  if (!sp.accessToken) return null;
+  if (Date.now() >= sp.expiresAt) {
+    const ok = await spotifyRefresh();
+    if (!ok) return null;
+  }
+  return sp.accessToken;
+}
+
+/** Wrapper de fetch — adiciona Authorization e retenta uma vez no 401. */
+async function spotifyFetch(path, opts = {}) {
+  let tok = await spotifyEnsureToken();
+  if (!tok) return null;
+  const doFetch = () => fetch('https://api.spotify.com/v1' + path, {
+    ...opts,
+    headers: { ...(opts.headers || {}), Authorization: 'Bearer ' + tok },
+  });
+  let res = await doFetch();
+  if (res.status === 401) {
+    if (await spotifyRefresh()) {
+      tok = state.user.spotify.accessToken;
+      res = await doFetch();
+    }
+  }
+  return res;
+}
+
+/** Está conectado? (tem clientId + accessToken). */
+function spotifyConnected() {
+  const sp = state.user?.spotify;
+  return !!(sp && sp.clientId && sp.accessToken);
+}
+
+/** Desconecta — limpa tokens (mantém clientId pra reconectar fácil). */
+function spotifyDisconnect() {
+  state.user.spotify.accessToken = '';
+  state.user.spotify.refreshToken = '';
+  state.user.spotify.expiresAt = 0;
+  state.user.spotify.scope = '';
+  saveState();
+  spotifyStopPolling();
+  _spotifyNowPlaying = null;
+  toast('Spotify desconectado');
+  render();
+}
+
+/** Busca o que está tocando agora. Cacheia em _spotifyNowPlaying. */
+async function spotifyFetchNowPlaying() {
+  if (!spotifyConnected()) { _spotifyNowPlaying = null; return null; }
+  const now = Date.now();
+  if (now - _spotifyLastFetchAt < 3000) return _spotifyNowPlaying; // throttle 3s
+  _spotifyLastFetchAt = now;
+  try {
+    const res = await spotifyFetch('/me/player/currently-playing');
+    if (!res) return null;
+    if (res.status === 204) { _spotifyNowPlaying = { idle: true }; return _spotifyNowPlaying; }
+    if (!res.ok) return _spotifyNowPlaying; // mantém o último
+    const j = await res.json();
+    _spotifyNowPlaying = j;
+    return j;
+  } catch (e) {
+    console.error('now-playing:', e);
+    return _spotifyNowPlaying;
+  }
+}
+
+/** Inicia polling do now-playing. Cancela qualquer anterior. */
+function spotifyStartPolling(intervalMs = 12000) {
+  spotifyStopPolling();
+  if (!spotifyConnected()) return;
+  // Primeira busca imediata
+  spotifyFetchNowPlaying().then(() => updateSpotifyCard());
+  _spotifyPollInterval = setInterval(async () => {
+    await spotifyFetchNowPlaying();
+    updateSpotifyCard();
+  }, intervalMs);
+}
+
+function spotifyStopPolling() {
+  if (_spotifyPollInterval) { clearInterval(_spotifyPollInterval); _spotifyPollInterval = null; }
+}
+
+/** Atualiza só o conteúdo do card de spotify (sem re-render completo). */
+function updateSpotifyCard() {
+  const card = document.querySelector('[data-spotify-card]');
+  if (!card) return;
+  card.outerHTML = renderSpotifyCard();
+  attachSpotifyCardHandlers();
+  // Mantém o player modal sincronizado, se estiver aberto
+  const playerBody = document.querySelector('[data-spotify-player-body]');
+  if (playerBody) {
+    playerBody.outerHTML = renderSpotifyPlayerBody();
+    attachSpotifyPlayerHandlers();
+  }
+}
+
+/** Comandos de playback (Premium-only — fail-soft com toast). */
+async function spotifyCommand(action) {
+  if (!spotifyConnected()) return;
+  vibrate(8);
+  const map = {
+    next:  { path: '/me/player/next',     method: 'POST' },
+    prev:  { path: '/me/player/previous', method: 'POST' },
+    play:  { path: '/me/player/play',     method: 'PUT' },
+    pause: { path: '/me/player/pause',    method: 'PUT' },
+  };
+  const cfg = map[action];
+  if (!cfg) return;
+  try {
+    const res = await spotifyFetch(cfg.path, { method: cfg.method });
+    if (res?.status === 403) toast('Premium necessário pra controlar');
+    else if (res?.status === 404) toast('Nenhum aparelho ativo no Spotify');
+    // Espera ~600ms pro Spotify processar e depois pega o novo estado
+    setTimeout(async () => { await spotifyFetchNowPlaying(); updateSpotifyCard(); }, 700);
+  } catch (e) {
+    console.error('spotify cmd:', e);
+  }
+}
+
+/** Renderiza o card do Spotify (cobre quote do dia na home). */
+function renderSpotifyCard() {
+  const sp = state.user.spotify;
+  if (!sp.clientId) {
+    return `
+    <div class="spotify-card spotify-empty" data-spotify-card>
+      <div class="spotify-empty-icon">🎵</div>
+      <div class="spotify-empty-text">
+        <div class="font-bold text-sm">Conecte o Spotify</div>
+        <div class="text-[10px] text-ink/55 dark:text-paper/55">Cole seu Client ID em Configurações</div>
+      </div>
+      <button class="q-btn q-btn-ghost text-[10px]" data-go-config>→ Config</button>
+    </div>`;
+  }
+  if (!sp.accessToken) {
+    return `
+    <div class="spotify-card spotify-empty" data-spotify-card>
+      <div class="spotify-empty-icon">🎵</div>
+      <div class="spotify-empty-text">
+        <div class="font-bold text-sm">Spotify</div>
+        <div class="text-[10px] text-ink/55 dark:text-paper/55">Toque pra autorizar</div>
+      </div>
+      <button class="q-btn q-btn-primary text-[10px]" data-spotify-connect>Conectar</button>
+    </div>`;
+  }
+  const np = _spotifyNowPlaying;
+  if (!np || np.idle || !np.item) {
+    return `
+    <div class="spotify-card spotify-empty" data-spotify-card>
+      <div class="spotify-empty-icon">⏸</div>
+      <div class="spotify-empty-text">
+        <div class="font-bold text-sm">Nada tocando</div>
+        <div class="text-[10px] text-ink/55 dark:text-paper/55">Abre o Spotify e dá play</div>
+      </div>
+      <button class="q-btn q-btn-ghost text-[10px]" data-spotify-refresh>↻</button>
+    </div>`;
+  }
+  const t = np.item;
+  const artists = (t.artists || []).map(a => a.name).join(', ');
+  const cover = t.album?.images?.[0]?.url || '';
+  const progress = np.progress_ms || 0;
+  const duration = t.duration_ms || 1;
+  const pct = Math.min(100, (progress / duration) * 100);
+  const playing = np.is_playing;
+  return `
+  <button class="spotify-card spotify-playing" data-spotify-card data-spotify-open>
+    <div class="spotify-cover">
+      ${cover ? `<img src="${cover}" alt="${t.album?.name || ''}" />` : '🎵'}
+      ${playing ? '<div class="spotify-eq"><span></span><span></span><span></span></div>' : ''}
+    </div>
+    <div class="spotify-meta">
+      <div class="spotify-eyebrow">${playing ? '▶ NOW PLAYING' : '⏸ PAUSADO'}</div>
+      <div class="spotify-track">${t.name}</div>
+      <div class="spotify-artist">${artists}</div>
+      <div class="spotify-progress"><span style="width:${pct}%"></span></div>
+    </div>
+    <div class="spotify-quick">
+      <span data-spotify-cmd="prev" title="Anterior">⏮</span>
+      <span data-spotify-cmd="${playing ? 'pause' : 'play'}" title="${playing ? 'Pausar' : 'Tocar'}">${playing ? '⏸' : '▶'}</span>
+      <span data-spotify-cmd="next" title="Próxima">⏭</span>
+    </div>
+  </button>`;
+}
+
+/** Liga os clicks do card. */
+function attachSpotifyCardHandlers() {
+  // Clique em qualquer botão de comando — para a propagação pra não abrir o player
+  document.querySelectorAll('[data-spotify-cmd]').forEach((el) => {
+    el.onclick = (ev) => {
+      ev.stopPropagation();
+      ev.preventDefault();
+      spotifyCommand(el.dataset.spotifyCmd);
+    };
+  });
+  document.querySelector('[data-spotify-open]')?.addEventListener('click', (ev) => {
+    if (ev.target.closest('[data-spotify-cmd]')) return; // já tratado acima
+    if (!spotifyConnected() || !_spotifyNowPlaying?.item) return;
+    modalSpotifyPlayer();
+  });
+  document.querySelector('[data-spotify-connect]')?.addEventListener('click', () => {
+    spotifyConnect();
+  });
+  document.querySelector('[data-spotify-refresh]')?.addEventListener('click', async () => {
+    _spotifyLastFetchAt = 0;
+    await spotifyFetchNowPlaying();
+    updateSpotifyCard();
+  });
+  document.querySelector('[data-go-config]')?.addEventListener('click', () => {
+    currentTab = 'config'; render();
+    setTimeout(() => document.getElementById('cfg-spotify-cid')?.focus(), 100);
+  });
+}
+
+/** Modal full player — capa grande, controles, fila. */
+function modalSpotifyPlayer() {
+  vibrate(10);
+  openModal(`
+    <div class="spotify-player">
+      <button class="workout-hero-btn workout-hero-btn-right modal-close">✕</button>
+      <div data-spotify-player-body>${renderSpotifyPlayerBody()}</div>
+    </div>
+  `, { persistent: false });
+  attachSpotifyPlayerHandlers();
+  // Carrega a fila depois
+  spotifyLoadQueue();
+}
+
+let _spotifyQueue = null;
+
+async function spotifyLoadQueue() {
+  if (!spotifyConnected()) return;
+  try {
+    const res = await spotifyFetch('/me/player/queue');
+    if (res?.ok) {
+      _spotifyQueue = await res.json();
+      const queueBox = document.querySelector('[data-spotify-queue]');
+      if (queueBox) queueBox.outerHTML = renderSpotifyQueue();
+      attachSpotifyPlayerHandlers();
+    }
+  } catch (e) { console.error('queue:', e); }
+}
+
+function renderSpotifyPlayerBody() {
+  const np = _spotifyNowPlaying;
+  if (!np || np.idle || !np.item) {
+    return `
+      <div class="spotify-player-empty">
+        <div class="text-6xl">⏸</div>
+        <div class="font-bold mt-3">Nada tocando agora</div>
+        <div class="text-xs text-ink/55 dark:text-paper/55 mt-1">Abre o Spotify em qualquer aparelho e dá play</div>
+      </div>`;
+  }
+  const t = np.item;
+  const artists = (t.artists || []).map(a => a.name).join(', ');
+  const cover = t.album?.images?.[0]?.url || '';
+  const album = t.album?.name || '';
+  const progress = np.progress_ms || 0;
+  const duration = t.duration_ms || 1;
+  const pct = Math.min(100, (progress / duration) * 100);
+  const fmt = (ms) => {
+    const s = Math.floor(ms / 1000), m = Math.floor(s/60), ss = String(s%60).padStart(2,'0');
+    return `${m}:${ss}`;
+  };
+  const playing = np.is_playing;
+  return `
+    <div class="spotify-player-body">
+      <div class="spotify-player-cover">
+        ${cover ? `<img src="${cover}" alt="${album}" />` : ''}
+      </div>
+      <div class="spotify-player-meta">
+        <div class="spotify-player-track">${t.name}</div>
+        <div class="spotify-player-artist">${artists}</div>
+        <div class="spotify-player-album">${album}</div>
+      </div>
+      <div class="spotify-player-progress">
+        <div class="spotify-player-bar"><span style="width:${pct}%"></span></div>
+        <div class="spotify-player-times">
+          <span>${fmt(progress)}</span>
+          <span>${fmt(duration)}</span>
+        </div>
+      </div>
+      <div class="spotify-player-controls">
+        <button class="spotify-ctrl" data-spotify-cmd="prev" aria-label="Anterior">⏮</button>
+        <button class="spotify-ctrl spotify-ctrl-main" data-spotify-cmd="${playing ? 'pause' : 'play'}" aria-label="${playing ? 'Pausar' : 'Tocar'}">${playing ? '⏸' : '▶'}</button>
+        <button class="spotify-ctrl" data-spotify-cmd="next" aria-label="Próxima">⏭</button>
+      </div>
+      ${renderSpotifyQueue()}
+    </div>`;
+}
+
+function renderSpotifyQueue() {
+  if (!_spotifyQueue || !_spotifyQueue.queue?.length) {
+    return `<div data-spotify-queue class="spotify-queue-empty">Fila vazia ou carregando…</div>`;
+  }
+  const items = _spotifyQueue.queue.slice(0, 10).map((tr, i) => `
+    <div class="spotify-queue-item">
+      <div class="spotify-queue-index">${i + 1}</div>
+      <div class="spotify-queue-cover">${tr.album?.images?.[2]?.url ? `<img src="${tr.album.images[2].url}" />` : '♪'}</div>
+      <div class="spotify-queue-meta">
+        <div class="spotify-queue-name">${tr.name}</div>
+        <div class="spotify-queue-artist">${(tr.artists || []).map(a => a.name).join(', ')}</div>
+      </div>
+    </div>
+  `).join('');
+  return `
+    <div data-spotify-queue class="spotify-queue">
+      <div class="spotify-queue-title">PRÓXIMAS NA FILA</div>
+      ${items}
+    </div>`;
+}
+
+function attachSpotifyPlayerHandlers() {
+  document.querySelectorAll('.spotify-player [data-spotify-cmd]').forEach((el) => {
+    el.onclick = (ev) => {
+      ev.stopPropagation();
+      spotifyCommand(el.dataset.spotifyCmd);
+      // Recarrega a fila após próxima/anterior
+      if (el.dataset.spotifyCmd === 'next' || el.dataset.spotifyCmd === 'prev') {
+        setTimeout(() => spotifyLoadQueue(), 800);
+      }
+    };
+  });
 }
 
 /** Helper — devolve o personagem ativo (ou null) sem replicar a busca em todo lugar. */

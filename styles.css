@@ -2143,3 +2143,358 @@ html[data-character] .kombat-divider::after {
   color: rgba(244,233,200,0.85);
 }
 
+/* ============================================================
+   SPOTIFY — now-playing card no header + modal full player
+   ============================================================ */
+
+/* Quote do dia em formato mini (depois de mover spotify pro topo) */
+.quote-mini {
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.03);
+  border-left: 2px solid rgba(255,183,197,0.45);
+  font-size: 11px;
+  line-height: 1.4;
+  opacity: 0.75;
+}
+.quote-mini > div {
+  font-size: inherit !important;
+}
+
+/* === Card principal === */
+.spotify-card {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(29,185,84,0.35);
+  background: linear-gradient(135deg, rgba(29,185,84,0.18) 0%, rgba(29,185,84,0.04) 60%, transparent 100%);
+  color: inherit;
+  text-align: left;
+  font-family: inherit;
+  cursor: pointer;
+  transition: transform .12s ease, box-shadow .2s ease;
+  position: relative;
+  overflow: hidden;
+}
+.spotify-card:hover, .spotify-card:active {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(29,185,84,0.25);
+  border-color: rgba(29,185,84,0.6);
+}
+
+.spotify-empty {
+  cursor: default;
+}
+.spotify-empty-icon {
+  width: 42px; height: 42px;
+  border-radius: 10px;
+  background: rgba(29,185,84,0.18);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.spotify-empty-text { flex: 1; min-width: 0; }
+
+.spotify-cover {
+  width: 54px; height: 54px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.05);
+  flex-shrink: 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+.spotify-cover img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Equalizer mini animado quando tocando */
+.spotify-eq {
+  position: absolute;
+  bottom: 4px; left: 50%;
+  transform: translateX(-50%);
+  display: flex; gap: 2px;
+  height: 12px;
+}
+.spotify-eq span {
+  display: block;
+  width: 3px;
+  background: #1DB954;
+  border-radius: 1px;
+  animation: spEq 0.9s ease-in-out infinite;
+}
+.spotify-eq span:nth-child(2) { animation-delay: 0.15s; }
+.spotify-eq span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes spEq {
+  0%, 100% { height: 4px; }
+  50%      { height: 12px; }
+}
+
+.spotify-meta {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.spotify-eyebrow {
+  font-family: "Russo One", Impact, system-ui, sans-serif;
+  font-size: 8px;
+  letter-spacing: 0.22em;
+  color: #1DB954;
+}
+.spotify-track {
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1.15;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.spotify-artist {
+  font-size: 10px;
+  opacity: 0.7;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.spotify-progress {
+  margin-top: 4px;
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(255,255,255,0.08);
+  overflow: hidden;
+}
+.spotify-progress > span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #1DB954, #1ED760);
+  transition: width 1s linear;
+}
+
+.spotify-quick {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.spotify-quick > span {
+  width: 28px; height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-size: 14px;
+  background: rgba(255,255,255,0.06);
+  cursor: pointer;
+  transition: background .15s ease, transform .1s ease;
+}
+.spotify-quick > span:hover, .spotify-quick > span:active {
+  background: rgba(29,185,84,0.25);
+  transform: scale(1.1);
+}
+
+/* === Modal full player === */
+.spotify-player {
+  position: relative;
+  background: linear-gradient(180deg, #0E1224 0%, #1A1A2E 100%);
+  color: #F4E9C8;
+  padding: 0;
+  max-height: 92vh;
+  overflow-y: auto;
+}
+.spotify-player-body {
+  padding: 32px 24px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.spotify-player-empty {
+  padding: 60px 30px;
+  text-align: center;
+  color: #F4E9C8;
+}
+
+.spotify-player-cover {
+  width: 75%;
+  max-width: 280px;
+  aspect-ratio: 1 / 1;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #0F1426;
+  box-shadow:
+    0 12px 30px rgba(0,0,0,0.5),
+    0 0 30px rgba(29,185,84,0.2);
+}
+.spotify-player-cover img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.spotify-player-meta {
+  width: 100%;
+  text-align: center;
+}
+.spotify-player-track {
+  font-weight: 800;
+  font-size: 18px;
+  line-height: 1.2;
+  margin-bottom: 2px;
+}
+.spotify-player-artist {
+  font-size: 13px;
+  color: #1DB954;
+  margin-bottom: 1px;
+}
+.spotify-player-album {
+  font-size: 11px;
+  opacity: 0.55;
+}
+
+.spotify-player-progress {
+  width: 100%;
+}
+.spotify-player-bar {
+  height: 4px;
+  border-radius: 3px;
+  background: rgba(255,255,255,0.1);
+  overflow: hidden;
+}
+.spotify-player-bar > span {
+  display: block;
+  height: 100%;
+  background: #1DB954;
+}
+.spotify-player-times {
+  display: flex;
+  justify-content: space-between;
+  font-size: 9px;
+  opacity: 0.55;
+  margin-top: 4px;
+  font-family: "Russo One", Impact, monospace;
+  letter-spacing: 0.08em;
+}
+
+.spotify-player-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 10px;
+}
+.spotify-ctrl {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  border: 0;
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  transition: transform .12s ease, background .2s ease;
+}
+.spotify-ctrl:hover, .spotify-ctrl:active {
+  background: rgba(255,255,255,0.18);
+  transform: scale(1.08);
+}
+.spotify-ctrl-main {
+  width: 64px; height: 64px;
+  background: #1DB954;
+  font-size: 22px;
+  box-shadow: 0 6px 20px rgba(29,185,84,0.5);
+}
+.spotify-ctrl-main:hover, .spotify-ctrl-main:active {
+  background: #1ED760;
+  transform: scale(1.06);
+}
+
+/* Queue */
+.spotify-queue {
+  width: 100%;
+  margin-top: 18px;
+  padding: 14px 0 0;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.spotify-queue-empty {
+  width: 100%;
+  margin-top: 18px;
+  padding: 14px;
+  text-align: center;
+  font-size: 11px;
+  opacity: 0.55;
+}
+.spotify-queue-title {
+  font-family: "Russo One", Impact, system-ui, sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  color: #1DB954;
+  margin-bottom: 8px;
+}
+.spotify-queue-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 4px;
+  border-radius: 6px;
+}
+.spotify-queue-item + .spotify-queue-item {
+  border-top: 1px dashed rgba(255,255,255,0.05);
+  padding-top: 8px;
+  margin-top: 2px;
+}
+.spotify-queue-index {
+  width: 18px;
+  text-align: center;
+  font-size: 10px;
+  opacity: 0.4;
+  font-family: "Russo One", Impact, monospace;
+}
+.spotify-queue-cover {
+  width: 36px; height: 36px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.05);
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  opacity: 0.7;
+}
+.spotify-queue-cover img { width: 100%; height: 100%; object-fit: cover; }
+.spotify-queue-meta { flex: 1; min-width: 0; }
+.spotify-queue-name {
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.spotify-queue-artist {
+  font-size: 10px;
+  opacity: 0.55;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Config — caixinha pra Redirect URI (precisa ser fácil de copiar) */
+.cfg-spotify-redirect {
+  font-family: "Courier New", Consolas, monospace;
+  font-size: 10px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: rgba(29,185,84,0.1);
+  border: 1px dashed rgba(29,185,84,0.4);
+  color: #1DB954;
+  word-break: break-all;
+  user-select: all;
+}
+
