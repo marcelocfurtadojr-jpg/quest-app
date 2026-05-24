@@ -7016,16 +7016,13 @@ function viewDashboard() {
 
   <section class="px-4 mt-6">
     <div class="kombat-divider">${theme.labels?.arsenal || '⚔ ARSENAL ⚔'}</div>
-    <!-- Reduzido: removidos "Biblioteca" (já tem no header de Treino),
-         "Leitura" (já é tab), "Insights" (movido pra Config) e "Desafios"
-         (raramente usado). Mantém só atalhos únicos. -->
+    <!-- Reduzido pro essencial: 4 tiles. Outros (Competição, Conquistas,
+         Biblioteca, Leitura, Insights, Desafios) removidos. -->
     <div class="grid grid-cols-2 gap-3">
-      ${quickTile('choreo',       'Dança K-pop', I.spark, 'modal')}
-      ${quickTile('compete',      'Competição',  I.trophy, 'modal')}
-      ${quickTile('sleep',        'Sono',        I.moon,   'modal')}
-      ${quickTile('rewards',      'Recompensas', I.gift,   'modal')}
-      ${quickTile('achievements', `Conquistas · ${unlockedCount}`, I.award, 'modal')}
-      ${quickTile('config',       'Config',      I.cog)}
+      ${quickTile('sleep',   'Sono',        I.moon,  'modal')}
+      ${quickTile('choreo',  'Dança K-pop', I.spark, 'modal')}
+      ${quickTile('rewards', 'Recompensas', I.gift,  'modal')}
+      ${quickTile('config',  'Config',      I.cog)}
     </div>
   </section>
 
