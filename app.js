@@ -4555,9 +4555,21 @@ const CHARACTERS = [
     stats: { ATAQUE: 50, VELOCIDADE: 85, DEFESA: 45, TÉCNICA: 80, CARISMA: 95 },
     desc: 'Idol guerreiro do entardecer. Foco em técnica e carisma.',
     buff: 'sabedoria' },
-  { id: 'p2', slot: '2P', name: '???', title: 'EM BREVE', unlocked: false },
-  { id: 'p3', slot: '3P', name: '???', title: 'EM BREVE', unlocked: false },
-  { id: 'p4', slot: '4P', name: '???', title: 'EM BREVE', unlocked: false },
+  { id: 'cagemorgan', slot: '2P', name: 'CAGE MORGAN', title: 'THE LAST TAKE',
+    img: 'icons/characters/cagemorgan.webp', unlocked: true,
+    stats: { ATAQUE: 75, VELOCIDADE: 70, DEFESA: 70, TÉCNICA: 70, CARISMA: 98 },
+    desc: 'Astro de Hollywood com soco de cinema. Vive de carisma e timing.',
+    buff: 'vitalidade' },
+  { id: 'sanji', slot: '3P', name: 'SANJI', title: 'THE BLACK LEG',
+    img: 'icons/characters/sanji.webp', unlocked: true,
+    stats: { ATAQUE: 70, VELOCIDADE: 80, DEFESA: 55, TÉCNICA: 90, CARISMA: 92 },
+    desc: 'Chef de combate. Mãos pra cozinhar, pernas pra lutar. Técnica de fogo.',
+    buff: 'disciplina' },
+  { id: 'joehigashi', slot: '4P', name: 'JOE HIGASHI', title: 'THE HURRICANE',
+    img: 'icons/characters/joehigashi.webp', unlocked: true,
+    stats: { ATAQUE: 85, VELOCIDADE: 90, DEFESA: 60, TÉCNICA: 75, CARISMA: 72 },
+    desc: 'Muay thai bruto, vento e fúria. Pura agressão e cardio infinito.',
+    buff: 'resistencia' },
   { id: 'p5', slot: '5P', name: '???', title: 'EM BREVE', unlocked: false },
 ];
 
@@ -6304,35 +6316,28 @@ function go(tab) {
 // ----- 6.0 Choose Your Fighter (onboarding) ------------------
 
 function viewCharacterSelect() {
-  const tiles = CHARACTERS.map((c) => {
+  // Cada imagem JÁ é uma carta "Choose Your Fighter" completa (slot, título,
+  // stats e PRESS START desenhados na arte). Mostro full-bleed em coluna única
+  // e adiciono apenas o overlay de tap + variante travada para slots vazios.
+  const cards = CHARACTERS.map((c) => {
     if (!c.unlocked) {
       return `
-        <button class="cs-tile cs-locked" data-id="${c.id}">
-          <div class="cs-slot">${c.slot}</div>
-          <div class="cs-portrait">
-            <div class="cs-silhouette">?</div>
+        <button class="cs-card cs-locked" data-id="${c.id}">
+          <div class="cs-locked-inner">
+            <div class="cs-locked-slot">${c.slot}</div>
+            <div class="cs-locked-q">?</div>
+            <div class="cs-locked-name">???</div>
+            <div class="cs-locked-title">EM BREVE</div>
+            <div class="cs-lock">🔒</div>
           </div>
-          <div class="cs-name">???</div>
-          <div class="cs-title">EM BREVE</div>
-          <div class="cs-lock">🔒</div>
         </button>`;
     }
-    const statRows = Object.entries(c.stats || {}).map(([k, v]) => `
-      <div class="cs-stat">
-        <span class="cs-stat-k">${k}</span>
-        <span class="cs-stat-bar"><span style="width:${v}%"></span></span>
-      </div>
-    `).join('');
     return `
-      <button class="cs-tile cs-unlocked" data-id="${c.id}">
-        <div class="cs-slot cs-slot-on">${c.slot}</div>
-        <div class="cs-portrait">
-          <img src="${c.img}" alt="${c.name}" loading="lazy" />
+      <button class="cs-card cs-unlocked" data-id="${c.id}">
+        <img src="${c.img}" alt="${c.name} — ${c.title}" loading="lazy" />
+        <div class="cs-tap-overlay">
+          <span>▶ SELECIONAR ${c.slot}</span>
         </div>
-        <div class="cs-name">${c.name}</div>
-        <div class="cs-title">${c.title}</div>
-        <div class="cs-stats">${statRows}</div>
-        <div class="cs-press">PRESS START</div>
       </button>`;
   }).join('');
 
@@ -6344,13 +6349,13 @@ function viewCharacterSelect() {
         <div class="cs-sub">선수 선택 — escolha quem vai te representar nessa jornada</div>
       </div>
 
-      <div class="cs-grid">
-        ${tiles}
+      <div class="cs-deck">
+        ${cards}
       </div>
 
       <div class="cs-foot">
         <div class="cs-coin">▶ INSERT COIN</div>
-        <div class="cs-hint">Personagens travados serão liberados em breve.</div>
+        <div class="cs-hint">Toque na carta para entrar em combate.</div>
       </div>
     </section>
   `;

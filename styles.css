@@ -1521,173 +1521,138 @@ input[type=number] { -moz-appearance: textfield; }
   color: rgba(244,233,200,0.7);
 }
 
-.cs-grid {
+/* Deck full-bleed: cada carta É a imagem (slot, título, stats baked-in) */
+.cs-deck {
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
+  grid-template-columns: 1fr;
+  gap: 14px;
   margin: 0 auto;
-  max-width: 460px;
-}
-/* Primeiro card (Yeonjun) ocupa a largura inteira como "destaque" */
-.cs-grid .cs-tile:first-child {
-  grid-column: 1 / -1;
+  max-width: 420px;
 }
 
-.cs-tile {
+.cs-card {
   position: relative;
-  padding: 12px 10px 14px;
-  border-radius: 14px;
-  text-align: center;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 16px;
+  overflow: hidden;
   background: linear-gradient(180deg, #1B1F36 0%, #0F1426 100%);
-  border: 1px solid rgba(214,169,62,0.25);
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.06),
-    0 6px 18px rgba(0,0,0,0.45);
-  color: inherit;
+    0 8px 24px rgba(0,0,0,0.55);
   cursor: pointer;
-  transition: transform .15s ease, box-shadow .2s ease, border-color .2s ease;
-  overflow: hidden;
+  transition: transform .15s ease, box-shadow .2s ease;
+  color: inherit;
 }
-.cs-tile::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: radial-gradient(120% 80% at 50% 0%, rgba(214,169,62,0.12) 0%, transparent 55%);
+.cs-card.cs-unlocked img {
+  display: block;
+  width: 100%;
+  height: auto;
 }
-.cs-tile:hover, .cs-tile:active {
+.cs-card:hover, .cs-card:active {
   transform: translateY(-2px);
-  border-color: rgba(214,169,62,0.55);
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.08),
-    0 10px 24px rgba(0,0,0,0.55),
-    0 0 18px rgba(214,169,62,0.25);
+    0 14px 30px rgba(0,0,0,0.6),
+    0 0 24px rgba(214,169,62,0.28);
 }
+
+/* Overlay de "tap to select" — só aparece no hover/touch (mobile mostra sempre suave) */
+.cs-tap-overlay {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  padding: 10px 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.55) 65%, rgba(0,0,0,0.78) 100%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .2s ease;
+}
+.cs-card:hover .cs-tap-overlay,
+.cs-card:active .cs-tap-overlay,
+.cs-card:focus-visible .cs-tap-overlay {
+  opacity: 1;
+}
+.cs-tap-overlay span {
+  font-family: "Russo One", Impact, system-ui, sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  color: #FFE9A8;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+}
+/* Em telas touch (sem hover), mostra o CTA sempre, mais discreto */
+@media (hover: none) {
+  .cs-tap-overlay { opacity: 0.9; }
+}
+
+/* Carta travada (slot 5P) — mantém o estilo arcade */
 .cs-locked {
-  filter: grayscale(0.6) brightness(0.85);
+  aspect-ratio: 2 / 3;
+  background:
+    repeating-linear-gradient(45deg, rgba(255,255,255,0.03) 0 8px, transparent 8px 16px),
+    linear-gradient(180deg, #1B1F36 0%, #0F1426 100%);
+  border: 1px solid rgba(214,169,62,0.25);
   cursor: not-allowed;
+  filter: grayscale(0.4);
 }
 .cs-locked:hover, .cs-locked:active {
   transform: none;
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.04),
-    0 6px 18px rgba(0,0,0,0.45);
-  border-color: rgba(214,169,62,0.18);
+    0 8px 24px rgba(0,0,0,0.55);
 }
-
-.cs-slot {
-  font-family: "Russo One", Impact, system-ui, sans-serif;
-  font-size: 11px;
-  letter-spacing: 0.2em;
-  color: rgba(244,233,200,0.55);
-  margin-bottom: 6px;
-}
-.cs-slot-on {
-  color: #D6A93E;
-  text-shadow: 0 0 6px rgba(214,169,62,0.55);
-}
-
-.cs-portrait {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 3 / 4;
-  border-radius: 10px;
-  overflow: hidden;
-  background:
-    repeating-linear-gradient(45deg, rgba(255,255,255,0.03) 0 6px, transparent 6px 12px),
-    linear-gradient(180deg, #1F2440 0%, #0B0E1F 100%);
-  border: 1px solid rgba(255,255,255,0.06);
-}
-.cs-grid .cs-tile:first-child .cs-portrait {
-  aspect-ratio: 16 / 11;
-}
-.cs-portrait img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center top;
-  display: block;
-}
-.cs-silhouette {
+.cs-locked-inner {
   position: absolute;
   inset: 0;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-family: "Russo One", Impact, system-ui, sans-serif;
-  font-size: 64px;
-  color: rgba(255,255,255,0.18);
-  letter-spacing: 0.1em;
+  gap: 6px;
+  text-align: center;
 }
-
-.cs-name {
-  margin-top: 8px;
+.cs-locked-slot {
   font-family: "Russo One", Impact, system-ui, sans-serif;
   font-size: 14px;
-  letter-spacing: 0.15em;
-  color: #F4E9C8;
-}
-.cs-title {
-  font-family: "Noto Sans KR", Inter, system-ui, sans-serif;
-  font-size: 10px;
-  letter-spacing: 0.08em;
-  color: rgba(244,233,200,0.7);
-  margin-bottom: 6px;
-}
-
-.cs-stats {
-  display: grid;
-  gap: 3px;
-  margin-top: 4px;
-  text-align: left;
-}
-.cs-stat {
-  display: grid;
-  grid-template-columns: 72px 1fr;
-  align-items: center;
-  gap: 6px;
-  font-size: 9px;
-  letter-spacing: 0.06em;
-}
-.cs-stat-k {
-  font-family: "Russo One", Impact, system-ui, sans-serif;
-  color: rgba(244,233,200,0.7);
-}
-.cs-stat-bar {
-  position: relative;
-  height: 5px;
-  background: rgba(255,255,255,0.08);
-  border-radius: 3px;
-  overflow: hidden;
-}
-.cs-stat-bar > span {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, #D6A93E 0%, #B8242E 100%);
-  border-radius: 3px;
-  box-shadow: 0 0 6px rgba(214,169,62,0.5);
-}
-
-.cs-press {
-  margin-top: 8px;
-  font-family: "Russo One", Impact, system-ui, sans-serif;
-  font-size: 10px;
   letter-spacing: 0.25em;
-  color: #D6A93E;
-  animation: csBlink 1.1s steps(2, end) infinite;
+  color: rgba(244,233,200,0.5);
 }
-@keyframes csBlink {
-  0%, 50%   { opacity: 1; }
-  51%, 100% { opacity: 0.25; }
+.cs-locked-q {
+  font-family: "Russo One", Impact, system-ui, sans-serif;
+  font-size: 120px;
+  line-height: 1;
+  color: rgba(255,255,255,0.12);
+  text-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+.cs-locked-name {
+  font-family: "Russo One", Impact, system-ui, sans-serif;
+  font-size: 16px;
+  letter-spacing: 0.2em;
+  color: rgba(244,233,200,0.6);
+}
+.cs-locked-title {
+  font-family: "Noto Sans KR", Inter, system-ui, sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  color: rgba(244,233,200,0.45);
 }
 .cs-lock {
   position: absolute;
-  top: 8px;
-  right: 10px;
-  font-size: 14px;
-  opacity: 0.7;
+  top: 12px;
+  right: 14px;
+  font-size: 18px;
+  opacity: 0.65;
+}
+
+@keyframes csBlink {
+  0%, 50%   { opacity: 1; }
+  51%, 100% { opacity: 0.25; }
 }
 
 .cs-foot {
