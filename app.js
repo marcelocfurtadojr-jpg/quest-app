@@ -4545,6 +4545,22 @@ function fighterHtml(key, { className = '' } = {}) {
 }
 
 // 5 atributos — agora com lutador MK como mascote.
+// ===== Personagens (Choose Your Fighter) ====================
+// O usuário escolhe um na primeira vez. Salvo em state.user.activeCharacter.
+// Pode trocar via Config. Cada um tem stats próprios (puramente visual por ora;
+// futuramente: cada um buffa um atributo do XP system).
+const CHARACTERS = [
+  { id: 'yeonjun', slot: '1P', name: 'YEONJUN', title: 'THE BLUE HOUR',
+    img: 'icons/characters/yeonjun.webp', unlocked: true,
+    stats: { ATAQUE: 50, VELOCIDADE: 85, DEFESA: 45, TÉCNICA: 80, CARISMA: 95 },
+    desc: 'Idol guerreiro do entardecer. Foco em técnica e carisma.',
+    buff: 'sabedoria' },
+  { id: 'p2', slot: '2P', name: '???', title: 'EM BREVE', unlocked: false },
+  { id: 'p3', slot: '3P', name: '???', title: 'EM BREVE', unlocked: false },
+  { id: 'p4', slot: '4P', name: '???', title: 'EM BREVE', unlocked: false },
+  { id: 'p5', slot: '5P', name: '???', title: 'EM BREVE', unlocked: false },
+];
+
 const ATTRIBUTES = [
   { key: 'forca',       name: 'Força',       ko: '힘',     color: '#B8242E', icon: '💪', fighter: 'kano',
     desc: 'Cresce com treinos pesados (compostos, séries baixas).' },
@@ -6250,6 +6266,15 @@ function render() {
   ensureDailyQuests();
   ensureWeeklyQuest();
   applyTheme();
+  // Se ainda não escolheu personagem, mostra a tela de "Choose Your Fighter"
+  // sem tabbar (não há contexto de tab pré-onboarding).
+  if (!state.user.activeCharacter) {
+    app().innerHTML = viewCharacterSelect();
+    document.getElementById('tabbar').innerHTML = '';
+    attachCharacterSelectHandlers();
+    updateRestTimerDisplay();
+    return;
+  }
   const views = {
     home:       viewDashboard,
     workout:    viewWorkout,
@@ -6274,6 +6299,84 @@ function go(tab) {
   currentTab = tab;
   window.scrollTo(0, 0);
   render();
+}
+
+// ----- 6.0 Choose Your Fighter (onboarding) ------------------
+
+function viewCharacterSelect() {
+  const tiles = CHARACTERS.map((c) => {
+    if (!c.unlocked) {
+      return `
+        <button class="cs-tile cs-locked" data-id="${c.id}">
+          <div class="cs-slot">${c.slot}</div>
+          <div class="cs-portrait">
+            <div class="cs-silhouette">?</div>
+          </div>
+          <div class="cs-name">???</div>
+          <div class="cs-title">EM BREVE</div>
+          <div class="cs-lock">🔒</div>
+        </button>`;
+    }
+    const statRows = Object.entries(c.stats || {}).map(([k, v]) => `
+      <div class="cs-stat">
+        <span class="cs-stat-k">${k}</span>
+        <span class="cs-stat-bar"><span style="width:${v}%"></span></span>
+      </div>
+    `).join('');
+    return `
+      <button class="cs-tile cs-unlocked" data-id="${c.id}">
+        <div class="cs-slot cs-slot-on">${c.slot}</div>
+        <div class="cs-portrait">
+          <img src="${c.img}" alt="${c.name}" loading="lazy" />
+        </div>
+        <div class="cs-name">${c.name}</div>
+        <div class="cs-title">${c.title}</div>
+        <div class="cs-stats">${statRows}</div>
+        <div class="cs-press">PRESS START</div>
+      </button>`;
+  }).join('');
+
+  return `
+    <section class="cs-screen animate-fade-up">
+      <div class="cs-header">
+        <div class="cs-eyebrow">QUEST · SELECT MODE</div>
+        <h1 class="cs-title-big">CHOOSE YOUR FIGHTER</h1>
+        <div class="cs-sub">선수 선택 — escolha quem vai te representar nessa jornada</div>
+      </div>
+
+      <div class="cs-grid">
+        ${tiles}
+      </div>
+
+      <div class="cs-foot">
+        <div class="cs-coin">▶ INSERT COIN</div>
+        <div class="cs-hint">Personagens travados serão liberados em breve.</div>
+      </div>
+    </section>
+  `;
+}
+
+function attachCharacterSelectHandlers() {
+  document.querySelectorAll('.cs-tile').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.id;
+      const ch = CHARACTERS.find((c) => c.id === id);
+      if (!ch) return;
+      if (!ch.unlocked) {
+        toast('Em breve 🔒');
+        btn.classList.add('animate-shake');
+        setTimeout(() => btn.classList.remove('animate-shake'), 400);
+        return;
+      }
+      // Confirma seleção
+      state.user.activeCharacter = ch.id;
+      saveState();
+      toast(`${ch.name} entrou em combate!`);
+      // Pequeno efeito antes de carregar a home
+      btn.classList.add('cs-chosen');
+      setTimeout(() => { currentTab = 'home'; render(); }, 380);
+    });
+  });
 }
 
 // ----- 6.1 Dashboard ----------------------------------------
@@ -11242,6 +11345,23 @@ function viewConfig() {
       </button>
     </div>`}
 
+    ${(() => {
+      const cur = CHARACTERS.find((c) => c.id === state.user.activeCharacter);
+      if (!cur) return '';
+      return `
+      <div class="q-card p-4 flex items-center gap-3">
+        <div class="cfg-fighter-avatar">
+          ${cur.img ? `<img src="${cur.img}" alt="${cur.name}" />` : '<span>?</span>'}
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="text-xs uppercase tracking-wider text-ink/45 dark:text-paper/45">Personagem ativo</div>
+          <div class="font-bold truncate">${cur.name}</div>
+          <div class="text-[10px] text-ink/55 dark:text-paper/55">${cur.title}</div>
+        </div>
+        <button id="cfg-switch-fighter" class="q-btn q-btn-ghost text-xs">Trocar</button>
+      </div>`;
+    })()}
+
     <div class="q-card p-4">
       <label class="block">
         <span class="text-sm font-semibold">Seu nome</span>
@@ -12171,6 +12291,13 @@ function attachHandlers() {
   document.getElementById('cfg-logout')?.addEventListener('click', () => {
     if (!confirm('Sair da conta? Seus dados continuam salvos.')) return;
     logoutAccount();
+  });
+  document.getElementById('cfg-switch-fighter')?.addEventListener('click', () => {
+    if (!confirm('Trocar de personagem? Você volta pra tela de seleção.')) return;
+    delete state.user.activeCharacter;
+    saveState();
+    currentTab = 'home';
+    render();
   });
   document.getElementById('cfg-delete')?.addEventListener('click', async () => {
     const acc = currentAccount();

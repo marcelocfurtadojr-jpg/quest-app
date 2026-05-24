@@ -1467,3 +1467,281 @@ input[type=number] { -moz-appearance: textfield; }
 .dow-val { font-size: 9px; font-weight: 600; color: rgba(26,26,46,0.7); }
 .dark .dow-val { color: rgba(255,255,255,0.7); }
 
+/* ============================================================
+   Choose Your Fighter — tela de seleção de personagem
+   ============================================================ */
+.cs-screen {
+  position: relative;
+  min-height: 100vh;
+  padding: 28px 14px 80px;
+  background:
+    radial-gradient(120% 60% at 50% -10%, rgba(214,169,62,0.18) 0%, transparent 60%),
+    radial-gradient(80% 50% at 50% 110%, rgba(184,36,46,0.18) 0%, transparent 60%),
+    linear-gradient(180deg, #0B1020 0%, #14172A 55%, #0B1020 100%);
+  color: #F4E9C8;
+  overflow: hidden;
+}
+.cs-screen::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(0deg, rgba(255,255,255,0.025) 0px, rgba(255,255,255,0.025) 1px, transparent 1px, transparent 3px);
+  mix-blend-mode: overlay;
+}
+.cs-header {
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  margin-bottom: 18px;
+}
+.cs-eyebrow {
+  font-family: "Russo One", Impact, system-ui, sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.35em;
+  color: #D6A93E;
+  opacity: 0.85;
+}
+.cs-title-big {
+  font-family: "Russo One", Impact, system-ui, sans-serif;
+  font-size: clamp(28px, 8vw, 38px);
+  letter-spacing: 0.08em;
+  margin: 4px 0 2px;
+  background: linear-gradient(180deg, #FFE9A8 0%, #D6A93E 55%, #8C5A1A 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 0 rgba(0,0,0,0.45)) drop-shadow(0 0 12px rgba(214,169,62,0.35));
+}
+.cs-sub {
+  font-family: "Noto Sans KR", Inter, system-ui, sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: rgba(244,233,200,0.7);
+}
+
+.cs-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin: 0 auto;
+  max-width: 460px;
+}
+/* Primeiro card (Yeonjun) ocupa a largura inteira como "destaque" */
+.cs-grid .cs-tile:first-child {
+  grid-column: 1 / -1;
+}
+
+.cs-tile {
+  position: relative;
+  padding: 12px 10px 14px;
+  border-radius: 14px;
+  text-align: center;
+  background: linear-gradient(180deg, #1B1F36 0%, #0F1426 100%);
+  border: 1px solid rgba(214,169,62,0.25);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.06),
+    0 6px 18px rgba(0,0,0,0.45);
+  color: inherit;
+  cursor: pointer;
+  transition: transform .15s ease, box-shadow .2s ease, border-color .2s ease;
+  overflow: hidden;
+}
+.cs-tile::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(120% 80% at 50% 0%, rgba(214,169,62,0.12) 0%, transparent 55%);
+}
+.cs-tile:hover, .cs-tile:active {
+  transform: translateY(-2px);
+  border-color: rgba(214,169,62,0.55);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    0 10px 24px rgba(0,0,0,0.55),
+    0 0 18px rgba(214,169,62,0.25);
+}
+.cs-locked {
+  filter: grayscale(0.6) brightness(0.85);
+  cursor: not-allowed;
+}
+.cs-locked:hover, .cs-locked:active {
+  transform: none;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.04),
+    0 6px 18px rgba(0,0,0,0.45);
+  border-color: rgba(214,169,62,0.18);
+}
+
+.cs-slot {
+  font-family: "Russo One", Impact, system-ui, sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: rgba(244,233,200,0.55);
+  margin-bottom: 6px;
+}
+.cs-slot-on {
+  color: #D6A93E;
+  text-shadow: 0 0 6px rgba(214,169,62,0.55);
+}
+
+.cs-portrait {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  border-radius: 10px;
+  overflow: hidden;
+  background:
+    repeating-linear-gradient(45deg, rgba(255,255,255,0.03) 0 6px, transparent 6px 12px),
+    linear-gradient(180deg, #1F2440 0%, #0B0E1F 100%);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.cs-grid .cs-tile:first-child .cs-portrait {
+  aspect-ratio: 16 / 11;
+}
+.cs-portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+}
+.cs-silhouette {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Russo One", Impact, system-ui, sans-serif;
+  font-size: 64px;
+  color: rgba(255,255,255,0.18);
+  letter-spacing: 0.1em;
+}
+
+.cs-name {
+  margin-top: 8px;
+  font-family: "Russo One", Impact, system-ui, sans-serif;
+  font-size: 14px;
+  letter-spacing: 0.15em;
+  color: #F4E9C8;
+}
+.cs-title {
+  font-family: "Noto Sans KR", Inter, system-ui, sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: rgba(244,233,200,0.7);
+  margin-bottom: 6px;
+}
+
+.cs-stats {
+  display: grid;
+  gap: 3px;
+  margin-top: 4px;
+  text-align: left;
+}
+.cs-stat {
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  align-items: center;
+  gap: 6px;
+  font-size: 9px;
+  letter-spacing: 0.06em;
+}
+.cs-stat-k {
+  font-family: "Russo One", Impact, system-ui, sans-serif;
+  color: rgba(244,233,200,0.7);
+}
+.cs-stat-bar {
+  position: relative;
+  height: 5px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.cs-stat-bar > span {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, #D6A93E 0%, #B8242E 100%);
+  border-radius: 3px;
+  box-shadow: 0 0 6px rgba(214,169,62,0.5);
+}
+
+.cs-press {
+  margin-top: 8px;
+  font-family: "Russo One", Impact, system-ui, sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  color: #D6A93E;
+  animation: csBlink 1.1s steps(2, end) infinite;
+}
+@keyframes csBlink {
+  0%, 50%   { opacity: 1; }
+  51%, 100% { opacity: 0.25; }
+}
+.cs-lock {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  font-size: 14px;
+  opacity: 0.7;
+}
+
+.cs-foot {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  margin-top: 22px;
+  color: rgba(244,233,200,0.7);
+}
+.cs-coin {
+  font-family: "Russo One", Impact, system-ui, sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.25em;
+  color: #D6A93E;
+  animation: csBlink 1.6s steps(2, end) infinite;
+}
+.cs-hint {
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  margin-top: 4px;
+  color: rgba(244,233,200,0.55);
+}
+
+.cs-chosen {
+  animation: csChosen 380ms ease-out forwards;
+}
+@keyframes csChosen {
+  0%   { transform: scale(1);   box-shadow: 0 0 0 rgba(214,169,62,0); }
+  60%  { transform: scale(1.04); box-shadow: 0 0 40px rgba(214,169,62,0.65); }
+  100% { transform: scale(1);   box-shadow: 0 0 0 rgba(214,169,62,0); }
+}
+
+/* Avatar do personagem ativo na tela de configurações */
+.cfg-fighter-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: linear-gradient(180deg, #1B1F36 0%, #0F1426 100%);
+  border: 1px solid rgba(214,169,62,0.4);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cfg-fighter-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+.cfg-fighter-avatar span {
+  font-family: "Russo One", Impact, system-ui, sans-serif;
+  color: rgba(255,255,255,0.4);
+  font-size: 20px;
+}
+

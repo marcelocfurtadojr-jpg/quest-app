@@ -29,3 +29,35 @@ icons/goals/*.gif
 /johnny.jpg
 /leejeno.jpg
 /calistenia.webp
+
+# Imagens de personagens novos que o usuário dropa no root antes de
+# processarmos pra icons/characters/*.webp. Mantenha fora do repositório
+# público (copyright). O app só carrega o que estiver em icons/characters/.
+/Yeonjun.png
+/Yeonjun.jpg
+/Yeonjun.webp
+/Heihachi.jpg
+/Heihachi.png
+/Heihachi.webp
+/Jinpachi.jpg
+/Jinpachi.png
+/Jinpachi.webp
+/JoeHigashi.jpg
+/JoeHigashi.png
+/JoeHigashi.webp
+/Rugal.jpg
+/Rugal.png
+/Rugal.webp
+/Shaokhan.jpg
+/Shaokhan.png
+/Shaokhan.webp
+/Takuma.jpg
+/Takuma.png
+/Takuma.webp
+/Toji.jpg
+/Toji.png
+/Toji.webp
+/Coxas.avif
+/Coxas.jpg
+/Coxas.png
+/Coxas.webp
