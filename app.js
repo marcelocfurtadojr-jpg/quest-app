@@ -6437,7 +6437,7 @@ function viewCharacterSelect() {
 }
 
 function attachCharacterSelectHandlers() {
-  document.querySelectorAll('.cs-tile').forEach((btn) => {
+  document.querySelectorAll('.cs-card').forEach((btn) => {
     btn.addEventListener('click', () => {
       const id = btn.dataset.id;
       const ch = CHARACTERS.find((c) => c.id === id);
