@@ -10803,11 +10803,22 @@ function modalAttributeDetail(attrKey) {
 }
 
 function modalCutting() {
+  // Usa a imagem de abs do personagem ativo como hero — sempre que possível,
+  // o lutador está presente. Fallback pra cutting.webp original.
+  const ch = activeCharacter();
+  const heroImg =
+    ch?.workouts?.['icons/workouts/abs.webp'] ||
+    ch?.img ||
+    'icons/body/cutting.webp';
+  const heroPos = ch?.workoutPositions?.[heroImg] || 'center 35%';
+  const eyebrow = ch
+    ? `${ch.slot} ${ch.name} · cutting guide`
+    : 'cutting guide';
   openModal(`
-    <div class="attr-hero" style="background-image:url('icons/body/cutting.webp'); background-position:center 40%">
-      <button class="workout-hero-btn workout-hero-btn-right modal-close">✕</button>
+    <div class="attr-hero" style="background-image:url('${heroImg}'); background-position:${heroPos}">
+      <button class="workout-hero-btn workout-hero-btn-right modal-close" aria-label="Fechar guia de cutting">✕</button>
       <div class="workout-hero-overlay">
-        <div class="font-display text-[10px] uppercase tracking-[0.3em] text-white/70">cutting guide</div>
+        <div class="font-display text-[10px] uppercase tracking-[0.3em] text-white/70">${eyebrow}</div>
         <h2 class="font-extrabold text-3xl text-white drop-shadow-lg">Cutting saudável</h2>
         <div class="text-[11px] text-white/80 mt-0.5">Perder gordura preservando músculo</div>
       </div>
@@ -10899,6 +10910,14 @@ function modalCutting() {
           de déficit. Mais sustentável que cutting agressivo.
         </p>
       </div>
+
+      <!-- CTA de fechar (acessível, visível, claro) -->
+      <button class="q-btn q-btn-primary w-full mt-2 modal-close" aria-label="Fechar guia de cutting">
+        ← Voltar para Corpo
+      </button>
+      <p class="text-[10px] text-center text-ink/45 dark:text-paper/45 italic">
+        Toque fora do guia também fecha.
+      </p>
 
     </div>
   `);
