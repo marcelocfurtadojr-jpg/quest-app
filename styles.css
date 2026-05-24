@@ -2486,6 +2486,133 @@ html[data-character] .kombat-divider::after {
 }
 
 /* Config — caixinha pra Redirect URI (precisa ser fácil de copiar) */
+/* ============================================================
+   READING — sub-tabs Artigo/Literatura + cards
+   ============================================================ */
+.reading-subtabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  padding: 4px;
+  border-radius: 12px;
+  background: rgba(26,26,46,0.06);
+}
+.dark .reading-subtabs { background: rgba(255,255,255,0.04); }
+
+.reading-subtab {
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: transparent;
+  border: 0;
+  font-weight: 600;
+  font-size: 13px;
+  color: rgba(26,26,46,0.55);
+  cursor: pointer;
+  transition: background .15s ease, color .15s ease;
+}
+.dark .reading-subtab { color: rgba(251,250,247,0.55); }
+.reading-subtab:hover { color: rgba(26,26,46,0.85); }
+.dark .reading-subtab:hover { color: rgba(251,250,247,0.85); }
+.reading-subtab.is-active {
+  background: var(--lavender, #B7B5FF);
+  color: #1A1A2E;
+  box-shadow: 0 2px 8px rgba(183,181,255,0.3);
+}
+
+/* ---- Card do livro atual sorteado ---- */
+.lit-current {
+  background:
+    linear-gradient(135deg, rgba(255,183,197,0.15) 0%, rgba(183,181,255,0.12) 60%, transparent 100%),
+    linear-gradient(180deg, var(--char-accent-soft, transparent) 0%, transparent 70%);
+  border: 1px solid rgba(255,183,197,0.4);
+  position: relative;
+  overflow: hidden;
+}
+.lit-current::before {
+  content: "";
+  position: absolute;
+  top: -20px;
+  right: -20px;
+  width: 80px;
+  height: 80px;
+  background: radial-gradient(circle, rgba(255,183,197,0.3) 0%, transparent 70%);
+  pointer-events: none;
+}
+.lit-current-eyebrow {
+  font-family: "Russo One", Impact, system-ui, sans-serif;
+  font-size: 9px;
+  letter-spacing: 0.25em;
+  color: #FFB7C5;
+  margin-bottom: 4px;
+}
+.lit-current-title {
+  font-weight: 800;
+  font-size: 18px;
+  line-height: 1.2;
+}
+.lit-current-meta {
+  font-size: 11px;
+  opacity: 0.7;
+  margin-top: 2px;
+}
+
+/* ---- Card "lista vazia / sortear" ---- */
+.lit-empty {
+  border: 1px dashed rgba(183,181,255,0.45);
+  background: linear-gradient(180deg, rgba(183,181,255,0.05) 0%, transparent 100%);
+}
+
+/* ---- Linha de livro pendente ---- */
+.lit-pending-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: rgba(26,26,46,0.04);
+  font-size: 13px;
+}
+.dark .lit-pending-row { background: rgba(255,255,255,0.04); }
+.lit-pending-row.is-current {
+  background: rgba(255,183,197,0.15);
+  border: 1px solid rgba(255,183,197,0.4);
+}
+.lit-pending-marker {
+  width: 16px;
+  text-align: center;
+  color: rgba(26,26,46,0.45);
+}
+.dark .lit-pending-marker { color: rgba(255,255,255,0.45); }
+.lit-pending-row.is-current .lit-pending-marker {
+  color: #FFB7C5;
+  font-weight: 700;
+}
+.lit-remove {
+  border: 0;
+  background: transparent;
+  font-size: 16px;
+  color: rgba(26,26,46,0.4);
+  cursor: pointer;
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+}
+.dark .lit-remove { color: rgba(255,255,255,0.4); }
+.lit-remove:hover {
+  background: rgba(184,36,46,0.15);
+  color: #B8242E;
+}
+
+.lit-finished-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  opacity: 0.7;
+}
+
 .cfg-spotify-redirect {
   font-family: "Courier New", Consolas, monospace;
   font-size: 10px;

@@ -5832,6 +5832,39 @@ function migrateState(s) {
   s.user.spotify.refreshToken = s.user.spotify.refreshToken || '';
   s.user.spotify.expiresAt   = s.user.spotify.expiresAt   || 0;
   s.user.spotify.scope       = s.user.spotify.scope       || '';
+
+  // Livros (v1.57+) — categoria 'literatura' (default) ou 'artigo', + id estável.
+  // currentLiteraturaBookId aponta pro livro sorteado em curso (null = precisa sortear).
+  if (Array.isArray(s.books)) {
+    s.books.forEach((b) => {
+      if (!b.id) b.id = 'b_' + Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-4);
+      if (!b.category) b.category = 'literatura';
+    });
+  }
+  if (s.user.currentLiteraturaBookId === undefined) s.user.currentLiteraturaBookId = null;
+
+  // Day rollover (v1.57+) — preenche dias passados que ficaram sem log com
+  // um entry autoClosed=true (neutro: xp=0, não conta sleep/training/etc).
+  // Só preenche entre o primeiro log do usuário e ontem (não inventa histórico).
+  if (Array.isArray(s.dailyLogs) && s.dailyLogs.length) {
+    const today = todayISO();
+    const logged = new Set(s.dailyLogs.map(l => l.date));
+    const realLogs = s.dailyLogs.filter(l => !l.autoClosed);
+    if (realLogs.length) {
+      const earliest = realLogs.reduce((m, l) => l.date < m ? l.date : m, realLogs[0].date);
+      const start = new Date(earliest + 'T00:00:00');
+      const end = new Date(today + 'T00:00:00');
+      let added = 0;
+      for (let d = new Date(start); d < end; d.setDate(d.getDate() + 1)) {
+        const iso = isoDate(d);
+        if (!logged.has(iso)) {
+          s.dailyLogs.push({ date: iso, autoClosed: true, xp: 0 });
+          added++;
+        }
+      }
+      if (added) s.dailyLogs.sort((a, b) => a.date.localeCompare(b.date));
+    }
+  }
 }
 
 function saveState() {
@@ -6401,6 +6434,37 @@ let currentTab = 'home';
 // Data sendo visualizada na aba Nutri. Module-level (NÃO persistido) —
 // se persistisse, refeições adicionadas iam pro dia errado em sessões futuras.
 let _currentNutriDate = null;
+// Sub-tab da aba Leitura: 'artigos' (timer + log) ou 'literatura' (livros).
+let _readingSubTab = 'artigos';
+
+/** Helpers de literatura — livros pendentes, atual, sorteador. */
+function literaturaBooks() {
+  return (state.books || []).filter((b) => (b.category || 'literatura') === 'literatura');
+}
+function pendingLiteraturaBooks() {
+  return literaturaBooks().filter((b) => !b.finishedAt);
+}
+function currentLiteraturaBook() {
+  const id = state.user?.currentLiteraturaBookId;
+  if (!id) return null;
+  return literaturaBooks().find((b) => b.id === id) || null;
+}
+/** Sorteia um livro pendente diferente do atual. Salva como currentLiteraturaBookId. */
+function pickNextLiteraturaBook() {
+  const currentId = state.user?.currentLiteraturaBookId;
+  let candidates = pendingLiteraturaBooks().filter((b) => b.id !== currentId);
+  // Se só sobrou o atual, libera ele de novo (caso a lista tenha 1 só)
+  if (!candidates.length) candidates = pendingLiteraturaBooks();
+  if (!candidates.length) {
+    state.user.currentLiteraturaBookId = null;
+    saveState();
+    return null;
+  }
+  const next = candidates[Math.floor(Math.random() * candidates.length)];
+  state.user.currentLiteraturaBookId = next.id;
+  saveState();
+  return next;
+}
 // Flag de sessão: a tela "Choose Your Fighter" aparece em CADA abertura do
 // app (refresh / abrir PWA do zero). Como é module-level, reseta naturalmente
 // a cada carregamento. O usuário precisa confirmar (mesmo o último escolhido)
@@ -9436,6 +9500,13 @@ function viewReading() {
       </div>
     </div>
 
+    <!-- Sub-tabs: 📰 Artigo (timer manual) vs 📚 Literatura (livros com sorteio) -->
+    <div class="reading-subtabs">
+      <button class="reading-subtab ${_readingSubTab === 'artigos' ? 'is-active' : ''}" data-rsubtab="artigos">📰 Artigo</button>
+      <button class="reading-subtab ${_readingSubTab === 'literatura' ? 'is-active' : ''}" data-rsubtab="literatura">📚 Literatura</button>
+    </div>
+
+    ${_readingSubTab === 'artigos' ? `
     <!-- Timer (conta UP, pausa e finaliza manualmente) -->
     <div class="q-card p-4 text-center">
       <div class="flex items-center justify-between mb-1">
@@ -9458,6 +9529,9 @@ function viewReading() {
         <button class="r-quick q-btn q-btn-ghost flex-1 text-[10px]" data-min="15">+15 min</button>
         <button class="r-quick q-btn q-btn-ghost flex-1 text-[10px]" data-min="30">+30 min</button>
         <button class="r-quick q-btn q-btn-ghost flex-1 text-[10px]" data-min="60">+60 min</button>
+      </div>
+      <div class="text-[10px] text-ink/45 dark:text-paper/45 mt-3 italic">
+        Artigos, blogs, post longos — você lança manualmente quando termina.
       </div>
     </div>
 
@@ -9504,28 +9578,95 @@ function viewReading() {
         ${cloudReady() ? 'Inclui todos os usuários do app (cadastrados no Firebase) + 3 bots. Renova toda segunda.' : 'Inclui contas locais + 3 bots. Sem internet = leaderboard local.'}
       </p>
     </div>
+    ` : `
+    <!-- ===== LITERATURA — lista de livros + sorteio do próximo ===== -->
+    ${(() => {
+      const cur = currentLiteraturaBook();
+      const pending = pendingLiteraturaBooks();
+      const finished = literaturaBooks().filter((b) => b.finishedAt);
+      const hasPendingExceptCurrent = pending.filter((b) => b.id !== cur?.id).length > 0;
 
-    <!-- Livros -->
-    <h2 class="font-extrabold text-lg mt-4">Livros em andamento</h2>
-    <div class="space-y-2">
-      ${state.books.map((b, i) => `
-        <div class="q-card p-3 flex items-center gap-2" data-book="${i}">
-          <div class="flex-1 min-w-0">
-            <div class="font-semibold truncate">${b.title}</div>
-            <div class="text-xs text-ink/55 dark:text-paper/55">página ${b.currentPage} / ${b.totalPages}${b.finishedAt ? ' · ✓ concluído ' + formatDateBR(b.finishedAt) : ''}</div>
-            <div class="xp-track mt-2"><div class="xp-fill" style="width:${(b.currentPage/b.totalPages)*100}%"></div></div>
+      const currentCard = cur ? `
+        <div class="q-card p-4 lit-current">
+          <div class="lit-current-eyebrow">📚 LIVRO ATUAL · sorteado</div>
+          <div class="lit-current-title">${cur.title}</div>
+          <div class="lit-current-meta">página ${cur.currentPage} / ${cur.totalPages}</div>
+          <div class="xp-track mt-2"><div class="xp-fill" style="width:${Math.round((cur.currentPage/cur.totalPages)*100)}%"></div></div>
+          <div class="flex gap-2 mt-3">
+            <button class="q-btn q-btn-primary flex-1 page-up-lit" data-i="${state.books.indexOf(cur)}">+10 páginas</button>
+            <button class="q-btn q-btn-finish flex-1 lit-finish" data-i="${state.books.indexOf(cur)}">✓ Concluir</button>
           </div>
-          ${b.finishedAt ? '' : `<button class="q-btn q-btn-ghost px-2 py-1 text-xs page-up-tab" data-i="${i}" title="+10 páginas">+10</button>`}
-          <button class="q-btn q-btn-ghost px-2 py-1 text-xs book-edit" data-i="${i}" title="Editar livro">✏️</button>
-          <button class="q-btn q-btn-ghost px-2 py-1 text-xs book-remove" data-i="${i}" title="Remover">×</button>
-        </div>`).join('') || `<div class="q-card p-4 text-sm text-ink/55">Sem livros ainda. Adicione abaixo.</div>`}
-    </div>
+        </div>
+      ` : (pending.length ? `
+        <div class="q-card p-4 lit-empty">
+          <div class="text-3xl text-center mb-2">🎲</div>
+          <div class="font-bold text-center">Sorteie seu próximo livro</div>
+          <p class="text-xs text-ink/55 dark:text-paper/55 text-center mt-1">
+            ${pending.length} livro(s) pendente(s) — deixa o app escolher pra começar.
+          </p>
+          <button id="lit-pick" class="q-btn q-btn-primary w-full mt-3">🎲 Sortear próximo</button>
+        </div>
+      ` : `
+        <div class="q-card p-4 lit-empty">
+          <div class="text-3xl text-center mb-2">📖</div>
+          <div class="font-bold text-center">Lista vazia</div>
+          <p class="text-xs text-ink/55 dark:text-paper/55 text-center mt-1">
+            Adicione livros abaixo e o app sorteia o próximo a cada conclusão.
+          </p>
+        </div>
+      `);
 
-    <form id="book-form-tab" class="flex gap-2 mt-2">
-      <input class="q-input flex-1" name="title" placeholder="Título do novo livro" required />
-      <input class="q-input w-20" name="pages" type="number" placeholder="págs" required min="1" />
-      <button class="q-btn q-btn-primary">+</button>
-    </form>
+      const reshuffleBtn = (cur && hasPendingExceptCurrent) ? `
+        <button id="lit-reshuffle" class="q-btn q-btn-ghost w-full text-xs">🔀 Sortear outro (descarta o atual sem concluir)</button>
+      ` : '';
+
+      const pendingList = pending.length ? `
+        <div class="mt-3">
+          <div class="text-[10px] uppercase tracking-wider text-ink/45 dark:text-paper/45 mb-1">Pendentes (${pending.length})</div>
+          <div class="space-y-1">
+            ${pending.map((b) => `
+              <div class="lit-pending-row ${b.id === cur?.id ? 'is-current' : ''}">
+                <span class="lit-pending-marker">${b.id === cur?.id ? '★' : '○'}</span>
+                <span class="flex-1 truncate">${b.title}</span>
+                <span class="text-[10px] text-ink/45 dark:text-paper/45">${b.totalPages}p</span>
+                <button class="lit-remove" data-i="${state.books.indexOf(b)}" title="Remover" aria-label="Remover">×</button>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      ` : '';
+
+      const finishedList = finished.length ? `
+        <details class="mt-3">
+          <summary class="text-xs text-ink/55 dark:text-paper/55 cursor-pointer">📚 Concluídos (${finished.length})</summary>
+          <div class="space-y-1 mt-2">
+            ${finished.map((b) => `
+              <div class="lit-finished-row">
+                <span>✓</span>
+                <span class="flex-1 truncate">${b.title}</span>
+                <span class="text-[10px] text-ink/45 dark:text-paper/45">${formatDateBR(b.finishedAt)}</span>
+              </div>
+            `).join('')}
+          </div>
+        </details>
+      ` : '';
+
+      return `
+        ${currentCard}
+        ${reshuffleBtn}
+        ${pendingList}
+        ${finishedList}
+        <form id="lit-add-form" class="flex gap-2 mt-3">
+          <input class="q-input flex-1" name="title" placeholder="Título do livro" required />
+          <input class="q-input w-20" name="pages" type="number" placeholder="págs" min="1" value="200" />
+          <button class="q-btn q-btn-primary" type="submit">+</button>
+        </form>
+        <p class="text-[10px] text-ink/45 dark:text-paper/45 mt-2 italic text-center">
+          Adicione vários livros — o app sorteia o próximo a cada conclusão.
+        </p>
+      `;
+    })()}
+    `}
   </section>
   `;
 }
@@ -11812,6 +11953,19 @@ function viewConfig() {
       </p>
     </div>
 
+    <!-- Zerar Elo: rank/XP/atributos/conquistas pra 0, preservando histórico físico -->
+    <div class="q-card p-4" style="border:1px solid rgba(214,169,62,0.35)">
+      <h3 class="font-bold mb-1 text-kgold">↻ Zerar Elo</h3>
+      <p class="text-xs text-ink/55 dark:text-paper/55 leading-relaxed">
+        Reseta <b>rank, XP, atributos, conquistas, daily spin e battle log</b> pro começo.
+        <b>Preserva</b> seus treinos, medidas, fotos, livros e o histórico diário —
+        a evolução do corpo e do hábito continua intacta.
+      </p>
+      <button id="cfg-reset-elo" class="q-btn q-btn-ghost w-full mt-3 text-sm" style="border:1px solid rgba(214,169,62,0.45); color:var(--gold, #D6A93E)">
+        ↻ Zerar elo agora
+      </button>
+    </div>
+
     ${acc ? `
     <div class="q-card p-4" style="border:1px solid rgba(184,36,46,0.3)">
       <h3 class="font-bold mb-1 text-blood">⚠ Zona de perigo</h3>
@@ -12270,6 +12424,88 @@ function attachHandlers() {
       state.books.push({ title: f.title.value, totalPages: +f.pages.value || 200, currentPage: 0 });
       saveState(); render();
     });
+
+    // ===== Sub-tabs Artigo/Literatura =====
+    document.querySelectorAll('.reading-subtab').forEach((b) => b.onclick = () => {
+      _readingSubTab = b.dataset.rsubtab;
+      render();
+    });
+
+    // ===== Literatura — sortear / página / concluir / remover / adicionar =====
+    document.getElementById('lit-pick')?.addEventListener('click', () => {
+      const next = pickNextLiteraturaBook();
+      if (next) { toast(`🎲 Sorteado: "${next.title}"`); confetti(600); }
+      render();
+    });
+    document.getElementById('lit-reshuffle')?.addEventListener('click', () => {
+      if (!confirm('Sortear OUTRO livro? O atual volta pra fila como pendente.')) return;
+      const next = pickNextLiteraturaBook();
+      if (next) toast(`🔀 Novo sorteio: "${next.title}"`);
+      render();
+    });
+    document.querySelectorAll('.page-up-lit').forEach((b) => b.onclick = () => {
+      const i = +b.dataset.i;
+      const book = state.books[i];
+      if (!book) return;
+      book.currentPage = Math.min(book.totalPages, book.currentPage + 10);
+      if (book.currentPage >= book.totalPages) {
+        book.finishedAt = todayISO();
+        toast(`📖 "${book.title}" concluído!`);
+        confetti(1500);
+        // Sorteia o próximo automaticamente
+        const next = pickNextLiteraturaBook();
+        if (next) setTimeout(() => toast(`🎲 Próximo: "${next.title}"`), 700);
+      }
+      saveState(); render();
+    });
+    document.querySelectorAll('.lit-finish').forEach((b) => b.onclick = () => {
+      const i = +b.dataset.i;
+      const book = state.books[i];
+      if (!book) return;
+      if (!confirm(`Marcar "${book.title}" como concluído? O app sorteia o próximo automaticamente.`)) return;
+      book.currentPage = book.totalPages;
+      book.finishedAt = todayISO();
+      toast(`📖 "${book.title}" concluído!`);
+      confetti(1500);
+      const next = pickNextLiteraturaBook();
+      if (next) setTimeout(() => toast(`🎲 Próximo: "${next.title}"`), 700);
+      saveState(); render();
+    });
+    document.querySelectorAll('.lit-remove').forEach((b) => b.onclick = () => {
+      const i = +b.dataset.i;
+      const book = state.books[i];
+      if (!book) return;
+      if (!confirm(`Remover "${book.title}" da lista?`)) return;
+      const wasCurrent = state.user.currentLiteraturaBookId === book.id;
+      state.books.splice(i, 1);
+      if (wasCurrent) {
+        // Se era o atual, sorteia outro
+        pickNextLiteraturaBook();
+      }
+      saveState(); render();
+    });
+    document.getElementById('lit-add-form')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const f = e.target;
+      const title = f.title.value.trim();
+      if (!title) return;
+      const book = {
+        id: 'b_' + Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-4),
+        title,
+        totalPages: Math.max(1, +f.pages.value || 200),
+        currentPage: 0,
+        category: 'literatura',
+      };
+      state.books.push(book);
+      // Se não tem livro atual, já sorteia ele agora
+      if (!currentLiteraturaBook() && pendingLiteraturaBooks().length === 1) {
+        state.user.currentLiteraturaBookId = book.id;
+        toast(`📚 "${title}" adicionado e sorteado`);
+      } else {
+        toast(`📚 "${title}" adicionado à lista`);
+      }
+      saveState(); render();
+    });
   })();
 
   // Handlers da aba "Metas" (viewGoals)
@@ -12631,6 +12867,16 @@ function attachHandlers() {
     // Mantém activeCharacter como "último escolhido" (vira destaque na tela)
     // mas reabre Choose Your Fighter pra confirmação.
     _characterPickedThisSession = false;
+    currentTab = 'home';
+    render();
+  });
+
+  // ---- Zerar Elo ----
+  document.getElementById('cfg-reset-elo')?.addEventListener('click', () => {
+    if (!confirm('Zerar TODO o Elo? (rank, XP, atributos, conquistas, battle log)\n\nSeu histórico de treinos, medidas, fotos e livros NÃO será apagado.')) return;
+    if (!confirm('Confirmar de vez? Não dá pra desfazer.')) return;
+    resetElo();
+    toast('Elo zerado — sua jornada recomeça');
     currentTab = 'home';
     render();
   });
@@ -13600,6 +13846,26 @@ function attachSpotifyPlayerHandlers() {
       }
     };
   });
+}
+
+/** Zera tudo que compõe o "Elo" (rank/XP/conquistas/atributos),
+ *  preservando histórico físico (treinos, medidas, fotos, livros, dailyLogs). */
+function resetElo() {
+  if (!state?.user) return;
+  state.user.rankXP = 0;
+  state.user.totalXP = 0;
+  state.user.currentRank = 'iron4';
+  state.user.attributes = { forca: 0, resistencia: 0, sabedoria: 0, disciplina: 0, vitalidade: 0 };
+  state.user.achievementsUnlocked = [];
+  state.user.questsCompleted = 0;
+  state.user.eloResetAt = Date.now();
+  state.rankHistory = [];
+  // Daily spin / login bonus history limpa (não tem impacto físico)
+  state.user.lastDailySpinAt = null;
+  state.user.lastLoginBonusAt = null;
+  // Battle log também (é narrativa do rank)
+  state.user.battleLog = [];
+  saveState();
 }
 
 /** Helper — devolve o personagem ativo (ou null) sem replicar a busca em todo lugar. */
