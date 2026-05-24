@@ -24,6 +24,8 @@ icons/goals/*.gif
 
 # Fotos de referência que ficavam no root do projeto (legado de versões
 # anteriores). Hoje o app usa upload via Metas → state.user.goalImages.
-johnny.jpg
-leejeno.jpg
-calistenia.webp
+# Ignora SÓ no root, não em subpastas (icons/workouts/calistenia.webp é parte
+# do app agora).
+/johnny.jpg
+/leejeno.jpg
+/calistenia.webp
