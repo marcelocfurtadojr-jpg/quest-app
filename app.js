@@ -6574,52 +6574,55 @@ function viewDashboard() {
   })()}
 
   <section class="px-4 mt-2">
-    <div class="q-card p-3 elo-card ${baseRankIndex(r.key) >= 4 ? 'rank-elite' : ''} relative overflow-hidden" style="background: linear-gradient(135deg, ${r.color}11 0%, transparent 60%), linear-gradient(180deg, var(--char-accent-soft, transparent) 0%, transparent 70%)">
-      ${(() => {
-        const ch = activeCharacter();
-        if (!ch || !ch.img) return '';
-        // Avatar do lutador no canto direito — assina o card do Elo
-        return `
-        <div class="elo-fighter" title="${ch.name} · ${ch.title}">
-          <img src="${ch.img}" alt="${ch.name}" loading="lazy" />
-          <div class="elo-fighter-slot">${ch.slot}</div>
-        </div>`;
-      })()}
-      <div class="flex items-center gap-3">
-        <div class="rank-badge text-paper shrink-0" style="background:${r.color}; box-shadow: 0 4px 18px ${r.color}55; width:54px; height:54px; border-radius:14px; font-size:1rem;">
-          ${r.name.replace(/\s.*/, '').slice(0,1).toUpperCase()}${r.div ? `<sub style="font-size:.6em; opacity:.85; margin-left:1px">${r.div}</sub>` : ''}
-        </div>
-        <div class="flex-1 min-w-0">
-          <div class="flex items-baseline justify-between gap-2 min-w-0">
-            <div class="font-kombat text-base uppercase tracking-wider truncate min-w-0" style="color:${r.color}">${r.name}</div>
-            <div class="text-[9px] text-ink/50 dark:text-paper/50 whitespace-nowrap shrink-0">
-              ${next ? `→ <b>${next.threshold - rxp}</b> XP` : '👑 TOPO'}
+    ${(() => {
+      const ch = activeCharacter();
+      const hasFighter = ch && ch.img;
+      const rankInitial = r.name.replace(/\s.*/, '').slice(0,1).toUpperCase();
+      const rankDiv = r.div || '';
+      const focusName = hasFighter ? ((ATTRIBUTES.find(a => a.key === ch.buff)?.name) || '—') : null;
+      return `
+      <div class="q-card p-3 elo-card ${baseRankIndex(r.key) >= 4 ? 'rank-elite' : ''} relative overflow-hidden"
+           style="background: linear-gradient(135deg, ${r.color}11 0%, transparent 60%), linear-gradient(180deg, var(--char-accent-soft, transparent) 0%, transparent 70%)">
+        <div class="elo-row">
+          <!-- ESQUERDA: portrait do lutador OU emblema do rank (fallback) -->
+          ${hasFighter ? `
+          <div class="elo-portrait" style="--rank-color:${r.color}" title="${ch.name} · ${ch.title}">
+            <img src="${ch.img}" alt="${ch.name}" loading="lazy" />
+            <div class="elo-portrait-slot">${ch.slot}</div>
+            <div class="elo-portrait-rank">${rankInitial}${rankDiv ? `<sub>${rankDiv}</sub>` : ''}</div>
+          </div>` : `
+          <div class="rank-badge text-paper shrink-0" style="background:${r.color}; box-shadow: 0 4px 18px ${r.color}55; width:84px; height:84px; border-radius:16px; font-size:1.25rem;">
+            ${rankInitial}${rankDiv ? `<sub style="font-size:.6em; opacity:.85; margin-left:1px">${rankDiv}</sub>` : ''}
+          </div>`}
+
+          <!-- DIREITA: rank name, xp bar, stats e info do lutador -->
+          <div class="elo-info">
+            <div class="elo-rank-row">
+              <div class="font-kombat uppercase tracking-wider truncate" style="color:${r.color}">${r.name}</div>
+              <div class="elo-next-xp">
+                ${next ? `→ <b>${next.threshold - rxp}</b> XP` : '👑 TOPO'}
+              </div>
             </div>
-          </div>
-          <div class="xp-track is-kombat mt-1.5"><div class="xp-fill" style="width:${progress}%"></div></div>
-          <div class="flex justify-between text-[10px] mt-1 text-ink/55 dark:text-paper/55 gap-1">
-            <span>Total: <b>${rxp}</b></span>
-            <span>Sem: <b>${wxp}</b></span>
-            <span>Hoje: <b>${dayXP}/${DAILY_XP_CAP}</b></span>
+            <div class="xp-track is-kombat mt-1.5"><div class="xp-fill" style="width:${progress}%"></div></div>
+            <div class="elo-stats">
+              <span>Total <b>${rxp}</b></span>
+              <span class="elo-stats-sep">·</span>
+              <span>Sem <b>${wxp}</b></span>
+              <span class="elo-stats-sep">·</span>
+              <span>Hoje <b>${dayXP}/${DAILY_XP_CAP}</b></span>
+            </div>
+            ${hasFighter ? `
+            <div class="elo-fighter-line">
+              <span class="elo-fighter-name">${ch.name}</span>
+              <span class="elo-fighter-title">· ${ch.title}</span>
+            </div>
+            <div class="elo-fighter-focus">
+              Foco: <b>${focusName}</b>
+            </div>` : ''}
           </div>
         </div>
-      </div>
-      ${(() => {
-        const ch = activeCharacter();
-        if (!ch || !ch.name || ch.name === '???') return '';
-        // Linha de "evolução do lutador" — nome, título e tagline curta da carreira
-        // Mostra que o personagem está evoluindo junto com seu rank.
-        return `
-        <div class="elo-fighter-track">
-          <div class="elo-fighter-name">${ch.name} <span class="elo-fighter-title">· ${ch.title}</span></div>
-          <div class="elo-fighter-progress">
-            <span>Jornada: <b>${rxp} XP</b></span>
-            <span>·</span>
-            <span>Foco: <b>${(ATTRIBUTES.find(a => a.key === ch.buff)?.name) || '—'}</b></span>
-          </div>
-        </div>`;
-      })()}
-    </div>
+      </div>`;
+    })()}
   </section>
 
   <!-- Vital Stats — barras estilo character sheet RPG -->
