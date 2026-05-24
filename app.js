@@ -7552,6 +7552,7 @@ const WORKOUT_HERO_POSITIONS = {
   'icons/workouts/core.webp':   'center 40%', // foca no abdômen, evita corte no L-sit
   'icons/workouts/ombros.webp': 'center 25%', // foca em ombros/peito (não só cabeça)
   'icons/workouts/bracos.webp': 'center 30%', // double biceps pose — foca braços/peito
+  'icons/workouts/abs.webp':    'center 35%', // cropped tank top — foca abs no centro
 };
 const WORKOUT_HERO_IMAGES = {
   'A · Peito + Tríceps + Abs':  'icons/workouts/peito.webp',
@@ -7568,13 +7569,13 @@ const WORKOUT_HERO_IMAGES = {
   'Upper A':                    'icons/workouts/bracos.webp',
   'Upper B':                    'icons/workouts/ombros2.webp',
   'Lower A':                    'icons/workouts/pernas.webp',
-  'Push':                       'icons/workouts/ombros2.webp',
+  'Push':                       'icons/workouts/abs.webp',
   'Pull':                       'icons/workouts/dorsal.webp',
   'Upper completo':             'icons/workouts/ombros.webp',
   'Core/Abs':                   'icons/workouts/core.webp',
   'Caminhada':                  'icons/workouts/caminhada.webp',
   'Calistenia':                 'icons/workouts/calistenia.webp',
-  'Full Body A':                'icons/workouts/peito.webp',
+  'Full Body A':                'icons/workouts/abs.webp',
   'Full Body B':                'icons/workouts/dorsal.webp',
 };
 
