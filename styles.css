@@ -2602,10 +2602,8 @@ html[data-character] .kombat-divider::after {
 }
 .status-body {
   position: relative;
-  width: 92px;
-  /* Aspect-ratio = source webp (307 × 820). Garante que o corpo INTEIRO
-     apareça — pouco acima da cabeça até a sola dos pés — sem cortar. */
-  aspect-ratio: 307 / 820;
+  width: 108px;          /* mais largo: 92 → 108 */
+  height: 200px;         /* mais baixo: 246 → 200 (aspect fixo, sem grow vertical) */
   flex-shrink: 0;
   border-radius: 10px;
   overflow: hidden;
@@ -2615,11 +2613,28 @@ html[data-character] .kombat-divider::after {
 .status-body img {
   width: 100%;
   height: 100%;
-  object-fit: cover;     /* aspect bate exatamente com o do container → sem distorção */
+  /* contain garante que o corpo INTEIRO apareça (acima da cabeça → sola dos pés)
+     mesmo o container sendo mais quadrado que o webp. Padding fica nas laterais
+     e o background lavanda preenche. */
+  object-fit: contain;
   object-position: center;
   display: block;
 }
-/* Status card cresceu — alinha as bars verticalmente centradas com a foto */
+.status-body-label {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-family: "Russo One", Impact, system-ui, sans-serif;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  padding: 3px 0 4px;
+  background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.85) 65%);
+  color: #E3DBFF;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.7);
+  pointer-events: none;
+}
 .status-card { align-items: stretch; }
 .status-content { justify-content: center; }
 .status-content {

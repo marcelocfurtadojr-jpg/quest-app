@@ -6952,12 +6952,12 @@ function viewDashboard() {
       ${(() => {
         // Corpo do Matthew à esquerda — muda conforme nutrição/treino de hoje.
         // Mostra mesmo se outro personagem está ativo (é um espelho global do dia).
-        // Os termos magrelo/lean/athletic/bulked/fat são chaves técnicas, NÃO
-        // aparecem no UI — só identificam qual imagem usar.
         const bs = computeBodyState();
+        const bsLabel = bodyStateLabel(bs);
         return `
         <div class="status-body" title="Espelho do seu dia">
-          <img src="icons/bodies/${bs}.webp" alt="estado do corpo" loading="lazy" />
+          <img src="icons/bodies/${bs}.webp" alt="${bsLabel}" loading="lazy" />
+          <div class="status-body-label">${bsLabel}</div>
         </div>`;
       })()}
       <div class="status-content">
