@@ -132,6 +132,87 @@ body {
 .attr-tile:active .attr-portrait { transform: scale(0.96); }
 .attr-tile:hover .attr-portrait { box-shadow: 0 4px 16px var(--accent, #B7B5FF)55, inset 0 1px 0 rgba(255,255,255,0.12); }
 
+/* Workout pick cards (lista de treinos com thumb) ----------- */
+.workout-pick {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--card-bg, rgba(255,255,255,0.6));
+  border-radius: 14px;
+  box-shadow: 0 2px 12px rgba(26,26,46,0.06), 0 1px 3px rgba(26,26,46,0.04);
+  overflow: hidden;
+  text-align: left;
+  cursor: pointer;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.dark .workout-pick { background: rgba(255,255,255,0.04); }
+.workout-pick:active { transform: scale(0.98); }
+.workout-pick:hover {
+  box-shadow: 0 6px 18px rgba(26,26,46,0.12), 0 2px 6px rgba(26,26,46,0.06);
+}
+.workout-pick-thumb {
+  width: 100%;
+  height: 96px;
+  background-size: cover;
+  background-position: center top;
+  background-color: #1A1A2E;
+  position: relative;
+}
+.workout-pick-thumb::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom, rgba(15,23,41,0) 50%, rgba(15,23,41,0.4) 100%);
+  pointer-events: none;
+}
+.workout-pick-thumb-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1A1A2E, #2A1F3D);
+  color: rgba(255,183,197,0.5);
+}
+.workout-pick-thumb-placeholder svg { width: 36px; height: 36px; }
+.workout-pick-text {
+  padding: .7rem .8rem;
+}
+
+/* Quick start (último treino) ------------------------------- */
+.workout-quickstart {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  background: linear-gradient(135deg, #B8242E, #E84A1A);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 18px rgba(184,36,46,0.35);
+  width: 100%;
+  cursor: pointer;
+  transition: transform .15s ease;
+  min-height: 80px;
+}
+.workout-quickstart:active { transform: scale(0.98); }
+.workout-quickstart-thumb {
+  width: 100px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  flex-shrink: 0;
+}
+.workout-quickstart-thumb::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(to right, transparent, rgba(184,36,46,0.55));
+}
+.workout-quickstart-text {
+  flex: 1;
+  padding: .8rem 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  color: #FFF;
+}
+
 /* Attribute detail modal hero ------------------------------ */
 .attr-hero {
   position: relative;

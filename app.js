@@ -4659,38 +4659,6 @@ const EXERCISE_LIBRARY = {
       mistakes: 'Usar inércia. Lombar levantando.',
       tip: 'Pense "enrolar a pelve" em vez de "subir as pernas".' },
   ],
-  'Lower B': [
-    { name: 'Hip thrust', target: '4×6–10', muscles: 'glúteo máximo, isquio', ko: '힙 쓰러스트',
-      description: 'O exercício mais eficiente para glúteo. Carga alta direto no maior músculo do corpo.',
-      technique: 'Escápula no banco, barra sobre quadril (com pad). Pés na largura dos ombros, ponta levemente pra fora. Sobe até alinhar tronco-coxa, aperta glúteo 1s no topo.',
-      mistakes: 'Hiperestender lombar. Pés muito longe (vira isquio). Não pausar no topo.',
-      tip: 'Olhar fixo num ponto à frente (não pro teto) mantém pescoço seguro.' },
-    { name: 'Afundo passada', target: '3×10/perna', muscles: 'quadríceps, glúteo, estabilizadores', ko: '런지',
-      description: 'Unilateral — corrige assimetrias e treina estabilidade.',
-      technique: 'Passada longa, desce até joelho de trás quase tocar. Joelho da frente alinhado com o pé. Empurre com calcanhar.',
-      mistakes: 'Passada curta (vira quad isolado). Joelho da frente passando muito do pé.',
-      tip: 'Mais passada longa = mais glúteo; mais curta = mais quad.' },
-    { name: 'Cadeira extensora', target: '3×10–15', muscles: 'quadríceps (isolado)', ko: '레그 익스텐션',
-      description: 'Isolamento puro de quad. Bom pré-fadiga ou finalizador.',
-      technique: 'Almofada na canela, encaixa joelho com o eixo. Estende até quase travar, aperta no topo, desce em 3s.',
-      mistakes: 'Travar joelho com chute. Carga excessiva.',
-      tip: 'Aponte ponta do pé um pouco pra fora pra recrutar vasto medial (gota acima do joelho).' },
-    { name: 'Cadeira flexora', target: '3×10–15', muscles: 'isquiotibiais (sentado)', ko: '시티드 컬',
-      description: 'Variação sentada — mais alongamento e mais ativação que a mesa flexora.',
-      technique: 'Quadril fixo, almofada na panturrilha. Flexiona joelho ao máximo, segura 1s, controla a volta.',
-      mistakes: 'Levantar quadril. Voltar com inércia.',
-      tip: 'Aponte os pés pra dentro (inversão) — recruta mais a cabeça medial.' },
-    { name: 'Panturrilha sentado', target: '4×15', muscles: 'sóleo', ko: '시티드 카프',
-      description: 'Joelho flexionado = sóleo (panturrilha "interna"). Complementa em pé.',
-      technique: 'Joelho 90°, pad na coxa. Sobe forte, desce profundo. Amplitude completa.',
-      mistakes: 'Amplitude curta. Carga sem controle.',
-      tip: 'Sóleo é resistente — use reps altas (15–25).' },
-    { name: 'Prancha', target: '3×45s', muscles: 'core profundo, glúteo', ko: '플랭크',
-      description: 'Anti-extensão lombar. Treina core a manter coluna neutra.',
-      technique: 'Cotovelos sob ombros, corpo reto, glúteo apertado, queixo neutro. Respiração ativa.',
-      mistakes: 'Bumbum levantado. Lombar caindo. Cabeça pendurada.',
-      tip: 'Se 45s ficar fácil, vá pra prancha lateral ou com perna alternada.' },
-  ],
   'Push': [
     { name: 'Supino inclinado barra', target: '4×6–10', muscles: 'peito superior, deltóide, tríceps', ko: '인클라인 바벨',
       description: 'Push pesado focado no peito alto. Excelente para construir massa torácica visível.',
@@ -4767,28 +4735,6 @@ const EXERCISE_LIBRARY = {
       mistakes: 'Girar só braço (sem ativar core).',
       tip: 'Vai mais devagar do que parece — controle vence carga.' },
   ],
-  'Cardio HIIT': [
-    { name: 'Sprint 30s × 12 (1:1)', target: '12 rounds', muscles: 'sistema cardio + perna', ko: '스프린트',
-      description: 'HIIT clássico. Queima gordura mantendo massa muscular.',
-      technique: 'Esteira ou ar livre. 30s intenso (≥85% FCmax) + 30s caminhada. Repete 12x.',
-      mistakes: 'Não recuperar entre rounds. Forçar quando lesão está pedindo descanso.',
-      tip: 'Faz no fim do treino de upper, nunca antes — drena energia.' },
-    { name: 'Burpees', target: '5×10 reps', muscles: 'corpo inteiro', ko: '버피',
-      description: 'O exercício mais democrático do mundo. Sem equipamento. Brutal.',
-      technique: 'Agacha, lança pernas pra trás (prancha), faz 1 flexão, volta, salta com mãos pra cima.',
-      mistakes: 'Lombar caindo na prancha. Não saltar no fim.',
-      tip: 'Quando sentir TDAH explodir e não conseguir focar: 30 burpees, depois tenta de novo.' },
-    { name: 'Pular corda', target: '5×3min', muscles: 'panturrilha, ombro, cardio', ko: '줄넘기',
-      description: 'Cardio com baixo impacto + coordenação. Pode fazer em qualquer lugar.',
-      technique: 'Pulos baixos, pés juntos, pulso girando (não braço inteiro).',
-      mistakes: 'Pulos altos demais (gasta energia à toa).',
-      tip: 'Boxeadores fazem 15min direto — começa com 3min × 5 e vai subindo.' },
-    { name: 'Mountain climbers', target: '4×40s', muscles: 'core + cardio', ko: '마운틴 클라이머',
-      description: 'Cardio sem sair do lugar. Combina ativação de core + frequência cardíaca.',
-      technique: 'Prancha alta. Joelhos vêm rápido até o peito alternados. Mantém quadril estável.',
-      mistakes: 'Bumbum subindo. Joelho não chegando no peito.',
-      tip: 'Põe 4 séries de 40s entre outros exercícios — vira finalizador HIIT.' },
-  ],
   'Caminhada': [
     { name: 'Caminhada leve', target: '30–45min', muscles: 'cardio (LISS), panturrilha, postura', ko: '걷기',
       description: 'LISS clássico — Low Intensity Steady State. Queima gordura sem fadigar SNC e ajuda a digestão.',
@@ -4852,18 +4798,6 @@ const EXERCISE_LIBRARY = {
       technique: 'Sentado no chão ou paralelas, levanta corpo só com braços, pernas em L à frente.',
       mistakes: 'Pernas dobradas (versão progressão). Ombros encolhidos.',
       tip: 'Começa com joelhos flex (tuck L-sit), evolui pra perna reta em ~8 semanas.' },
-  ],
-  'Dança K-pop': [
-    { name: 'Sessão de dança completa', target: '30–45min', muscles: 'corpo inteiro, cardio, coordenação', ko: '케이팝 댄스',
-      description: 'Combina cardio + coordenação + alegria. Excelente para TDAH (foco numa coisa visual e ritmada).',
-      technique: 'Aquecimento 5min, sessão principal aprendendo/repetindo 25min, cooldown 5min.',
-      mistakes: 'Pular aquecimento (joelho não agradece). Forçar movimento sem alongamento.',
-      tip: 'NewJeans, Stray Kids, IVE têm coreografias acessíveis. 1theK Dance e KPOP Step são bons canais.' },
-    { name: 'Aprender coreografia nova', target: '30min', muscles: 'memória motora + cardio', ko: '안무 배우기',
-      description: 'Foco em aprender uma coreografia nova do começo ao fim. Ótimo desafio cognitivo.',
-      technique: 'Vídeo em câmera lenta primeiro (0.5x), domina 8 contagens por vez, depois aumenta velocidade.',
-      mistakes: 'Tentar a velocidade real direto — frustra.',
-      tip: 'Grava em vídeo pra ver onde está errando. 화이팅 ☆' },
   ],
   'Peito + Tríceps': [
     { name: 'Supino reto barra', target: '4×6–10', muscles: 'peitoral, tríceps, deltóide ant.',
@@ -4942,26 +4876,6 @@ const EXERCISE_LIBRARY = {
     { name: 'Panturrilha em pé', target: '4×12–15', muscles: 'gastrocnêmio',
       description: 'Joelho estendido = gastrocnêmio.', technique: 'Antepé na borda, calcanhar abaixo da linha.',
       mistakes: 'Amplitude curta.', tip: 'Faz 1 dropset por treino — panturrilha responde a volume alto.' },
-  ],
-  'Pernas (posterior + glúteo)': [
-    { name: 'Stiff (RDL)', target: '4×8–10', muscles: 'isquiotibiais, glúteo, lombar',
-      description: 'Posterior de coxa via hip hinge.', technique: 'Joelhos quase travados, empurra quadril pra trás, barra colada à perna.',
-      mistakes: 'Agachar. Lombar arredondando.', tip: '"Fechar a porta com a bunda" — quadril pra trás, não pra baixo.' },
-    { name: 'Hip thrust', target: '5×6–10', muscles: 'glúteo máximo, isquio',
-      description: 'O exercício mais eficiente para glúteo.', technique: 'Escápula no banco, sobe até alinhar tronco-coxa, aperta 1s no topo.',
-      mistakes: 'Hiperestender lombar.', tip: 'Olhar fixo num ponto à frente, não pro teto.' },
-    { name: 'Mesa flexora', target: '4×10–12', muscles: 'isquiotibiais',
-      description: 'Isolamento de posterior.', technique: 'Quadril apoiado, puxa calcanhar até quase tocar o glúteo.',
-      mistakes: 'Levantar quadril.', tip: 'Conte 3s na fase de volta — isquio cresce na excêntrica.' },
-    { name: 'Cadeira flexora sentado', target: '3×10–15', muscles: 'isquiotibiais',
-      description: 'Variação sentada com mais alongamento.', technique: 'Flexiona joelho ao máximo, segura 1s.',
-      mistakes: 'Voltar com inércia.', tip: 'Pés pra dentro recruta a cabeça medial.' },
-    { name: 'Afundo búlgaro', target: '3×8/perna', muscles: 'glúteo, quad, posterior',
-      description: 'Unilateral pesado.', technique: 'Pé de trás elevado num banco, desce reto, peso na perna da frente.',
-      mistakes: 'Curvar pra frente.', tip: 'Tronco ligeiramente inclinado = mais glúteo.' },
-    { name: 'Panturrilha sentado', target: '4×15', muscles: 'sóleo',
-      description: 'Joelho flexionado = sóleo.', technique: 'Joelho 90°, pad na coxa, sobe forte, desce profundo.',
-      mistakes: 'Amplitude curta.', tip: 'Reps altas (15–25).' },
   ],
   'Braços (bíceps + tríceps)': [
     { name: 'Rosca direta barra', target: '4×8–10', muscles: 'bíceps braquial',
@@ -5046,26 +4960,6 @@ const EXERCISE_LIBRARY = {
     { name: 'Panturrilha em pé', target: '4×12–15', muscles: 'gastrocnêmio',
       description: 'Volume de panturrilha.', technique: 'Amplitude completa, antepé na borda.',
       mistakes: 'Amplitude curta.', tip: 'Faz 1 dropset por treino.' },
-  ],
-  'Glúteo focus': [
-    { name: 'Hip thrust', target: '5×8–12', muscles: 'glúteo máximo',
-      description: 'Exercício rei do glúteo.', technique: 'Escápula no banco, sobe até alinhar tronco-coxa.',
-      mistakes: 'Hiperestender lombar.', tip: 'Aperta 1s no topo.' },
-    { name: 'Agachamento sumô', target: '4×10–12', muscles: 'glúteo, adutor, quad',
-      description: 'Pé aberto recruta glúteo interno.', technique: 'Pés mais largos que ombros, ponta a 30°.',
-      mistakes: 'Joelho pra dentro.', tip: 'Empurre o joelho na direção do dedinho do pé.' },
-    { name: 'Afundo búlgaro', target: '3×8–10/perna', muscles: 'glúteo, quad, posterior',
-      description: 'Unilateral pesado em glúteo.', technique: 'Pé de trás elevado num banco.',
-      mistakes: 'Curvar pra frente.', tip: 'Tronco ligeiramente inclinado = mais glúteo.' },
-    { name: 'Cadeira abdutora', target: '4×15–20', muscles: 'glúteo médio, abdutor',
-      description: 'Foco lateral do glúteo.', technique: 'Abre lentamente, aperta 1s no fim.',
-      mistakes: 'Carga excessiva.', tip: 'Inclinar tronco pra frente pega mais glúteo.' },
-    { name: 'Stiff (RDL)', target: '3×10–12', muscles: 'glúteo, isquio',
-      description: 'Posterior + glúteo combinados.', technique: 'Quadril pra trás, barra colada à perna.',
-      mistakes: 'Lombar arredondando.', tip: 'Sensação de "esticar" no isquio é o foco.' },
-    { name: 'Glute bridge unilateral', target: '3×10–12/perna', muscles: 'glúteo isolado',
-      description: 'Unilateral leve, ótimo finalizador.', technique: 'Pé apoiado no chão, outra perna elevada.',
-      mistakes: 'Não isolar glúteo (vira posterior).', tip: 'Pausa 2s no topo.' },
   ],
   'Full Body A': [
     { name: 'Agachamento livre', target: '4×6–10', muscles: 'perna inteira, core',
@@ -5983,7 +5877,7 @@ function saveState() {
 /** Popula dados de exemplo dos últimos 14 dias para tela "preenchida". */
 function seedSampleData() {
   const today = new Date();
-  const types = ['Upper A', 'Lower A', 'Upper B', 'Lower B', 'Push', 'Pull', 'Dança K-pop'];
+  const types = ['Upper A', 'Lower A', 'Upper B', 'Push', 'Pull', 'Caminhada'];
   // Inclui hoje (i=0) para o estado inicial não ficar "Ferro 0 XP".
   for (let i = 13; i >= 0; i--) {
     const d = new Date(today); d.setDate(d.getDate() - i);
@@ -7242,17 +7136,16 @@ function viewWorkout() {
     '🆓 Treino livre': 'detecta split sozinho',
     'Peito + Tríceps':  'pressão + isolamento', 'Costas + Bíceps':  'tração + isolamento',
     'Ombros':           'deltóide completo',     'Braços (bíceps + tríceps)': 'dia de braço',
-    'Pernas (quadríceps)': 'quad isolado',       'Pernas (posterior + glúteo)': 'cadeia posterior',
+    'Pernas (quadríceps)': 'quad isolado',
     'Upper A': 'peito + dorsais',                'Upper B': 'peito alto + ombros',
-    'Lower A': 'compostos pesados',              'Lower B': 'glúteo + acessórios',
+    'Lower A': 'compostos pesados',
     'Push':    'peito · ombro · tríceps',        'Pull':    'dorsais · bíceps',
-    'Core/Abs': 'núcleo de combate',             'Cardio HIIT': 'queima · resistência',
+    'Core/Abs': 'núcleo de combate',
     'Caminhada': 'LISS · passos · trilha',
-    'Calistenia': 'sem peso · só corpo',         'Dança K-pop': 'cardio + coordenação',
+    'Calistenia': 'sem peso · só corpo',
     'Costas + Ombros + Bíceps': 'V-taper · puxar tudo',
     'Peito + Ombros + Tríceps': 'empurrar completo',
     'Perna completo': 'quad · post · glúteo',
-    'Glúteo focus': 'foco no glúteo',
     'Full Body A':   'corpo todo · pesado',      'Full Body B': 'corpo todo · técnico',
     'Upper completo': 'tronco inteiro',
     'A · Peito + Tríceps + Abs':  'ABC split · dia A',
@@ -7264,13 +7157,13 @@ function viewWorkout() {
     '🆓 Treino livre': I.plus,
     'Peito + Tríceps': I.flame, 'Costas + Bíceps': I.dumb,
     'Ombros': I.fist,           'Braços (bíceps + tríceps)': I.fist,
-    'Pernas (quadríceps)': I.bolt, 'Pernas (posterior + glúteo)': I.bolt,
-    'Upper A': I.fist, 'Upper B': I.fist, 'Lower A': I.bolt, 'Lower B': I.bolt,
+    'Pernas (quadríceps)': I.bolt,
+    'Upper A': I.fist, 'Upper B': I.fist, 'Lower A': I.bolt,
     'Push': I.flame, 'Pull': I.dumb, 'Core/Abs': I.skull,
-    'Cardio HIIT': I.bolt, 'Caminhada': I.fighter,
-    'Calistenia': I.fighter, 'Dança K-pop': I.spark,
+    'Caminhada': I.fighter,
+    'Calistenia': I.fighter,
     'Costas + Ombros + Bíceps': I.dumb, 'Peito + Ombros + Tríceps': I.flame,
-    'Perna completo': I.bolt, 'Glúteo focus': I.bolt,
+    'Perna completo': I.bolt,
     'Full Body A': I.fighter, 'Full Body B': I.fighter,
     'Upper completo': I.fist,
     'A · Peito + Tríceps + Abs': I.flame,
@@ -7354,16 +7247,58 @@ function viewWorkout() {
       </div>
     </div>
 
-    <div class="kombat-divider">SELECIONE SEU ESTILO</div>
-    <div class="grid grid-cols-2 gap-2">
-      ${types.map(t => `
-        <button class="q-card p-3 text-left workout-start relative" data-type="${t}">
-          <div class="absolute top-2 right-2 w-5 h-5 text-blood/50">${icons[t] || I.dumb}</div>
-          <div class="font-kombat text-[10px] text-blood/70 dark:text-ember/70 tracking-widest uppercase">${(EXERCISE_LIBRARY[t]||[]).length} moves</div>
-          <div class="font-bold mt-0.5">${t}</div>
-          <div class="text-xs text-ink/50 dark:text-paper/50 mt-0.5 leading-tight">${subtitles[t] || ''}</div>
-        </button>`).join('')}
-    </div>
+    ${(() => {
+      // Quick start: último treino registrado
+      const last = state.workouts.slice().reverse()[0];
+      if (!last || !EXERCISE_LIBRARY[last.type]) return '';
+      const hero = WORKOUT_HERO_IMAGES[last.type];
+      return `
+      <div class="kombat-divider">REPETIR ÚLTIMO</div>
+      <button class="workout-quickstart workout-start" data-type="${last.type}">
+        ${hero ? `<div class="workout-quickstart-thumb" style="background-image:url('${hero}')"></div>` : ''}
+        <div class="workout-quickstart-text">
+          <div class="text-[10px] uppercase tracking-widest text-white/70 font-bold">↻ Quick start</div>
+          <div class="font-extrabold text-base text-white truncate">${last.type}</div>
+          <div class="text-[10px] text-white/60">${formatDateBR(last.date)} · ${last.exercises.length} exs</div>
+        </div>
+        <span class="text-white text-xl shrink-0 pr-3">→</span>
+      </button>`;
+    })()}
+
+    ${(() => {
+      // Agrupa tipos por categoria visual
+      const GROUPS = {
+        'ABC SPLIT': ['A · Peito + Tríceps + Abs', 'B · Costas + Ombros + Bíceps + Abs', 'C · Pernas completo + Abs'],
+        'UPPER / LOWER': ['Upper A', 'Upper B', 'Lower A', 'Push', 'Pull', 'Upper completo', 'Full Body A', 'Full Body B'],
+        'POR FOCO': ['Peito + Tríceps', 'Peito + Ombros + Tríceps', 'Costas + Bíceps', 'Costas + Ombros + Bíceps',
+                     'Ombros', 'Braços (bíceps + tríceps)', 'Pernas (quadríceps)', 'Perna completo', 'Core/Abs'],
+        'CARDIO / FUNCIONAL': ['Caminhada', 'Calistenia'],
+        'LIVRE': ['🆓 Treino livre', 'Outro'],
+      };
+      return Object.entries(GROUPS).map(([groupName, groupTypes]) => {
+        const valid = groupTypes.filter((t) => EXERCISE_LIBRARY[t] != null);
+        if (!valid.length) return '';
+        return `
+        <div class="kombat-divider">${groupName}</div>
+        <div class="grid grid-cols-2 gap-2">
+          ${valid.map(t => {
+            const hero = WORKOUT_HERO_IMAGES[t];
+            const moveCount = (EXERCISE_LIBRARY[t] || []).length;
+            return `
+            <button class="workout-pick workout-start" data-type="${t}">
+              ${hero
+                ? `<div class="workout-pick-thumb" style="background-image:url('${hero}'); background-position:${WORKOUT_HERO_POSITIONS[hero] || 'center top'}"></div>`
+                : `<div class="workout-pick-thumb workout-pick-thumb-placeholder">${icons[t] || I.dumb}</div>`}
+              <div class="workout-pick-text">
+                <div class="font-kombat text-[9px] text-blood/70 dark:text-ember/70 tracking-widest uppercase">${moveCount} moves</div>
+                <div class="font-bold text-sm leading-tight">${t}</div>
+                <div class="text-[10px] text-ink/50 dark:text-paper/50 leading-tight">${subtitles[t] || ''}</div>
+              </div>
+            </button>`;
+          }).join('')}
+        </div>`;
+      }).join('');
+    })()}
   </section>
 
   <section class="px-4 mt-6">
@@ -7494,7 +7429,7 @@ function suggestExercises(query) {
   // Coleta notas heurísticas: quando o usuário pede algo fora do escopo,
   // a app explica o que entendeu e orienta com princípios gerais.
   const notes = [];
-  if (isCrossfit) notes.push('💡 CrossFit: combine HIIT + agachamento livre + barra fixa + burpees. Pega o tile "Cardio HIIT" + "🆓 Treino livre" e adiciona movimentos compostos pesados.');
+  if (isCrossfit) notes.push('💡 CrossFit: combine HIIT + agachamento livre + barra fixa + burpees. Pega "🆓 Treino livre" e adiciona movimentos compostos pesados.');
   if (isMartial) notes.push('💡 Para arte marcial: alterne 8s explosão + 12s pausa (estilo tabata) com shadowboxing/saco. Combine com mobilidade de quadril e core anti-rotacional (woodchopper).');
   if (isFunctional) notes.push('💡 Funcional: movimentos multiarticulares (terra, agachamento, swing, carry). Use "🆓 Treino livre" e adicione: kettlebell swing 4×15, farmer carry 30m, goblet squat 3×12.');
   if (isSwim) notes.push('💡 Natação: cardio de baixo impacto. Como complemento, foca em mobilidade de ombro (face pull, band pull-aparts) e core anti-extensão.');
@@ -7516,10 +7451,10 @@ function suggestExercises(query) {
   // Suplemento de atividades para casa/mobilidade (não estão na library)
   const HOME_EXTRAS = [
     { name: 'Caminhada 30 min',          muscles: 'cardio, panturrilha', _type: 'Cardio' },
-    { name: 'Pular corda 3x60s',         muscles: 'cardio, panturrilha', _type: 'Cardio HIIT' },
+    { name: 'Pular corda 3x60s',         muscles: 'cardio, panturrilha', _type: 'Caminhada' },
     { name: 'Burpees 3x10',              muscles: 'corpo todo, cardio',  _type: 'Calistenia' },
     { name: 'Mountain climber 3x30s',    muscles: 'core, cardio',        _type: 'Calistenia' },
-    { name: 'Polichinelo 3x40s',         muscles: 'cardio, panturrilha', _type: 'Cardio HIIT' },
+    { name: 'Polichinelo 3x40s',         muscles: 'cardio, panturrilha', _type: 'Caminhada' },
     { name: 'Bird dog 3x10/lado',        muscles: 'core, estabilidade',  _type: 'Mobilidade' },
     { name: 'Dead bug 3x10/lado',        muscles: 'core, oblíquos',      _type: 'Mobilidade' },
     { name: 'Cossack squat 3x8/lado',    muscles: 'quadríceps, mobilidade quadril', _type: 'Mobilidade' },
@@ -7538,13 +7473,13 @@ function suggestExercises(query) {
     { name: 'Flexão diamante 3x8',       muscles: 'peito, tríceps',      _type: 'Calistenia' },
     { name: 'Pike push-up 3x8',          muscles: 'ombro, tríceps',      _type: 'Calistenia' },
     { name: 'Inverted row na mesa 3x10', muscles: 'dorsal, bíceps',      _type: 'Calistenia' },
-    { name: 'Escalador alpinista 3x30s', muscles: 'cardio, core',        _type: 'Cardio HIIT' },
+    { name: 'Escalador alpinista 3x30s', muscles: 'cardio, core',        _type: 'Caminhada' },
     { name: 'Step-up no banco 3x10/perna', muscles: 'quadríceps, glúteo', _type: 'Calistenia' },
-    { name: 'High knees 3x30s',          muscles: 'cardio, quadríceps',  _type: 'Cardio HIIT' },
-    { name: 'Box jump (cama/banco) 3x8', muscles: 'cardio, quadríceps',  _type: 'Cardio HIIT' },
-    { name: 'Sprint na escada 3x',       muscles: 'cardio, glúteo',      _type: 'Cardio HIIT' },
-    { name: 'Pular corda 5 min',         muscles: 'cardio, panturrilha', _type: 'Cardio HIIT' },
-    { name: 'Cardio dança K-pop 20 min', muscles: 'cardio, coordenação', _type: 'Dança K-pop' },
+    { name: 'High knees 3x30s',          muscles: 'cardio, quadríceps',  _type: 'Caminhada' },
+    { name: 'Box jump (cama/banco) 3x8', muscles: 'cardio, quadríceps',  _type: 'Caminhada' },
+    { name: 'Sprint na escada 3x',       muscles: 'cardio, glúteo',      _type: 'Caminhada' },
+    { name: 'Pular corda 5 min',         muscles: 'cardio, panturrilha', _type: 'Caminhada' },
+    { name: 'Cardio dança K-pop 20 min', muscles: 'cardio, coordenação', _type: 'Caminhada' },
     { name: 'Cardio dança hip-hop 20 min', muscles: 'cardio, coordenação', _type: 'Dança' },
   ];
   for (const e of HOME_EXTRAS) all.push(e);
@@ -7564,12 +7499,12 @@ function suggestExercises(query) {
     }
     if (isCalistenia && (e._type === 'Calistenia' || /flex[ãa]o|prancha|burpee|jumping|polichinelo|wall|glute bridge|superman|bird|dead bug|pike|squat/i.test(name))) s += 2;
     if (isCalistenia && /smith|máquina|maquina|cabo|leg press|halter pesado/i.test(name)) s -= 2;
-    if (isShort  && (e._type === 'Cardio HIIT' || e._type === 'Core/Abs' || e._type === 'Mobilidade')) s += 1;
+    if (isShort  && (e._type === 'Caminhada' || e._type === 'Core/Abs' || e._type === 'Mobilidade')) s += 1;
     if (isLong   && /agachamento|terra|stiff|supino|deadlift/i.test(name)) s += 0.6;
     if (isLight  && (e._type === 'Mobilidade' || e._type === 'Yoga' || /alongamento|caminhada|bird|dead bug|wall|cat-cow|cobra|saudação|stretch/i.test(name))) s += 1.2;
     if (isHeavy  && /agachamento|levantamento|stiff|supino|barra|terra|deadlift|squat livre/i.test(name)) s += 1;
     if (isMobility && (e._type === 'Mobilidade' || e._type === 'Yoga' || /mobilidade|alonga|stretch|yoga/i.test(name + ' ' + muscles))) s += 1.5;
-    if (isDance && (e._type === 'Dança K-pop' || e._type === 'Dança' || /dan[çc]a|coreo/i.test(name))) s += 2;
+    if (isDance && (/dan[çc]a|coreo/i.test(name))) s += 2;
     return { e, s };
   }).filter((x) => x.s > 0);
   scored.sort((a, b) => b.s - a.s);
@@ -7625,23 +7560,18 @@ const WORKOUT_HERO_IMAGES = {
   'Costas + Bíceps':            'icons/workouts/dorsal.webp',
   'Costas + Ombros + Bíceps':   'icons/workouts/dorsal.webp',
   'Pernas (quadríceps)':        'icons/workouts/pernas.webp',
-  'Pernas (posterior + glúteo)':'icons/workouts/gluteo.png',
   'Perna completo':             'icons/workouts/pernas.webp',
-  'Glúteo focus':               'icons/workouts/gluteo.png',
   'Ombros':                     'icons/workouts/ombros.webp',
   'Braços (bíceps + tríceps)':  'icons/workouts/bracos.webp',
   'Upper A':                    'icons/workouts/peito.webp',
   'Upper B':                    'icons/workouts/ombros.webp',
   'Lower A':                    'icons/workouts/pernas.webp',
-  'Lower B':                    'icons/workouts/gluteo.png',
   'Push':                       'icons/workouts/peito.webp',
   'Pull':                       'icons/workouts/dorsal.webp',
   'Upper completo':             'icons/workouts/peito.webp',
   'Core/Abs':                   'icons/workouts/core.webp',
-  'Cardio HIIT':                'icons/workouts/cardio.png',
   'Caminhada':                  'icons/workouts/caminhada.webp',
   'Calistenia':                 'icons/workouts/calistenia.webp',
-  'Dança K-pop':                'icons/workouts/danca.png',
   'Full Body A':                'icons/workouts/peito.webp',
   'Full Body B':                'icons/workouts/dorsal.webp',
 };
@@ -7685,8 +7615,6 @@ function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
     if (/prancha|plank|hollow|l-sit|isomet|wall sit|dead bug/.test(n)) return 'core-static';
     // Por tipo de treino como fallback
     if (type === 'Caminhada')   return 'walking';
-    if (type === 'Cardio HIIT') return 'hiit';
-    if (type === 'Dança K-pop') return 'dance';
     // Sub-categorias de força — só pra ajustar opções, todas usam Reps/kg
     if (/supino|press|desenvolv|crucifixo|fly|dip|mergulho|flexão|push|tríceps/.test(n))    return 'push';
     if (/remada|pulldown|pull[\- ]up|barra fixa|chin[\- ]up|terra|deadlift|bíceps/.test(n)) return 'pull';
@@ -8147,7 +8075,7 @@ function detectSplit(exercises) {
   } else if (has('quad') && counts.post === 0) {
     type = 'Pernas (quadríceps)';
   } else if (has('post') && !has('quad')) {
-    type = 'Pernas (posterior + glúteo)';
+    type = 'Perna completo';
   } else if (has('peito') && has('dorsal')) {
     type = 'Upper A';
   } else if (has('quad') && has('post')) {
@@ -8155,7 +8083,7 @@ function detectSplit(exercises) {
   } else if (has('core') && total === counts.core) {
     type = 'Core/Abs';
   } else if (has('cardio') && total === counts.cardio) {
-    type = 'Cardio HIIT';
+    type = 'Caminhada';
   } else if (has('peito')) {
     type = 'Push'; confidence = 0.5;
   } else if (has('dorsal')) {
@@ -10455,11 +10383,11 @@ function parsePastedSummary(text) {
 /** Mapeia esporte do TCX → tipo de treino do QUEST. */
 function tcxSportToQuestType(sport) {
   const s = (sport || '').toLowerCase();
-  if (/run/.test(s) || /corrida/.test(s)) return 'Cardio HIIT';
-  if (/bik/.test(s) || /cycl/.test(s))    return 'Cardio HIIT';
+  if (/run/.test(s) || /corrida/.test(s)) return 'Caminhada';
+  if (/bik/.test(s) || /cycl/.test(s))    return 'Caminhada';
   if (/walk/.test(s) || /walking/.test(s) || /caminh/.test(s)) return 'Caminhada';
-  if (/swim/.test(s) || /natac/.test(s) || /natação/.test(s))  return 'Cardio HIIT';
-  return 'Cardio HIIT';
+  if (/swim/.test(s) || /natac/.test(s) || /natação/.test(s))  return 'Caminhada';
+  return 'Caminhada';
 }
 
 // ===== Dicas pra subir cada atributo =====
@@ -10479,7 +10407,7 @@ const ATTR_LEVEL_UP_TIPS = {
     title: 'Como subir Resistência',
     subtitle: 'Cardio, caminhada, passos e dança sobem esse atributo.',
     tips: [
-      { icon: '🏃', text: 'Treino tipo Cardio HIIT / Caminhada / Dança K-pop salvo = XP nesse atributo.' },
+      { icon: '🏃', text: 'Treino tipo Caminhada salvo (com cardio) = XP nesse atributo.' },
       { icon: '⌚', text: 'Importar do Polar/Garmin/Strava (botão no header de Treino) conta cardio.' },
       { icon: '👣', text: 'Bater 8.000 passos no dia (FINISH IT!) = +1 XP + atributo.' },
       { icon: '🎯', text: 'Quests com tag "cardio" (q11, q57, q93, q94, q95, q96, q97).' },
