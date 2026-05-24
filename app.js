@@ -6856,37 +6856,7 @@ function viewDashboard() {
     </div>
   </section>
 
-  <section class="px-4 mt-3">
-    ${(() => {
-      const idx = Math.floor(new Date(todayISO()).getTime() / 86400000) % ATTRIBUTES.length;
-      const a = ATTRIBUTES[idx];
-      const xp = attrs[a.key] || 0;
-      const info = attrInfo(xp);
-      const showKo = theme.showKombatant;
-      const tier = attrTierFor(a.key, info.level);
-      return `
-      <div class="q-card p-3 flex items-center gap-3">
-        <div class="attr-chip shrink-0" style="--accent:${a.color}; width:56px; height:56px; font-size:22px;" data-fallback="${a.icon}">
-          ${showKo ? `<span class="attr-ko">${a.ko || a.icon}</span>` : ''}
-        </div>
-        <div class="flex-1 min-w-0">
-          <div class="text-[10px] uppercase tracking-widest text-ink/45 dark:text-paper/45">Atributo do dia · ${a.name}</div>
-          <div class="font-extrabold text-base" style="color:${a.color}">${tier.current}${showKo && a.ko ? ` · ${a.ko}` : ''}</div>
-          <div class="text-[10px] text-ink/60 dark:text-paper/60 leading-tight mt-0.5">${a.desc}</div>
-          <div class="xp-track mt-1" style="height:3px"><div class="xp-fill" style="width:${info.pctToNext}%; background:${a.color}"></div></div>
-          <div class="text-[9px] text-ink/45 dark:text-paper/45 mt-0.5">
-            lvl ${info.level} · ${info.intoLevel.toFixed(1)}/${info.nextCost.toFixed(1)} XP
-            ${tier.next ? ` · próximo tier: <b>${tier.next}</b> (lvl ${tier.nextMin})` : ''}
-          </div>
-        </div>
-        <div class="text-right">
-          <div class="text-[10px] text-ink/45 dark:text-paper/45">lvl</div>
-          <div class="text-xl font-extrabold" style="color:${a.color}">${info.level}</div>
-        </div>
-      </div>`;
-    })()}
-  </section>
-
+  <!-- (Atributo do dia removido — grid de Atributos acima já mostra tudo) -->
   <!-- (Meta do dia removida — aba Metas também desativada) -->
 
   <!-- (Notícias de vôlei removidas da home a pedido do usuário) -->
@@ -6910,24 +6880,7 @@ function viewDashboard() {
     </section>`;
   })()}
 
-  ${(() => {
-    const m = mascotState();
-    const formLabel = { magro: 'magrinho', musculoso: 'musculoso', gordo: 'fofinho', neutro: 'tranquilo' };
-    const formColor = { magro: '#7BB8FF', musculoso: '#A8E6CF', gordo: '#FFB7C5', neutro: '#B7B5FF' };
-    return `
-    <section class="px-4 mt-3">
-      <div class="q-card p-3 flex items-center gap-3 mascot-card" style="border-left:3px solid ${formColor[m.formDay]}">
-        <div class="mascot-wrap" style="width:72px; height:72px">${mascotSvg(m.themeKey, m.formDay)}</div>
-        <div class="flex-1 min-w-0">
-          <div class="flex items-center gap-2">
-            <div class="text-[10px] uppercase tracking-widest text-ink/45 dark:text-paper/45">Mascote do dia · ${m.species}</div>
-          </div>
-          <div class="font-extrabold text-base" style="color:${formColor[m.formDay]}">${m.name} · ${formLabel[m.formDay]} ${m.emoji}</div>
-          <div class="text-[11px] text-ink/60 dark:text-paper/60 leading-tight mt-0.5">${m.adviceDay}</div>
-        </div>
-      </div>
-    </section>`;
-  })()}
+  <!-- (Mascote do dia removido) -->
 
   <div class="px-4"><div class="section-divider">⚔ 일일 미션 · DAILY MISSIONS ⚔</div></div>
   <section class="px-4">
@@ -7001,9 +6954,6 @@ function viewDashboard() {
           </button>
         `).join('')}
       </div>` : '';
-    const mw = mascotState();
-    const formLabel = { magro: 'magrinho', musculoso: 'musculoso', gordo: 'fofinho', neutro: 'tranquilo' };
-    const formColor = { magro: '#7BB8FF', musculoso: '#A8E6CF', gordo: '#FFB7C5', neutro: '#B7B5FF' };
     return `
     <section class="px-4 mt-5">
       <div class="q-card p-4">
@@ -7024,15 +6974,6 @@ function viewDashboard() {
           <button id="wq-toggle" class="text-xs text-lavender font-semibold">
             ${wq.completed ? 'desmarcar' : (target > 1 ? 'marcar tudo como completa' : 'marcar como completa')}
           </button>
-        </div>
-        <!-- Mascote semanal -->
-        <div class="mt-3 pt-3 border-t border-ink/5 dark:border-paper/5 flex items-center gap-3">
-          <div class="mascot-wrap" style="width:56px; height:56px">${mascotSvg(mw.themeKey, mw.formWeek)}</div>
-          <div class="flex-1 min-w-0">
-            <div class="text-[10px] uppercase tracking-widest text-ink/45 dark:text-paper/45">Mascote · semana</div>
-            <div class="font-bold text-sm" style="color:${formColor[mw.formWeek]}">${mw.name} ${formLabel[mw.formWeek]} ${mw.emoji}</div>
-            <div class="text-[10px] text-ink/55 dark:text-paper/55 leading-tight">${mw.adviceWeek}</div>
-          </div>
         </div>
       </div>
     </section>`;
@@ -7070,17 +7011,16 @@ function viewDashboard() {
 
   <section class="px-4 mt-6">
     <div class="kombat-divider">${theme.labels?.arsenal || '⚔ ARSENAL ⚔'}</div>
+    <!-- Reduzido: removidos "Biblioteca" (já tem no header de Treino),
+         "Leitura" (já é tab), "Insights" (movido pra Config) e "Desafios"
+         (raramente usado). Mantém só atalhos únicos. -->
     <div class="grid grid-cols-2 gap-3">
-      ${theme.showKombatant ? quickTile('choreo', 'Dança K-pop', I.spark, 'modal') : ''}
-      ${quickTile('challenge',  'Desafios',    I.skull,  'modal')}
-      ${quickTile('compete',    'Competição',  I.trophy, 'modal')}
-      ${quickTile('library',    'Biblioteca',  I.brain,  'modal')}
-      ${quickTile('sleep',      'Sono',        I.moon,   'modal')}
-      ${quickTile('reading',    'Leitura',     I.book,   'modal')}
-      ${quickTile('rewards',    'Recompensas', I.gift,   'modal')}
-      ${quickTile('insights',   'Insights',    I.spark)}
+      ${quickTile('choreo',       'Dança K-pop', I.spark, 'modal')}
+      ${quickTile('compete',      'Competição',  I.trophy, 'modal')}
+      ${quickTile('sleep',        'Sono',        I.moon,   'modal')}
+      ${quickTile('rewards',      'Recompensas', I.gift,   'modal')}
       ${quickTile('achievements', `Conquistas · ${unlockedCount}`, I.award, 'modal')}
-      ${quickTile('config',     'Config',      I.cog)}
+      ${quickTile('config',       'Config',      I.cog)}
     </div>
   </section>
 
