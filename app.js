@@ -4557,6 +4557,14 @@ const CHARACTERS = [
     buff: 'sabedoria',
     // Cor-assinatura (sakura/lavanda) — pinta o tema do app quando ativo.
     accent: '#FFB7C5', accentDeep: '#C76A85', accentGlow: '#FFD0DD',
+    lore: 'Membro fundador do TXT, ídolo K-pop conhecido pela versatilidade entre dança, vocal e rap. "Blue Hour" é o momento exato entre o dia e a noite — quando ele é mais perigoso.',
+    age: 26, origin: 'Seul, Coreia do Sul', style: 'Idol · Multi-talent',
+    passives: [
+      { icon: '🧠', text: '+10% XP em Leitura' },
+      { icon: '💃', text: '+5% XP em Dança K-pop' },
+    ],
+    signature: { name: '이클립스 · Eclipse', icon: '🌒',
+      desc: 'Quests de foco/estudo dão XP dobrado entre 18h e 21h (crepúsculo).' },
     workouts: {
       'icons/workouts/peito.webp':      'icons/characters/yeonjun/peito.webp',
       'icons/workouts/dorsal.webp':     'icons/characters/yeonjun/costas.webp',
@@ -4584,6 +4592,14 @@ const CHARACTERS = [
     desc: 'Astro de Hollywood com soco de cinema. Vive de carisma e timing.',
     buff: 'vitalidade',
     accent: '#7BFFB0', accentDeep: '#2EA060', accentGlow: '#A0FFC8',
+    lore: 'Estrela de Hollywood com timing impecável. Soco de cinema, fala lenta, ego do tamanho da Walk of Fame. Sua próxima cena é sempre a melhor.',
+    age: 32, origin: 'Los Angeles, EUA', style: 'Cinema · Showtime',
+    passives: [
+      { icon: '🏆', text: '+10% XP em Recompensas e Lazer' },
+      { icon: '🦵', text: '+5% XP em treinos de Pernas' },
+    ],
+    signature: { name: 'And... ACTION!', icon: '🎬',
+      desc: '1×/dia, a próxima quest concluída rende XP em dobro. Cena perfeita.' },
     workouts: {
       'icons/workouts/peito.webp':      'icons/characters/cagemorgan/peito.webp',
       'icons/workouts/dorsal.webp':     'icons/characters/cagemorgan/costas.webp',
@@ -4611,6 +4627,14 @@ const CHARACTERS = [
     desc: 'Chef de combate. Mãos pra cozinhar, pernas pra lutar. Técnica de fogo.',
     buff: 'disciplina',
     accent: '#FFB347', accentDeep: '#B85C00', accentGlow: '#FFD089',
+    lore: 'Cozinheiro dos Chapéus de Palha. Jurou nunca usar as mãos numa luta — elas existem só pra cozinhar. As pernas viraram lâminas de fogo. Sonho: encontrar o All Blue.',
+    age: 21, origin: 'East Blue (Restaurante Baratie)', style: 'Black Leg · Chef',
+    passives: [
+      { icon: '🍳', text: '+15% XP em Nutrição (proteína na meta)' },
+      { icon: '🦵', text: '+10% XP em treinos de Pernas' },
+    ],
+    signature: { name: 'Diable Jambe · 悪魔風脚', icon: '🔥',
+      desc: 'Treinos de perna em fogo: queimam +25% XP. Sempre ativo. A perna acende.' },
     workouts: {
       'icons/workouts/peito.webp':      'icons/characters/sanji/peito.webp',
       'icons/workouts/dorsal.webp':     'icons/characters/sanji/costas.webp',
@@ -4638,6 +4662,14 @@ const CHARACTERS = [
     desc: 'Muay thai bruto, vento e fúria. Pura agressão e cardio infinito.',
     buff: 'forca',
     accent: '#FF6B3D', accentDeep: '#8C2A0E', accentGlow: '#FF9D6F',
+    lore: 'Lutador de Muay Thai vindo de Tóquio. Adolescência cheia de brigas, treino na Tailândia, headband sempre vermelho. Coração de furacão.',
+    age: 23, origin: 'Tóquio, Japão (treino na Tailândia)', style: 'Muay Thai · Hurricane',
+    passives: [
+      { icon: '🏃', text: '+15% XP em Cardio e Caminhada' },
+      { icon: '💥', text: '+10% XP em treinos compostos pesados' },
+    ],
+    signature: { name: 'Hurricane Upper · ハリケーンアッパー', icon: '🌀',
+      desc: 'HIIT e Calistenia rendem +30% XP. O furacão não para de girar.' },
     workouts: {
       'icons/workouts/peito.webp':      'icons/characters/joehigashi/peito.webp',
       'icons/workouts/dorsal.webp':     'icons/characters/joehigashi/costas.webp',
@@ -4665,6 +4697,14 @@ const CHARACTERS = [
     desc: 'Chama azul do palco. Rap, ritmo e energia que não apaga.',
     buff: 'resistencia',
     accent: '#7BB8FF', accentDeep: '#2A6BCC', accentGlow: '#A8D0FF',
+    lore: 'Rapper-líder de NCT, apelidado de "Mark the Workaholic". Multilíngue, multi-sub-unit, nunca dorme. A "chama azul" é a mais quente de todas — silenciosa, focada, inesgotável.',
+    age: 26, origin: 'Toronto/Vancouver, Canadá (base em Seul)', style: 'Rapper · Workhorse',
+    passives: [
+      { icon: '🔥', text: '+10% XP em manter Streaks ativas' },
+      { icon: '💪', text: '+5% XP em qualquer treino realizado' },
+    ],
+    signature: { name: 'Blue Flame · 푸른 불꽃', icon: '🔵',
+      desc: 'A cada 3 dias seguidos de quest cumprida, ganha +10% XP cumulativo (até +30%).' },
     // Hero images dedicadas (mapeia defaultImg → versão do personagem).
     // Quando esse personagem está ativo, esses overrides assumem nos heros
     // de treino. Workouts sem match direto caem em fallback temático.
@@ -6649,11 +6689,12 @@ function viewDashboard() {
         <div class="elo-row">
           <!-- ESQUERDA: portrait do lutador OU emblema do rank (fallback) -->
           ${hasFighter ? `
-          <div class="elo-portrait" style="--rank-color:${r.color}" title="${ch.name} · ${ch.title}">
+          <button class="elo-portrait" style="--rank-color:${r.color}" title="Abrir ficha · ${ch.name} · ${ch.title}" data-action="open-char-sheet" data-id="${ch.id}">
             <img src="${ch.img}" alt="${ch.name}" loading="lazy" />
             <div class="elo-portrait-slot">${ch.slot}</div>
             <div class="elo-portrait-rank">${rankInitial}${rankDiv ? `<sub>${rankDiv}</sub>` : ''}</div>
-          </div>` : `
+            <div class="elo-portrait-hint">FICHA</div>
+          </button>` : `
           <div class="rank-badge text-paper shrink-0" style="background:${r.color}; box-shadow: 0 4px 18px ${r.color}55; width:84px; height:84px; border-radius:16px; font-size:1.25rem;">
             ${rankInitial}${rankDiv ? `<sub style="font-size:.6em; opacity:.85; margin-left:1px">${rankDiv}</sub>` : ''}
           </div>`}
@@ -11778,6 +11819,14 @@ function attachHandlers() {
     };
   });
 
+  // Portrait do lutador no card do Elo → abre ficha do personagem
+  document.querySelectorAll('[data-action="open-char-sheet"]').forEach((btn) => {
+    btn.onclick = () => {
+      vibrate(8);
+      modalCharacterSheet(btn.dataset.id);
+    };
+  });
+
   document.getElementById('toggle-dark')?.addEventListener('click', () => {
     state.user.darkMode = !state.user.darkMode;
     document.documentElement.classList.toggle('dark', state.user.darkMode);
@@ -12972,6 +13021,77 @@ function applyTheme() {
 /** Helper — devolve o personagem ativo (ou null) sem replicar a busca em todo lugar. */
 function activeCharacter() {
   return CHARACTERS.find((c) => c.id === state?.user?.activeCharacter) || null;
+}
+
+/** Modal de ficha do personagem (acionado tocando no portrait do Elo). */
+function modalCharacterSheet(charId) {
+  const ch = CHARACTERS.find((c) => c.id === charId) || activeCharacter();
+  if (!ch || !ch.unlocked) return;
+  const stats = ch.stats || {};
+  const statRows = Object.entries(stats).map(([k, v]) => `
+    <div class="cs-stat">
+      <span class="cs-stat-k">${k}</span>
+      <span class="cs-stat-bar"><span style="width:${v}%; background:linear-gradient(90deg, var(--char-accent, #D6A93E), var(--char-accent-deep, #B8242E));"></span></span>
+      <span class="cs-stat-v">${v}</span>
+    </div>
+  `).join('');
+  const passives = (ch.passives || []).map((p) => `
+    <li class="char-passive">
+      <span class="char-passive-icon">${p.icon}</span>
+      <span class="char-passive-text">${p.text}</span>
+    </li>
+  `).join('');
+  const sig = ch.signature;
+  const focusAttr = ATTRIBUTES.find((a) => a.key === ch.buff);
+
+  openModal(`
+    <div class="char-sheet">
+      <div class="char-sheet-hero" style="background-image:url('${ch.img}')">
+        <button class="workout-hero-btn workout-hero-btn-right modal-close">✕</button>
+        <div class="char-sheet-hero-grad">
+          <div class="char-sheet-slot">${ch.slot} · PLAYER</div>
+          <h2 class="char-sheet-name">${ch.name}</h2>
+          <div class="char-sheet-title">${ch.title}</div>
+        </div>
+      </div>
+
+      <div class="char-sheet-body">
+        <p class="char-sheet-lore">${ch.lore || ch.desc || ''}</p>
+
+        <div class="char-sheet-meta">
+          ${ch.age ? `<div><span>Idade</span><b>${ch.age}</b></div>` : ''}
+          ${ch.origin ? `<div><span>Origem</span><b>${ch.origin}</b></div>` : ''}
+          ${ch.style ? `<div><span>Estilo</span><b>${ch.style}</b></div>` : ''}
+          ${focusAttr ? `<div><span>Atributo-foco</span><b>${focusAttr.icon} ${focusAttr.name}</b></div>` : ''}
+        </div>
+
+        <div class="char-sheet-section">
+          <div class="char-sheet-section-title">⚔ STATS BASE</div>
+          <div class="cs-stats">${statRows}</div>
+        </div>
+
+        ${passives ? `
+        <div class="char-sheet-section">
+          <div class="char-sheet-section-title">✨ PASSIVOS</div>
+          <ul class="char-passives">${passives}</ul>
+        </div>` : ''}
+
+        ${sig ? `
+        <div class="char-sheet-section char-sheet-signature">
+          <div class="char-sheet-section-title">⚡ HABILIDADE ESPECIAL</div>
+          <div class="char-sig">
+            <div class="char-sig-icon">${sig.icon}</div>
+            <div class="char-sig-body">
+              <div class="char-sig-name">${sig.name}</div>
+              <div class="char-sig-desc">${sig.desc}</div>
+            </div>
+          </div>
+        </div>` : ''}
+
+        <button class="q-btn q-btn-ghost w-full mt-2 modal-close text-sm">FECHAR</button>
+      </div>
+    </div>
+  `);
 }
 
 /** Pinta o tema do personagem ativo via CSS variables — sem mexer na base.
