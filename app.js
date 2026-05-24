@@ -4555,6 +4555,8 @@ const CHARACTERS = [
     stats: { ATAQUE: 50, VELOCIDADE: 85, DEFESA: 45, TÉCNICA: 80, CARISMA: 95 },
     desc: 'Idol guerreiro do entardecer. Foco em técnica e carisma.',
     buff: 'sabedoria',
+    // Cor-assinatura (sakura/lavanda) — pinta o tema do app quando ativo.
+    accent: '#FFB7C5', accentDeep: '#C76A85', accentGlow: '#FFD0DD',
     workouts: {
       'icons/workouts/peito.webp':      'icons/characters/yeonjun/peito.webp',
       'icons/workouts/dorsal.webp':     'icons/characters/yeonjun/costas.webp',
@@ -4580,22 +4582,26 @@ const CHARACTERS = [
     img: 'icons/characters/cagemorgan.webp', unlocked: true,
     stats: { ATAQUE: 75, VELOCIDADE: 70, DEFESA: 70, TÉCNICA: 70, CARISMA: 98 },
     desc: 'Astro de Hollywood com soco de cinema. Vive de carisma e timing.',
-    buff: 'vitalidade' },
+    buff: 'vitalidade',
+    accent: '#7BFFB0', accentDeep: '#2EA060', accentGlow: '#A0FFC8' },
   { id: 'sanji', slot: '3P', name: 'SANJI', title: 'THE BLACK LEG',
     img: 'icons/characters/sanji.webp', unlocked: true,
     stats: { ATAQUE: 70, VELOCIDADE: 80, DEFESA: 55, TÉCNICA: 90, CARISMA: 92 },
     desc: 'Chef de combate. Mãos pra cozinhar, pernas pra lutar. Técnica de fogo.',
-    buff: 'disciplina' },
+    buff: 'disciplina',
+    accent: '#FFB347', accentDeep: '#B85C00', accentGlow: '#FFD089' },
   { id: 'joehigashi', slot: '4P', name: 'JOE HIGASHI', title: 'THE HURRICANE',
     img: 'icons/characters/joehigashi.webp', unlocked: true,
     stats: { ATAQUE: 85, VELOCIDADE: 90, DEFESA: 60, TÉCNICA: 75, CARISMA: 72 },
     desc: 'Muay thai bruto, vento e fúria. Pura agressão e cardio infinito.',
-    buff: 'forca' },
+    buff: 'forca',
+    accent: '#FF6B3D', accentDeep: '#8C2A0E', accentGlow: '#FF9D6F' },
   { id: 'marklee', slot: '5P', name: 'MARK LEE', title: 'THE BLUE FLAME',
     img: 'icons/characters/marklee.webp', unlocked: true,
     stats: { ATAQUE: 55, VELOCIDADE: 78, DEFESA: 52, TÉCNICA: 82, CARISMA: 96 },
     desc: 'Chama azul do palco. Rap, ritmo e energia que não apaga.',
     buff: 'resistencia',
+    accent: '#7BB8FF', accentDeep: '#2A6BCC', accentGlow: '#A8D0FF',
     // Hero images dedicadas (mapeia defaultImg → versão do personagem).
     // Quando esse personagem está ativo, esses overrides assumem nos heros
     // de treino. Workouts sem match direto caem em fallback temático.
@@ -6568,24 +6574,51 @@ function viewDashboard() {
   })()}
 
   <section class="px-4 mt-2">
-    <div class="q-card p-3 flex items-center gap-3 ${baseRankIndex(r.key) >= 4 ? 'rank-elite' : ''} relative overflow-hidden" style="background: linear-gradient(135deg, ${r.color}11 0%, transparent 60%)">
-      <div class="rank-badge text-paper shrink-0" style="background:${r.color}; box-shadow: 0 4px 18px ${r.color}55; width:54px; height:54px; border-radius:14px; font-size:1rem;">
-        ${r.name.replace(/\s.*/, '').slice(0,1).toUpperCase()}${r.div ? `<sub style="font-size:.6em; opacity:.85; margin-left:1px">${r.div}</sub>` : ''}
-      </div>
-      <div class="flex-1 min-w-0">
-        <div class="flex items-baseline justify-between gap-2 min-w-0">
-          <div class="font-kombat text-base uppercase tracking-wider truncate min-w-0" style="color:${r.color}">${r.name}</div>
-          <div class="text-[9px] text-ink/50 dark:text-paper/50 whitespace-nowrap shrink-0">
-            ${next ? `→ <b>${next.threshold - rxp}</b> XP` : '👑 TOPO'}
+    <div class="q-card p-3 elo-card ${baseRankIndex(r.key) >= 4 ? 'rank-elite' : ''} relative overflow-hidden" style="background: linear-gradient(135deg, ${r.color}11 0%, transparent 60%), linear-gradient(180deg, var(--char-accent-soft, transparent) 0%, transparent 70%)">
+      ${(() => {
+        const ch = activeCharacter();
+        if (!ch || !ch.img) return '';
+        // Avatar do lutador no canto direito — assina o card do Elo
+        return `
+        <div class="elo-fighter" title="${ch.name} · ${ch.title}">
+          <img src="${ch.img}" alt="${ch.name}" loading="lazy" />
+          <div class="elo-fighter-slot">${ch.slot}</div>
+        </div>`;
+      })()}
+      <div class="flex items-center gap-3">
+        <div class="rank-badge text-paper shrink-0" style="background:${r.color}; box-shadow: 0 4px 18px ${r.color}55; width:54px; height:54px; border-radius:14px; font-size:1rem;">
+          ${r.name.replace(/\s.*/, '').slice(0,1).toUpperCase()}${r.div ? `<sub style="font-size:.6em; opacity:.85; margin-left:1px">${r.div}</sub>` : ''}
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-baseline justify-between gap-2 min-w-0">
+            <div class="font-kombat text-base uppercase tracking-wider truncate min-w-0" style="color:${r.color}">${r.name}</div>
+            <div class="text-[9px] text-ink/50 dark:text-paper/50 whitespace-nowrap shrink-0">
+              ${next ? `→ <b>${next.threshold - rxp}</b> XP` : '👑 TOPO'}
+            </div>
+          </div>
+          <div class="xp-track is-kombat mt-1.5"><div class="xp-fill" style="width:${progress}%"></div></div>
+          <div class="flex justify-between text-[10px] mt-1 text-ink/55 dark:text-paper/55 gap-1">
+            <span>Total: <b>${rxp}</b></span>
+            <span>Sem: <b>${wxp}</b></span>
+            <span>Hoje: <b>${dayXP}/${DAILY_XP_CAP}</b></span>
           </div>
         </div>
-        <div class="xp-track is-kombat mt-1.5"><div class="xp-fill" style="width:${progress}%"></div></div>
-        <div class="flex justify-between text-[10px] mt-1 text-ink/55 dark:text-paper/55 gap-1">
-          <span>Total: <b>${rxp}</b></span>
-          <span>Sem: <b>${wxp}</b></span>
-          <span>Hoje: <b>${dayXP}/${DAILY_XP_CAP}</b></span>
-        </div>
       </div>
+      ${(() => {
+        const ch = activeCharacter();
+        if (!ch || !ch.name || ch.name === '???') return '';
+        // Linha de "evolução do lutador" — nome, título e tagline curta da carreira
+        // Mostra que o personagem está evoluindo junto com seu rank.
+        return `
+        <div class="elo-fighter-track">
+          <div class="elo-fighter-name">${ch.name} <span class="elo-fighter-title">· ${ch.title}</span></div>
+          <div class="elo-fighter-progress">
+            <span>Jornada: <b>${rxp} XP</b></span>
+            <span>·</span>
+            <span>Foco: <b>${(ATTRIBUTES.find(a => a.key === ch.buff)?.name) || '—'}</b></span>
+          </div>
+        </div>`;
+      })()}
     </div>
   </section>
 
@@ -10887,11 +10920,21 @@ function modalChoreo() {
   const tiktokTag   = `https://www.tiktok.com/tag/${encodeURIComponent((c.artist + c.song).replace(/[^a-z0-9]/gi, ''))}`;
   const tiktokSearch = `https://www.tiktok.com/search?q=${encodeURIComponent(c.artist + ' ' + c.song + ' dance')}`;
 
+  // Hero do modal de dança: usa a imagem de caminhada/pose do personagem ativo
+  // (cabe perfeito porque caminhada.webp já é o lutador em pé, vestido moderno).
+  // Cai pra danca.webp se não tiver personagem ou imagem específica.
+  const _ch = activeCharacter();
+  const danceHero =
+    _ch?.workouts?.['icons/workouts/caminhada.webp'] ||
+    _ch?.img ||
+    'icons/lounge/danca.webp';
+  const danceHeroPos = _ch?.workoutPositions?.[danceHero] || 'center 25%';
+
   openModal(`
-    <div class="dance-hero" style="background-image:url('icons/lounge/danca.webp')">
+    <div class="dance-hero" style="background-image:url('${danceHero}'); background-position:${danceHeroPos}">
       <button class="workout-hero-btn workout-hero-btn-right modal-close">✕</button>
       <div class="workout-hero-overlay">
-        <div class="font-display text-[10px] uppercase tracking-[0.3em] text-white/70">${getTheme(state).tags.dance}</div>
+        <div class="font-display text-[10px] uppercase tracking-[0.3em] text-white/70">${getTheme(state).tags.dance}${_ch ? ` · ${_ch.slot} ${_ch.name}` : ''}</div>
         <h2 class="font-extrabold text-2xl text-white drop-shadow-lg">Coreografia sorteada</h2>
         <div class="text-[11px] text-white/80 mt-0.5">${c.artist} · ${c.year}</div>
       </div>
@@ -12857,6 +12900,33 @@ async function maybeNotifyMascot() {
 function applyTheme() {
   const t = state?.user?.theme && THEMES[state.user.theme] ? state.user.theme : 'kpop_anime';
   document.documentElement.dataset.theme = t;
+  applyCharacterTheme();
+}
+
+/** Helper — devolve o personagem ativo (ou null) sem replicar a busca em todo lugar. */
+function activeCharacter() {
+  return CHARACTERS.find((c) => c.id === state?.user?.activeCharacter) || null;
+}
+
+/** Pinta o tema do personagem ativo via CSS variables — sem mexer na base.
+ *  Quando não há personagem ou ele não tem accent, remove as vars (cai no default). */
+function applyCharacterTheme() {
+  const ch = activeCharacter();
+  const root = document.documentElement;
+  if (!ch || !ch.accent) {
+    root.style.removeProperty('--char-accent');
+    root.style.removeProperty('--char-accent-deep');
+    root.style.removeProperty('--char-accent-glow');
+    root.style.removeProperty('--char-accent-soft');
+    delete root.dataset.character;
+    return;
+  }
+  root.style.setProperty('--char-accent',      ch.accent);
+  root.style.setProperty('--char-accent-deep', ch.accentDeep || ch.accent);
+  root.style.setProperty('--char-accent-glow', ch.accentGlow || ch.accent);
+  // 22 ≈ 13% alpha — pra gradientes suaves de fundo
+  root.style.setProperty('--char-accent-soft', ch.accent + '22');
+  root.dataset.character = ch.id;
 }
 
 /** Renderiza tela de login/cadastro sem tabbar. */

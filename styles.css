@@ -1684,6 +1684,112 @@ input[type=number] { -moz-appearance: textfield; }
   animation: csBlink 1.4s steps(2, end) infinite;
 }
 
+/* ============================================================
+   TEMA DO PERSONAGEM — pinta vibes sem alterar a base.
+   Quando --char-accent não está setado, fallback transparente
+   garante visual idêntico ao app sem personagem.
+   ============================================================ */
+
+/* Card do Elo ganha avatar do lutador no canto + linha de evolução */
+.elo-card {
+  /* Borda dourada sutil quando há personagem ativo */
+  border-color: var(--char-accent-soft, transparent);
+  position: relative;
+}
+.elo-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: radial-gradient(120% 80% at 100% 0%, var(--char-accent-soft, transparent) 0%, transparent 55%);
+}
+.elo-fighter {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1.5px solid var(--char-accent, rgba(255,255,255,0.15));
+  box-shadow: 0 4px 14px var(--char-accent-soft, rgba(0,0,0,0.25));
+  background: #0F1426;
+  z-index: 1;
+}
+.elo-fighter img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+}
+.elo-fighter-slot {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-family: "Russo One", Impact, system-ui, sans-serif;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  padding: 1px 0 2px;
+  background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.7) 60%);
+  color: var(--char-accent-glow, #fff);
+}
+
+.elo-fighter-track {
+  margin-top: 8px;
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: linear-gradient(90deg, var(--char-accent-soft, rgba(255,255,255,0.04)) 0%, transparent 80%);
+  border-left: 2px solid var(--char-accent, rgba(255,255,255,0.15));
+  position: relative;
+  z-index: 1;
+}
+.elo-fighter-name {
+  font-family: "Russo One", Impact, system-ui, sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  color: var(--char-accent, currentColor);
+}
+.elo-fighter-title {
+  opacity: 0.65;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+}
+.elo-fighter-progress {
+  margin-top: 2px;
+  display: flex;
+  gap: 6px;
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+/* Quando personagem está ativo, da uma pintada sutil na xp-fill */
+html[data-character] .xp-fill {
+  background: linear-gradient(90deg, var(--char-accent), var(--char-accent-deep, var(--char-accent))) !important;
+  box-shadow: 0 0 8px var(--char-accent-soft);
+}
+
+/* Tabbar — adiciona glow do personagem na tab ativa (sem alterar layout) */
+html[data-character] #tabbar [aria-current="page"],
+html[data-character] #tabbar .is-active {
+  box-shadow: 0 -2px 0 var(--char-accent) inset, 0 8px 18px var(--char-accent-soft);
+}
+
+/* Botões primários ganham um leve toque do personagem na sombra */
+html[data-character] .q-btn-primary {
+  box-shadow: 0 4px 14px var(--char-accent-soft);
+}
+
+/* Section dividers Kombat — leve glow do personagem */
+html[data-character] .kombat-divider::before,
+html[data-character] .kombat-divider::after {
+  background: linear-gradient(90deg, transparent, var(--char-accent), transparent) !important;
+  opacity: 0.4;
+}
+
 .cs-foot {
   position: relative;
   z-index: 1;
