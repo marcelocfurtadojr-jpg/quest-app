@@ -6844,8 +6844,13 @@ function viewDashboard() {
           const tier = attrTierFor(a.key, info.level);
           return `
           <button class="flex flex-col items-center gap-1 attr-tile" data-attr="${a.key}" aria-label="${a.name}: ${tier.current} (lvl ${info.level})">
-            <div class="attr-chip" style="--accent:${a.color}" data-fallback="${a.icon}">
-              <span class="attr-ko">${a.ko || a.icon}</span>
+            <!-- Portrait image (com fallback pro chip emoji se 404) -->
+            <div class="attr-portrait" style="--accent:${a.color}">
+              <img src="icons/attrs/${a.key}.webp" alt="${a.name}" loading="lazy"
+                   onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'" />
+              <div class="attr-chip attr-chip-fallback" style="--accent:${a.color}; display:none" data-fallback="${a.icon}">
+                <span class="attr-ko">${a.ko || a.icon}</span>
+              </div>
             </div>
             <div class="w-full xp-track" style="height:5px"><div class="xp-fill" style="width:${info.pctToNext}%; background:${a.color}"></div></div>
             <div class="text-[10px] font-bold leading-tight text-center truncate w-full" style="color:${a.color}" title="${tier.current} · lvl ${info.level}">${tier.current}</div>
@@ -7608,11 +7613,11 @@ function suggestExercises(query) {
 // Mapa de hero images por tipo de treino. Drop os arquivos em
 // icons/workouts/<filename> e o modal pega automaticamente.
 const WORKOUT_HERO_IMAGES = {
-  'A · Peito + Tríceps + Abs':  'icons/workouts/peito.png',
+  'A · Peito + Tríceps + Abs':  'icons/workouts/peito.webp',
   'B · Costas + Ombros + Bíceps + Abs': 'icons/workouts/dorsal.png',
   'C · Pernas completo + Abs':  'icons/workouts/pernas.png',
-  'Peito + Tríceps':            'icons/workouts/peito.png',
-  'Peito + Ombros + Tríceps':   'icons/workouts/peito.png',
+  'Peito + Tríceps':            'icons/workouts/peito.webp',
+  'Peito + Ombros + Tríceps':   'icons/workouts/peito.webp',
   'Costas + Bíceps':            'icons/workouts/dorsal.png',
   'Costas + Ombros + Bíceps':   'icons/workouts/dorsal.png',
   'Pernas (quadríceps)':        'icons/workouts/pernas.png',
@@ -7621,19 +7626,19 @@ const WORKOUT_HERO_IMAGES = {
   'Glúteo focus':               'icons/workouts/gluteo.png',
   'Ombros':                     'icons/workouts/ombros.png',
   'Braços (bíceps + tríceps)':  'icons/workouts/bracos.png',
-  'Upper A':                    'icons/workouts/peito.png',
+  'Upper A':                    'icons/workouts/peito.webp',
   'Upper B':                    'icons/workouts/ombros.png',
   'Lower A':                    'icons/workouts/pernas.png',
   'Lower B':                    'icons/workouts/gluteo.png',
-  'Push':                       'icons/workouts/peito.png',
+  'Push':                       'icons/workouts/peito.webp',
   'Pull':                       'icons/workouts/dorsal.png',
-  'Upper completo':             'icons/workouts/peito.png',
+  'Upper completo':             'icons/workouts/peito.webp',
   'Core/Abs':                   'icons/workouts/core.png',
   'Cardio HIIT':                'icons/workouts/cardio.png',
   'Caminhada':                  'icons/workouts/caminhada.png',
   'Calistenia':                 'icons/workouts/calistenia.png',
   'Dança K-pop':                'icons/workouts/danca.png',
-  'Full Body A':                'icons/workouts/peito.png',
+  'Full Body A':                'icons/workouts/peito.webp',
   'Full Body B':                'icons/workouts/dorsal.png',
 };
 
