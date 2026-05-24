@@ -4569,8 +4569,12 @@ const CHARACTERS = [
     img: 'icons/characters/joehigashi.webp', unlocked: true,
     stats: { ATAQUE: 85, VELOCIDADE: 90, DEFESA: 60, TÉCNICA: 75, CARISMA: 72 },
     desc: 'Muay thai bruto, vento e fúria. Pura agressão e cardio infinito.',
+    buff: 'forca' },
+  { id: 'marklee', slot: '5P', name: 'MARK LEE', title: 'THE BLUE FLAME',
+    img: 'icons/characters/marklee.webp', unlocked: true,
+    stats: { ATAQUE: 55, VELOCIDADE: 78, DEFESA: 52, TÉCNICA: 82, CARISMA: 96 },
+    desc: 'Chama azul do palco. Rap, ritmo e energia que não apaga.',
     buff: 'resistencia' },
-  { id: 'p5', slot: '5P', name: '???', title: 'EM BREVE', unlocked: false },
 ];
 
 const ATTRIBUTES = [
