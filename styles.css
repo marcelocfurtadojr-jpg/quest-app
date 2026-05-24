@@ -103,6 +103,58 @@ body {
   100% { transform: scale(1); }
 }
 
+/* Workout modal hero image --------------------------------- */
+.workout-hero {
+  position: relative;
+  width: 100%;
+  height: 40vh;
+  min-height: 240px;
+  max-height: 340px;
+  background-size: cover;
+  background-position: center top;
+  background-color: #1A1A2E;
+}
+.workout-hero::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 55%;
+  background: linear-gradient(to bottom, transparent 0%, rgba(15,23,41,0.4) 40%, rgba(15,23,41,0.95) 100%);
+  pointer-events: none;
+}
+.workout-hero-overlay {
+  position: absolute;
+  left: 1rem; right: 1rem; bottom: .8rem;
+  z-index: 2;
+}
+.workout-hero-overlay h2 {
+  text-shadow: 0 2px 12px rgba(0,0,0,0.6);
+}
+.workout-hero-btn {
+  position: absolute;
+  top: .8rem;
+  z-index: 3;
+  background: rgba(15,23,41,0.65);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: #FFF;
+  font-size: .7rem;
+  font-weight: 700;
+  padding: .4rem .7rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background .15s ease;
+}
+.workout-hero-btn:hover { background: rgba(15,23,41,0.85); }
+.workout-hero-btn-left { left: .8rem; }
+.workout-hero-btn-right {
+  right: .8rem;
+  width: 32px; height: 32px;
+  padding: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .9rem;
+}
+
 /* Daily Spin (gacha) ---------------------------------------- */
 .spin-overlay {
   position: fixed; inset: 0; z-index: 100;

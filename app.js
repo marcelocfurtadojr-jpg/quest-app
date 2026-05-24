@@ -7605,6 +7605,38 @@ function suggestExercises(query) {
   return { groups: targets, items, summary: tags.join(' · '), notes };
 }
 
+// Mapa de hero images por tipo de treino. Drop os arquivos em
+// icons/workouts/<filename> e o modal pega automaticamente.
+const WORKOUT_HERO_IMAGES = {
+  'A · Peito + Tríceps + Abs':  'icons/workouts/peito.png',
+  'B · Costas + Ombros + Bíceps + Abs': 'icons/workouts/dorsal.png',
+  'C · Pernas completo + Abs':  'icons/workouts/pernas.png',
+  'Peito + Tríceps':            'icons/workouts/peito.png',
+  'Peito + Ombros + Tríceps':   'icons/workouts/peito.png',
+  'Costas + Bíceps':            'icons/workouts/dorsal.png',
+  'Costas + Ombros + Bíceps':   'icons/workouts/dorsal.png',
+  'Pernas (quadríceps)':        'icons/workouts/pernas.png',
+  'Pernas (posterior + glúteo)':'icons/workouts/gluteo.png',
+  'Perna completo':             'icons/workouts/pernas.png',
+  'Glúteo focus':               'icons/workouts/gluteo.png',
+  'Ombros':                     'icons/workouts/ombros.png',
+  'Braços (bíceps + tríceps)':  'icons/workouts/bracos.png',
+  'Upper A':                    'icons/workouts/peito.png',
+  'Upper B':                    'icons/workouts/ombros.png',
+  'Lower A':                    'icons/workouts/pernas.png',
+  'Lower B':                    'icons/workouts/gluteo.png',
+  'Push':                       'icons/workouts/peito.png',
+  'Pull':                       'icons/workouts/dorsal.png',
+  'Upper completo':             'icons/workouts/peito.png',
+  'Core/Abs':                   'icons/workouts/core.png',
+  'Cardio HIIT':                'icons/workouts/cardio.png',
+  'Caminhada':                  'icons/workouts/caminhada.png',
+  'Calistenia':                 'icons/workouts/calistenia.png',
+  'Dança K-pop':                'icons/workouts/danca.png',
+  'Full Body A':                'icons/workouts/peito.png',
+  'Full Body B':                'icons/workouts/dorsal.png',
+};
+
 function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
   // Se dateISO presente: visualização de sessão antiga.
   // Se prebuiltStart presente: reabre modal mantendo o estado em memória (após
@@ -7613,6 +7645,7 @@ function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
     ? state.workouts.find((w) => w.date === dateISO && w.type === type)
     : null;
   const lib = EXERCISE_LIBRARY[type] || [];
+  const heroImg = WORKOUT_HERO_IMAGES[type] || null;
   const start = prebuiltStart || editing || {
     date: todayISO(),
     type,
@@ -7680,6 +7713,21 @@ function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
   };
 
   openModal(`
+    ${heroImg ? `
+    <div class="workout-hero" style="background-image: url('${heroImg}')">
+      <!-- Botões flutuantes sobre a imagem -->
+      <button id="open-glossary" class="workout-hero-btn workout-hero-btn-left" aria-label="Glossário de técnicas">ℹ Técnicas</button>
+      <button class="workout-hero-btn workout-hero-btn-right modal-close" aria-label="Fechar">✕</button>
+      <!-- Título e data sobrepostos na base da imagem -->
+      <div class="workout-hero-overlay">
+        <div class="font-display text-[10px] uppercase tracking-[0.3em] text-white/70">workout</div>
+        <h2 class="font-extrabold text-2xl text-white mt-0.5 drop-shadow-lg">${type}</h2>
+        <label class="block mt-2 text-[10px] text-white/70">
+          Data <input type="date" id="workout-date" class="q-input p-1 text-xs ml-1" style="width:auto;display:inline-block;background:rgba(0,0,0,0.45);color:#FFF;border-color:rgba(255,255,255,0.3)" value="${start.date}" max="${todayISO()}" />
+        </label>
+      </div>
+    </div>
+    ` : `
     <header class="flex items-center justify-between p-4 border-b border-ink/5 dark:border-paper/5">
       <div class="min-w-0 flex-1">
         <div class="font-display text-xs uppercase tracking-widest text-ink/40 dark:text-paper/40">workout</div>
@@ -7691,8 +7739,9 @@ function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
       <button id="open-glossary" class="text-[10px] text-lavender font-semibold px-2 py-1 rounded-full bg-lavender/10 hover:bg-lavender/20 mr-2" aria-label="Glossário de técnicas">ℹ Técnicas</button>
       <button class="modal-close p-1"><span class="w-5 h-5">${I.close}</span></button>
     </header>
+    `}
 
-    <div class="p-4 space-y-4 overflow-y-auto" style="max-height:70vh" id="workout-body">
+    <div class="p-4 space-y-4 overflow-y-auto" style="max-height:${heroImg ? '50vh' : '70vh'}" id="workout-body">
       <div class="q-card p-3 flex items-center justify-between gap-2">
         <div class="font-semibold text-sm">⏱ Timer de descanso</div>
         <div class="flex gap-1">
