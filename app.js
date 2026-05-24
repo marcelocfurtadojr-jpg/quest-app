@@ -7551,6 +7551,7 @@ const WORKOUT_HERO_POSITIONS = {
   'icons/workouts/pernas.webp': 'center 45%', // personagem em squat fica no meio-baixo
   'icons/workouts/core.webp':   'center 40%', // foca no abdômen, evita corte no L-sit
   'icons/workouts/ombros.webp': 'center 25%', // foca em ombros/peito (não só cabeça)
+  'icons/workouts/bracos.webp': 'center 30%', // double biceps pose — foca braços/peito
 };
 const WORKOUT_HERO_IMAGES = {
   'A · Peito + Tríceps + Abs':  'icons/workouts/peito.webp',
@@ -7564,7 +7565,7 @@ const WORKOUT_HERO_IMAGES = {
   'Perna completo':             'icons/workouts/pernas.webp',
   'Ombros':                     'icons/workouts/ombros.webp',
   'Braços (bíceps + tríceps)':  'icons/workouts/bracos.webp',
-  'Upper A':                    'icons/workouts/peito.webp',
+  'Upper A':                    'icons/workouts/bracos.webp',
   'Upper B':                    'icons/workouts/ombros2.webp',
   'Lower A':                    'icons/workouts/pernas.webp',
   'Push':                       'icons/workouts/ombros2.webp',
