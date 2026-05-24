@@ -7609,6 +7609,12 @@ function suggestExercises(query) {
 
 // Mapa de hero images por tipo de treino. Drop os arquivos em
 // icons/workouts/<filename> e o modal pega automaticamente.
+//
+// Override por imagem: WORKOUT_HERO_POSITIONS guarda o background-position
+// quando o foco da imagem NÃO está no topo. Default = "center top".
+const WORKOUT_HERO_POSITIONS = {
+  'icons/workouts/pernas.webp': 'center 45%', // personagem em squat fica no meio-baixo
+};
 const WORKOUT_HERO_IMAGES = {
   'A · Peito + Tríceps + Abs':  'icons/workouts/peito.webp',
   'B · Costas + Ombros + Bíceps + Abs': 'icons/workouts/dorsal.webp',
@@ -7716,7 +7722,7 @@ function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
 
   openModal(`
     ${heroImg ? `
-    <div class="workout-hero" style="background-image: url('${heroImg}')">
+    <div class="workout-hero" style="background-image: url('${heroImg}'); background-position: ${WORKOUT_HERO_POSITIONS[heroImg] || 'center top'}">
       <!-- Botões flutuantes sobre a imagem -->
       <button id="open-glossary" class="workout-hero-btn workout-hero-btn-left" aria-label="Glossário de técnicas">ℹ Técnicas</button>
       <button class="workout-hero-btn workout-hero-btn-right modal-close" aria-label="Fechar">✕</button>
