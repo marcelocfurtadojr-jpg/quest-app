@@ -13390,6 +13390,15 @@ const SPOTIFY_SCOPES = [
   'user-modify-playback-state',
 ].join(' ');
 
+// SVG icons (24×24, fill currentColor) — renderizam idênticos em todas as plataformas,
+// diferente dos emojis ⏮⏯⏭ que ficam tortos no Android/iOS/desktop.
+const SP_ICON = {
+  prev:  '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 6h2v12H6V6zm3.5 6L18 18V6l-8.5 6z"/></svg>',
+  play:  '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5.5v13l11-6.5L7 5.5z"/></svg>',
+  pause: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h3.5v14H7V5zm6.5 0H17v14h-3.5V5z"/></svg>',
+  next:  '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 6h2v12h-2V6zm-2.5 6L5 6v12l8.5-6z"/></svg>',
+};
+
 let _spotifyPollInterval = null;
 let _spotifyNowPlaying = null;       // cache da última resposta
 let _spotifyLastFetchAt = 0;         // throttle
@@ -13701,9 +13710,9 @@ function renderSpotifyCard() {
       <div class="spotify-progress"><span style="width:${pct}%"></span></div>
     </div>
     <div class="spotify-quick">
-      <span data-spotify-cmd="prev" title="Anterior">⏮</span>
-      <span data-spotify-cmd="${playing ? 'pause' : 'play'}" title="${playing ? 'Pausar' : 'Tocar'}">${playing ? '⏸' : '▶'}</span>
-      <span data-spotify-cmd="next" title="Próxima">⏭</span>
+      <span data-spotify-cmd="prev" title="Anterior" aria-label="Anterior">${SP_ICON.prev}</span>
+      <span data-spotify-cmd="${playing ? 'pause' : 'play'}" class="is-main" title="${playing ? 'Pausar' : 'Tocar'}" aria-label="${playing ? 'Pausar' : 'Tocar'}">${playing ? SP_ICON.pause : SP_ICON.play}</span>
+      <span data-spotify-cmd="next" title="Próxima" aria-label="Próxima">${SP_ICON.next}</span>
     </div>
   </button>`;
 }
@@ -13806,9 +13815,9 @@ function renderSpotifyPlayerBody() {
         </div>
       </div>
       <div class="spotify-player-controls">
-        <button class="spotify-ctrl" data-spotify-cmd="prev" aria-label="Anterior">⏮</button>
-        <button class="spotify-ctrl spotify-ctrl-main" data-spotify-cmd="${playing ? 'pause' : 'play'}" aria-label="${playing ? 'Pausar' : 'Tocar'}">${playing ? '⏸' : '▶'}</button>
-        <button class="spotify-ctrl" data-spotify-cmd="next" aria-label="Próxima">⏭</button>
+        <button class="spotify-ctrl" data-spotify-cmd="prev" aria-label="Anterior">${SP_ICON.prev}</button>
+        <button class="spotify-ctrl spotify-ctrl-main" data-spotify-cmd="${playing ? 'pause' : 'play'}" aria-label="${playing ? 'Pausar' : 'Tocar'}">${playing ? SP_ICON.pause : SP_ICON.play}</button>
+        <button class="spotify-ctrl" data-spotify-cmd="next" aria-label="Próxima">${SP_ICON.next}</button>
       </div>
       ${renderSpotifyQueue()}
     </div>`;
