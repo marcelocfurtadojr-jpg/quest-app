@@ -12915,8 +12915,13 @@ function attachHandlers() {
       state.books.push({ title: f.title.value, totalPages: +f.pages.value || 200, currentPage: 0 });
       saveState(); render();
     });
+  })(); // FIM do attachReadingHandlers (escopo do timer)
 
-    // ===== Sub-tabs Artigo/Literatura =====
+  // ===== Sub-tabs Artigo/Literatura + handlers da Literatura =====
+  // FORA do attachReadingHandlers porque aquele IIFE faz early-return se o
+  // timer (que só existe em Artigos) não está no DOM. Antes, isso fazia o
+  // submit do form de Literatura ser ignorado → page reload → Choose Fighter.
+  (function attachLiteraturaHandlers() {
     document.querySelectorAll('.reading-subtab').forEach((b) => b.onclick = () => {
       _readingSubTab = b.dataset.rsubtab;
       render();
