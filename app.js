@@ -6820,6 +6820,61 @@ function currentLiteraturaBook() {
   if (!id) return null;
   return literaturaBooks().find((b) => b.id === id) || null;
 }
+/** Modal pra editar título e total de páginas de um livro literatura. */
+function modalEditLiteraturaBook(bookId) {
+  const book = (state.books || []).find((b) => b.id === bookId);
+  if (!book) return;
+  openModal(`
+    <header class="flex items-center justify-between p-4 border-b border-ink/5 dark:border-paper/5">
+      <h2 class="font-bold text-lg">Editar livro</h2>
+      <button class="modal-close p-1 text-xl" aria-label="Fechar">×</button>
+    </header>
+    <form id="lit-edit-form" class="p-4 space-y-3">
+      <label class="block">
+        <span class="text-xs font-semibold">Título</span>
+        <input id="lit-edit-title" class="q-input mt-1" value="${book.title.replace(/"/g, '&quot;')}" required />
+      </label>
+      <div class="grid grid-cols-2 gap-3">
+        <label class="block">
+          <span class="text-xs font-semibold">Total de páginas</span>
+          <input id="lit-edit-total" class="q-input mt-1" type="number" min="1" value="${book.totalPages}" required />
+        </label>
+        <label class="block">
+          <span class="text-xs font-semibold">Página atual</span>
+          <input id="lit-edit-current" class="q-input mt-1" type="number" min="0" value="${book.currentPage || 0}" />
+        </label>
+      </div>
+      <div class="flex gap-2 pt-2">
+        <button type="button" class="q-btn q-btn-ghost flex-1 modal-close">Cancelar</button>
+        <button type="submit" class="q-btn q-btn-primary flex-1">Salvar</button>
+      </div>
+    </form>
+  `, { persistent: true });
+  document.getElementById('lit-edit-form')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    try {
+      const title = document.getElementById('lit-edit-title').value.trim();
+      const totalPages = Math.max(1, parseInt(document.getElementById('lit-edit-total').value, 10) || 1);
+      const currentPage = Math.max(0, Math.min(totalPages, parseInt(document.getElementById('lit-edit-current').value, 10) || 0));
+      if (!title) { toast('Título não pode ficar vazio'); return; }
+      book.title = title;
+      book.totalPages = totalPages;
+      book.currentPage = currentPage;
+      // Re-avalia conclusão se page == total
+      if (currentPage >= totalPages && !book.finishedAt) {
+        book.finishedAt = todayISO();
+        toast(`📖 "${title}" concluído!`);
+      } else if (currentPage < totalPages && book.finishedAt) {
+        delete book.finishedAt;
+      }
+      saveState();
+      closeModal();
+      toast('Livro atualizado');
+      render();
+    } catch (err) { console.error(err); toast('Erro ao salvar: ' + err.message); }
+  });
+}
+
 /** Sorteia um livro pendente diferente do atual. Salva como currentLiteraturaBookId. */
 function pickNextLiteraturaBook() {
   const currentId = state.user?.currentLiteraturaBookId;
@@ -7511,7 +7566,15 @@ function modalDailyLog(dateISO = null) {
     steps: 0,
     buffs: [],
     notes: '',
+    meals: [],
   };
+  // Se já tem treino registrado pela aba Workout hoje, pré-marca "feito"
+  // (antes o user precisava marcar feito manualmente no Finish It mesmo
+  // tendo salvo um treino completo na aba — confuso).
+  const workoutToday = state.workouts.find((w) => w.date === today);
+  if (workoutToday && !existing.training?.done) {
+    existing.training = { type: workoutToday.type, done: true };
+  }
   openModal(`
     <header class="flex items-center justify-between p-4 border-b border-ink/5 dark:border-paper/5">
       <div class="min-w-0 flex-1">
@@ -7603,8 +7666,13 @@ function modalDailyLog(dateISO = null) {
     const steps = +f.steps.value || 0;
     const buffs = [...f.querySelectorAll('input[name="buff"]:checked')].map((b) => b.value);
     const notes = f.notes.value;
+    // Preserva refeições e outros campos que o Finish It NÃO controla
+    // (meals vem da aba Nutri; sem isso, salvar o dia apaga as refeições).
+    // Também limpa autoClosed (se o dia foi auto-fechado e o user voltou pra editar).
     const newLog = {
+      ...(existing.date === today ? existing : {}),
       date: today,
+      autoClosed: false,
       training: {
         type: status === 'descanso' ? 'descanso' : trainType,
         done: status === 'feito',
@@ -7616,6 +7684,8 @@ function modalDailyLog(dateISO = null) {
       buffs,
       notes,
     };
+    // Garante array de meals (mesmo se existing não tinha)
+    if (!Array.isArray(newLog.meals)) newLog.meals = [];
     newLog.xp = computeDayXP(newLog);
     const change = upsertDailyLog(newLog);
     saveState();
@@ -8503,6 +8573,28 @@ function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
     const isNewWorkout = idx < 0;
     if (idx >= 0) state.workouts[idx] = start;
     else state.workouts.push(start);
+
+    // Sincroniza com dailyLogs: marca training.done=true sem mexer em XP
+    // (XP do treino é dado abaixo separadamente; do dia, pelo Finish It).
+    // Isso garante que o Status na home conte esse dia como "treino feito"
+    // sem precisar abrir o Finish It manualmente.
+    const dlIdx = state.dailyLogs.findIndex((l) => l.date === start.date);
+    if (dlIdx >= 0) {
+      const dl = state.dailyLogs[dlIdx];
+      dl.training = dl.training || {};
+      dl.training.type = start.type;
+      dl.training.done = true;
+      if (dl.autoClosed) delete dl.autoClosed;
+    } else {
+      state.dailyLogs.push({
+        date: start.date,
+        training: { type: start.type, done: true },
+        protein: { grams: 0, hit: false },
+        sleep: { hours: 0 },
+        reading: { minutes: 0 },
+        steps: 0, buffs: [], notes: '', meals: [], xp: 0,
+      });
+    }
 
     // XP direto pelo treino — só na primeira vez que salva pra esse dia/tipo
     // (editar não dá XP de novo, pra evitar abuso). Base 3 + 1 por exercício
@@ -9965,9 +10057,10 @@ function viewReading() {
           <div class="lit-current-meta">página ${cur.currentPage} / ${cur.totalPages}</div>
           <div class="xp-track mt-2"><div class="xp-fill" style="width:${Math.round((cur.currentPage/cur.totalPages)*100)}%"></div></div>
           <div class="flex gap-2 mt-3">
-            <button class="q-btn q-btn-primary flex-1 page-up-lit" data-i="${state.books.indexOf(cur)}">+10 páginas</button>
-            <button class="q-btn q-btn-finish flex-1 lit-finish" data-i="${state.books.indexOf(cur)}">✓ Concluir</button>
+            <button class="q-btn q-btn-primary flex-1 page-up-lit" data-id="${cur.id}">+10 páginas</button>
+            <button class="q-btn q-btn-finish flex-1 lit-finish" data-id="${cur.id}">✓ Concluir</button>
           </div>
+          <button class="q-btn q-btn-ghost w-full mt-2 text-xs lit-edit" data-id="${cur.id}">✎ Editar livro</button>
         </div>
       ` : (pending.length ? `
         <div class="q-card p-4 lit-empty">
@@ -10001,7 +10094,9 @@ function viewReading() {
                 <span class="lit-pending-marker">${b.id === cur?.id ? '★' : '○'}</span>
                 <span class="flex-1 truncate">${b.title}</span>
                 <span class="text-[10px] text-ink/45 dark:text-paper/45">${b.totalPages}p</span>
-                <button class="lit-remove" data-i="${state.books.indexOf(b)}" title="Remover" aria-label="Remover">×</button>
+                ${b.id !== cur?.id ? `<button class="lit-make-current" data-id="${b.id}" title="Tornar este o atual" aria-label="Tornar atual">★</button>` : ''}
+                <button class="lit-edit" data-id="${b.id}" title="Editar título / páginas" aria-label="Editar">✎</button>
+                <button class="lit-remove" data-id="${b.id}" title="Remover" aria-label="Remover">×</button>
               </div>
             `).join('')}
           </div>
@@ -12827,80 +12922,110 @@ function attachHandlers() {
       render();
     });
 
-    // ===== Literatura — sortear / página / concluir / remover / adicionar =====
+    // ===== Literatura — handlers (sempre por ID estável, nunca índice volátil) =====
+    const findBookById = (id) => (state.books || []).find((x) => x.id === id);
+
     document.getElementById('lit-pick')?.addEventListener('click', () => {
-      const next = pickNextLiteraturaBook();
-      if (next) { toast(`🎲 Sorteado: "${next.title}"`); confetti(600); }
-      render();
+      try {
+        const next = pickNextLiteraturaBook();
+        if (next) { toast(`🎲 Sorteado: "${next.title}"`); confetti(600); }
+        else toast('Adicione livros primeiro');
+        render();
+      } catch (err) { console.error(err); toast('Erro ao sortear: ' + err.message); }
     });
     document.getElementById('lit-reshuffle')?.addEventListener('click', () => {
       if (!confirm('Sortear OUTRO livro? O atual volta pra fila como pendente.')) return;
-      const next = pickNextLiteraturaBook();
-      if (next) toast(`🔀 Novo sorteio: "${next.title}"`);
-      render();
+      try {
+        const next = pickNextLiteraturaBook();
+        if (next) toast(`🔀 Novo sorteio: "${next.title}"`);
+        render();
+      } catch (err) { console.error(err); toast('Erro: ' + err.message); }
     });
     document.querySelectorAll('.page-up-lit').forEach((b) => b.onclick = () => {
-      const i = +b.dataset.i;
-      const book = state.books[i];
-      if (!book) return;
-      book.currentPage = Math.min(book.totalPages, book.currentPage + 10);
-      if (book.currentPage >= book.totalPages) {
+      try {
+        const book = findBookById(b.dataset.id);
+        if (!book) { toast('Livro não encontrado'); return; }
+        book.currentPage = Math.min(book.totalPages, (book.currentPage || 0) + 10);
+        if (book.currentPage >= book.totalPages) {
+          book.finishedAt = todayISO();
+          toast(`📖 "${book.title}" concluído!`);
+          confetti(1500);
+          const next = pickNextLiteraturaBook();
+          if (next) setTimeout(() => toast(`🎲 Próximo: "${next.title}"`), 700);
+        } else {
+          toast(`+10 págs em "${book.title}"`);
+        }
+        saveState(); render();
+      } catch (err) { console.error(err); toast('Erro: ' + err.message); }
+    });
+    document.querySelectorAll('.lit-finish').forEach((b) => b.onclick = () => {
+      try {
+        const book = findBookById(b.dataset.id);
+        if (!book) { toast('Livro não encontrado'); return; }
+        if (!confirm(`Marcar "${book.title}" como concluído? O app sorteia o próximo automaticamente.`)) return;
+        book.currentPage = book.totalPages;
         book.finishedAt = todayISO();
         toast(`📖 "${book.title}" concluído!`);
         confetti(1500);
-        // Sorteia o próximo automaticamente
         const next = pickNextLiteraturaBook();
         if (next) setTimeout(() => toast(`🎲 Próximo: "${next.title}"`), 700);
-      }
-      saveState(); render();
-    });
-    document.querySelectorAll('.lit-finish').forEach((b) => b.onclick = () => {
-      const i = +b.dataset.i;
-      const book = state.books[i];
-      if (!book) return;
-      if (!confirm(`Marcar "${book.title}" como concluído? O app sorteia o próximo automaticamente.`)) return;
-      book.currentPage = book.totalPages;
-      book.finishedAt = todayISO();
-      toast(`📖 "${book.title}" concluído!`);
-      confetti(1500);
-      const next = pickNextLiteraturaBook();
-      if (next) setTimeout(() => toast(`🎲 Próximo: "${next.title}"`), 700);
-      saveState(); render();
+        saveState(); render();
+      } catch (err) { console.error(err); toast('Erro: ' + err.message); }
     });
     document.querySelectorAll('.lit-remove').forEach((b) => b.onclick = () => {
-      const i = +b.dataset.i;
-      const book = state.books[i];
-      if (!book) return;
-      if (!confirm(`Remover "${book.title}" da lista?`)) return;
-      const wasCurrent = state.user.currentLiteraturaBookId === book.id;
-      state.books.splice(i, 1);
-      if (wasCurrent) {
-        // Se era o atual, sorteia outro
-        pickNextLiteraturaBook();
-      }
-      saveState(); render();
+      try {
+        const book = findBookById(b.dataset.id);
+        if (!book) { toast('Livro não encontrado'); return; }
+        if (!confirm(`Remover "${book.title}" da lista?`)) return;
+        const wasCurrent = state.user.currentLiteraturaBookId === book.id;
+        state.books = state.books.filter((x) => x.id !== book.id);
+        if (wasCurrent) {
+          state.user.currentLiteraturaBookId = null;
+          pickNextLiteraturaBook();
+        }
+        saveState(); render();
+      } catch (err) { console.error(err); toast('Erro: ' + err.message); }
+    });
+    document.querySelectorAll('.lit-make-current').forEach((b) => b.onclick = () => {
+      try {
+        const book = findBookById(b.dataset.id);
+        if (!book) return;
+        state.user.currentLiteraturaBookId = book.id;
+        toast(`★ "${book.title}" agora é o atual`);
+        saveState(); render();
+      } catch (err) { console.error(err); toast('Erro: ' + err.message); }
+    });
+    document.querySelectorAll('.lit-edit').forEach((b) => b.onclick = () => {
+      const book = findBookById(b.dataset.id);
+      if (!book) { toast('Livro não encontrado'); return; }
+      modalEditLiteraturaBook(book.id);
     });
     document.getElementById('lit-add-form')?.addEventListener('submit', (e) => {
       e.preventDefault();
-      const f = e.target;
-      const title = f.title.value.trim();
-      if (!title) return;
-      const book = {
-        id: 'b_' + Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-4),
-        title,
-        totalPages: Math.max(1, +f.pages.value || 200),
-        currentPage: 0,
-        category: 'literatura',
-      };
-      state.books.push(book);
-      // Se não tem livro atual, já sorteia ele agora
-      if (!currentLiteraturaBook() && pendingLiteraturaBooks().length === 1) {
-        state.user.currentLiteraturaBookId = book.id;
-        toast(`📚 "${title}" adicionado e sorteado`);
-      } else {
-        toast(`📚 "${title}" adicionado à lista`);
-      }
-      saveState(); render();
+      try {
+        // Usa FormData pra evitar conflito de propriedades (f.title vs HTMLElement.title)
+        const fd = new FormData(e.target);
+        const title = (fd.get('title') || '').toString().trim();
+        const pagesRaw = (fd.get('pages') || '').toString();
+        const pages = Math.max(1, parseInt(pagesRaw, 10) || 200);
+        if (!title) { toast('Digite o título'); return; }
+        const book = {
+          id: 'b_' + Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-4),
+          title,
+          totalPages: pages,
+          currentPage: 0,
+          category: 'literatura',
+        };
+        state.books.push(book);
+        // Se não tinha atual, este vira o atual automaticamente
+        if (!state.user.currentLiteraturaBookId) {
+          state.user.currentLiteraturaBookId = book.id;
+          toast(`📚 "${title}" adicionado e sorteado`);
+        } else {
+          toast(`📚 "${title}" entrou na fila`);
+        }
+        saveState(); render();
+      } catch (err) { console.error(err); toast('Erro ao adicionar: ' + err.message); }
     });
   })();
 

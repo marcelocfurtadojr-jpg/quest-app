@@ -2987,20 +2987,35 @@ html[data-character] .kombat-divider::after {
   color: #FFB7C5;
   font-weight: 700;
 }
-.lit-remove {
+.lit-remove, .lit-edit, .lit-make-current {
   border: 0;
   background: transparent;
-  font-size: 16px;
-  color: rgba(26,26,46,0.4);
+  font-size: 14px;
+  color: rgba(26,26,46,0.45);
   cursor: pointer;
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background .15s ease, color .15s ease;
 }
-.dark .lit-remove { color: rgba(255,255,255,0.4); }
+.dark .lit-remove, .dark .lit-edit, .dark .lit-make-current {
+  color: rgba(255,255,255,0.45);
+}
 .lit-remove:hover {
   background: rgba(184,36,46,0.15);
   color: #B8242E;
+}
+.lit-edit:hover {
+  background: rgba(183,181,255,0.18);
+  color: #7B79E0;
+}
+.lit-make-current:hover {
+  background: rgba(255,183,197,0.2);
+  color: #E66B85;
 }
 
 .lit-finished-row {
