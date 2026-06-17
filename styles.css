@@ -13,92 +13,115 @@ body {
   font-feature-settings: 'cv11', 'ss01';
   text-rendering: optimizeLegibility;
   overscroll-behavior-y: contain;
-  /* Background do app — dojo neon coreano fixo (não scrolla com conteúdo).
-     Overlay translúcido por cima do bg pra manter legibilidade. */
-  background-image: url('icons/bg/dojo.webp');
-  background-size: cover;
-  background-position: center top;
+  /* Background limpo estilo Hevy/Strong — sem imagem.
+     Light mode: cream warm. Dark mode: deep navy com gradiente sutil. */
+  background:
+    radial-gradient(120% 80% at 50% 0%, rgba(255,183,197,0.05) 0%, transparent 50%),
+    #FAF8F5;
   background-attachment: fixed;
-  background-repeat: no-repeat;
-  background-color: #1A1A2E;
+  min-height: 100vh;
 }
-/* Overlay translúcido ajusta intensidade conforme tema */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  /* Light mode: 88% opaque pra dar foco no conteúdo, bg vira textura sutil */
-  background: rgba(251, 250, 247, 0.88);
-  pointer-events: none;
-}
-.dark body::before,
-html.dark body::before {
-  /* Dark mode: 75% opaque, deixa o neon do dojo aparecer um pouco mais */
-  background: rgba(15, 23, 41, 0.78);
+.dark body,
+html.dark body {
+  background:
+    radial-gradient(120% 80% at 50% 0%, rgba(123,184,255,0.06) 0%, transparent 60%),
+    radial-gradient(80% 50% at 50% 100%, rgba(255,183,197,0.04) 0%, transparent 60%),
+    #0E1118;
 }
 
 /* Tipografia display (Noto Sans KR para títulos coreanos) ---- */
 .font-display { font-family: 'Noto Sans KR', Inter, system-ui, sans-serif; }
 
-/* Card "neumórfico" leve ------------------------------------- */
+/* Cards modernos (Hevy/Strong style) — flat, borda sutil, sem sombra dramática */
 .q-card {
-  background: #ffffff;
-  border-radius: 18px;
-  box-shadow:
-    0 2px 12px rgba(26,26,46,0.06),
-    0 1px 3px rgba(26,26,46,0.04);
-  border: 1px solid rgba(26,26,46,0.04);
+  background: #FFFFFF;
+  border-radius: 16px;
+  border: 1px solid rgba(26,26,46,0.06);
+  box-shadow: 0 1px 2px rgba(26,26,46,0.03);
 }
 .dark .q-card {
-  background: #182238;
-  border-color: rgba(255,255,255,0.06);
-  box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+  background: #161B28;
+  border-color: rgba(255,255,255,0.04);
+  box-shadow: none;
 }
 
-/* Inputs ---------------------------------------------------- */
+/* Inputs limpos — borda visível, foco com accent simples */
 .q-input {
   width: 100%;
   padding: 0.65rem 0.85rem;
-  border-radius: 12px;
-  background: #F5F4EF;
-  border: 1px solid transparent;
+  border-radius: 10px;
+  background: #F7F6F2;
+  border: 1px solid rgba(26,26,46,0.06);
   color: inherit;
   font-size: 1rem;
-  transition: border-color .15s, background .15s;
+  transition: border-color .15s, background .15s, box-shadow .15s;
 }
 .q-input:focus {
   outline: none;
-  border-color: #B7B5FF;
-  background: #ffffff;
+  border-color: #7BB8FF;
+  background: #FFFFFF;
+  box-shadow: 0 0 0 3px rgba(123,184,255,0.15);
 }
-.dark .q-input { background: #0F1729; border-color: rgba(255,255,255,0.06); }
-.dark .q-input:focus { background: #182238; border-color: #B7B5FF; }
+.dark .q-input {
+  background: #0F1422;
+  border-color: rgba(255,255,255,0.06);
+}
+.dark .q-input:focus {
+  background: #1A1F2E;
+  border-color: #7BB8FF;
+  box-shadow: 0 0 0 3px rgba(123,184,255,0.2);
+}
 
-/* Botões ---------------------------------------------------- */
+/* Botões — primary virou monocrômico azul-fitness (não mais gradiente rainbow).
+   Menos ruído visual, mais decisão clara. */
 .q-btn {
   display: inline-flex; align-items: center; justify-content: center; gap: .4rem;
   padding: 0.7rem 1.1rem;
-  border-radius: 14px;
+  border-radius: 12px;
   font-weight: 600;
-  transition: transform .12s ease, box-shadow .15s ease, background .15s;
+  transition: transform .12s ease, box-shadow .15s ease, background .15s, border-color .15s;
   user-select: none;
 }
 .q-btn:active { transform: scale(.97); }
 .q-btn-primary {
-  background: linear-gradient(135deg, #B7B5FF, #FFB7C5);
-  color: #1A1A2E;
-  box-shadow: 0 6px 18px rgba(183,181,255,0.4);
+  background: #1A1A2E;
+  color: #FFFFFF;
+  box-shadow: 0 1px 2px rgba(26,26,46,0.1);
 }
-.q-btn-primary:hover { box-shadow: 0 8px 22px rgba(183,181,255,0.55); }
+.q-btn-primary:hover { background: #2A2A4E; box-shadow: 0 4px 12px rgba(26,26,46,0.15); }
+.dark .q-btn-primary { background: #FFFFFF; color: #1A1A2E; }
+.dark .q-btn-primary:hover { background: #E8E8F2; }
+
 .q-btn-ghost {
   background: rgba(26,26,46,0.04);
   color: inherit;
+  border: 1px solid transparent;
 }
-.dark .q-btn-ghost { background: rgba(255,255,255,0.06); }
+.q-btn-ghost:hover {
+  background: rgba(26,26,46,0.08);
+}
+.dark .q-btn-ghost {
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(255,255,255,0.04);
+}
+.dark .q-btn-ghost:hover {
+  background: rgba(255,255,255,0.08);
+}
 .q-btn-danger {
   background: #FFD3D6;
   color: #8B1E2D;
+}
+.dark .q-btn-danger {
+  background: rgba(255,80,90,0.15);
+  color: #FF8B95;
+}
+.q-btn-finish {
+  background: #A8E6CF;
+  color: #14543A;
+}
+.dark .q-btn-finish {
+  background: rgba(168,230,207,0.18);
+  color: #A8E6CF;
 }
 
 /* Checkbox custom (quests) ---------------------------------- */
@@ -737,24 +760,46 @@ html.dark body::before {
 .dark .levelup-card { background: linear-gradient(160deg, #1A2238, #261D38); color: #FBFAF7; }
 @keyframes popIn { from {transform:scale(.7); opacity:0} to {transform:scale(1); opacity:1} }
 
-/* Tabbar item ---------------------------------------------- */
+/* Tabbar item — estilo limpo, indicador embaixo (não pill colorido) */
 .tab-item {
   flex: 1;
-  display: flex; flex-direction: column; align-items: center; gap: 2px;
-  padding: .35rem .25rem .15rem;
-  border-radius: 12px;
-  color: rgba(26,26,46,0.55);
-  font-size: .72rem; font-weight: 600;
-  transition: color .15s, background .15s, transform .12s;
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: .5rem .25rem .25rem;
+  border-radius: 10px;
+  color: rgba(26,26,46,0.5);
+  font-size: .68rem; font-weight: 600;
+  transition: color .15s, transform .12s;
+  position: relative;
 }
-.dark .tab-item { color: rgba(255,255,255,.55); }
+.dark .tab-item { color: rgba(255,255,255,.5); }
 .tab-item.is-active {
   color: #1A1A2E;
-  background: rgba(183,181,255,0.18);
+  background: transparent;
 }
-.dark .tab-item.is-active { color: #FBFAF7; background: rgba(183,181,255,0.22); }
+.tab-item.is-active::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 30%;
+  right: 30%;
+  height: 2px;
+  border-radius: 1px;
+  background: #1A1A2E;
+}
+.dark .tab-item.is-active { color: #FFFFFF; }
+.dark .tab-item.is-active::after { background: #FFFFFF; }
 .tab-item:active { transform: scale(.94); }
 .tab-item svg { width: 22px; height: 22px; }
+
+/* Tabbar container — limpo, sem blur pesado, borda discreta */
+#tabbar {
+  background: rgba(255,255,255,0.96) !important;
+  border-top-color: rgba(26,26,46,0.06) !important;
+}
+.dark #tabbar {
+  background: rgba(14,17,24,0.96) !important;
+  border-top-color: rgba(255,255,255,0.04) !important;
+}
 
 /* Tabela de pesos / histórico ------------------------------ */
 .q-grid {

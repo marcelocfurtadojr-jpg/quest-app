@@ -7374,8 +7374,11 @@ function render() {
   app().innerHTML = (views[currentTab] || viewDashboard)();
   renderTabbar();
   attachHandlers();
-  renderAIFab();
   app().firstElementChild?.classList.add('animate-fade-up');
+  // FAB do chatbot removido — user rejeitou explicitamente o paradigma de
+  // chat. Estrutura askClaude/aiCoachSystemPrompt fica pra usar internamente
+  // (sugestões inline, análise semanal silenciosa) sem UI de conversa.
+  document.getElementById('ai-fab')?.remove();
   // Re-renderiza o chip do rest timer (sobrevive em qualquer aba)
   updateRestTimerDisplay();
   // Spotify polling — só roda quando estamos na home (onde o card aparece).
@@ -8593,8 +8596,21 @@ function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
     date: todayISO(),
     type,
     exercises: lib.map((e) => {
-      // Se o exercício declarar defaultTech, pré-preenche em TODAS as séries
-      // — usuário pode mudar uma e a auto-propagação cuida do resto.
+      // Auto-fill esperto: pega a última sessão deste exercício como base.
+      // Se existe, usa os valores reais (peso/reps/técnica) — assim o user só
+      // confirma ou ajusta, não digita do zero toda vez.
+      const lastSession = lastSessionsFor(e.name, 1)[0];
+      if (lastSession?.sets?.length) {
+        return {
+          name: e.name,
+          sets: lastSession.sets.map((s) => ({
+            reps: '', // reps vazio pra forçar registro consciente (anti-fraude)
+            weight: s.weight || '',
+            technique: s.technique || e.defaultTech || '',
+          })),
+        };
+      }
+      // Sem histórico: 3 séries em branco com técnica default do exercício
       const t = e.defaultTech || '';
       return {
         name: e.name,
@@ -8862,19 +8878,9 @@ function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
             <div><b class="text-pink">Erros comuns:</b> ${ex.mistakes}</div>
             <div><b class="text-mint">💡 Dica:</b> ${ex.tip}</div>
           </div>
-          ${aiReady() ? `
-          <button class="ai-ex-explain q-btn w-full mt-3 text-sm" data-ex-name="${encodeURIComponent(ex.name)}"
-                  style="background:linear-gradient(135deg,#B7B5FF,#7BB8FF); color:#1A1A2E; font-weight:700">
-            ✨ Pedir explicação detalhada ao Claude
-          </button>` : ''}
         </div>`;
       document.body.appendChild(pop);
       pop.onclick = (ev) => { if (ev.target === pop || ev.target.classList.contains('pop-close')) pop.remove(); };
-      pop.querySelector('.ai-ex-explain')?.addEventListener('click', () => {
-        const exName = decodeURIComponent(pop.querySelector('.ai-ex-explain').dataset.exName);
-        pop.remove();
-        modalAIExerciseExplanation(exName);
-      });
     });
   });
 
@@ -8908,8 +8914,20 @@ function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
     let shouldFocusNewSet = false;
     if (addBtn) {
       if (addBtn.dataset.action === 'add') {
-        // Herda técnica do último set
-        ex.sets.push({ reps: '', weight: '', technique: lastSet.technique || '' });
+        // Auto-fill esperto: herda peso, reps E técnica do set anterior.
+        // App "entende" que se você fez 50kg×10, provavelmente vai repetir.
+        // Se chegar no 4º set, sugere técnica de finalização (drop-set ou
+        // rest-pause) — princípio de variação automática.
+        const cat = exerciseCategory(ex);
+        const finishingTech = cat === 'isolation' ? 'drop-set'
+                            : cat === 'strength' || cat === 'push' || cat === 'pull' ? 'rest-pause'
+                            : lastSet.technique || '';
+        const isFinishingSet = ex.sets.length >= 3 && !lastSet.technique;
+        ex.sets.push({
+          reps:      lastSet.reps || '',
+          weight:    lastSet.weight || '',
+          technique: isFinishingSet ? finishingTech : (lastSet.technique || ''),
+        });
         shouldFocusNewSet = true;
       } else if (ex.sets.length > 1) {
         const setIdx = +addBtn.closest('[data-set-idx]').dataset.setIdx;
@@ -8919,10 +8937,14 @@ function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
       const target = +preset.dataset.n;
       if (target > 0 && target <= 20) {
         if (target > ex.sets.length) {
-          // Adiciona séries herdando a técnica do último (ou do primeiro se vazio)
+          // Adiciona séries herdando técnica E peso/reps do último set
           const techToInherit = lastSet.technique || ex.sets.find((s) => s.technique)?.technique || '';
           while (ex.sets.length < target) {
-            ex.sets.push({ reps: '', weight: '', technique: techToInherit });
+            ex.sets.push({
+              reps:      lastSet.reps || '',
+              weight:    lastSet.weight || '',
+              technique: techToInherit,
+            });
           }
         } else if (target < ex.sets.length) {
           // Remove sets do fim
