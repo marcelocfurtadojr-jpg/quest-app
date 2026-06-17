@@ -5465,6 +5465,97 @@ function resolveWorkoutHero(workoutType) {
   return { img, position };
 }
 
+// Planos de treino pré-montados (estilo Smartfit "Programas"). Aplica
+// o schedule no state.user.weeklyPlan ao escolher.
+const PRESET_PLANS = {
+  abc_4x: {
+    name: 'ABC clássico — 4 dias',
+    desc: 'Mais comum em academias BR. Foco em hipertrofia.',
+    schedule: {
+      dom: 'descanso',
+      seg: 'A · Peito + Tríceps + Abs',
+      ter: 'B · Costas + Ombros + Bíceps + Abs',
+      qua: 'descanso',
+      qui: 'C · Pernas completo + Abs',
+      sex: 'Upper completo',
+      sab: 'descanso',
+    },
+  },
+  upper_lower_4x: {
+    name: 'Upper/Lower — 4 dias',
+    desc: 'Frequência alta por grupo. Bom pra força + estética.',
+    schedule: {
+      dom: 'descanso',
+      seg: 'Upper B',
+      ter: 'C · Pernas completo + Abs',
+      qua: 'descanso',
+      qui: 'Push',
+      sex: 'C · Pernas completo + Abs',
+      sab: 'descanso',
+    },
+  },
+  push_pull_legs: {
+    name: 'Push/Pull/Legs — 6 dias',
+    desc: 'Máximo volume. Pra quem treina forte 6×/sem.',
+    schedule: {
+      dom: 'descanso',
+      seg: 'Push',
+      ter: 'B · Costas + Ombros + Bíceps + Abs',
+      qua: 'C · Pernas completo + Abs',
+      qui: 'Push',
+      sex: 'B · Costas + Ombros + Bíceps + Abs',
+      sab: 'C · Pernas completo + Abs',
+    },
+  },
+  iniciante_3x: {
+    name: 'Iniciante — 3 dias full body',
+    desc: 'Pra começar. 3 treinos full-body com descanso entre.',
+    schedule: {
+      dom: 'descanso',
+      seg: 'Upper completo',
+      ter: 'descanso',
+      qua: 'Upper completo',
+      qui: 'descanso',
+      sex: 'Upper completo',
+      sab: 'Caminhada',
+    },
+  },
+  cutting_5x: {
+    name: 'Definição — 5 dias com cardio',
+    desc: 'Cutting: foco em estímulo + cardio LISS pra queima.',
+    schedule: {
+      dom: 'Caminhada',
+      seg: 'A · Peito + Tríceps + Abs',
+      ter: 'B · Costas + Ombros + Bíceps + Abs',
+      qua: 'Caminhada',
+      qui: 'C · Pernas completo + Abs',
+      sex: 'Upper completo',
+      sab: 'Caminhada',
+    },
+  },
+};
+
+const DAY_KEYS = ['dom','seg','ter','qua','qui','sex','sab'];
+const DAY_LABELS = { dom:'Dom', seg:'Seg', ter:'Ter', qua:'Qua', qui:'Qui', sex:'Sex', sab:'Sáb' };
+const DAY_LABELS_FULL = { dom:'Domingo', seg:'Segunda', ter:'Terça', qua:'Quarta', qui:'Quinta', sex:'Sexta', sab:'Sábado' };
+
+/** Retorna a key do dia ('dom','seg',...) pra uma data (default hoje). */
+function dayKeyFor(date) {
+  const d = date || new Date();
+  return DAY_KEYS[d.getDay()];
+}
+
+/** Tipo de treino planejado pra hoje (do weeklyPlan). */
+function plannedToday() {
+  return state.user.weeklyPlan?.[dayKeyFor()] || 'descanso';
+}
+
+/** Já registrou treino hoje? Retorna o workout ou undefined. */
+function todayWorkoutDone() {
+  const today = todayISO();
+  return state.workouts.find(w => w.date === today);
+}
+
 const ATTRIBUTES = [
   { key: 'forca',       name: 'Força',       ko: '힘',     color: '#B8242E', icon: '💪', fighter: 'kano',
     desc: 'Cresce com treinos pesados (compostos, séries baixas).' },
@@ -6387,6 +6478,17 @@ function makeEmptyState() {
       // Lazeres bobos / recompensas pessoais. Lista editável pelo user.
       // Quando completa quest/treino/intention, o app sugere 1 reward aleatório.
       personalRewards: [],     // [{text, claimedDates: ['2026-...']}]
+      // Plano semanal de treino (estilo Smartfit/Strong calendar).
+      // Chaves: dom, seg, ter, qua, qui, sex, sab. Valor: workout type string ou 'descanso'.
+      weeklyPlan: {
+        dom: 'descanso',
+        seg: 'A · Peito + Tríceps + Abs',
+        ter: 'B · Costas + Ombros + Bíceps + Abs',
+        qua: 'Caminhada',
+        qui: 'C · Pernas completo + Abs',
+        sex: 'Upper completo',
+        sab: 'descanso',
+      },
     },
     dailyLogs: [],          // [{date, training, protein, sleep, reading, steps, buffs, notes, xp}]
     workouts: [],           // [{date, type, exercises:[{name, sets:[{reps,weight,technique}]}]}]
@@ -6598,6 +6700,16 @@ function migrateState(s) {
   s.user.profile.description = s.user.profile.description || '';
   if (!Array.isArray(s.user.profile.customQuests)) s.user.profile.customQuests = [];
   if (!Array.isArray(s.user.personalRewards)) s.user.personalRewards = [];
+
+  // Plano semanal (v1.76+) — agenda Smartfit-style por dia da semana
+  s.user.weeklyPlan = s.user.weeklyPlan || {
+    dom: 'descanso', seg: 'A · Peito + Tríceps + Abs',
+    ter: 'B · Costas + Ombros + Bíceps + Abs', qua: 'Caminhada',
+    qui: 'C · Pernas completo + Abs', sex: 'Upper completo', sab: 'descanso',
+  };
+  ['dom','seg','ter','qua','qui','sex','sab'].forEach(d => {
+    if (!s.user.weeklyPlan[d]) s.user.weeklyPlan[d] = 'descanso';
+  });
 
   // PRÉ-PREENCHE com o perfil declarado pelo user no chat (apenas se ainda
   // não tiver dado nenhuma condition — não sobrescreve escolha consciente).
@@ -7694,31 +7806,70 @@ function viewDashboard() {
     const intention = todayLog.intention || '';
     const intentionDone = !!todayLog.intentionDone;
     return `
-    <!-- ===== Quick Start (estilo Hevy) — entrada rápida pro treino =====
-         Mostra o último treino feito como "Repetir" + botão pra iniciar novo. -->
+    <!-- ===== Treino de hoje (Smartfit-style) — card grande em destaque ===== -->
     ${(() => {
-      const lastWorkout = state.workouts.slice().reverse()[0];
-      const hasLib = lastWorkout && EXERCISE_LIBRARY[lastWorkout.type];
+      const planned = plannedToday();
+      const done = todayWorkoutDone();
+      const isRest = planned === 'descanso' || planned === 'Descanso';
+      const hasLib = !isRest && EXERCISE_LIBRARY[planned];
+      const exCount = hasLib ? EXERCISE_LIBRARY[planned].length : 0;
+      const todayLabel = DAY_LABELS_FULL[dayKeyFor()];
       return `
       <section class="px-4 mt-2">
-        <div class="grid grid-cols-2 gap-2">
-          <button class="q-card p-3 text-left" data-quick-new-workout>
-            <div class="text-[10px] uppercase tracking-widest text-ink/45 dark:text-paper/45">Iniciar</div>
-            <div class="font-bold text-sm mt-1">+ Novo treino</div>
-            <div class="text-[10px] text-ink/45 dark:text-paper/45">Escolher tipo</div>
-          </button>
+        <button class="today-workout-card" data-today-workout-start
+                ${!hasLib ? 'disabled style="opacity:0.7; cursor:default"' : ''}>
+          <div class="today-workout-eyebrow">${todayLabel.toUpperCase()} · TREINO DE HOJE</div>
+          <div class="today-workout-title">
+            ${done ? '✓ ' : ''}${isRest ? 'Dia de descanso' : planned}
+          </div>
           ${hasLib ? `
-          <button class="q-card p-3 text-left" data-quick-repeat-workout data-type="${lastWorkout.type}"
-                  style="background:#1A1A2E; color:#fff">
-            <div class="text-[10px] uppercase tracking-widest opacity-70">Repetir</div>
-            <div class="font-bold text-sm mt-1 truncate">${lastWorkout.type}</div>
-            <div class="text-[10px] opacity-60">${formatDateBR(lastWorkout.date)}</div>
-          </button>` : `
-          <button class="q-card p-3 text-left" data-go="body">
-            <div class="text-[10px] uppercase tracking-widest text-ink/45 dark:text-paper/45">Corpo</div>
-            <div class="font-bold text-sm mt-1">📐 Medidas</div>
-            <div class="text-[10px] text-ink/45 dark:text-paper/45">Atualizar</div>
-          </button>`}
+            <div class="today-workout-meta">${exCount} exercícios · ${done ? 'já registrado hoje' : 'pronto pra começar'}</div>
+            <div class="today-workout-cta">
+              ${done ? '↻ Refazer/editar treino' : '▶ Começar treino'}
+            </div>
+          ` : isRest ? `
+            <div class="today-workout-meta">Recuperação ativa. Caminhada leve se quiser.</div>
+          ` : `
+            <div class="today-workout-meta">Tipo não encontrado — edite o plano em ⚙ Plano semanal</div>
+          `}
+        </button>
+        <button class="text-[10px] text-ink/55 dark:text-paper/55 w-full text-center mt-2 underline" data-edit-weekly-plan>
+          ⚙ Editar plano semanal
+        </button>
+      </section>`;
+    })()}
+
+    <!-- ===== Calendário semanal mini-view (Smartfit-style) ===== -->
+    ${(() => {
+      const today = dayKeyFor();
+      const plan = state.user.weeklyPlan || {};
+      // Mapeia treinos feitos por dia da semana atual
+      const weekDates = [];
+      const start = new Date();
+      start.setDate(start.getDate() - start.getDay()); // domingo
+      for (let i = 0; i < 7; i++) {
+        const d = new Date(start);
+        d.setDate(d.getDate() + i);
+        weekDates.push({ key: DAY_KEYS[i], iso: isoDate(d) });
+      }
+      const doneSet = new Set(state.workouts.map(w => w.date));
+      return `
+      <section class="px-4 mt-3">
+        <div class="text-[10px] uppercase tracking-widest text-ink/45 dark:text-paper/45 mb-1.5 px-1">Esta semana</div>
+        <div class="week-calendar">
+          ${weekDates.map(({key, iso}) => {
+            const planned = plan[key] || 'descanso';
+            const isToday = key === today;
+            const isRest = planned === 'descanso';
+            const isDone = doneSet.has(iso);
+            const cls = ['week-day', isToday ? 'is-today' : '', isRest ? 'is-rest' : '', isDone ? 'is-done' : ''].filter(Boolean).join(' ');
+            return `
+              <div class="${cls}">
+                <div class="week-day-label">${DAY_LABELS[key]}</div>
+                <div class="week-day-dot">${isDone ? '✓' : isRest ? '·' : ''}</div>
+                <div class="week-day-type" title="${planned}">${isRest ? '—' : planned.split(' · ')[0].split(' ')[0]}</div>
+              </div>`;
+          }).join('')}
         </div>
       </section>`;
     })()}
@@ -13495,12 +13646,15 @@ function attachHandlers() {
     toast('Histórico de batalhas limpo');
     render();
   });
-  document.querySelector('[data-quick-new-workout]')?.addEventListener('click', () => go('workout'));
-  document.querySelector('[data-quick-repeat-workout]')?.addEventListener('click', (e) => {
-    const type = e.currentTarget.dataset.type;
-    if (type && EXERCISE_LIBRARY[type]) modalWorkoutSession(type);
-  });
   document.querySelectorAll('[data-go]').forEach((b) => b.onclick = () => go(b.dataset.go));
+  // Treino de hoje (Smartfit-style)
+  document.querySelector('[data-today-workout-start]')?.addEventListener('click', () => {
+    const planned = plannedToday();
+    if (planned && planned !== 'descanso' && EXERCISE_LIBRARY[planned]) {
+      modalWorkoutSession(planned);
+    }
+  });
+  document.querySelector('[data-edit-weekly-plan]')?.addEventListener('click', () => modalWeeklyPlan());
   document.querySelector('[data-go-profile-setup]')?.addEventListener('click', () => {
     currentTab = 'config';
     render();
@@ -15880,6 +16034,71 @@ function triggerRewardSuggestion(context = 'atividade') {
     saveState();
     closeModal();
     toast('Aproveita 😉');
+  };
+}
+
+/** Modal pra editar o plano semanal — escolher preset OU customizar dia a dia. */
+function modalWeeklyPlan() {
+  vibrate(8);
+  const plan = state.user.weeklyPlan || {};
+  const workoutTypes = ['descanso', ...Object.keys(EXERCISE_LIBRARY).filter(t => EXERCISE_LIBRARY[t]?.length > 0)];
+  openModal(`
+    <header class="flex items-center justify-between p-4 border-b border-ink/5 dark:border-paper/5">
+      <h2 class="font-bold text-lg">📅 Plano semanal</h2>
+      <button class="modal-close p-1" aria-label="Fechar">✕</button>
+    </header>
+    <div class="p-4 space-y-4 overflow-y-auto" style="max-height:70vh">
+      <!-- Presets -->
+      <div>
+        <div class="text-[10px] uppercase tracking-widest text-ink/45 dark:text-paper/45 mb-2">Programas prontos</div>
+        <div class="space-y-2">
+          ${Object.entries(PRESET_PLANS).map(([k, p]) => `
+            <button class="q-card p-3 w-full text-left" data-apply-preset="${k}">
+              <div class="font-bold text-sm">${p.name}</div>
+              <div class="text-[10px] text-ink/55 dark:text-paper/55 mt-0.5">${p.desc}</div>
+            </button>
+          `).join('')}
+        </div>
+      </div>
+      <!-- Editar dia a dia -->
+      <div>
+        <div class="text-[10px] uppercase tracking-widest text-ink/45 dark:text-paper/45 mb-2">Personalizar dia a dia</div>
+        <div class="space-y-2">
+          ${DAY_KEYS.map(d => `
+            <div class="flex items-center gap-2">
+              <div class="w-12 text-xs font-bold text-ink/65 dark:text-paper/65">${DAY_LABELS_FULL[d].slice(0, 3)}</div>
+              <select class="q-input flex-1 text-xs" data-plan-day="${d}">
+                ${workoutTypes.map(t => `<option value="${t}" ${plan[d] === t ? 'selected' : ''}>${t}</option>`).join('')}
+              </select>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+      <button id="save-weekly-plan" class="q-btn q-btn-primary w-full">Salvar plano</button>
+    </div>
+  `, { persistent: false });
+
+  document.querySelectorAll('[data-apply-preset]').forEach((btn) => btn.onclick = () => {
+    const k = btn.dataset.applyPreset;
+    const preset = PRESET_PLANS[k];
+    if (!preset) return;
+    state.user.weeklyPlan = { ...preset.schedule };
+    saveState();
+    toast(`✓ "${preset.name}" aplicado`);
+    closeModal();
+    render();
+  });
+  document.getElementById('save-weekly-plan').onclick = () => {
+    const newPlan = {};
+    DAY_KEYS.forEach(d => {
+      const sel = document.querySelector(`[data-plan-day="${d}"]`);
+      newPlan[d] = sel?.value || 'descanso';
+    });
+    state.user.weeklyPlan = newPlan;
+    saveState();
+    toast('Plano semanal salvo');
+    closeModal();
+    render();
   };
 }
 
