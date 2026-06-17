@@ -8814,18 +8814,39 @@ function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
   // fica correto.
   function exerciseCategory(ex) {
     const n = (ex?.name || '').toLowerCase();
-    if (/caminhada|caminhar|trilha|hike|rucking|escada|step|passos\b|10k passos/.test(n)) return 'walking';
-    if (/sprint|hiit|burpee|jumping|mountain climb|pular corda|tabata|jump squat|jump lunge/.test(n)) return 'hiit';
-    if (/dança|coreograf|dance|k-pop/.test(n)) return 'dance';
-    if (/cardio|corrida|bike|esteira|elíptico|spinning|remo erg|rowing|natação|nado/.test(n)) return 'cardio';
-    if (/prancha|plank|hollow|l-sit|isomet|wall sit|dead bug/.test(n)) return 'core-static';
-    // Por tipo de treino como fallback
+    // BUG FIX: matching por TOKEN (palavra inteira) em vez de substring.
+    // Antes /nado/ matchava 'inclinado' → 'supino inclin[ado]' caía em cardio.
+    // Agora token-based: só matcha se "nado" for palavra própria.
+    const tokens = n.split(/[\s\-\/().,]+/).filter(Boolean);
+    const hasToken = (...keys) => keys.some(k => tokens.includes(k));
+
+    // 1) Compound patterns específicos PRIMEIRO (evita falsos positivos)
+    if (/hanging leg|leg raise|knee raise|woodchopper|russian twist|ab wheel|wheel/.test(n)) return 'isolation';
+    if (/face pull/.test(n)) return 'isolation';
+    if (/wall sit|dead bug|l-sit|hollow/.test(n)) return 'core-static';
+    if (/mountain climb|pular corda|jump squat|jump lunge/.test(n)) return 'hiit';
+    if (/remo erg/.test(n)) return 'cardio';
+    if (/pull[ -]?up|chin[ -]?up|barra fixa/.test(n)) return 'pull';
+    if (/leg press/.test(n)) return 'leg';
+
+    // 2) Token matching (palavra inteira) — robusto contra substring
+    if (hasToken('caminhada','caminhar','trilha','hike','hiking','rucking','escada','escadas','step','steps','passos','passada')) return 'walking';
+    if (hasToken('sprint','sprints','hiit','burpee','burpees','tabata','jumping')) return 'hiit';
+    if (hasToken('dança','dance','kpop','k-pop')) return 'dance';
+    if (/coreograf/.test(n)) return 'dance';
+    if (hasToken('cardio','corrida','correr','bike','esteira','elíptico','spinning','rowing','natação','nado')) return 'cardio';
+    if (hasToken('prancha','plank')) return 'core-static';
+    if (/isomet/.test(n)) return 'core-static';
+    // Fallback de tipo só pra Caminhada (Calistenia tem PUSH/LEG/etc detectáveis)
     if (type === 'Caminhada')   return 'walking';
-    // Sub-categorias de força — só pra ajustar opções, todas usam Reps/kg
-    if (/supino|press|desenvolv|crucifixo|fly|dip|mergulho|flexão|push|tríceps/.test(n))    return 'push';
-    if (/remada|pulldown|pull[\- ]up|barra fixa|chin[\- ]up|terra|deadlift|bíceps/.test(n)) return 'pull';
-    if (/agach|squat|leg press|hack|afundo|lunge|stiff|rdl|hip thrust|extensora|flexora|panturrilha|coxa/.test(n)) return 'leg';
-    if (/rosca|elevação|encolh|shrug|face pull|woodchopper|abdom|prancha|crunch/.test(n))   return 'isolation';
+
+    // 3) Força — LEG antes de PUSH (pra 'leg press' não cair em push)
+    if (hasToken('agachamento','agach','squat','hack','afundo','lunge','stiff','rdl','thrust','extensora','flexora','panturrilha','perna','pernas','leg','hip','coxa','glúteo','gluteo','pistol')) return 'leg';
+    if (/terra|deadlift/.test(n)) return 'pull';
+    if (hasToken('remada','pulldown','bíceps','biceps')) return 'pull';
+    if (hasToken('supino','press','desenvolvimento','desenvolv','crucifixo','fly','dip','dips','mergulho','flexão','flexões','flexao','push','tríceps','triceps')) return 'push';
+    if (hasToken('rosca','elevação','elevacao','encolh','shrug','crunch','abdominal','abdominais','twist')) return 'isolation';
+
     return 'strength';
   }
 
