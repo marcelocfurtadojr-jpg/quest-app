@@ -5629,42 +5629,74 @@ const EXERCISE_LIBRARY = {
       tip: 'Começa com joelhos flex (tuck L-sit), evolui pra perna reta em ~8 semanas.' },
   ],
   'Braços (bíceps + tríceps)': [
-    { name: 'Rosca direta barra', target: '4×8–10', muscles: 'bíceps braquial',
-      description: 'Hipertrofia clássica.', technique: 'Cotovelos colados, pulso neutro.', mistakes: 'Balanço.', tip: 'Encoste a parede.' },
-    { name: 'Rosca martelo', target: '3×10–12', muscles: 'bíceps + braquiorradial',
-      description: 'Bíceps grosso + antebraço.', technique: 'Pegada neutra, cotovelo fixo.', mistakes: 'Cotovelo indo pra frente.', tip: 'Superset com rosca direta.' },
-    { name: 'Rosca scott', target: '3×10–12', muscles: 'bíceps (parte baixa)',
-      description: 'Pico de bíceps.', technique: 'Banco scott, amplitude completa, sem balanço.', mistakes: 'Não esticar completamente.', tip: 'Não estoure cotovelo — controle no fim.' },
-    { name: 'Tríceps testa', target: '4×8–12', muscles: 'tríceps cabeça longa',
-      description: 'Alongamento intenso.', technique: 'Cotovelos travados apontando pro teto.', mistakes: 'Cotovelo abrindo.', tip: 'Barra W.' },
-    { name: 'Tríceps corda', target: '4×12–15', muscles: 'tríceps todas cabeças',
-      description: 'Volume e pump.', technique: 'Abra a corda no fim.', mistakes: 'Cotovelo subindo.', tip: 'Drop set no fim.' },
-    { name: 'Tríceps francês', target: '3×10', muscles: 'tríceps cabeça longa',
-      description: 'Alongamento profundo.', technique: 'Halter atrás da cabeça, cotovelos apontando pro teto.', mistakes: 'Cotovelo abrindo.', tip: 'Use halter de peso médio com amplitude total.' },
+    { name: 'Rosca direta barra', target: '4×8–10', muscles: 'bíceps braquial (cabeça curta + longa)', ko: '바벨 컬',
+      description: 'Exercício fundacional pra hipertrofia de bíceps. Barra reta permite máxima carga.',
+      technique: 'Em pé, pegada supinada largura dos ombros, cotovelos colados ao tronco. Sobe controlando até quase tocar barra no peito, desce em 2 segundos.',
+      mistakes: 'Balanço do tronco (gambiarra). Cotovelos indo pra frente no topo (vira ombro). Soltar peso na descida.',
+      tip: 'Encoste as costas na parede pra travar o tronco — força só o bíceps trabalhar.' },
+    { name: 'Rosca martelo halteres', target: '3×10–12', muscles: 'bíceps braquial + braquiorradial (antebraço)', ko: '해머 컬',
+      description: 'Trabalha bíceps GROSSO (cabeça longa) e braquiorradial. Essencial pra braço cheio.',
+      technique: 'Pegada neutra (martelo), cotovelos fixos. Sobe alternado ou junto até a altura do ombro. Foco no aperto no topo.',
+      mistakes: 'Cotovelo indo pra frente. Subir alto demais (vira ombro). Punho dobrando.',
+      tip: 'Superset com rosca direta: 8 rosca + 10 martelo sem descansar = pump absurdo.' },
+    { name: 'Rosca scott (banco preacher)', target: '3×10–12', muscles: 'bíceps cabeça curta (pico)', ko: '스캇 컬',
+      description: 'Trava o cotovelo no banco e isola o bíceps. Foco no PICO do bíceps.',
+      technique: 'Banco scott ajustado pra axila tocar o topo. Pegada supinada. Amplitude total — desce até quase esticar, sobe até flexão completa.',
+      mistakes: 'Não estender completamente na descida (perde alongamento). Sacudir no fim. Carga excessiva.',
+      tip: 'Use peso menor que rosca direta. Foco em controle — 2s descendo, 1s no topo apertando.' },
+    { name: 'Tríceps testa barra W', target: '4×8–12', muscles: 'tríceps cabeça longa', ko: '라잉 트라이셉스',
+      description: 'Alongamento intenso da cabeça longa do tríceps. Construção de massa.',
+      technique: 'Deitado no banco, barra W acima do peito, cotovelos apontando PRO TETO (não pra frente). Só antebraço se move — desce barra em direção à testa.',
+      mistakes: 'Cotovelos abrindo pra fora. Cotovelos indo pra frente (vira pullover). Descer atrás da cabeça (estressa cotovelo).',
+      tip: 'Barra W salva o punho — pegada reta dói no pulso. Pegada mais fechada que ombro.' },
+    { name: 'Tríceps corda polia alta', target: '4×12–15', muscles: 'tríceps (todas as 3 cabeças)', ko: '트라이셉스 푸쉬다운',
+      description: 'Volume e pump pra tríceps. Excelente finalizador.',
+      technique: 'Polia alta com corda. Cotovelos COLADOS ao corpo, sem se mover. Estende braço pra baixo e SEPARA a corda no fim do movimento (abre as mãos).',
+      mistakes: 'Cotovelos subindo durante o movimento (vira ombro). Não abrir corda no fim. Tronco se inclinando muito.',
+      tip: 'Finaliza com drop set: 12 reps → tira 30% → 12 reps → tira 30% → AMRAP. Pump nível 11.' },
+    { name: 'Tríceps francês (halter sobrecabeça)', target: '3×10–12', muscles: 'tríceps cabeça longa (alongamento)', ko: '오버헤드 트라이셉스',
+      description: 'Alongamento máximo da cabeça longa (que cruza o ombro).',
+      technique: 'Sentado ou em pé. Halter atrás da cabeça com 2 mãos (ou unilateral). Cotovelos apontando PRO TETO e colados ao crânio. Estende braço pra cima.',
+      mistakes: 'Cotovelos abrindo pra fora. Descer baixo demais e tensionar cervical. Carga excessiva.',
+      tip: 'Versão unilateral isola melhor — pegue halter de peso médio com amplitude COMPLETA até sentir alongamento profundo no tríceps.' },
   ],
   // ===== Splits combinados extras =====
   'Upper completo': [
-    { name: 'Supino reto barra', target: '4×6–10', muscles: 'peito, tríceps, ombro',
-      description: 'Composto horizontal pesado.', technique: 'Escápula retraída, peito alto.',
-      mistakes: 'Cotovelos abertos demais.', tip: 'Pés firmes no chão.' },
-    { name: 'Remada curvada barra', target: '4×6–10', muscles: 'dorsal, romboides',
-      description: 'Composto horizontal de puxar.', technique: 'Tronco ~45°, puxa até umbigo.',
-      mistakes: 'Cheating com tronco.', tip: '"Cotovelo pro bolso de trás".' },
-    { name: 'Desenvolvimento militar', target: '4×6–10', muscles: 'ombro, tríceps',
-      description: 'Pressão vertical.', technique: 'Core travado, barra em linha reta.',
-      mistakes: 'Empurrar pra frente.', tip: 'Cabeça atravessa janela.' },
-    { name: 'Pull-up', target: '3×AMRAP', muscles: 'dorsal, bíceps',
-      description: 'Tração vertical.', technique: 'Queixo passa a barra.',
-      mistakes: 'Subir só com bíceps.', tip: 'Pega largura ombro+10cm.' },
-    { name: 'Rosca direta', target: '3×10–12', muscles: 'bíceps',
-      description: 'Isolamento de bíceps.', technique: 'Cotovelos colados.',
-      mistakes: 'Balanço.', tip: 'Encoste a parede.' },
-    { name: 'Tríceps corda', target: '3×12–15', muscles: 'tríceps',
-      description: 'Pump de tríceps.', technique: 'Abre a corda no fim.',
-      mistakes: 'Cotovelo subindo.', tip: 'Drop set finaliza.' },
-    { name: 'Face pull', target: '3×15', muscles: 'deltóide posterior, manguito',
-      description: 'Equilibra postura.', technique: 'Cotovelos altos.',
-      mistakes: 'Carga pesada.', tip: 'Abertura de cortina na cabeça.' },
+    { name: 'Supino reto barra', target: '4×6–10', muscles: 'peitoral maior, tríceps, deltóide anterior', ko: '벤치 프레스',
+      description: 'O composto horizontal mais clássico de peito. Permite carga pesada e construção de força bruta.',
+      technique: 'Escápula retraída e estável no banco, pés firmes no chão, leve arco lombar natural. Pegada largura dos ombros + 5cm. Desce barra na linha do mamilo, sobe sem trancar cotovelo no topo.',
+      mistakes: 'Cotovelos abertos a 90° (estressa ombro — mantenha a ~70°). Levantar o bumbum do banco. Tirar pés do chão. Tranco no topo.',
+      tip: 'Pés firmes geram potência: empurre o chão durante a subida (leg drive). Se ainda não tem força pra barra, comece com halteres.' },
+    { name: 'Remada curvada barra', target: '4×6–10', muscles: 'dorsal médio, romboides, trapézio médio, bíceps', ko: '벤트 오버 로우',
+      description: 'O melhor composto horizontal de puxar. Espessura de dorsal e meio das costas.',
+      technique: 'Tronco inclinado ~45°, lombar neutra (NÃO arredondada), joelhos semi-flex. Pegada pronada largura dos ombros. Puxa barra até tocar o umbigo, escápulas retraindo ANTES dos braços moverem.',
+      mistakes: 'Cheating com tronco subindo a cada rep. Lombar arredondando (perigoso). Puxar até o peito (vira trapézio).',
+      tip: '"Cotovelo pro bolso de trás" — visualize isso e o movimento corrige sozinho. Pause 1s no topo apertando escápulas.' },
+    { name: 'Desenvolvimento militar barra', target: '4×6–10', muscles: 'deltóide anterior + médio, tríceps, trapézio superior', ko: '밀리터리 프레스',
+      description: 'Pressão vertical pesada. Constrói força e tamanho de ombro como nenhum outro.',
+      technique: 'Em pé ou sentado, barra na altura clavicular. Core travado, glúteo apertado, costelas pra baixo. Empurra barra em LINHA RETA pra cima — não pra frente. Cabeça passa pra frente quando barra sobe.',
+      mistakes: 'Empurrar barra pra frente (vira supino inclinado). Hiperestender lombar. Travar joelhos. Cotovelo apontando pra frente demais.',
+      tip: 'Imagine que a cabeça precisa atravessar uma janela quando a barra sobe — isso alinha o caminho da barra com o centro de gravidade.' },
+    { name: 'Pull-up (barra fixa) ou assistido', target: '3×AMRAP', muscles: 'dorsal, romboides, bíceps, core', ko: '풀업',
+      description: 'Tração vertical clássica. Marco de força relativa.',
+      technique: 'Pegada pronada (palmas pra frente) largura dos ombros + 10cm. Escápulas DEPRIMIDAS antes de puxar (ombro pra trás e pra baixo). Sobe até queixo passar barra. Desce CONTROLANDO.',
+      mistakes: 'Balanço com pernas (kipping — não vale aqui). Subir só com bíceps (cotovelos perto do corpo). Soltar peso na descida.',
+      tip: 'Se ainda não tira, faça NEGATIVAS: pula até em cima, desce em 5 segundos. Em 4-6 semanas tira a primeira completa.' },
+    { name: 'Rosca direta barra', target: '3×10–12', muscles: 'bíceps braquial',
+      description: 'Isolamento clássico de bíceps. Fecha o treino de upper.',
+      technique: 'Em pé, pegada supinada largura ombro, cotovelos colados ao tronco. Sobe até quase tocar barra no peito, desce em 2s.',
+      mistakes: 'Balanço de quadril. Cotovelo indo pra frente no topo. Não estender totalmente em baixo.',
+      tip: 'Encoste as costas na parede — força o bíceps a fazer tudo sozinho.' },
+    { name: 'Tríceps corda polia alta', target: '3×12–15', muscles: 'tríceps (3 cabeças)',
+      description: 'Pump de tríceps e finalização do upper.',
+      technique: 'Cotovelos COLADOS ao corpo. Estende e abre a corda no fim do movimento.',
+      mistakes: 'Cotovelos saindo pra frente. Não abrir a corda. Tronco inclinando muito.',
+      tip: 'Drop set finaliza: 12 → tira 30% → 12 → tira 30% → AMRAP. Pump máximo.' },
+    { name: 'Face pull corda', target: '3×15', muscles: 'deltóide posterior, romboides, manguito rotador',
+      description: 'Antídoto da postura cifótica de quem treina muito peito. Faz no fim de TODO upper.',
+      technique: 'Polia alta com corda. Puxa até as mãos chegarem nas orelhas, cotovelos ALTOS (acima do ombro). Rotação externa no fim — punhos viram pra trás.',
+      mistakes: 'Carga pesada (perde forma). Cotovelo abaixo do ombro (vira remada alta). Não fazer rotação no fim.',
+      tip: 'Visualize "abertura de cortina" na altura da cabeça. Carga LEVE com forma perfeita > carga pesada com forma ruim.' },
   ],
   // ===== Splits ABC clássico =====
   'A · Peito + Tríceps + Abs': [
@@ -7715,6 +7747,85 @@ function viewDashboard() {
     const intention = todayLog.intention || '';
     const intentionDone = !!todayLog.intentionDone;
     return `
+    <!-- ===== Quick Start (estilo Hevy) — entrada rápida pro treino =====
+         Mostra o último treino feito como "Repetir" + botão pra iniciar novo. -->
+    ${(() => {
+      const lastWorkout = state.workouts.slice().reverse()[0];
+      const hasLib = lastWorkout && EXERCISE_LIBRARY[lastWorkout.type];
+      return `
+      <section class="px-4 mt-2">
+        <div class="grid grid-cols-2 gap-2">
+          <button class="q-card p-3 text-left" data-quick-new-workout>
+            <div class="text-[10px] uppercase tracking-widest text-ink/45 dark:text-paper/45">Iniciar</div>
+            <div class="font-bold text-sm mt-1">+ Novo treino</div>
+            <div class="text-[10px] text-ink/45 dark:text-paper/45">Escolher tipo</div>
+          </button>
+          ${hasLib ? `
+          <button class="q-card p-3 text-left" data-quick-repeat-workout data-type="${lastWorkout.type}"
+                  style="background:#1A1A2E; color:#fff">
+            <div class="text-[10px] uppercase tracking-widest opacity-70">Repetir</div>
+            <div class="font-bold text-sm mt-1 truncate">${lastWorkout.type}</div>
+            <div class="text-[10px] opacity-60">${formatDateBR(lastWorkout.date)}</div>
+          </button>` : `
+          <button class="q-card p-3 text-left" data-go="body">
+            <div class="text-[10px] uppercase tracking-widest text-ink/45 dark:text-paper/45">Corpo</div>
+            <div class="font-bold text-sm mt-1">📐 Medidas</div>
+            <div class="text-[10px] text-ink/45 dark:text-paper/45">Atualizar</div>
+          </button>`}
+        </div>
+      </section>`;
+    })()}
+
+    <!-- ===== Última atividade — feed compacto dos últimos 3 registros ===== -->
+    ${(() => {
+      const items = [];
+      // Último treino
+      const lw = state.workouts.slice().reverse()[0];
+      if (lw) items.push({ t: `🏋 ${lw.type}`, d: lw.date, sub: `${lw.exercises.length} exercícios` });
+      // Última medida corporal
+      const lm = state.bodyMeasurements?.slice().reverse()[0];
+      if (lm) items.push({ t: '📐 Medidas atualizadas', d: lm.date, sub: lm.weight ? `${lm.weight}kg` : '' });
+      // Último log diário com sleep > 0
+      const ll = (state.dailyLogs || []).filter(l => !l.autoClosed && (l.sleep?.hours || 0) > 0).slice(-1)[0];
+      if (ll) items.push({ t: '🌙 Sono registrado', d: ll.date, sub: `${ll.sleep.hours}h` });
+      if (items.length === 0) return '';
+      items.sort((a, b) => (b.d || '').localeCompare(a.d || ''));
+      return `
+      <section class="px-4 mt-3">
+        <div class="text-[10px] uppercase tracking-widest text-ink/45 dark:text-paper/45 mb-1.5 px-1">Última atividade</div>
+        <div class="q-card divide-y divide-ink/5 dark:divide-paper/5">
+          ${items.slice(0, 3).map(i => `
+            <div class="p-3 flex items-center gap-2 text-sm">
+              <div class="flex-1 min-w-0">
+                <div class="font-semibold truncate">${i.t}</div>
+                <div class="text-[10px] text-ink/55 dark:text-paper/55">${i.sub}${i.sub ? ' · ' : ''}${formatDateBR(i.d)}</div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </section>`;
+    })()}
+
+    <!-- CTA "Personalize suas quests" — sempre visível enquanto não houver
+         customQuests cadastradas. Sumiu quando user gerar. -->
+    ${(() => {
+      const hasCustom = (state.user.profile?.customQuests || []).length > 0;
+      const hasDesc = !!(state.user.profile?.description || '').trim();
+      if (hasCustom) return '';
+      return `
+      <section class="px-4 mt-2">
+        <button class="q-card p-3 w-full text-left flex items-center gap-3" data-go-profile-setup
+                style="border:1px dashed rgba(123,184,255,0.5)">
+          <span class="text-2xl">${hasDesc ? '✨' : '📝'}</span>
+          <div class="flex-1">
+            <div class="font-bold text-sm">${hasDesc ? 'Gerar quests só pra você' : 'Personalize suas quests'}</div>
+            <div class="text-[10px] text-ink/55 dark:text-paper/55">${hasDesc ? 'Você já escreveu seu perfil. Toque pra gerar com a IA.' : 'Conta sobre você → IA gera quests sob medida'}</div>
+          </div>
+          <span class="text-ink/45 dark:text-paper/45">→</span>
+        </button>
+      </section>`;
+    })()}
+
     <!-- Análise semanal — botão discreto quando é domingo (ou houver dados) -->
     ${(() => {
       const isDom = new Date().getDay() === 0;
@@ -8368,7 +8479,7 @@ function viewWorkout() {
         if (!valid.length) return '';
         return `
         <div class="kombat-divider">${groupName}</div>
-        <div class="grid grid-cols-2 gap-2">
+        <div class="workout-pick-grid">
           ${valid.map(t => {
             const heroResolved = resolveWorkoutHero(t);
             const hero = heroResolved?.img;
@@ -8379,9 +8490,9 @@ function viewWorkout() {
                 ? `<div class="workout-pick-thumb" style="background-image:url('${hero}'); background-position:${heroResolved.position}"></div>`
                 : `<div class="workout-pick-thumb workout-pick-thumb-placeholder">${icons[t] || I.dumb}</div>`}
               <div class="workout-pick-text">
-                <div class="font-kombat text-[9px] text-blood/70 dark:text-ember/70 tracking-widest uppercase">${moveCount} moves</div>
-                <div class="font-bold text-sm leading-tight">${t}</div>
-                <div class="text-[10px] text-ink/50 dark:text-paper/50 leading-tight">${subtitles[t] || ''}</div>
+                <div>${moveCount} exercícios</div>
+                <div>${t}</div>
+                <div>${subtitles[t] || ''}</div>
               </div>
             </button>`;
           }).join('')}
@@ -13409,6 +13520,24 @@ function attachHandlers() {
     go('nutri');
   });
   document.querySelector('[data-weekly-analyze]')?.addEventListener('click', () => modalWeeklyReport());
+  document.querySelector('[data-quick-new-workout]')?.addEventListener('click', () => go('workout'));
+  document.querySelector('[data-quick-repeat-workout]')?.addEventListener('click', (e) => {
+    const type = e.currentTarget.dataset.type;
+    if (type && EXERCISE_LIBRARY[type]) modalWorkoutSession(type);
+  });
+  document.querySelectorAll('[data-go]').forEach((b) => b.onclick = () => go(b.dataset.go));
+  document.querySelector('[data-go-profile-setup]')?.addEventListener('click', () => {
+    currentTab = 'config';
+    render();
+    // Rola até o card de descrição
+    setTimeout(() => {
+      const target = document.getElementById('cfg-prof-description');
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        target.focus();
+      }
+    }, 100);
+  });
 
   // ===== Foco do dia (implementation intention) =====
   const ensureTodayLog = () => {
