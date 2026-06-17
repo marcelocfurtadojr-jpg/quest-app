@@ -73,7 +73,9 @@ function baseRankIndex(rankKey) {
 const RANK_DECAY = 0.10;
 
 // Quantas daily quests aparecem na home por padrão.
-const DAILY_QUEST_COUNT = 5;
+// Reduzido 5→3 pra carga executiva menor (TDAH-friendly). 3 escolhas
+// realistas vs 5 que viram paralisia de decisão e "abandono".
+const DAILY_QUEST_COUNT = 3;
 
 // Mapa de tag → emoji/cor/label pra UI de quests (mais visual e divertido).
 const QUEST_TAG_INFO = {
@@ -6342,6 +6344,7 @@ function makeEmptyState() {
         goal: 'definicao_abs',  // 'definicao_abs','massa_geral','peso_off','saude','performance'
         engagement: { gym: 'medio', diet: 'medio' },  // baixo|medio|alto
         notes: '',
+        lowSensory: false,      // true → desativa animações, confetti, vibração, ⚔
       },
     },
     dailyLogs: [],          // [{date, training, protein, sleep, reading, steps, buffs, notes, xp}]
@@ -6550,6 +6553,7 @@ function migrateState(s) {
   s.user.profile.engagement.gym = s.user.profile.engagement.gym || 'medio';
   s.user.profile.engagement.diet = s.user.profile.engagement.diet || 'medio';
   s.user.profile.notes = s.user.profile.notes || '';
+  if (typeof s.user.profile.lowSensory !== 'boolean') s.user.profile.lowSensory = false;
 
   // PRÉ-PREENCHE com o perfil declarado pelo user no chat (apenas se ainda
   // não tiver dado nenhuma condition — não sobrescreve escolha consciente).
@@ -7048,6 +7052,7 @@ const I = {
 // ===== 5. FX (efeitos visuais e hápticos) ====================
 
 function vibrate(ms = 18) {
+  if (reducedMotion()) return;
   if (navigator.vibrate) navigator.vibrate(ms);
 }
 
@@ -7060,6 +7065,7 @@ function toast(message, ms = 2200) {
 }
 
 function confetti(durationMs = 1400) {
+  if (reducedMotion()) return;
   const colors = ['#FFB7C5', '#B7B5FF', '#A8E6CF', '#FFD8A8', '#7BB8FF'];
   const fx = document.getElementById('fx');
   const N = 28;
@@ -7689,7 +7695,59 @@ function viewDashboard() {
     const kGoal = getKcalGoal();
     const proteinPct = Math.min(100, Math.round((proteinG / pGoal) * 100));
     const kcalPct = Math.min(100, Math.round((kcalToday / kGoal) * 100));
+    const intention = todayLog.intention || '';
+    const intentionDone = !!todayLog.intentionDone;
     return `
+    <!-- Análise semanal — botão discreto quando é domingo (ou houver dados) -->
+    ${(() => {
+      const isDom = new Date().getDay() === 0;
+      const has7d = (state.dailyLogs || []).length >= 3;
+      if (!isDom && !has7d) return '';
+      if (!aiReady()) return '';
+      return `
+      <section class="px-4 mt-2">
+        <button class="q-card p-3 w-full text-left flex items-center gap-3" data-weekly-analyze>
+          <span class="text-2xl">📊</span>
+          <div class="flex-1">
+            <div class="font-bold text-sm">Análise da semana</div>
+            <div class="text-[10px] text-ink/55 dark:text-paper/55">${isDom ? 'Domingo · momento ideal' : 'Resumo dos últimos 7 dias'}</div>
+          </div>
+          <span class="text-ink/45 dark:text-paper/45">→</span>
+        </button>
+      </section>`;
+    })()}
+
+    <!-- ===== Foco do dia (implementation intention) =====
+         Pre-commitment matinal: user escolhe 1 micro-meta concreta.
+         Estrutura externa pra TDAH — externaliza a decisão pra ser feita 1×
+         de manhã em vez de 100× durante o dia.
+         "When-then" psicológico: a intenção escrita vincula gatilho a comportamento. -->
+    <section class="px-4 mt-2">
+      <div class="q-card p-3">
+        <div class="flex items-center justify-between mb-2">
+          <div class="text-[10px] uppercase tracking-widest text-ink/45 dark:text-paper/45">🎯 Foco do dia</div>
+          ${intention ? `<button class="text-[10px] text-lavender" data-intention-clear>limpar</button>` : ''}
+        </div>
+        ${intention ? `
+          <div class="flex items-center gap-2">
+            <button class="q-check ${intentionDone ? 'is-checked' : ''}" data-intention-toggle aria-label="Marcar como feito">
+              ${intentionDone ? I.check : ''}
+            </button>
+            <div class="flex-1 ${intentionDone ? 'line-through opacity-60' : ''}">${intention}</div>
+          </div>
+          ${intentionDone ? `<div class="text-[10px] text-mint mt-2">✓ Foco do dia concluído</div>` : ''}
+        ` : `
+          <form data-intention-set class="flex gap-2">
+            <input class="q-input flex-1 text-sm" placeholder="ex: comer proteína no almoço" required maxlength="80" />
+            <button class="q-btn q-btn-primary text-xs" type="submit">Definir</button>
+          </form>
+          <p class="text-[9px] text-ink/45 dark:text-paper/45 mt-2 leading-tight">
+            1 coisa concreta pra hoje. Pequena. Específica. Termine antes de continuar.
+          </p>
+        `}
+      </div>
+    </section>
+
     <section class="px-4 mt-3">
       <div class="q-card p-3">
         <div class="flex items-center justify-between mb-2">
@@ -12868,6 +12926,16 @@ function viewConfig() {
           <textarea id="cfg-prof-notes" class="q-input mt-1 text-sm" rows="2" placeholder="ex: sensibilidade a barulho, gosto de rotina fixa, evitar comparações…">${p.notes || ''}</textarea>
         </label>
 
+        <label class="flex items-center gap-2 mt-3 cursor-pointer">
+          <input type="checkbox" id="cfg-prof-lowsensory" ${p.lowSensory ? 'checked' : ''} class="q-check-native" />
+          <div class="flex-1">
+            <div class="text-[12px] font-semibold">🔕 Modo sensorial reduzido</div>
+            <div class="text-[10px] text-ink/55 dark:text-paper/55 leading-tight">
+              Desativa confetti, vibração e animações fortes. Ideal pra dias com sobrecarga sensorial.
+            </div>
+          </div>
+        </label>
+
         <button id="cfg-prof-save" class="q-btn q-btn-primary w-full mt-3 text-xs">Salvar perfil</button>
       </div>`;
     })()}
@@ -13069,13 +13137,14 @@ function viewConfig() {
 // ===== 7. ROUTER / TABBAR / MODAL ============================
 
 function renderTabbar() {
+  // Tabbar reduzido pra 4 abas principais (menos decisões = TDAH-friendly).
+  // Calistenia → ainda acessível dentro da aba Treino (lista de treinos).
+  // Leitura → acessível via tile no Arsenal da home.
   const items = [
-    { key: 'home',       icon: I.home,    label: 'Início' },
-    { key: 'workout',    icon: I.dumb,    label: 'Treino' },
-    { key: 'calistenia', icon: I.fighter, label: 'Calist.' },
-    { key: 'nutri',      icon: I.bowl,    label: 'Nutri' },
-    { key: 'reading',    icon: I.book,    label: 'Leitura' },
-    { key: 'body',       icon: I.body,    label: 'Corpo' },
+    { key: 'home',    icon: I.home, label: 'Início' },
+    { key: 'workout', icon: I.dumb, label: 'Treino' },
+    { key: 'nutri',   icon: I.bowl, label: 'Nutri' },
+    { key: 'body',    icon: I.body, label: 'Corpo' },
   ];
   document.getElementById('tabbar').innerHTML = `
     <div class="flex gap-1">
@@ -13171,6 +13240,50 @@ function attachHandlers() {
   });
   document.querySelector('[data-quick-meal-edit]')?.addEventListener('click', () => {
     go('nutri');
+  });
+  document.querySelector('[data-weekly-analyze]')?.addEventListener('click', () => modalWeeklyReport());
+
+  // ===== Foco do dia (implementation intention) =====
+  const ensureTodayLog = () => {
+    const today = todayISO();
+    let log = state.dailyLogs.find((l) => l.date === today);
+    if (!log) {
+      log = { date: today, training: { type: 'descanso', done: false }, protein: { grams: 0, hit: false },
+              sleep: { hours: 0 }, reading: { minutes: 0 }, steps: 0, buffs: [], notes: '', meals: [] };
+      state.dailyLogs.push(log);
+    }
+    return log;
+  };
+  document.querySelector('[data-intention-set]')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const input = e.target.querySelector('input');
+    const text = input.value.trim();
+    if (!text) return;
+    const log = ensureTodayLog();
+    log.intention = text;
+    log.intentionDone = false;
+    saveState();
+    toast('🎯 Foco definido');
+    render();
+  });
+  document.querySelector('[data-intention-toggle]')?.addEventListener('click', () => {
+    const log = ensureTodayLog();
+    log.intentionDone = !log.intentionDone;
+    if (log.intentionDone) {
+      vibrate(20);
+      confetti(500);
+      toast('✓ Foco do dia concluído');
+    }
+    saveState();
+    render();
+  });
+  document.querySelector('[data-intention-clear]')?.addEventListener('click', () => {
+    if (!confirm('Limpar foco do dia?')) return;
+    const log = ensureTodayLog();
+    delete log.intention;
+    delete log.intentionDone;
+    saveState();
+    render();
   });
 
   // Spotify (card no header + bind direto)
@@ -14066,8 +14179,9 @@ function attachHandlers() {
       diet: document.getElementById('cfg-prof-diet')?.value || 'medio',
     };
     state.user.profile.notes = document.getElementById('cfg-prof-notes')?.value?.trim() || '';
+    state.user.profile.lowSensory = !!document.getElementById('cfg-prof-lowsensory')?.checked;
     saveState();
-    toast('Perfil salvo — IA vai usar daqui pra frente');
+    toast('Perfil salvo');
     render();
   });
 
@@ -14563,6 +14677,14 @@ function applyTheme() {
   const t = state?.user?.theme && THEMES[state.user.theme] ? state.user.theme : 'kpop_anime';
   document.documentElement.dataset.theme = t;
   applyCharacterTheme();
+  // Modo sensorial reduzido — desativa animações, confetti, vibração (CSS faz o resto)
+  const lowSensory = !!state?.user?.profile?.lowSensory;
+  document.documentElement.dataset.lowSensory = lowSensory ? 'true' : '';
+}
+
+/** Helper: pula vibração e confetti quando lowSensory está ativo. */
+function reducedMotion() {
+  return !!state?.user?.profile?.lowSensory;
 }
 
 // ===== 5.5 SPOTIFY ============================================
@@ -15269,17 +15391,57 @@ function modalAIChat() {
   };
 }
 
-/** Renderiza o FAB do chat IA. Reutiliza o mesmo elemento entre renders. */
-function renderAIFab() {
-  let fab = document.getElementById('ai-fab');
-  if (!fab) {
-    fab = document.createElement('button');
-    fab.id = 'ai-fab';
-    fab.className = 'ai-fab';
-    fab.setAttribute('aria-label', 'Chat com Claude');
-    fab.innerHTML = '<span>🤖</span>';
-    fab.onclick = () => { vibrate(8); modalAIChat(); };
-    document.body.appendChild(fab);
+/** Análise semanal silenciosa via Claude. Pega dados dos últimos 7 dias,
+ *  manda 1 query, mostra relatório formatado em modal (NÃO é chat). */
+async function modalWeeklyReport() {
+  vibrate(10);
+  if (!aiReady()) {
+    toast('Configure a API key em Configurações → 🤖 Claude IA');
+    return;
+  }
+  openModal(`
+    <header class="flex items-center justify-between p-4 border-b border-ink/5 dark:border-paper/5">
+      <div>
+        <div class="text-[10px] uppercase tracking-widest text-ink/45 dark:text-paper/45">Análise semanal</div>
+        <h2 class="font-bold text-lg">Últimos 7 dias</h2>
+      </div>
+      <button class="modal-close p-1" aria-label="Fechar">✕</button>
+    </header>
+    <div id="weekly-body" class="p-5 overflow-y-auto" style="max-height:60vh">
+      <div class="text-center text-xs text-ink/55 dark:text-paper/55 py-8">
+        <span class="ai-typing">▮▮▮</span><br>
+        Analisando seus últimos 7 dias…
+      </div>
+    </div>
+    <div class="p-3 border-t border-ink/5 dark:border-paper/5">
+      <button class="q-btn q-btn-primary w-full modal-close">Fechar</button>
+    </div>
+  `);
+  try {
+    const system = aiCoachSystemPrompt() + `
+
+ESPECÍFICO PRA ANÁLISE SEMANAL:
+Estrutura fixa (use markdown ** pra negrito):
+
+**📊 O que funcionou**
+[2-3 linhas concretas observadas — ex: "treinou 4×, bateu meta proteína em 5/7 dias"]
+
+**🎯 1 ajuste pra próxima semana**
+[1 ação específica, pequena, mensurável. Ligada ao objetivo abdômen quando relevante.]
+
+**💬 Observação**
+[1 frase curta validando o esforço, sem motivação açucarada]
+
+Total: máximo 100 palavras. Linguagem factual. Zero shame.`;
+    const reply = await askClaude(system, 'Faz a análise da semana baseada no contexto do user.', { maxTokens: 600 });
+    const body = document.getElementById('weekly-body');
+    const html = reply
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\n/g,'<br>');
+    body.innerHTML = `<div class="ai-explanation text-sm leading-relaxed">${html}</div>`;
+  } catch (err) {
+    document.getElementById('weekly-body').innerHTML = `<div class="text-xs text-pink">Erro: ${err.message}<br><br>Verifica a API key em Config.</div>`;
   }
 }
 

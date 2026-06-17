@@ -760,6 +760,33 @@ html.dark body {
 .dark .levelup-card { background: linear-gradient(160deg, #1A2238, #261D38); color: #FBFAF7; }
 @keyframes popIn { from {transform:scale(.7); opacity:0} to {transform:scale(1); opacity:1} }
 
+/* ============================================================
+   MODO SENSORIAL REDUZIDO — desativa animações, glows pulsantes,
+   gradientes vibrantes. Mantém estrutura visual mas remove "ruído".
+   Ativado via Config → Perfil → 🔕 Modo sensorial reduzido.
+   ============================================================ */
+html[data-low-sensory="true"] *,
+html[data-low-sensory="true"] *::before,
+html[data-low-sensory="true"] *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+html[data-low-sensory="true"] .animate-pop-in,
+html[data-low-sensory="true"] .animate-fade-up,
+html[data-low-sensory="true"] .animate-shake,
+html[data-low-sensory="true"] .confetti-piece {
+  animation: none !important;
+}
+html[data-low-sensory="true"] .ai-typing,
+html[data-low-sensory="true"] .cs-press,
+html[data-low-sensory="true"] .cs-coin,
+html[data-low-sensory="true"] .cs-last-badge {
+  animation: none !important;
+  opacity: 0.85 !important;
+}
+
 /* Tabbar item — estilo limpo, indicador embaixo (não pill colorido) */
 .tab-item {
   flex: 1;
