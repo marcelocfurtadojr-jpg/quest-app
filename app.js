@@ -8781,14 +8781,19 @@ function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
     </header>
     `}
 
-    <div class="p-4 space-y-4 overflow-y-auto" style="max-height:${heroImg ? '50vh' : '70vh'}" id="workout-body">
-      <div class="q-card p-3 flex items-center justify-between gap-2">
-        <div class="font-semibold text-sm">⏱ Timer de descanso</div>
-        <div class="flex gap-1">
-          ${[60,90,120,180].map(s => `<button class="rest-btn pill" data-sec="${s}">${s}s</button>`).join('')}
+    <!-- Floating rest timer — sticky no topo do scroll. Sempre visível
+         enquanto registra séries, sem precisar scrollar pra cima. -->
+    <div class="rest-timer-float">
+      <div class="rest-timer-row">
+        <span class="rest-timer-label">⏱ DESCANSO</span>
+        <div class="rest-timer-buttons">
+          ${[60,90,120,180].map(s => `<button class="rest-btn-mini" data-sec="${s}">${s}s</button>`).join('')}
         </div>
       </div>
-      <div id="timer-display" class="text-center text-3xl font-extrabold hidden"></div>
+      <div id="timer-display" class="rest-timer-display hidden"></div>
+    </div>
+
+    <div class="p-4 pt-2 space-y-4 overflow-y-auto" style="max-height:${heroImg ? '46vh' : '64vh'}" id="workout-body">
 
       ${start.exercises.map((ex, exIdx) => {
         const lastSessions = lastSessionsFor(ex.name, 5);
@@ -13084,6 +13089,22 @@ function viewConfig() {
       </p>
     </div>
 
+    <!-- Histórico: zerar tudo OU adicionar dia retroativo -->
+    <div class="q-card p-4">
+      <div class="text-xs uppercase tracking-wider text-ink/45 dark:text-paper/45">📅 Histórico</div>
+      <div class="font-bold mt-0.5">Gerenciar dias e treinos</div>
+      <p class="text-[10px] text-ink/55 dark:text-paper/55 leading-relaxed mt-1">
+        Adicionar dia retroativo: registra sono, treino, refeições de um dia passado.
+        Zerar histórico: apaga todos os dailyLogs, treinos, medidas e fotos. Rank/perfil ficam intactos.
+      </p>
+      <button id="cfg-add-past-day" class="q-btn q-btn-primary w-full mt-3 text-sm">
+        + Adicionar dia retroativo
+      </button>
+      <button id="cfg-reset-history" class="q-btn q-btn-ghost w-full mt-2 text-sm" style="color:#B8242E; border:1px solid rgba(184,36,46,0.3)">
+        🗑 Zerar histórico de dias/treinos/medidas
+      </button>
+    </div>
+
     <!-- Zerar Elo: rank/XP/atributos/conquistas pra 0, preservando histórico físico -->
     <div class="q-card p-4" style="border:1px solid rgba(214,169,62,0.35)">
       <h3 class="font-bold mb-1 text-kgold">↻ Zerar Elo</h3>
@@ -14119,6 +14140,26 @@ function attachHandlers() {
     // Mantém activeCharacter como "último escolhido" (vira destaque na tela)
     // mas reabre Choose Your Fighter pra confirmação.
     _characterPickedThisSession = false;
+    currentTab = 'home';
+    render();
+  });
+
+  // ---- Histórico ----
+  document.getElementById('cfg-add-past-day')?.addEventListener('click', () => {
+    // modalDailyLog aceita dateISO — abre com data padrão de ontem e o user
+    // pode mexer no campo Data direto no modal pra escolher outro dia.
+    const d = new Date(); d.setDate(d.getDate() - 1);
+    modalDailyLog(isoDate(d));
+  });
+  document.getElementById('cfg-reset-history')?.addEventListener('click', () => {
+    if (!confirm('Zerar TODO o histórico?\n\nApaga:\n- Todos os dailyLogs (sono, refeições, leitura, passos)\n- Todos os treinos registrados\n- Todas as medidas corporais\n- Todas as fotos\n\nPreserva:\n- Rank, XP, atributos, conquistas\n- Perfil comportamental + IA configurada\n- Personagem ativo\n- Lista de livros (lit. + artigos)\n- Spotify connected\n\nIsso NÃO dá pra desfazer.')) return;
+    if (!confirm('Confirmar de vez? Última chance.')) return;
+    state.dailyLogs = [];
+    state.workouts = [];
+    state.bodyMeasurements = [];
+    state.photos = [];
+    saveState();
+    toast('Histórico zerado — pode adicionar dias retroativos agora');
     currentTab = 'home';
     render();
   });
