@@ -14477,14 +14477,26 @@ Regras:
     modalDailyLog(isoDate(d));
   });
   document.getElementById('cfg-reset-history')?.addEventListener('click', () => {
-    if (!confirm('Zerar TODO o histórico?\n\nApaga:\n- Todos os dailyLogs (sono, refeições, leitura, passos)\n- Todos os treinos registrados\n- Todas as medidas corporais\n- Todas as fotos\n\nPreserva:\n- Rank, XP, atributos, conquistas\n- Perfil comportamental + IA configurada\n- Personagem ativo\n- Lista de livros (lit. + artigos)\n- Spotify connected\n\nIsso NÃO dá pra desfazer.')) return;
+    if (!confirm('Zerar TODO o histórico?\n\nAPAGA:\n• Todos os dailyLogs (sono, refeições, leitura, passos, foco do dia)\n• Todos os treinos registrados\n• Todas as medidas corporais\n• Todas as fotos\n• Quests do dia / semana (resorteia)\n• Battle log / histórico de rank\n• Conquistas desbloqueadas (zera o counter)\n\nPRESERVA:\n• Rank, XP, atributos\n• Perfil comportamental + IA configurada\n• Personagem ativo\n• Lista de livros\n• Spotify\n• Recompensas pessoais\n\nIsso NÃO dá pra desfazer.')) return;
     if (!confirm('Confirmar de vez? Última chance.')) return;
+    // Reset completo do histórico físico
     state.dailyLogs = [];
     state.workouts = [];
     state.bodyMeasurements = [];
     state.photos = [];
+    // Reset do histórico de jogo
+    state.rankHistory = [];
+    state.quests.dailyAssigned = { date: null, items: [], rerolled: false, completed: [] };
+    state.quests.weeklyCurrent = { weekStart: null, item: null, progress: 0, completed: false };
+    // Reset de tracking acumulado no user
+    state.user.battleLog = [];
+    state.user.achievementsUnlocked = [];
+    state.user.questsCompleted = 0;
+    state.user.lastDailySpinAt = null;
+    state.user.lastLoginBonusAt = null;
+    state.user.mascotNotifiedAt = null;
     saveState();
-    toast('Histórico zerado — pode adicionar dias retroativos agora');
+    toast('Histórico zerado — limpo de verdade');
     currentTab = 'home';
     render();
   });
