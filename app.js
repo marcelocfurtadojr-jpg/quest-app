@@ -8543,6 +8543,30 @@ function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
     strength:     ['','rest-pause','drop-set','myo-reps','AMRAP','tempo','pause-rep'],
   };
 
+  // Renderiza a área mutável de UM exercício (presets + headers + set rows).
+  // Usado tanto no template inicial quanto pra surgical update sem reabrir modal.
+  function renderExerciseMutable(ex, techOpts, exCols, exRepsMax, exWeightStep) {
+    return `
+      <div class="flex items-center gap-1.5 mt-3 text-[11px]">
+        <span class="text-ink/55 dark:text-paper/55">Séries:</span>
+        ${[3, 4, 5, 6, 8].map(n => `<button class="sets-preset pill text-[10px] ${n === ex.sets.length ? 'is-mint font-bold' : ''}" data-n="${n}">${n}</button>`).join('')}
+        <span class="text-[9px] text-ink/40 dark:text-paper/40 ml-auto italic">técnica copia automático</span>
+      </div>
+      <div class="q-grid mt-2 font-semibold text-xs text-ink/55 dark:text-paper/55">
+        <span>${exCols.tech}</span><span>${exCols.reps}</span><span>${exCols.weight}</span><span></span>
+      </div>
+      ${ex.sets.map((s, sIdx) => `
+        <div class="q-grid mt-1" data-set-idx="${sIdx}">
+          <select class="q-input p-1 text-xs set-tech">
+            ${techOpts.map(t => `<option ${s.technique===t?'selected':''}>${t}</option>`).join('')}
+          </select>
+          <input type="number" min="0" max="${exRepsMax}" class="q-input p-1 set-reps" value="${s.reps}" />
+          <input type="number" step="${exWeightStep}" min="0" max="500" class="q-input p-1 set-weight" value="${s.weight}" />
+          <button class="q-btn q-btn-ghost px-2 py-1 text-xs add-set" data-action="${sIdx===ex.sets.length-1?'add':'rm'}">${sIdx===ex.sets.length-1?'+':'−'}</button>
+        </div>`).join('')}
+    `;
+  }
+
   const COLS_BY_CAT = {
     walking:      { tech: 'Modo',     reps: 'Min',    weight: 'km/h', isCardio: true },
     hiit:         { tech: 'Bloco',    reps: 'Reps/s', weight: 'kg',   isCardio: true },
@@ -8621,23 +8645,9 @@ function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
             ${targetInfo?.technique ? `<button class="ex-info text-lavender w-5 h-5 flex-shrink-0" data-ex-name="${encodeURIComponent(ex.name)}" aria-label="info">${I.info}</button>` : ''}
             <div class="text-xs font-bold ${progClass}">${progLabel}</div>
           </div>
-          <div class="flex items-center gap-1.5 mt-3 text-[11px]">
-            <span class="text-ink/55 dark:text-paper/55">Séries:</span>
-            ${[3, 4, 5, 6, 8].map(n => `<button class="sets-preset pill text-[10px] ${n === ex.sets.length ? 'is-mint font-bold' : ''}" data-n="${n}">${n}</button>`).join('')}
-            <span class="text-[9px] text-ink/40 dark:text-paper/40 ml-auto italic">técnica copia automático</span>
+          <div data-ex-mutable="${exIdx}">
+            ${renderExerciseMutable(ex, techOpts, exCols, exRepsMax, exWeightStep)}
           </div>
-          <div class="q-grid mt-2 font-semibold text-xs text-ink/55 dark:text-paper/55">
-            <span>${exCols.tech}</span><span>${exCols.reps}</span><span>${exCols.weight}</span><span></span>
-          </div>
-          ${ex.sets.map((s, sIdx) => `
-            <div class="q-grid mt-1" data-set-idx="${sIdx}">
-              <select class="q-input p-1 text-xs set-tech">
-                ${techOpts.map(t => `<option ${s.technique===t?'selected':''}>${t}</option>`).join('')}
-              </select>
-              <input type="number" min="0" max="${exRepsMax}" class="q-input p-1 set-reps" value="${s.reps}" />
-              <input type="number" step="${exWeightStep}" min="0" max="500" class="q-input p-1 set-weight" value="${s.weight}" />
-              <button class="q-btn q-btn-ghost px-2 py-1 text-xs add-set" data-action="${sIdx===ex.sets.length-1?'add':'rm'}">${sIdx===ex.sets.length-1?'+':'−'}</button>
-            </div>`).join('')}
           ${lastSessions.length ? `
             <details class="mt-2 text-xs">
               <summary class="cursor-pointer text-ink/50 dark:text-paper/50">últimas ${lastSessions.length} sessões</summary>
@@ -8788,10 +8798,12 @@ function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
     const ex = start.exercises[exIdx];
     const lastSet = ex.sets[ex.sets.length - 1] || { reps: '', weight: '', technique: '' };
 
+    let shouldFocusNewSet = false;
     if (addBtn) {
       if (addBtn.dataset.action === 'add') {
         // Herda técnica do último set
         ex.sets.push({ reps: '', weight: '', technique: lastSet.technique || '' });
+        shouldFocusNewSet = true;
       } else if (ex.sets.length > 1) {
         const setIdx = +addBtn.closest('[data-set-idx]').dataset.setIdx;
         ex.sets.splice(setIdx, 1);
@@ -8811,9 +8823,23 @@ function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
         }
       }
     }
-    // 2) Reabre o modal preservando o estado em memória
-    closeModal();
-    setTimeout(() => modalWorkoutSession(type, dateISO, start), 30);
+    // 2) Surgical update: re-renderiza SÓ a área mutável do exercício afetado
+    //    (presets + headers + set rows). O modal NÃO fecha — nada de flicker,
+    //    perda de foco/scroll, ou re-animação. Foco vai pro reps do set novo.
+    const exCard = (addBtn || preset).closest('[data-ex-idx]');
+    const mutableArea = exCard?.querySelector(`[data-ex-mutable="${exIdx}"]`);
+    if (mutableArea) {
+      const cat = exerciseCategory(ex);
+      const techOpts = TECH_BY_CAT[cat] || TECH_BY_CAT.strength;
+      const exCols   = COLS_BY_CAT[cat] || COLS_BY_CAT.strength;
+      const exRepsMax  = exCols.isCardio ? 500 : 50;
+      const exWeightStep = exCols.isCardio ? 0.1 : 0.5;
+      mutableArea.innerHTML = renderExerciseMutable(ex, techOpts, exCols, exRepsMax, exWeightStep);
+      if (shouldFocusNewSet) {
+        const newRow = mutableArea.querySelector(`[data-set-idx="${ex.sets.length - 1}"]`);
+        newRow?.querySelector('.set-reps')?.focus();
+      }
+    }
   });
 
   // Quando o usuário escolhe uma técnica no PRIMEIRO set, propaga pros sets
