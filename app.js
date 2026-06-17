@@ -6344,8 +6344,17 @@ function makeEmptyState() {
         goal: 'definicao_abs',  // 'definicao_abs','massa_geral','peso_off','saude','performance'
         engagement: { gym: 'medio', diet: 'medio' },  // baixo|medio|alto
         notes: '',
-        lowSensory: false,      // true → desativa animações, confetti, vibração, ⚔
+        lowSensory: false,      // true → desativa animações, confetti, vibração
+        // Descrição livre pro user contar sobre rotina, gostos, restrições.
+        // A IA usa isso pra gerar quests personalizadas + sugerir recompensas.
+        description: '',
+        // Quests customizadas geradas pela IA via perfil descritivo.
+        // Substituem o pool default no sorteio diário se houver.
+        customQuests: [],       // [{id, text, xp, tag, ko?}]
       },
+      // Lazeres bobos / recompensas pessoais. Lista editável pelo user.
+      // Quando completa quest/treino/intention, o app sugere 1 reward aleatório.
+      personalRewards: [],     // [{text, claimedDates: ['2026-...']}]
     },
     dailyLogs: [],          // [{date, training, protein, sleep, reading, steps, buffs, notes, xp}]
     workouts: [],           // [{date, type, exercises:[{name, sets:[{reps,weight,technique}]}]}]
@@ -6554,6 +6563,9 @@ function migrateState(s) {
   s.user.profile.engagement.diet = s.user.profile.engagement.diet || 'medio';
   s.user.profile.notes = s.user.profile.notes || '';
   if (typeof s.user.profile.lowSensory !== 'boolean') s.user.profile.lowSensory = false;
+  s.user.profile.description = s.user.profile.description || '';
+  if (!Array.isArray(s.user.profile.customQuests)) s.user.profile.customQuests = [];
+  if (!Array.isArray(s.user.personalRewards)) s.user.personalRewards = [];
 
   // PRÉ-PREENCHE com o perfil declarado pelo user no chat (apenas se ainda
   // não tiver dado nenhuma condition — não sobrescreve escolha consciente).
@@ -6962,7 +6974,12 @@ function ensureDailyQuests() {
   const today = todayISO();
   const da = state.quests.dailyAssigned;
   const isKpop = state.user.theme === 'kpop_anime' || !state.user.theme;
-  const pool = state.quests.pool.filter((q) => isKpop || !q.kpopOnly);
+  // Custom quests da IA têm prioridade — se existem, USA SÓ ELAS (personalização total).
+  // Senão, cai no pool default.
+  const customQ = state.user?.profile?.customQuests || [];
+  const pool = customQ.length > 0
+    ? customQ
+    : state.quests.pool.filter((q) => isKpop || !q.kpopOnly);
   if (da.date !== today) {
     // Novo dia: sorteio completo
     state.quests.dailyAssigned = {
@@ -9417,8 +9434,26 @@ function viewNutrition() {
   `;
 }
 
-function renderFoodList(foods) {
-  if (!foods.length) return `<div class="q-card p-4 text-sm text-ink/55 dark:text-paper/55">Nenhum alimento encontrado.</div>`;
+function renderFoodList(foods, opts = {}) {
+  if (!foods.length) {
+    // Empty state com botão de IA — se o user digitou algo, oferece estimativa
+    const q = (typeof opts.query === 'string') ? opts.query.trim() : '';
+    return `<div class="q-card p-4 text-sm text-ink/55 dark:text-paper/55 text-center">
+      ${q ? `
+        <div class="mb-3">Não achei "${q}" na base.</div>
+        ${aiReady() ? `
+          <button class="q-btn q-btn-primary text-sm" data-ai-estimate-food="${encodeURIComponent(q)}">
+            ✨ Estimar macros com IA
+          </button>
+          <p class="text-[10px] opacity-70 mt-2 italic">
+            A IA estima kcal/proteína/carbo/gordura por 100g baseada no nome. Confirme antes de salvar.
+          </p>
+        ` : `
+          <p class="text-xs opacity-70">Configure a IA em Config → 🤖 Claude pra estimar macros de comidas não cadastradas.</p>
+        `}
+      ` : 'Nenhum alimento encontrado.'}
+    </div>`;
+  }
   return `<div class="q-card divide-y divide-ink/5 dark:divide-paper/5">
     ${foods.map((f, i) => `
       <button class="food-row w-full p-3 flex items-center gap-3 text-left" data-name="${encodeURIComponent(f.name)}">
@@ -9456,6 +9491,73 @@ function categoryLabel(c) {
     gordura: 'gordura', prato: 'prato', bebida: 'bebida',
     erro: '⚠ erro permitido', doce: 'doce', snack: 'snack', supl: 'suplemento',
   })[c] || c;
+}
+
+/** Modal de confirmação dos macros estimados pela IA.
+ *  User vê o palpite do Claude, pode ajustar antes de definir quantidade. */
+function modalConfirmAIFood(food) {
+  // food = {name, kcal, p, c, f, cat}
+  const cats = [
+    ['proteina','proteína'],['carb','carbo'],['veg','vegetal'],['fruta','fruta'],
+    ['gordura','gordura'],['prato','prato'],['bebida','bebida'],
+    ['erro','erro permitido'],['doce','doce'],['snack','snack'],['supl','suplemento'],
+  ];
+  openModal(`
+    <header class="flex items-center justify-between p-4 border-b border-ink/5 dark:border-paper/5">
+      <div class="min-w-0 flex-1">
+        <div class="text-[10px] uppercase tracking-widest text-ink/45 dark:text-paper/45">✨ IA estimou</div>
+        <h2 class="font-bold text-base truncate">${food.name}</h2>
+      </div>
+      <button class="modal-close p-1" aria-label="Fechar">✕</button>
+    </header>
+    <div class="p-4 space-y-3">
+      <p class="text-xs text-ink/55 dark:text-paper/55">
+        Valores POR 100g. Confira/ajuste antes de definir a quantidade.
+      </p>
+      <div class="grid grid-cols-4 gap-2 text-center">
+        <div>
+          <label class="text-[10px] uppercase tracking-wider text-ink/55 dark:text-paper/55">Kcal</label>
+          <input id="ai-kcal" type="number" min="0" class="q-input text-center" value="${food.kcal}" />
+        </div>
+        <div>
+          <label class="text-[10px] uppercase tracking-wider text-ink/55 dark:text-paper/55">Prot (g)</label>
+          <input id="ai-p" type="number" min="0" step="0.1" class="q-input text-center" value="${food.p}" />
+        </div>
+        <div>
+          <label class="text-[10px] uppercase tracking-wider text-ink/55 dark:text-paper/55">Carb (g)</label>
+          <input id="ai-c" type="number" min="0" step="0.1" class="q-input text-center" value="${food.c}" />
+        </div>
+        <div>
+          <label class="text-[10px] uppercase tracking-wider text-ink/55 dark:text-paper/55">Gord (g)</label>
+          <input id="ai-f" type="number" min="0" step="0.1" class="q-input text-center" value="${food.f}" />
+        </div>
+      </div>
+      <label class="block">
+        <span class="text-[10px] uppercase tracking-wider text-ink/55 dark:text-paper/55">Categoria</span>
+        <select id="ai-cat" class="q-input mt-1">
+          ${cats.map(([k, l]) => `<option value="${k}" ${food.cat === k ? 'selected' : ''}>${l}</option>`).join('')}
+        </select>
+      </label>
+      <button id="ai-confirm" class="q-btn q-btn-primary w-full">Confirmar e definir quantidade</button>
+      <p class="text-[10px] text-ink/45 dark:text-paper/45 italic">
+        Esta entrada fica disponível só nesta sessão. Pra salvar permanente, edita o app depois.
+      </p>
+    </div>
+  `);
+  document.getElementById('ai-confirm').onclick = () => {
+    const adjusted = {
+      name: food.name,
+      kcal: Math.max(0, +document.getElementById('ai-kcal').value || 0),
+      p:    Math.max(0, +document.getElementById('ai-p').value || 0),
+      c:    Math.max(0, +document.getElementById('ai-c').value || 0),
+      f:    Math.max(0, +document.getElementById('ai-f').value || 0),
+      cat:  document.getElementById('ai-cat').value,
+    };
+    // Injeta no FOOD_DB pra esta sessão. modalFoodPortion procura por name.
+    FOOD_DB.push(adjusted);
+    closeModal();
+    setTimeout(() => modalFoodPortion(adjusted.name), 50);
+  };
 }
 
 function modalFoodPortion(foodName) {
@@ -11799,14 +11901,11 @@ function modalAttributeDetail(attrKey) {
 }
 
 function modalCutting() {
-  // Usa a imagem de abs do personagem ativo como hero — sempre que possível,
-  // o lutador está presente. Fallback pra cutting.webp original.
+  // Mostra a IMAGEM ORIGINAL do cutting (a mesma que aparece na thumbnail/
+  // banner na aba Corpo). Personagem ativo entra só como eyebrow no overlay.
   const ch = activeCharacter();
-  const heroImg =
-    ch?.workouts?.['icons/workouts/abs.webp'] ||
-    ch?.img ||
-    'icons/body/cutting.webp';
-  const heroPos = ch?.workoutPositions?.[heroImg] || 'center 35%';
+  const heroImg = 'icons/body/cutting.webp';
+  const heroPos = 'center 40%';
   const eyebrow = ch
     ? `${ch.slot} ${ch.name} · cutting guide`
     : 'cutting guide';
@@ -12942,6 +13041,53 @@ function viewConfig() {
         </label>
 
         <button id="cfg-prof-save" class="q-btn q-btn-primary w-full mt-3 text-xs">Salvar perfil</button>
+      </div>
+
+      <!-- ===== Descrição livre + Quests personalizadas pela IA ===== -->
+      <div class="q-card p-4 mt-3">
+        <div class="text-xs uppercase tracking-wider text-ink/45 dark:text-paper/45">📝 Sobre você (pra IA personalizar quests)</div>
+        <div class="font-bold mt-0.5">Descrição livre</div>
+        <p class="text-[10px] text-ink/55 dark:text-paper/55 mt-1 leading-relaxed">
+          Conta sobre rotina, gostos, restrições, o que te dá prazer fazer. A IA usa isso pra gerar
+          quests que sejam REFORÇADORAS pra você (não genéricas).
+        </p>
+        <textarea id="cfg-prof-description" class="q-input mt-2 text-sm" rows="5"
+                  placeholder="ex: trabalho em casa, gosto de games e séries coreanas, café da manhã sempre frito (ovos+bacon), foco abs mas odeio cardio longo, prefiro treino de manhã, leio pouco, tenho gato…">${p.description || ''}</textarea>
+        <button id="cfg-desc-save" class="q-btn q-btn-ghost w-full mt-2 text-xs">Salvar descrição</button>
+        <button id="cfg-gen-quests" class="q-btn q-btn-primary w-full mt-2 text-xs" ${aiReady() ? '' : 'disabled'}>
+          ${(state.user.profile?.customQuests || []).length > 0 ? '🔄 Regenerar quests personalizadas' : '✨ Gerar quests personalizadas'}
+        </button>
+        ${(state.user.profile?.customQuests || []).length > 0 ? `
+          <p class="text-[10px] text-mint mt-2 italic">
+            ✓ ${state.user.profile.customQuests.length} quests personalizadas ativas no sorteio diário.
+          </p>
+        ` : ''}
+        ${!aiReady() ? `
+          <p class="text-[10px] text-pink/80 mt-2">⚠ Configure a IA acima primeiro pra gerar quests.</p>
+        ` : ''}
+      </div>
+
+      <!-- ===== Recompensas pessoais (lazeres bobos) ===== -->
+      <div class="q-card p-4 mt-3">
+        <div class="text-xs uppercase tracking-wider text-ink/45 dark:text-paper/45">🎁 Recompensas pessoais</div>
+        <div class="font-bold mt-0.5">Lazeres bobos pra ganhar</div>
+        <p class="text-[10px] text-ink/55 dark:text-paper/55 mt-1 leading-relaxed">
+          Adicione coisas pequenas que você curte. Quando completar quest ou foco do dia, o app
+          vai sortear UMA dessas pra te lembrar que ganhou direito. Só uma por dia da mesma coisa.
+        </p>
+        <div class="space-y-1 mt-3 mb-2">
+          ${(state.user.personalRewards || []).map((r, i) => `
+            <div class="flex items-center gap-2 p-2 rounded bg-paper/40 dark:bg-navy/40">
+              <span class="flex-1 text-sm">${r.text}</span>
+              <span class="text-[10px] text-ink/45 dark:text-paper/45">${(r.claimedDates || []).length}×</span>
+              <button class="text-[14px] text-pink reward-remove" data-i="${i}" aria-label="Remover">×</button>
+            </div>
+          `).join('') || '<p class="text-[11px] text-ink/55 dark:text-paper/55 italic">Nenhuma cadastrada ainda. Adiciona abaixo.</p>'}
+        </div>
+        <form id="cfg-reward-form" class="flex gap-2">
+          <input class="q-input flex-1 text-sm" name="text" placeholder="ex: 1h de game, sushi delivery, sair pra tomar café" maxlength="80" required />
+          <button class="q-btn q-btn-primary text-xs" type="submit">+</button>
+        </form>
       </div>`;
     })()}
 
@@ -13294,6 +13440,8 @@ function attachHandlers() {
       vibrate(20);
       confetti(500);
       toast('✓ Foco do dia concluído');
+      // Sugere recompensa pessoal (a do foco do dia é maior — pode ser melhor)
+      setTimeout(() => triggerRewardSuggestion('o foco do dia'), 900);
     }
     saveState();
     render();
@@ -13354,6 +13502,8 @@ function attachHandlers() {
         logBattleEvent(`${tagInfo.emoji} ${q?.text?.slice(0,32) || 'Quest'} · +${change.finalAmt || (q?.xp || 1)} XP${change.mult > 1 ? ` ×${change.mult.toFixed(1)}` : ''}`, 'gain');
         // Easter egg "TOASTY!" 5% das vezes
         if (Math.random() < 0.05) setTimeout(() => kombatOverlay('toasty'), 600);
+        // Sugere uma recompensa pessoal aleatória (se tiver cadastrada)
+        setTimeout(() => triggerRewardSuggestion('uma quest'), 900);
       }
       saveState(); render();
       if (change.changed) levelUpOverlay(change.from, change.to, change.promoted);
@@ -13902,6 +14052,51 @@ function attachHandlers() {
     if (change.changed) setTimeout(() => kombatOverlay('brutality'), 400);
   });
 
+  // Estima macros de uma comida que não está na base via Claude.
+  // Retorna {kcal, p, c, f, cat} ou throws. Macros sempre por 100g.
+  async function aiEstimateFoodMacros(foodName) {
+    const system = `Você é nutricionista. Estima macros de uma comida brasileira/internacional baseado no nome.
+RESPONDA APENAS JSON VÁLIDO, sem markdown, sem texto antes ou depois:
+{"kcal": <number>, "p": <number>, "c": <number>, "f": <number>, "cat": "<string>"}
+
+Regras:
+- Valores SEMPRE por 100g (não por porção)
+- cat deve ser uma destas: proteina, carb, veg, fruta, gordura, prato, bebida, erro, doce, snack, supl
+  (proteina = carnes/ovos/laticínios proteicos; erro = fast food/junk; doce = sobremesas)
+- Se for prato composto (lasanha, estrogonofe), use 'prato'
+- Se for nome ambíguo, escolha a versão mais comum no Brasil
+- kcal inteiro; p/c/f com 1 casa decimal`;
+    const reply = await askClaude(system, foodName, { maxTokens: 200 });
+    // Limpa formatação e parseia
+    const cleaned = reply.replace(/```json|```/g, '').trim();
+    const parsed = JSON.parse(cleaned);
+    if (typeof parsed.kcal !== 'number' || typeof parsed.p !== 'number') {
+      throw new Error('Resposta inválida da IA');
+    }
+    return parsed;
+  }
+
+  // Liga o botão "Estimar com IA" quando aparece no empty-state da busca
+  function bindAIEstimate() {
+    document.querySelectorAll('[data-ai-estimate-food]').forEach((btn) => {
+      btn.onclick = async () => {
+        const foodName = decodeURIComponent(btn.dataset.aiEstimateFood);
+        btn.disabled = true;
+        btn.textContent = '⏳ Estimando…';
+        try {
+          const est = await aiEstimateFoodMacros(foodName);
+          // Abre modal de confirmação com os macros sugeridos
+          modalConfirmAIFood({ name: foodName, ...est });
+        } catch (err) {
+          console.error(err);
+          btn.disabled = false;
+          btn.innerHTML = '✨ Estimar macros com IA';
+          toast('Erro: ' + err.message);
+        }
+      };
+    });
+  }
+
   // Nutrição — busca + filtro de categoria combinados
   let _foodCat = 'all';
   const refreshFoods = () => {
@@ -13909,8 +14104,9 @@ function attachHandlers() {
     let pool = _foodCat === 'all' ? FOOD_DB : FOOD_DB.filter(f => f.cat === _foodCat);
     if (q) pool = pool.filter(f => f.name.toLowerCase().includes(q) || (f.ko || '').includes(q));
     const limit = q ? pool.length : Math.min(pool.length, 14);
-    document.getElementById('food-results').innerHTML = renderFoodList(pool.slice(0, q ? 50 : limit));
+    document.getElementById('food-results').innerHTML = renderFoodList(pool.slice(0, q ? 50 : limit), { query: q });
     bindFoodRows();
+    bindAIEstimate();
   };
   document.getElementById('food-search')?.addEventListener('input', refreshFoods);
   document.querySelectorAll('.food-cat-btn').forEach((b) => b.onclick = () => {
@@ -14223,6 +14419,59 @@ function attachHandlers() {
     state.user.profile.lowSensory = !!document.getElementById('cfg-prof-lowsensory')?.checked;
     saveState();
     toast('Perfil salvo');
+    render();
+  });
+
+  // ---- Descrição livre + Quests personalizadas ----
+  document.getElementById('cfg-desc-save')?.addEventListener('click', () => {
+    state.user.profile.description = document.getElementById('cfg-prof-description')?.value?.trim() || '';
+    saveState();
+    toast('Descrição salva');
+  });
+  document.getElementById('cfg-gen-quests')?.addEventListener('click', async () => {
+    // Salva descrição atual antes de gerar
+    state.user.profile.description = document.getElementById('cfg-prof-description')?.value?.trim() || '';
+    saveState();
+    const btn = document.getElementById('cfg-gen-quests');
+    const original = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '⏳ Gerando…';
+    try {
+      const quests = await aiGenerateCustomQuests();
+      toast(`✓ ${quests.length} quests personalizadas geradas`);
+      // Reset daily assignment pra forçar re-sorteio com as novas
+      if (state.quests?.dailyAssigned) {
+        state.quests.dailyAssigned.date = null;
+      }
+      saveState();
+      render();
+    } catch (err) {
+      console.error(err);
+      toast('Erro: ' + err.message);
+      btn.disabled = false;
+      btn.innerHTML = original;
+    }
+  });
+
+  // ---- Recompensas pessoais ----
+  document.getElementById('cfg-reward-form')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const text = (fd.get('text') || '').toString().trim();
+    if (!text) return;
+    state.user.personalRewards = state.user.personalRewards || [];
+    state.user.personalRewards.push({ text, claimedDates: [] });
+    saveState();
+    toast('🎁 Recompensa adicionada');
+    render();
+  });
+  document.querySelectorAll('.reward-remove').forEach((b) => b.onclick = () => {
+    const i = +b.dataset.i;
+    const r = state.user.personalRewards[i];
+    if (!r) return;
+    if (!confirm(`Remover "${r.text}"?`)) return;
+    state.user.personalRewards.splice(i, 1);
+    saveState();
     render();
   });
 
@@ -15429,6 +15678,92 @@ function modalAIChat() {
       body.insertAdjacentHTML('beforeend', `<div class="ai-msg ai-msg-error">Erro: ${err.message}</div>`);
       console.error(err);
     }
+  };
+}
+
+/** Gera quests personalizadas usando a descrição livre do perfil + Claude.
+ *  Salva em state.user.profile.customQuests. Substitui o pool default no
+ *  sorteio diário enquanto houver itens. */
+async function aiGenerateCustomQuests(opts = {}) {
+  if (!aiReady()) throw new Error('IA não configurada');
+  const p = state.user.profile || {};
+  const description = (p.description || '').trim();
+  if (!description) throw new Error('Descreva seu perfil em Config primeiro');
+  const system = `Você é especialista em design comportamental e ativação de hábitos.
+A partir da descrição de um usuário, GERAR 12 quests diárias PERSONALIZADAS
+que serão reforçadoras (prazerosas/interessantes pra ele especificamente).
+
+PRINCÍPIOS:
+- Cada quest = 1 ação CONCRETA, mensurável, completável em menos de 30min
+- Misturar quests fáceis (1 XP) com médias (2-3 XP) e raras desafiadoras (4 XP)
+- Conectar à rotina/gostos descritos — se ele mencionou jogos, criar quests
+  com tema de jogos; se mencionou música, com música; etc
+- Anti-aversivo: nunca "não faça X", sempre "faça Y"
+- Considerar o objetivo principal: ${({definicao_abs:'definição abdominal',massa_geral:'massa muscular',peso_off:'perda de peso',saude:'saúde',performance:'performance'}[p.goal] || 'saúde')}
+
+RESPONDA APENAS JSON VÁLIDO, sem markdown:
+{"quests":[{"id":"cq01","text":"...","xp":1,"tag":"..."}, ...]}
+
+Tags válidas: saúde, treino, foco, nutri, sono, mente, lazer, k-pop, criativo
+xp: 1 (fácil), 2 (médio), 3 (médio+), 4 (raro)
+Texto: max 70 chars, começar com verbo no infinitivo
+ids: cq01, cq02, ..., cq12`;
+  const reply = await askClaude(system, `DESCRIÇÃO DO USUÁRIO:\n${description}\n\nCONTEXTO:\n${aiBuildUserContext()}`, { maxTokens: 1500 });
+  const cleaned = reply.replace(/```json|```/g, '').trim();
+  const parsed = JSON.parse(cleaned);
+  if (!Array.isArray(parsed.quests) || parsed.quests.length === 0) throw new Error('IA não retornou quests válidas');
+  // Sanitiza
+  const sanitized = parsed.quests.slice(0, 15).map((q, i) => ({
+    id: `cq${String(i+1).padStart(2,'0')}`,
+    text: String(q.text || '').slice(0, 100),
+    xp: Math.min(4, Math.max(1, +q.xp || 1)),
+    tag: String(q.tag || 'lazer').slice(0, 20),
+  })).filter(q => q.text);
+  state.user.profile.customQuests = sanitized;
+  saveState();
+  return sanitized;
+}
+
+/** Sorteia 1 recompensa não usada hoje da lista personalRewards.
+ *  Retorna {text, isNew} ou null se não tem nenhuma cadastrada. */
+function pickPersonalReward() {
+  const rewards = state.user.personalRewards || [];
+  if (!rewards.length) return null;
+  const today = todayISO();
+  // Filtra os já usados HOJE (anti-spam — não mostra a mesma 2× no mesmo dia)
+  const available = rewards.filter((r) => !(r.claimedDates || []).includes(today));
+  if (!available.length) return null;
+  const r = available[Math.floor(Math.random() * available.length)];
+  return { text: r.text, ref: r };
+}
+
+/** Mostra modal de recompensa após completar quest/treino/intention. */
+function triggerRewardSuggestion(context = 'atividade') {
+  const reward = pickPersonalReward();
+  if (!reward) return;
+  // Probabilidade configurável — 100% por enquanto, fácil de ajustar depois
+  const FIRE = 1.0;
+  if (Math.random() > FIRE) return;
+  openModal(`
+    <div class="p-5 text-center space-y-3">
+      <div class="text-3xl">🎉</div>
+      <div class="text-[10px] uppercase tracking-widest text-ink/45 dark:text-paper/45">você concluiu ${context}</div>
+      <div class="text-lg font-bold leading-tight">${reward.text}</div>
+      <p class="text-xs text-ink/55 dark:text-paper/55">
+        Tá liberado. Faz isso agora se quiser — você ganhou.
+      </p>
+      <div class="grid grid-cols-2 gap-2 mt-3">
+        <button class="q-btn q-btn-ghost text-sm modal-close">Depois</button>
+        <button id="claim-reward" class="q-btn q-btn-primary text-sm">✓ Vou aproveitar</button>
+      </div>
+    </div>
+  `);
+  document.getElementById('claim-reward').onclick = () => {
+    reward.ref.claimedDates = reward.ref.claimedDates || [];
+    reward.ref.claimedDates.push(todayISO());
+    saveState();
+    closeModal();
+    toast('Aproveita 😉');
   };
 }
 
