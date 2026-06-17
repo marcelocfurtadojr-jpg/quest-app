@@ -7673,62 +7673,9 @@ function viewDashboard() {
     })()}
   </section>
 
-  <!-- Vital Stats — barras estilo character sheet RPG -->
-  <section class="px-4 mt-3">
-    <div class="q-card p-3 status-card">
-      ${(() => {
-        // Corpo do personagem ativo à esquerda — muda conforme nutrição/treino.
-        // Se o personagem ativo tem .bodyStates próprio (Matthew, Mark Lee, Jeno, Dhano),
-        // usa o dele. Senão cai no set default (Matthew) — assim TODOS os personagens
-        // mostram um corpo no status, mesmo os que ainda não têm set próprio.
-        // Clique → abre modalBodyJourney() com critérios pra mudar de estado.
-        const bs = computeBodyState();
-        const bsLabel = bodyStateLabel(bs);
-        const ch = activeCharacter();
-        const bodyImg = ch?.bodyStates?.[bs] || `icons/bodies/${bs}.webp`;
-        return `
-        <button class="status-body" title="Toque pra ver a jornada" data-action="open-body-journey">
-          <img src="${bodyImg}" alt="${bsLabel}" loading="lazy" />
-          <div class="status-body-label">${bsLabel}</div>
-        </button>`;
-      })()}
-      <div class="status-content">
-        <div class="text-[10px] uppercase tracking-widest text-ink/45 dark:text-paper/45 mb-2 flex items-center justify-between">
-          <span>⚔ Status</span>
-          ${mult > 1 ? `<span class="pill is-sun text-[9px] py-0.5 px-2">⚡ COMBO ×${mult.toFixed(1)}</span>` : ''}
-        </div>
-        <div class="space-y-1.5">
-          <!-- HP -->
-          <div class="flex items-center gap-2">
-            <span class="text-base w-5 text-center">❤️</span>
-            <span class="text-[10px] font-bold w-12 text-pink">HP</span>
-            <div class="flex-1 vital-bar"><div class="vital-fill" style="width:${hpPct}%; background:linear-gradient(90deg,#B8242E,#E84A1A)"></div></div>
-            <span class="text-[10px] font-bold tabular-nums w-12 text-right">${sleepHrs}/8h</span>
-          </div>
-          <!-- Stamina -->
-          <div class="flex items-center gap-2">
-            <span class="text-base w-5 text-center">⚡</span>
-            <span class="text-[10px] font-bold w-12" style="color:#FFD341">STA</span>
-            <div class="flex-1 vital-bar"><div class="vital-fill" style="width:${staminaPct}%; background:linear-gradient(90deg,#A8E6CF,#FFD341)"></div></div>
-            <span class="text-[10px] font-bold tabular-nums w-12 text-right">${trainDays7}/${optimalTrains} tr</span>
-          </div>
-          <!-- Foco -->
-          <div class="flex items-center gap-2">
-            <span class="text-base w-5 text-center">🧠</span>
-            <span class="text-[10px] font-bold w-12 text-lavender">MP</span>
-            <div class="flex-1 vital-bar"><div class="vital-fill" style="width:${focusPct}%; background:linear-gradient(90deg,#B7B5FF,#7BB8FF)"></div></div>
-            <span class="text-[10px] font-bold tabular-nums w-12 text-right">${readMin}/30m</span>
-          </div>
-        </div>
-        ${overtrained || undertrained || hpPct < 50 ? `
-          <div class="mt-2 text-[10px] text-ink/60 dark:text-paper/60 leading-tight">
-            ${overtrained ? '7 treinos na semana — vale considerar 1 dia off.' :
-              undertrained ? 'Semana com 1 treino. Próximo quando der.' :
-              hpPct < 50 ? 'Sono curto ontem. Hoje retoma.' : ''}
-          </div>` : ''}
-      </div>
-    </div>
-  </section>
+  <!-- Status card removido (user pediu): mantido só o card de Elo acima.
+       O corpo do dia continua acessível via modal de Jornada do Corpo
+       a partir de outros lugares no app. -->
 
   <!-- ===== Refeição rápida (anti-aversive, 1-tap pro foco abdômen) =====
        Estrutura externa pra compensar baixo engajamento com dieta:
@@ -8085,14 +8032,14 @@ function viewDashboard() {
   </section>
 
   ${(() => {
-    // ===== Battle log — feed de eventos de XP recentes =====
+    // ===== Histórico de batalhas — feed de eventos recentes =====
     const log = (state.user.battleLog || []).slice(0, 6);
     if (!log.length) return '';
     return `
     <section class="px-4 mt-5">
       <div class="flex items-center justify-between mb-2">
-        <h2 class="font-extrabold text-sm uppercase tracking-wider text-ink/55 dark:text-paper/55">⚔ Histórico de batalha</h2>
-        <span class="text-[10px] text-ink/45 dark:text-paper/45">últimos eventos</span>
+        <h2 class="font-extrabold text-sm uppercase tracking-wider text-ink/55 dark:text-paper/55">Histórico de batalhas</h2>
+        <button class="text-[10px] text-ink/45 dark:text-paper/45 underline" data-clear-battlelog>limpar</button>
       </div>
       <div class="space-y-1">
         ${log.map((ev) => `
@@ -13541,6 +13488,13 @@ function attachHandlers() {
     go('nutri');
   });
   document.querySelector('[data-weekly-analyze]')?.addEventListener('click', () => modalWeeklyReport());
+  document.querySelector('[data-clear-battlelog]')?.addEventListener('click', () => {
+    if (!confirm('Limpar o histórico de batalhas?')) return;
+    state.user.battleLog = [];
+    saveState();
+    toast('Histórico de batalhas limpo');
+    render();
+  });
   document.querySelector('[data-quick-new-workout]')?.addEventListener('click', () => go('workout'));
   document.querySelector('[data-quick-repeat-workout]')?.addEventListener('click', (e) => {
     const type = e.currentTarget.dataset.type;
