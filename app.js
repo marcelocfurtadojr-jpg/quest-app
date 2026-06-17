@@ -6040,6 +6040,37 @@ function mergeWithLocalMedia(cloudState, localState) {
   cloudState.user = cloudState.user || {};
   cloudState.user.goalImages = localState.user?.goalImages || {};
 
+  // ===== Anti-zumbi: respeita o eraseAt mais recente =====
+  // Bug: quando user zerava local, cloud ainda tinha dados antigos (debounce
+  // 800ms). Refresh chamava merge → UNION ressuscitava o histórico.
+  // Fix: o lado com eraseAt MAIS RECENTE manda. Side com data anterior ao
+  // eraseAt é descartado.
+  const cloudErase = +(cloudState.user?.eraseAt || 0);
+  const localErase = +(localState.user?.eraseAt || 0);
+  if (cloudErase || localErase) {
+    if (localErase > cloudErase) {
+      // Local zerou depois → local manda. Cloud histórico vira lixo.
+      cloudState.dailyLogs = [];
+      cloudState.workouts = [];
+      cloudState.bodyMeasurements = [];
+      cloudState.rankHistory = [];
+      cloudState.user.battleLog = [];
+      cloudState.user.achievementsUnlocked = [];
+      cloudState.user.eraseAt = localErase;
+    } else if (cloudErase > localErase) {
+      // Cloud zerou em outro device → cloud manda. Local histórico vira lixo.
+      localState.dailyLogs = [];
+      localState.workouts = [];
+      localState.bodyMeasurements = [];
+      localState.rankHistory = [];
+      if (localState.user) {
+        localState.user.battleLog = [];
+        localState.user.achievementsUnlocked = [];
+        localState.user.eraseAt = cloudErase;
+      }
+    }
+  }
+
   // ===== Smart merge — protege contra perda de dados locais =====
   // Se o usuário fez entradas locais que ainda não foram sincronizadas com
   // a nuvem (timeout de rede, app fechou rápido demais, etc.), a versão
@@ -13487,6 +13518,15 @@ function viewConfig() {
       <button id="cfg-reset-measurements" class="q-btn q-btn-ghost w-full mt-1 text-[11px]" style="border:1px solid rgba(184,36,46,0.18); color:rgba(184,36,46,0.7)">
         🗑 Zerar apenas medidas e fotos
       </button>
+      <hr class="my-3 border-ink/10 dark:border-paper/10" />
+      <button id="cfg-reset-nuclear" class="q-btn q-btn-danger w-full text-sm">
+        🔥 RESET TOTAL (apaga TUDO e força sync)
+      </button>
+      <p class="text-[10px] text-ink/45 dark:text-paper/45 mt-2 leading-tight">
+        Use o RESET TOTAL se os dados ressuscitarem depois dos botões granulares.
+        Ele marca o timestamp <code>eraseAt</code> e AGUARDA o cloud save terminar
+        antes de te liberar — assim outro device não restaura o histórico zumbi.
+      </p>
     </div>
 
     <!-- Zerar Elo: rank/XP/atributos/conquistas pra 0, preservando histórico físico -->
@@ -14613,6 +14653,51 @@ Regras:
     const d = new Date(); d.setDate(d.getDate() - 1);
     modalDailyLog(isoDate(d));
   });
+  // Aguarda o cloud save terminar — usado pelo RESET TOTAL.
+  // saveState() agenda em 800ms via setTimeout; precisamos esperar mais que isso.
+  async function awaitCloudSave() {
+    if (!cloudReady()) return;
+    // Espera o debounce + a chamada da rede. 2s é conservador mas garante.
+    await new Promise(r => setTimeout(r, 1800));
+  }
+
+  document.getElementById('cfg-reset-nuclear')?.addEventListener('click', async () => {
+    if (!confirm('🔥 RESET TOTAL\n\nApaga ABSOLUTAMENTE TUDO:\n• Todos os dailyLogs (sono, refeições, leitura, passos)\n• Todos os treinos\n• Todas as medidas e fotos\n• Quests, conquistas, battle log, rank history\n• Rank, XP, atributos zerados\n• Livros\n\nPRESERVA APENAS:\n• Perfil + condições + descrição\n• IA / Spotify config\n• Personagem ativo\n• Recompensas pessoais\n• Plano semanal de treino\n\nMarca timestamp eraseAt e AGUARDA o cloud save terminar antes de te liberar (anti-zumbi).\n\nNão dá pra desfazer.')) return;
+    if (!confirm('Confirmar RESET TOTAL? Última chance.')) return;
+    const btn = document.getElementById('cfg-reset-nuclear');
+    btn.disabled = true;
+    btn.textContent = '⏳ Apagando local + cloud…';
+    // Apaga TUDO
+    state.dailyLogs = [];
+    state.workouts = [];
+    state.bodyMeasurements = [];
+    state.photos = [];
+    state.books = [];
+    state.rankHistory = [];
+    state.quests.dailyAssigned = { date: null, items: [], rerolled: false, completed: [] };
+    state.quests.weeklyCurrent = { weekStart: null, item: null, progress: 0, completed: false };
+    // User-scoped
+    state.user.rankXP = 0;
+    state.user.totalXP = 0;
+    state.user.currentRank = 'iron4';
+    state.user.attributes = { forca: 0, resistencia: 0, sabedoria: 0, disciplina: 0, vitalidade: 0 };
+    state.user.battleLog = [];
+    state.user.achievementsUnlocked = [];
+    state.user.questsCompleted = 0;
+    state.user.lastDailySpinAt = null;
+    state.user.lastLoginBonusAt = null;
+    state.user.mascotNotifiedAt = null;
+    state.user.currentLiteraturaBookId = null;
+    // TIMESTAMP CRÍTICO — bloqueia ressurreição do merge
+    state.user.eraseAt = Date.now();
+    saveState();
+    // Aguarda cloud save (debounce 800ms + network ~1s)
+    await awaitCloudSave();
+    btn.textContent = '✓ Apagado e sincronizado';
+    toast('RESET TOTAL completo · cloud sincronizado');
+    setTimeout(() => { currentTab = 'home'; render(); }, 600);
+  });
+
   document.getElementById('cfg-reset-history')?.addEventListener('click', () => {
     if (!confirm('Zerar tudo (mantém medidas e fotos)?\n\nAPAGA:\n• Todos os dailyLogs (sono, refeições, leitura, passos, foco do dia)\n• Todos os treinos registrados\n• Quests do dia / semana (resorteia)\n• Battle log / histórico de rank\n• Conquistas desbloqueadas\n\nPRESERVA:\n• Medidas corporais e fotos\n• Rank, XP, atributos\n• Perfil comportamental + IA configurada\n• Personagem ativo\n• Lista de livros\n• Spotify\n• Recompensas pessoais\n\nIsso NÃO dá pra desfazer.')) return;
     if (!confirm('Confirmar de vez? Última chance.')) return;
@@ -14630,6 +14715,7 @@ Regras:
     state.user.lastDailySpinAt = null;
     state.user.lastLoginBonusAt = null;
     state.user.mascotNotifiedAt = null;
+    state.user.eraseAt = Date.now();  // anti-zumbi
     saveState();
     toast('Histórico zerado · medidas mantidas');
     currentTab = 'home';
@@ -14643,6 +14729,7 @@ Regras:
     (state.dailyLogs || []).forEach((l) => {
       if (l.training) l.training = { type: 'descanso', done: false };
     });
+    state.user.eraseAt = Date.now();
     saveState();
     toast('Treinos zerados');
     render();
@@ -14654,6 +14741,7 @@ Regras:
       l.meals = [];
       l.protein = { grams: 0, hit: false };
     });
+    state.user.eraseAt = Date.now();
     saveState();
     toast('Refeições zeradas');
     render();
@@ -14664,6 +14752,7 @@ Regras:
     if (!confirm(`Zerar APENAS medidas (${mCount}) e fotos (${pCount})?\n\nUse com cuidado — perde o histórico físico.\nTreinos, refeições, dailyLogs NÃO são tocados.`)) return;
     state.bodyMeasurements = [];
     state.photos = [];
+    state.user.eraseAt = Date.now();
     saveState();
     toast('Medidas e fotos zeradas');
     render();
@@ -16269,6 +16358,7 @@ function resetElo() {
   state.user.achievementsUnlocked = [];
   state.user.questsCompleted = 0;
   state.user.eloResetAt = Date.now();
+  state.user.eraseAt = Date.now();  // anti-zumbi (impede merge ressuscitar rankHistory/battleLog)
   state.rankHistory = [];
   // Daily spin / login bonus history limpa (não tem impacto físico)
   state.user.lastDailySpinAt = null;
