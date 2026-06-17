@@ -13512,6 +13512,9 @@ function viewConfig() {
       <button id="cfg-reset-meals" class="q-btn q-btn-ghost w-full mt-1 text-xs" style="border:1px solid rgba(184,36,46,0.18); color:#B8242E">
         🗑 Zerar só as refeições
       </button>
+      <button id="cfg-reset-workouts-meals" class="q-btn q-btn-primary w-full mt-2 text-xs">
+        🗑 Zerar treinos + refeições (mantém medidas)
+      </button>
       <button id="cfg-reset-history" class="q-btn q-btn-ghost w-full mt-2 text-sm" style="color:#B8242E; border:1px solid rgba(184,36,46,0.3)">
         🗑 Zerar tudo (mantém medidas e fotos)
       </button>
@@ -14744,6 +14747,22 @@ Regras:
     state.user.eraseAt = Date.now();
     saveState();
     toast('Refeições zeradas');
+    render();
+  });
+  document.getElementById('cfg-reset-workouts-meals')?.addEventListener('click', () => {
+    const wCount = state.workouts?.length || 0;
+    const mCount = (state.dailyLogs || []).reduce((s, l) => s + (l.meals?.length || 0), 0);
+    const measCount = state.bodyMeasurements?.length || 0;
+    if (!confirm(`Zerar TREINOS + REFEIÇÕES?\n\nApaga:\n• ${wCount} treinos registrados\n• ${mCount} refeições de todos os dias\n• Limpa flag training.done e proteína total\n\nPRESERVA:\n• ${measCount} medidas corporais\n• Fotos de progresso\n• Sono, leitura, passos nos dailyLogs\n• Tudo o resto (rank, perfil, IA, livros)`)) return;
+    state.workouts = [];
+    (state.dailyLogs || []).forEach((l) => {
+      l.meals = [];
+      l.protein = { grams: 0, hit: false };
+      if (l.training) l.training = { type: 'descanso', done: false };
+    });
+    state.user.eraseAt = Date.now();  // anti-zumbi
+    saveState();
+    toast('Treinos + refeições zerados · medidas mantidas');
     render();
   });
   document.getElementById('cfg-reset-measurements')?.addEventListener('click', () => {
