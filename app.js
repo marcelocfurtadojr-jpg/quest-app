@@ -13465,19 +13465,27 @@ function viewConfig() {
       </p>
     </div>
 
-    <!-- Histórico: zerar tudo OU adicionar dia retroativo -->
+    <!-- Histórico — granular: opções específicas + opção "tudo (mantém medidas)" -->
     <div class="q-card p-4">
       <div class="text-xs uppercase tracking-wider text-ink/45 dark:text-paper/45">📅 Histórico</div>
-      <div class="font-bold mt-0.5">Gerenciar dias e treinos</div>
+      <div class="font-bold mt-0.5">Gerenciar dias, treinos e medidas</div>
       <p class="text-[10px] text-ink/55 dark:text-paper/55 leading-relaxed mt-1">
-        Adicionar dia retroativo: registra sono, treino, refeições de um dia passado.
-        Zerar histórico: apaga todos os dailyLogs, treinos, medidas e fotos. Rank/perfil ficam intactos.
+        Cada botão zera APENAS o que diz. Medidas corporais e fotos só somem se você usar o botão específico.
       </p>
       <button id="cfg-add-past-day" class="q-btn q-btn-primary w-full mt-3 text-sm">
         + Adicionar dia retroativo
       </button>
+      <button id="cfg-reset-workouts" class="q-btn q-btn-ghost w-full mt-2 text-xs" style="border:1px solid rgba(184,36,46,0.18); color:#B8242E">
+        🗑 Zerar só os treinos
+      </button>
+      <button id="cfg-reset-meals" class="q-btn q-btn-ghost w-full mt-1 text-xs" style="border:1px solid rgba(184,36,46,0.18); color:#B8242E">
+        🗑 Zerar só as refeições
+      </button>
       <button id="cfg-reset-history" class="q-btn q-btn-ghost w-full mt-2 text-sm" style="color:#B8242E; border:1px solid rgba(184,36,46,0.3)">
-        🗑 Zerar histórico de dias/treinos/medidas
+        🗑 Zerar tudo (mantém medidas e fotos)
+      </button>
+      <button id="cfg-reset-measurements" class="q-btn q-btn-ghost w-full mt-1 text-[11px]" style="border:1px solid rgba(184,36,46,0.18); color:rgba(184,36,46,0.7)">
+        🗑 Zerar apenas medidas e fotos
       </button>
     </div>
 
@@ -14606,18 +14614,16 @@ Regras:
     modalDailyLog(isoDate(d));
   });
   document.getElementById('cfg-reset-history')?.addEventListener('click', () => {
-    if (!confirm('Zerar TODO o histórico?\n\nAPAGA:\n• Todos os dailyLogs (sono, refeições, leitura, passos, foco do dia)\n• Todos os treinos registrados\n• Todas as medidas corporais\n• Todas as fotos\n• Quests do dia / semana (resorteia)\n• Battle log / histórico de rank\n• Conquistas desbloqueadas (zera o counter)\n\nPRESERVA:\n• Rank, XP, atributos\n• Perfil comportamental + IA configurada\n• Personagem ativo\n• Lista de livros\n• Spotify\n• Recompensas pessoais\n\nIsso NÃO dá pra desfazer.')) return;
+    if (!confirm('Zerar tudo (mantém medidas e fotos)?\n\nAPAGA:\n• Todos os dailyLogs (sono, refeições, leitura, passos, foco do dia)\n• Todos os treinos registrados\n• Quests do dia / semana (resorteia)\n• Battle log / histórico de rank\n• Conquistas desbloqueadas\n\nPRESERVA:\n• Medidas corporais e fotos\n• Rank, XP, atributos\n• Perfil comportamental + IA configurada\n• Personagem ativo\n• Lista de livros\n• Spotify\n• Recompensas pessoais\n\nIsso NÃO dá pra desfazer.')) return;
     if (!confirm('Confirmar de vez? Última chance.')) return;
-    // Reset completo do histórico físico
+    // Reset do histórico — MANTÉM bodyMeasurements e photos
     state.dailyLogs = [];
     state.workouts = [];
-    state.bodyMeasurements = [];
-    state.photos = [];
-    // Reset do histórico de jogo
+    // state.bodyMeasurements — PRESERVADO
+    // state.photos — PRESERVADO
     state.rankHistory = [];
     state.quests.dailyAssigned = { date: null, items: [], rerolled: false, completed: [] };
     state.quests.weeklyCurrent = { weekStart: null, item: null, progress: 0, completed: false };
-    // Reset de tracking acumulado no user
     state.user.battleLog = [];
     state.user.achievementsUnlocked = [];
     state.user.questsCompleted = 0;
@@ -14625,8 +14631,41 @@ Regras:
     state.user.lastLoginBonusAt = null;
     state.user.mascotNotifiedAt = null;
     saveState();
-    toast('Histórico zerado — limpo de verdade');
+    toast('Histórico zerado · medidas mantidas');
     currentTab = 'home';
+    render();
+  });
+
+  // ---- Botões granulares de reset ----
+  document.getElementById('cfg-reset-workouts')?.addEventListener('click', () => {
+    if (!confirm(`Zerar SÓ os treinos?\n\nApaga ${state.workouts?.length || 0} treinos registrados.\nLimpa também o flag training.done dos dailyLogs (mas mantém sono/refeições/etc).\nMedidas e refeições NÃO são tocadas.`)) return;
+    state.workouts = [];
+    (state.dailyLogs || []).forEach((l) => {
+      if (l.training) l.training = { type: 'descanso', done: false };
+    });
+    saveState();
+    toast('Treinos zerados');
+    render();
+  });
+  document.getElementById('cfg-reset-meals')?.addEventListener('click', () => {
+    const total = (state.dailyLogs || []).reduce((s, l) => s + (l.meals?.length || 0), 0);
+    if (!confirm(`Zerar SÓ as refeições?\n\nApaga ${total} refeições de todos os dias.\nLimpa proteína total também (recalcula como 0).\nTreinos, sono, medidas NÃO são tocados.`)) return;
+    (state.dailyLogs || []).forEach((l) => {
+      l.meals = [];
+      l.protein = { grams: 0, hit: false };
+    });
+    saveState();
+    toast('Refeições zeradas');
+    render();
+  });
+  document.getElementById('cfg-reset-measurements')?.addEventListener('click', () => {
+    const mCount = state.bodyMeasurements?.length || 0;
+    const pCount = state.photos?.length || 0;
+    if (!confirm(`Zerar APENAS medidas (${mCount}) e fotos (${pCount})?\n\nUse com cuidado — perde o histórico físico.\nTreinos, refeições, dailyLogs NÃO são tocados.`)) return;
+    state.bodyMeasurements = [];
+    state.photos = [];
+    saveState();
+    toast('Medidas e fotos zeradas');
     render();
   });
 
