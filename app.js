@@ -5223,63 +5223,69 @@ function computeBodyState() {
   return 'lean';
 }
 
-/** Label PT do estado pra exibir abaixo da imagem. */
+/** Label PT do estado pra exibir abaixo da imagem.
+ *  Reframe neutro/positivo — sem termos aversivos. "FAT" virou "RECARGA"
+ *  porque comer mais é dado, não falha — análise funcional aplicada.
+ *  As CHAVES técnicas ('magrelo','fat',etc) ficam iguais pra não quebrar
+ *  o resto do código que indexa por elas. Só o LABEL muda. */
 function bodyStateLabel(state) {
   return ({
-    magrelo:  'MAGRELO',
-    lean:     'LEAN',
-    athletic: 'ATHLETIC',
-    bulked:   'BULKED',
-    fat:      'FAT',
-  })[state] || 'MAGRELO';
+    magrelo:  'JEJUM',         // antes: MAGRELO (corpo-shaming)
+    lean:     'LEVE',          // antes: LEAN
+    athletic: 'EM FORMA',      // antes: ATHLETIC
+    bulked:   'ABASTECIDO',    // antes: BULKED
+    fat:      'RECARGA',       // antes: FAT (mais aversivo de todos)
+  })[state] || 'JEJUM';
 }
 
 /** Metadata dos 5 estados — descrição e critérios pra atingir cada um.
  *  Usado pela modal de "Jornada do corpo". */
+// Reframe anti-aversivo. Descrições factuais sem julgamento — comer demais
+// não é "falha", junk não é "pecado". Tudo é dado, observável, ajustável.
 const BODY_STATE_INFO = {
   magrelo: {
-    label: 'MAGRELO',
+    label: 'JEJUM',
     icon: '🌱',
-    desc: 'Ainda não comeu nada hoje. Sem combustível, sem combate.',
+    desc: 'Ainda sem refeições registradas hoje. Quando comer, atualiza.',
     criteria: (kcalGoal) => ['Nenhuma refeição registrada hoje'],
     color: '#A0A0B0',
   },
   lean: {
-    label: 'LEAN',
+    label: 'LEVE',
     icon: '🦌',
-    desc: 'Comeu pouco e saudável. Definido, mas com pouca reserva.',
+    desc: 'Comeu pouco e dentro do plano. Tudo certo.',
     criteria: (kcalGoal) => [
       `Kcal < ${Math.round(kcalGoal * 0.85)} (até 85% da meta)`,
-      'Junk food abaixo de 30% das kcal',
+      'Pouco junk food (< 30% das kcal)',
       'Sem treino registrado hoje',
     ],
     color: '#A8E6CF',
   },
   athletic: {
-    label: 'ATHLETIC',
+    label: 'EM FORMA',
     icon: '⚡',
-    desc: 'Comeu E treinou. Estado ideal — saúde + performance.',
+    desc: 'Comeu + treinou. Dia redondo.',
     criteria: (kcalGoal) => [
       'Treino do dia registrado',
-      'Junk food abaixo de 30% das kcal',
+      'Pouco junk food (< 30% das kcal)',
     ],
     color: '#7BB8FF',
   },
   bulked: {
-    label: 'BULKED',
+    label: 'ABASTECIDO',
     icon: '🍖',
-    desc: 'Comeu muito e saudável, mas não treinou. Massa sem ativação.',
+    desc: 'Comeu bem hoje. Combustível disponível pro próximo treino.',
     criteria: (kcalGoal) => [
       `Kcal ≥ ${Math.round(kcalGoal * 0.85)} (85% ou mais da meta)`,
-      'Junk food abaixo de 30%',
+      'Pouco junk food (< 30%)',
       'Sem treino registrado',
     ],
     color: '#FFD8A8',
   },
   fat: {
-    label: 'FAT',
+    label: 'RECARGA',
     icon: '🍩',
-    desc: 'Muito junk ou comeu além da conta. Cuidado com cortisol/insulina.',
+    desc: 'Dia de mais calorias / mais junk. Faz parte. Próximo dia retoma.',
     criteria: (kcalGoal) => [
       `Junk food ≥ 30% das kcal OU kcal acima de ${Math.round(kcalGoal * 1.3)}`,
     ],
@@ -6326,6 +6332,17 @@ function makeEmptyState() {
       // anthropic-dangerous-direct-browser-access. INSEGURO se a key vazar —
       // user deve usar uma key pessoal com limite de gasto no console Anthropic.
       anthropic: { apiKey: '', model: 'claude-haiku-4-5-20251001' },
+      // Perfil comportamental — base pra análise funcional aplicada à estrutura
+      // do app. Conditions definem como apresentar feedback (anti-aversivo, baixa
+      // carga executiva, previsível). Goal foca a UI no objetivo principal.
+      // engagement.gym='high' → NÃO super-gamificar (over-justification).
+      // engagement.diet='low' → estrutura externa, log frictionless, anti-shame.
+      profile: {
+        conditions: [],         // ['tdah','tag','autismo']
+        goal: 'definicao_abs',  // 'definicao_abs','massa_geral','peso_off','saude','performance'
+        engagement: { gym: 'medio', diet: 'medio' },  // baixo|medio|alto
+        notes: '',
+      },
     },
     dailyLogs: [],          // [{date, training, protein, sleep, reading, steps, buffs, notes, xp}]
     workouts: [],           // [{date, type, exercises:[{name, sets:[{reps,weight,technique}]}]}]
@@ -6523,6 +6540,24 @@ function migrateState(s) {
   s.user.anthropic = s.user.anthropic || {};
   s.user.anthropic.apiKey = s.user.anthropic.apiKey || '';
   s.user.anthropic.model  = s.user.anthropic.model  || 'claude-haiku-4-5-20251001';
+
+  // Perfil comportamental (v1.70+) — base pra análise funcional aplicada à
+  // estrutura. Garante o objeto e seus campos pra states antigos.
+  s.user.profile = s.user.profile || {};
+  if (!Array.isArray(s.user.profile.conditions)) s.user.profile.conditions = [];
+  s.user.profile.goal = s.user.profile.goal || 'definicao_abs';
+  s.user.profile.engagement = s.user.profile.engagement || { gym: 'medio', diet: 'medio' };
+  s.user.profile.engagement.gym = s.user.profile.engagement.gym || 'medio';
+  s.user.profile.engagement.diet = s.user.profile.engagement.diet || 'medio';
+  s.user.profile.notes = s.user.profile.notes || '';
+
+  // PRÉ-PREENCHE com o perfil declarado pelo user no chat (apenas se ainda
+  // não tiver dado nenhuma condition — não sobrescreve escolha consciente).
+  if (s.user.profile.conditions.length === 0) {
+    s.user.profile.conditions = ['tdah', 'tag', 'autismo_possivel'];
+    s.user.profile.goal = 'definicao_abs';
+    s.user.profile.engagement = { gym: 'alto', diet: 'baixo' };
+  }
 
   // Livros (v1.57+) — categoria 'literatura' (default) ou 'artigo', + id estável.
   // currentLiteraturaBookId aponta pro livro sorteado em curso (null = precisa sortear).
@@ -7628,14 +7663,66 @@ function viewDashboard() {
           </div>
         </div>
         ${overtrained || undertrained || hpPct < 50 ? `
-          <div class="mt-2 text-[10px] text-ink/60 dark:text-paper/60 leading-tight italic">
-            ${overtrained ? '⚠️ Risco de overtraining — meta 1-2 dias de descanso/sem.' :
-              undertrained ? '💤 Poucos treinos essa semana — STA baixa.' :
-              hpPct < 50 ? '🛌 HP baixa — durma mais hoje pra recuperar.' : ''}
+          <div class="mt-2 text-[10px] text-ink/60 dark:text-paper/60 leading-tight">
+            ${overtrained ? '7 treinos na semana — vale considerar 1 dia off.' :
+              undertrained ? 'Semana com 1 treino. Próximo quando der.' :
+              hpPct < 50 ? 'Sono curto ontem. Hoje retoma.' : ''}
           </div>` : ''}
       </div>
     </div>
   </section>
+
+  <!-- ===== Refeição rápida (anti-aversive, 1-tap pro foco abdômen) =====
+       Estrutura externa pra compensar baixo engajamento com dieta:
+       evita decisão (sem escolha de qual proteína), reduz fricção (1 toque),
+       linguagem neutra ("registrar" não "comer mais"). Aparece SEMPRE — não
+       só quando a meta não foi batida — pra não virar lembrete-cobrança. -->
+  ${(() => {
+    const todayLog = state.dailyLogs.find((l) => l.date === todayISO()) || { meals: [] };
+    const meals = todayLog.meals || [];
+    const proteinG = Math.round(meals.reduce((s, m) => s + (m.p || 0), 0));
+    const kcalToday = Math.round(meals.reduce((s, m) => s + (m.kcal || 0), 0));
+    const pGoal = getProteinGoal();
+    const kGoal = getKcalGoal();
+    const proteinPct = Math.min(100, Math.round((proteinG / pGoal) * 100));
+    const kcalPct = Math.min(100, Math.round((kcalToday / kGoal) * 100));
+    return `
+    <section class="px-4 mt-3">
+      <div class="q-card p-3">
+        <div class="flex items-center justify-between mb-2">
+          <div class="text-[10px] uppercase tracking-widest text-ink/45 dark:text-paper/45">🍽 Hoje no prato</div>
+          <button class="text-[10px] text-lavender" data-quick-meal-edit>editar</button>
+        </div>
+        <div class="grid grid-cols-2 gap-2 text-[11px]">
+          <div>
+            <div class="flex justify-between mb-0.5">
+              <span>Proteína</span>
+              <span class="font-bold">${proteinG}/${pGoal}g</span>
+            </div>
+            <div class="xp-track" style="height:5px"><div class="xp-fill" style="width:${proteinPct}%; background:#FFB7C5"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between mb-0.5">
+              <span>Calorias</span>
+              <span class="font-bold">${kcalToday}/${kGoal}</span>
+            </div>
+            <div class="xp-track" style="height:5px"><div class="xp-fill" style="width:${kcalPct}%; background:#A8E6CF"></div></div>
+          </div>
+        </div>
+        <div class="grid grid-cols-3 gap-1.5 mt-3">
+          <button class="q-btn q-btn-ghost text-[11px] py-2" data-quick-add="protein-light"
+                  title="Whey + 1 fruta">+25g 🥤</button>
+          <button class="q-btn q-btn-ghost text-[11px] py-2" data-quick-add="protein-meal"
+                  title="Refeição com proteína">+40g 🍗</button>
+          <button class="q-btn q-btn-ghost text-[11px] py-2" data-quick-add="protein-heavy"
+                  title="Refeição forte">+55g 💪</button>
+        </div>
+        <p class="text-[9px] text-ink/45 dark:text-paper/45 mt-2 leading-tight">
+          1 toque = registro genérico. Não substitui o log na aba Nutri, mas serve quando a fricção é alta.
+        </p>
+      </div>
+    </section>`;
+  })()}
 
   <section class="px-4 mt-3">
     <div class="grid grid-cols-4 gap-1.5">
@@ -12694,6 +12781,75 @@ function viewConfig() {
       </div>`;
     })()}
 
+    <!-- ===== Perfil comportamental (orienta a IA + ajusta linguagem do app) ===== -->
+    ${(() => {
+      const p = state.user.profile || {};
+      const conds = p.conditions || [];
+      const checked = (k) => conds.includes(k) ? 'checked' : '';
+      return `
+      <div class="q-card p-4">
+        <div class="text-xs uppercase tracking-wider text-ink/45 dark:text-paper/45">🧠 Perfil comportamental</div>
+        <div class="font-bold mt-0.5">Como o app deve te tratar</div>
+        <p class="text-[10px] text-ink/55 dark:text-paper/55 mt-1 leading-relaxed">
+          Esses dados ajustam linguagem (anti-aversiva), reduzem carga executiva e orientam a IA.
+          NÃO ficam visíveis pra ninguém — só no seu aparelho.
+        </p>
+
+        <div class="text-[11px] font-semibold mt-3 mb-1">Condições</div>
+        <div class="flex flex-wrap gap-2">
+          ${[
+            ['tdah','TDAH'],
+            ['tag','TAG (ansiedade)'],
+            ['autismo_possivel','possível autismo'],
+            ['autismo','TEA confirmado'],
+            ['depressao','depressão'],
+          ].map(([k,label]) => `
+            <label class="cursor-pointer">
+              <input type="checkbox" name="cfg-cond" value="${k}" class="sr-only" ${checked(k)} />
+              <span class="pill is-lavender text-[10px] px-2 py-1">${label}</span>
+            </label>
+          `).join('')}
+        </div>
+
+        <label class="block mt-3">
+          <span class="text-[11px] font-semibold">Objetivo principal</span>
+          <select id="cfg-prof-goal" class="q-input mt-1 text-sm">
+            <option value="definicao_abs"  ${p.goal==='definicao_abs'?'selected':''}>Definição corporal (foco abdômen)</option>
+            <option value="massa_geral"    ${p.goal==='massa_geral'?'selected':''}>Ganho de massa geral</option>
+            <option value="peso_off"       ${p.goal==='peso_off'?'selected':''}>Perda de peso / cutting</option>
+            <option value="saude"          ${p.goal==='saude'?'selected':''}>Saúde geral</option>
+            <option value="performance"    ${p.goal==='performance'?'selected':''}>Performance esportiva</option>
+          </select>
+        </label>
+
+        <div class="grid grid-cols-2 gap-2 mt-3">
+          <label class="block">
+            <span class="text-[11px] font-semibold">Treino</span>
+            <select id="cfg-prof-gym" class="q-input mt-1 text-sm">
+              <option value="alto"  ${p.engagement?.gym==='alto'?'selected':''}>Alto engajamento</option>
+              <option value="medio" ${(p.engagement?.gym||'medio')==='medio'?'selected':''}>Médio</option>
+              <option value="baixo" ${p.engagement?.gym==='baixo'?'selected':''}>Baixo / instável</option>
+            </select>
+          </label>
+          <label class="block">
+            <span class="text-[11px] font-semibold">Dieta</span>
+            <select id="cfg-prof-diet" class="q-input mt-1 text-sm">
+              <option value="alto"  ${p.engagement?.diet==='alto'?'selected':''}>Alto engajamento</option>
+              <option value="medio" ${(p.engagement?.diet||'medio')==='medio'?'selected':''}>Médio</option>
+              <option value="baixo" ${p.engagement?.diet==='baixo'?'selected':''}>Baixo / instável</option>
+            </select>
+          </label>
+        </div>
+
+        <label class="block mt-3">
+          <span class="text-[11px] font-semibold">Notas pessoais (opcional)</span>
+          <textarea id="cfg-prof-notes" class="q-input mt-1 text-sm" rows="2" placeholder="ex: sensibilidade a barulho, gosto de rotina fixa, evitar comparações…">${p.notes || ''}</textarea>
+        </label>
+
+        <button id="cfg-prof-save" class="q-btn q-btn-primary w-full mt-3 text-xs">Salvar perfil</button>
+      </div>`;
+    })()}
+
     ${(() => {
       const cur = CHARACTERS.find((c) => c.id === state.user.activeCharacter);
       if (!cur) return '';
@@ -12957,6 +13113,42 @@ function attachHandlers() {
   // Corpo do Matthew no Status → abre jornada do corpo (5 estados + próximo)
   document.querySelectorAll('[data-action="open-body-journey"]').forEach((btn) => {
     btn.onclick = modalBodyJourney;
+  });
+
+  // ===== Quick Diet Actions (1-tap, anti-aversive) =====
+  // Templates genéricos pra reduzir fricção quando o user não quer escolher.
+  // Macros conservadores baseados em refeições típicas BR.
+  const QUICK_MEAL_TEMPLATES = {
+    'protein-light': { name: '🥤 Shake genérico',     kcal: 200, p: 25, c: 12, f: 5,  cat: 'proteina' },
+    'protein-meal':  { name: '🍗 Refeição com frango', kcal: 480, p: 40, c: 45, f: 15, cat: 'proteina' },
+    'protein-heavy': { name: '💪 Refeição forte',      kcal: 650, p: 55, c: 50, f: 22, cat: 'proteina' },
+  };
+  document.querySelectorAll('[data-quick-add]').forEach((btn) => {
+    btn.onclick = () => {
+      const key = btn.dataset.quickAdd;
+      const meal = QUICK_MEAL_TEMPLATES[key];
+      if (!meal) return;
+      vibrate(8);
+      const today = todayISO();
+      let log = state.dailyLogs.find((l) => l.date === today);
+      if (!log) {
+        log = { date: today, training: { type: 'descanso', done: false }, protein: { grams: 0, hit: false },
+                sleep: { hours: 0 }, reading: { minutes: 0 }, steps: 0, buffs: [], notes: '', meals: [] };
+        state.dailyLogs.push(log);
+      }
+      log.meals = log.meals || [];
+      log.meals.push({ ...meal, grams: 100, ko: '' });
+      // Atualiza proteína total no log
+      const totalP = log.meals.reduce((a, m) => a + (m.p || 0), 0);
+      log.protein = { grams: totalP, hit: totalP >= getProteinGoal() };
+      saveState();
+      toast(`+${meal.p}g proteína registrada`);
+      confetti(300);
+      render();
+    };
+  });
+  document.querySelector('[data-quick-meal-edit]')?.addEventListener('click', () => {
+    go('nutri');
   });
 
   // Spotify (card no header + bind direto)
@@ -13842,6 +14034,21 @@ function attachHandlers() {
     toast('API key removida');
     render();
   });
+  // ---- Perfil comportamental ----
+  document.getElementById('cfg-prof-save')?.addEventListener('click', () => {
+    const conds = [...document.querySelectorAll('input[name="cfg-cond"]:checked')].map(c => c.value);
+    state.user.profile.conditions = conds;
+    state.user.profile.goal       = document.getElementById('cfg-prof-goal')?.value || 'definicao_abs';
+    state.user.profile.engagement = {
+      gym:  document.getElementById('cfg-prof-gym')?.value  || 'medio',
+      diet: document.getElementById('cfg-prof-diet')?.value || 'medio',
+    };
+    state.user.profile.notes = document.getElementById('cfg-prof-notes')?.value?.trim() || '';
+    saveState();
+    toast('Perfil salvo — IA vai usar daqui pra frente');
+    render();
+  });
+
   document.getElementById('cfg-ai-test')?.addEventListener('click', async () => {
     const btn = document.getElementById('cfg-ai-test');
     btn.textContent = 'Testando…';
@@ -14862,11 +15069,13 @@ async function askClaude(systemPrompt, userMessage, opts = {}) {
   return j.content?.[0]?.text || '';
 }
 
-/** Constrói um "perfil resumido" do usuário pra dar contexto à IA.
- *  Inclui ativos, treinos recentes, nutrição da semana, sono, atributos. */
+/** Constrói o contexto do usuário pra IA — inclui dados físicos E perfil
+ *  comportamental. O perfil informa COMO falar (anti-aversivo, baixa carga
+ *  executiva, previsibilidade). */
 function aiBuildUserContext() {
   if (!state) return '';
   const u = state.user || {};
+  const p = u.profile || {};
   const today = todayISO();
   const last7 = (state.dailyLogs || []).slice(-7);
   const trainings = (state.workouts || []).slice(-5);
@@ -14877,19 +15086,82 @@ function aiBuildUserContext() {
   const readMin7 = last7.reduce((s,l)=>s+(l.reading?.minutes||0),0);
   const lastWeight = (state.bodyMeasurements||[]).slice(-1)[0]?.weight;
   const r = rankFromXP(u.rankXP||0);
+  const GOAL_LABELS = {
+    definicao_abs: 'definição corporal (foco abdômen)',
+    massa_geral:   'ganho de massa muscular geral',
+    peso_off:      'perda de peso / cutting',
+    saude:         'saúde geral',
+    performance:   'performance esportiva',
+  };
+  const CONDITION_LABELS = {
+    tdah: 'TDAH',
+    tag: 'TAG (transtorno de ansiedade generalizada)',
+    autismo_possivel: 'possível espectro autista',
+    autismo: 'TEA confirmado',
+    depressao: 'depressão',
+    bipolar: 'bipolaridade',
+  };
   return [
     `Nome: ${u.name || 'Jogador'}`,
-    ch ? `Personagem ativo: ${ch.name} · ${ch.title}` : '',
-    u.goals ? `Objetivos: ${u.goals}` : '',
+    ch ? `Personagem ativo no app: ${ch.name} · ${ch.title}` : '',
     u.height ? `Altura: ${u.height}cm` : '',
     u.age ? `Idade: ${u.age}` : '',
     u.sex ? `Sexo: ${u.sex==='m'?'masculino':'feminino'}` : '',
     lastWeight ? `Peso atual: ${lastWeight}kg` : '',
-    `Rank: ${r.name} (${u.rankXP||0} XP)`,
+    `Rank no app: ${r.name} (${u.rankXP||0} XP)`,
+    `Objetivo principal: ${GOAL_LABELS[p.goal] || p.goal || 'não definido'}`,
+    p.conditions?.length ? `Condições neurodivergentes/saúde mental: ${p.conditions.map(c => CONDITION_LABELS[c] || c).join(', ')}` : '',
+    `Engajamento atual: treino ${p.engagement?.gym || 'medio'} · dieta ${p.engagement?.diet || 'medio'}`,
+    p.notes ? `Notas pessoais: ${p.notes}` : '',
     `Últimos 7 dias: ${trainDays7} treinos, ~${Math.round(totalKcal7/Math.max(1,last7.length))} kcal/dia, ~${sleepAvg.toFixed(1)}h sono/dia, ${readMin7}min lendo`,
-    trainings.length ? `Últimos treinos: ${trainings.map(t=>t.type).join(', ')}` : '',
-    `Data: ${today}`,
+    trainings.length ? `Últimos treinos registrados: ${trainings.map(t=>t.type).join(', ')}` : '',
+    `Data de hoje: ${today}`,
   ].filter(Boolean).join('\n');
+}
+
+/** System prompt base — princípios de análise funcional aplicados.
+ *  Anti-aversivo, baixa carga executiva, validação > prescrição. */
+function aiCoachSystemPrompt() {
+  const p = state.user?.profile || {};
+  const hasNeurodivergence = p.conditions?.length > 0;
+  return `Você é Claude, integrado no app QUEST como coach de hábitos do usuário. Responde em pt-BR.
+
+PRINCÍPIOS DE COMUNICAÇÃO (siga todos sempre):
+
+1. ANTI-AVERSIVO. Nunca use:
+   - "você falhou", "perdeu", "atrasado", "está caindo"
+   - listas longas de "o que você deveria fazer"
+   - tom de cobrança ou comparação com outros
+   Em vez disso: foque no que JÁ ESTÁ funcionando, valide a tentativa.
+
+2. BAIXA CARGA EXECUTIVA (TDAH-friendly):
+   - 1 sugestão por vez, nunca 5
+   - ação concreta e ESPECÍFICA ("coma 1 ovo agora" não "tente mais proteína")
+   - se for explicar algo, use 2 parágrafos curtos no MÁXIMO
+   - resposta total entre 40 e 120 palavras (a menos que seja explicação técnica pedida)
+
+3. PREVISIBILIDADE (autismo-friendly):
+   - linguagem literal, sem metáfora confusa
+   - não invente analogias se não foi pedido
+   - estrutura igual entre respostas: validação → 1 ação → frase de fechamento
+
+4. RESPEITAR O QUE FUNCIONA:
+   - O usuário tem alto engajamento com TREINO. NÃO motive a treinar mais (já treina).
+     Pra treino: dê suporte técnico quando pedir, e só.
+   - O usuário tem baixo engajamento com DIETA. AQUI sim você ajuda com:
+     - templates de refeição prontos (1 toque mental)
+     - estratégias de pre-commitment ("deixe a marmita pronta na noite anterior")
+     - reframe de comer junk sem culpa ("comeu um doce, ok. e o próximo é proteína")
+   - NUNCA shame food choices. Tudo é dado, não falha.
+
+5. FOCO DO USUÁRIO: definição abdominal. Quando relevante, conecte a sugestão a esse objetivo. Mas NÃO force — se o user perguntar sobre outra coisa, responda a outra coisa.
+
+6. EMOJI OK, mas baixo (1-2 por resposta). Nada de listas com 5 emojis.
+
+${hasNeurodivergence ? `\nNOTA CLÍNICA: o usuário tem ${p.conditions.map(c => ({tdah:'TDAH',tag:'TAG',autismo_possivel:'possível autismo'}[c]||c)).join(' + ')}. Isso explica baixo engajamento com dieta (escape de decisão executiva + ansiedade). NÃO mencione as condições a menos que ele traga. Só ajuste o TOM como descrito acima.` : ''}
+
+CONTEXTO ATUAL DO USUÁRIO:
+${aiBuildUserContext()}`;
 }
 
 /** Modal de chat livre com a IA. Conversa contínua, history mantida em memória. */
@@ -14962,14 +15234,7 @@ function modalAIChat() {
     body.insertAdjacentHTML('beforeend', `<div class="ai-msg ai-msg-assistant" id="ai-typing"><span class="ai-typing">▮▮▮</span></div>`);
     body.scrollTop = body.scrollHeight;
     try {
-      const system = `Você é Claude, integrado num app de hábitos chamado QUEST.
-Responde em pt-BR, curto e direto. Estilo coach amigo: motiva sem ser fofo demais.
-Pode usar emoji ocasional mas nada de listas longas ou parágrafos enormes.
-Use o contexto do usuário (abaixo) pra dar respostas personalizadas.
-
-CONTEXTO DO USUÁRIO:
-${aiBuildUserContext()}`;
-      const reply = await askClaude(system, userMsg, { history: _aiChatHistory.slice(0, -1) });
+      const reply = await askClaude(aiCoachSystemPrompt(), userMsg, { history: _aiChatHistory.slice(0, -1) });
       document.getElementById('ai-typing')?.remove();
       _aiChatHistory.push({ role: 'assistant', content: reply });
       body.insertAdjacentHTML('beforeend', renderAIMsg({ role: 'assistant', content: reply }));
