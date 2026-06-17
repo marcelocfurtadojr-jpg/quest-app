@@ -6322,6 +6322,10 @@ function makeEmptyState() {
       // Integração Spotify (OAuth PKCE). Client ID o user cola via Config.
       // Tokens guardados em localStorage; refresh automático quando expira.
       spotify: { clientId: '', accessToken: '', refreshToken: '', expiresAt: 0, scope: '' },
+      // Integração Claude (Anthropic). API key direto no browser usando o header
+      // anthropic-dangerous-direct-browser-access. INSEGURO se a key vazar —
+      // user deve usar uma key pessoal com limite de gasto no console Anthropic.
+      anthropic: { apiKey: '', model: 'claude-haiku-4-5-20251001' },
     },
     dailyLogs: [],          // [{date, training, protein, sleep, reading, steps, buffs, notes, xp}]
     workouts: [],           // [{date, type, exercises:[{name, sets:[{reps,weight,technique}]}]}]
@@ -6514,6 +6518,11 @@ function migrateState(s) {
   s.user.spotify.refreshToken = s.user.spotify.refreshToken || '';
   s.user.spotify.expiresAt   = s.user.spotify.expiresAt   || 0;
   s.user.spotify.scope       = s.user.spotify.scope       || '';
+
+  // Claude/Anthropic (v1.69+) — garante o objeto. Default model = haiku 4.5 (barato).
+  s.user.anthropic = s.user.anthropic || {};
+  s.user.anthropic.apiKey = s.user.anthropic.apiKey || '';
+  s.user.anthropic.model  = s.user.anthropic.model  || 'claude-haiku-4-5-20251001';
 
   // Livros (v1.57+) — categoria 'literatura' (default) ou 'artigo', + id estável.
   // currentLiteraturaBookId aponta pro livro sorteado em curso (null = precisa sortear).
@@ -7330,6 +7339,7 @@ function render() {
   app().innerHTML = (views[currentTab] || viewDashboard)();
   renderTabbar();
   attachHandlers();
+  renderAIFab();
   app().firstElementChild?.classList.add('animate-fade-up');
   // Re-renderiza o chip do rest timer (sobrevive em qualquer aba)
   updateRestTimerDisplay();
@@ -8765,9 +8775,19 @@ function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
             <div><b class="text-pink">Erros comuns:</b> ${ex.mistakes}</div>
             <div><b class="text-mint">💡 Dica:</b> ${ex.tip}</div>
           </div>
+          ${aiReady() ? `
+          <button class="ai-ex-explain q-btn w-full mt-3 text-sm" data-ex-name="${encodeURIComponent(ex.name)}"
+                  style="background:linear-gradient(135deg,#B7B5FF,#7BB8FF); color:#1A1A2E; font-weight:700">
+            ✨ Pedir explicação detalhada ao Claude
+          </button>` : ''}
         </div>`;
       document.body.appendChild(pop);
       pop.onclick = (ev) => { if (ev.target === pop || ev.target.classList.contains('pop-close')) pop.remove(); };
+      pop.querySelector('.ai-ex-explain')?.addEventListener('click', () => {
+        const exName = decodeURIComponent(pop.querySelector('.ai-ex-explain').dataset.exName);
+        pop.remove();
+        modalAIExerciseExplanation(exName);
+      });
     });
   });
 
@@ -12632,6 +12652,48 @@ function viewConfig() {
       </div>`;
     })()}
 
+    <!-- ===== Claude IA (Anthropic) ===== -->
+    ${(() => {
+      const ai = state.user.anthropic || {};
+      const hasKey = !!ai.apiKey;
+      const keyMasked = hasKey ? ai.apiKey.slice(0, 7) + '••••••' + ai.apiKey.slice(-4) : '';
+      return `
+      <div class="q-card p-4">
+        <div class="flex items-center justify-between mb-2">
+          <div>
+            <div class="text-xs uppercase tracking-wider text-ink/45 dark:text-paper/45">🤖 Claude IA</div>
+            <div class="font-bold mt-0.5">${hasKey ? 'Conectado' : 'Não configurado'}</div>
+            ${hasKey ? `<div class="text-[10px] font-mono text-ink/45 dark:text-paper/45">${keyMasked}</div>` : ''}
+          </div>
+          ${hasKey
+            ? `<button id="cfg-ai-clear" class="q-btn q-btn-ghost text-xs">Desconectar</button>`
+            : ''}
+        </div>
+        <p class="text-[10px] text-ink/55 dark:text-paper/55 leading-relaxed mb-2">
+          1) Crie uma API key em <b>console.anthropic.com</b> · 2) Defina um <b>limite de gasto</b> (Settings → Billing → Spend limits) · 3) Cole a key abaixo.
+          A key fica salva no seu aparelho.
+        </p>
+        <label class="block">
+          <span class="text-xs font-semibold">API Key</span>
+          <input id="cfg-ai-key" class="q-input mt-1 font-mono text-[11px]"
+                 value="${ai.apiKey || ''}"
+                 placeholder="sk-ant-api03-..."
+                 spellcheck="false" autocomplete="off" type="password" />
+        </label>
+        <label class="block mt-3">
+          <span class="text-xs font-semibold">Modelo</span>
+          <select id="cfg-ai-model" class="q-input mt-1">
+            ${AI_MODELS.map(m => `<option value="${m.id}" ${ai.model === m.id ? 'selected' : ''}>${m.label}</option>`).join('')}
+          </select>
+        </label>
+        <button id="cfg-ai-save" class="q-btn q-btn-primary w-full mt-3 text-xs">Salvar</button>
+        ${hasKey ? `<button id="cfg-ai-test" class="q-btn q-btn-ghost w-full mt-1 text-xs">↻ Testar conexão</button>` : ''}
+        <p class="text-[10px] text-pink/80 mt-2 leading-relaxed">
+          ⚠ Atenção: a key fica em localStorage e visível no DevTools. Use só sua key pessoal com limite de gasto.
+        </p>
+      </div>`;
+    })()}
+
     ${(() => {
       const cur = CHARACTERS.find((c) => c.id === state.user.activeCharacter);
       if (!cur) return '';
@@ -13762,6 +13824,38 @@ function attachHandlers() {
     if (!confirm('Desconectar Spotify? O Client ID continua salvo.')) return;
     spotifyDisconnect();
   });
+
+  // ---- Claude IA config ----
+  document.getElementById('cfg-ai-save')?.addEventListener('click', () => {
+    const key   = document.getElementById('cfg-ai-key')?.value?.trim() || '';
+    const model = document.getElementById('cfg-ai-model')?.value || 'claude-haiku-4-5-20251001';
+    state.user.anthropic.apiKey = key;
+    state.user.anthropic.model = model;
+    saveState();
+    toast(key ? '🤖 Claude configurado' : 'API key limpa');
+    render();
+  });
+  document.getElementById('cfg-ai-clear')?.addEventListener('click', () => {
+    if (!confirm('Remover a API key salva?')) return;
+    state.user.anthropic.apiKey = '';
+    saveState();
+    toast('API key removida');
+    render();
+  });
+  document.getElementById('cfg-ai-test')?.addEventListener('click', async () => {
+    const btn = document.getElementById('cfg-ai-test');
+    btn.textContent = 'Testando…';
+    btn.disabled = true;
+    try {
+      const reply = await askClaude('Responde só com a palavra "OK".', 'Ping', { maxTokens: 16 });
+      toast(reply.toLowerCase().includes('ok') ? '✓ Funcionando!' : '✓ Conectou (resposta: ' + reply.slice(0,30) + ')');
+    } catch (err) {
+      toast('✕ ' + err.message);
+    } finally {
+      btn.textContent = '↻ Testar conexão';
+      btn.disabled = false;
+    }
+  });
   document.getElementById('cfg-delete')?.addEventListener('click', async () => {
     const acc = currentAccount();
     if (!acc) return;
@@ -14718,6 +14812,251 @@ function attachSpotifyPlayerHandlers() {
       }
     };
   });
+}
+
+// ===== 5.6 CLAUDE / ANTHROPIC ================================
+// Chamada client-side via header anthropic-dangerous-direct-browser-access.
+// API key fica no localStorage (state.user.anthropic.apiKey). User aceita o
+// risco — recomendação: usar key pessoal com limite de gasto no console.
+
+const AI_MODELS = [
+  { id: 'claude-haiku-4-5-20251001', label: 'Haiku 4.5 (rápido, barato)' },
+  { id: 'claude-sonnet-4-6',         label: 'Sonnet 4.6 (balanceado)' },
+  { id: 'claude-opus-4-8',           label: 'Opus 4.8 (mais inteligente)' },
+];
+
+function aiReady() {
+  return !!(state.user?.anthropic?.apiKey);
+}
+
+/** Chama Claude API. systemPrompt é fixo; userMessage é a query.
+ *  Retorna o texto da resposta ou lança erro. */
+async function askClaude(systemPrompt, userMessage, opts = {}) {
+  const key = state.user?.anthropic?.apiKey;
+  if (!key) throw new Error('API key não configurada');
+  const model = opts.model || state.user?.anthropic?.model || 'claude-haiku-4-5-20251001';
+  const maxTokens = opts.maxTokens || 1024;
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'x-api-key': key,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model,
+      max_tokens: maxTokens,
+      system: systemPrompt,
+      messages: opts.history ? [...opts.history, { role: 'user', content: userMessage }]
+                             : [{ role: 'user', content: userMessage }],
+    }),
+  });
+  if (!res.ok) {
+    const text = await res.text().catch(() => '');
+    let msg = `HTTP ${res.status}`;
+    try { const j = JSON.parse(text); msg = j.error?.message || msg; } catch {}
+    throw new Error(msg);
+  }
+  const j = await res.json();
+  return j.content?.[0]?.text || '';
+}
+
+/** Constrói um "perfil resumido" do usuário pra dar contexto à IA.
+ *  Inclui ativos, treinos recentes, nutrição da semana, sono, atributos. */
+function aiBuildUserContext() {
+  if (!state) return '';
+  const u = state.user || {};
+  const today = todayISO();
+  const last7 = (state.dailyLogs || []).slice(-7);
+  const trainings = (state.workouts || []).slice(-5);
+  const ch = activeCharacter();
+  const totalKcal7 = last7.reduce((s,l) => s + (l.meals||[]).reduce((a,m)=>a+(m.kcal||0),0), 0);
+  const trainDays7 = last7.filter(l => l.training?.done).length;
+  const sleepAvg = last7.reduce((s,l)=>s+(l.sleep?.hours||0),0)/Math.max(1,last7.length);
+  const readMin7 = last7.reduce((s,l)=>s+(l.reading?.minutes||0),0);
+  const lastWeight = (state.bodyMeasurements||[]).slice(-1)[0]?.weight;
+  const r = rankFromXP(u.rankXP||0);
+  return [
+    `Nome: ${u.name || 'Jogador'}`,
+    ch ? `Personagem ativo: ${ch.name} · ${ch.title}` : '',
+    u.goals ? `Objetivos: ${u.goals}` : '',
+    u.height ? `Altura: ${u.height}cm` : '',
+    u.age ? `Idade: ${u.age}` : '',
+    u.sex ? `Sexo: ${u.sex==='m'?'masculino':'feminino'}` : '',
+    lastWeight ? `Peso atual: ${lastWeight}kg` : '',
+    `Rank: ${r.name} (${u.rankXP||0} XP)`,
+    `Últimos 7 dias: ${trainDays7} treinos, ~${Math.round(totalKcal7/Math.max(1,last7.length))} kcal/dia, ~${sleepAvg.toFixed(1)}h sono/dia, ${readMin7}min lendo`,
+    trainings.length ? `Últimos treinos: ${trainings.map(t=>t.type).join(', ')}` : '',
+    `Data: ${today}`,
+  ].filter(Boolean).join('\n');
+}
+
+/** Modal de chat livre com a IA. Conversa contínua, history mantida em memória. */
+let _aiChatHistory = [];
+function modalAIChat() {
+  vibrate(10);
+  if (!aiReady()) {
+    openModal(`
+      <div class="p-5 space-y-3">
+        <div class="text-center">
+          <div class="text-3xl mb-2">🤖</div>
+          <h2 class="font-bold text-lg">Conecte Claude</h2>
+          <p class="text-xs text-ink/55 dark:text-paper/55 mt-2 leading-relaxed">
+            Cole sua API key da Anthropic em <b>Configurações → Claude IA</b>.
+            Sem key, eu não consigo conversar.
+          </p>
+        </div>
+        <button class="q-btn q-btn-primary w-full modal-close" onclick="currentTab='config'; render();">→ Ir pra Configurações</button>
+        <button class="q-btn q-btn-ghost w-full modal-close text-xs">Fechar</button>
+      </div>
+    `);
+    return;
+  }
+  openModal(`
+    <header class="flex items-center justify-between p-3 border-b border-ink/5 dark:border-paper/5">
+      <div class="flex items-center gap-2">
+        <span class="text-2xl">🤖</span>
+        <div>
+          <h2 class="font-bold">Claude</h2>
+          <div class="text-[9px] text-ink/45 dark:text-paper/45 uppercase tracking-widest">${state.user.anthropic.model.replace('claude-','').replace(/-2025\d+/, '')}</div>
+        </div>
+      </div>
+      <div class="flex gap-1">
+        <button id="ai-clear" class="q-btn q-btn-ghost text-xs px-2 py-1" title="Limpar conversa">↻</button>
+        <button class="modal-close p-1" aria-label="Fechar">✕</button>
+      </div>
+    </header>
+    <div id="ai-chat-body" class="p-3 space-y-2 overflow-y-auto" style="max-height:55vh">
+      ${_aiChatHistory.length ? _aiChatHistory.map(renderAIMsg).join('') : `
+        <div class="text-center text-xs text-ink/55 dark:text-paper/55 italic py-8">
+          Pergunte qualquer coisa: dúvida de treino, sugestão de dieta, motivação, técnica…
+        </div>
+      `}
+    </div>
+    <form id="ai-form" class="p-3 border-t border-ink/5 dark:border-paper/5 flex gap-2">
+      <input id="ai-input" class="q-input flex-1" placeholder="Manda a pergunta…" autocomplete="off" required />
+      <button class="q-btn q-btn-primary" type="submit">→</button>
+    </form>
+  `, { persistent: true });
+
+  const body  = document.getElementById('ai-chat-body');
+  const input = document.getElementById('ai-input');
+  input.focus();
+
+  document.getElementById('ai-clear').onclick = () => {
+    if (!confirm('Limpar conversa?')) return;
+    _aiChatHistory = [];
+    body.innerHTML = `<div class="text-center text-xs text-ink/55 dark:text-paper/55 italic py-8">Pergunte qualquer coisa…</div>`;
+  };
+
+  document.getElementById('ai-form').onsubmit = async (e) => {
+    e.preventDefault();
+    const userMsg = input.value.trim();
+    if (!userMsg) return;
+    input.value = '';
+    // Append user message
+    _aiChatHistory.push({ role: 'user', content: userMsg });
+    body.insertAdjacentHTML('beforeend', renderAIMsg({ role: 'user', content: userMsg }));
+    // Append typing indicator
+    body.insertAdjacentHTML('beforeend', `<div class="ai-msg ai-msg-assistant" id="ai-typing"><span class="ai-typing">▮▮▮</span></div>`);
+    body.scrollTop = body.scrollHeight;
+    try {
+      const system = `Você é Claude, integrado num app de hábitos chamado QUEST.
+Responde em pt-BR, curto e direto. Estilo coach amigo: motiva sem ser fofo demais.
+Pode usar emoji ocasional mas nada de listas longas ou parágrafos enormes.
+Use o contexto do usuário (abaixo) pra dar respostas personalizadas.
+
+CONTEXTO DO USUÁRIO:
+${aiBuildUserContext()}`;
+      const reply = await askClaude(system, userMsg, { history: _aiChatHistory.slice(0, -1) });
+      document.getElementById('ai-typing')?.remove();
+      _aiChatHistory.push({ role: 'assistant', content: reply });
+      body.insertAdjacentHTML('beforeend', renderAIMsg({ role: 'assistant', content: reply }));
+      body.scrollTop = body.scrollHeight;
+    } catch (err) {
+      document.getElementById('ai-typing')?.remove();
+      body.insertAdjacentHTML('beforeend', `<div class="ai-msg ai-msg-error">Erro: ${err.message}</div>`);
+      console.error(err);
+    }
+  };
+}
+
+/** Renderiza o FAB do chat IA. Reutiliza o mesmo elemento entre renders. */
+function renderAIFab() {
+  let fab = document.getElementById('ai-fab');
+  if (!fab) {
+    fab = document.createElement('button');
+    fab.id = 'ai-fab';
+    fab.className = 'ai-fab';
+    fab.setAttribute('aria-label', 'Chat com Claude');
+    fab.innerHTML = '<span>🤖</span>';
+    fab.onclick = () => { vibrate(8); modalAIChat(); };
+    document.body.appendChild(fab);
+  }
+}
+
+function renderAIMsg(m) {
+  const text = (m.content || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+  return `<div class="ai-msg ai-msg-${m.role}">${text}</div>`;
+}
+
+/** Modal pra explicar exercício via IA. Recebe o nome do exercício. */
+async function modalAIExerciseExplanation(exName) {
+  vibrate(10);
+  if (!aiReady()) {
+    toast('Configure a API key da Anthropic em Configurações');
+    return;
+  }
+  openModal(`
+    <header class="flex items-center justify-between p-3 border-b border-ink/5 dark:border-paper/5">
+      <div class="flex items-center gap-2 min-w-0 flex-1">
+        <span class="text-2xl">✨</span>
+        <div class="min-w-0">
+          <div class="text-[9px] text-ink/45 dark:text-paper/45 uppercase tracking-widest">Claude explica</div>
+          <h2 class="font-bold text-sm truncate">${exName}</h2>
+        </div>
+      </div>
+      <button class="modal-close p-1" aria-label="Fechar">✕</button>
+    </header>
+    <div id="ai-exp-body" class="p-4 overflow-y-auto" style="max-height:60vh">
+      <div class="text-center text-xs text-ink/55 dark:text-paper/55 italic py-6">
+        <span class="ai-typing">▮▮▮</span><br>Carregando…
+      </div>
+    </div>
+    <div class="p-3 border-t border-ink/5 dark:border-paper/5">
+      <button class="q-btn q-btn-primary w-full modal-close">Voltar</button>
+    </div>
+  `, { persistent: false });
+  try {
+    const system = `Você é Claude, expert em treinamento físico, integrado no app QUEST.
+Explica exercícios em pt-BR de forma clara e prática.
+
+FORMATO da resposta (use markdown simples — negrito ** e quebras de linha):
+**🎯 Músculos trabalhados**
+[1-2 linhas curtas]
+
+**✅ Execução correta**
+[3-4 passos numerados]
+
+**⚠️ Erros comuns**
+[2-3 erros]
+
+**💡 Variações / técnicas**
+[2-3 variações]
+
+Não use listas longas. Total max ~250 palavras.`;
+    const reply = await askClaude(system, `Explica o exercício "${exName}" pra mim.`, { maxTokens: 800 });
+    const body = document.getElementById('ai-exp-body');
+    // Render markdown-ish: ** → strong, line breaks
+    const html = reply
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\n/g,'<br>');
+    body.innerHTML = `<div class="ai-explanation text-sm leading-relaxed">${html}</div>`;
+  } catch (err) {
+    document.getElementById('ai-exp-body').innerHTML = `<div class="text-xs text-pink">Erro: ${err.message}</div>`;
+  }
 }
 
 /** Zera tudo que compõe o "Elo" (rank/XP/conquistas/atributos),
