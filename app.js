@@ -9091,8 +9091,8 @@ function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
           <div class="flex items-start justify-between gap-2">
             <div class="min-w-0 flex-1">
               <div class="font-bold flex items-center gap-2">
-                <span class="ex-name" data-ex-idx="${exIdx}" title="Toque pra renomear">${ex.name}</span>
-                <button class="ex-rename text-ink/40 dark:text-paper/40 hover:text-lavender flex-shrink-0" data-ex-idx="${exIdx}" aria-label="Renomear exercício" style="font-size:11px">✎</button>
+                <span class="ex-name" data-rename-idx="${exIdx}" title="Toque pra renomear">${ex.name}</span>
+                <button class="ex-rename text-ink/40 dark:text-paper/40 hover:text-lavender flex-shrink-0" data-rename-idx="${exIdx}" aria-label="Renomear exercício" style="font-size:11px">✎</button>
                 ${targetInfo?.ko ? `<span class="font-display text-xs text-ink/45 dark:text-paper/45">${targetInfo.ko}</span>` : ''}
               </div>
               <div class="text-xs text-ink/50 dark:text-paper/50">${targetInfo?.target || ''} ${targetInfo?.muscles ? '· ' + targetInfo.muscles : ''}</div>
@@ -9233,12 +9233,12 @@ function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
-      startExRename(+btn.dataset.exIdx);
+      startExRename(+btn.dataset.renameIdx);
     });
   });
   document.querySelectorAll('.ex-name').forEach((span) => {
     span.style.cursor = 'pointer';
-    span.addEventListener('click', () => startExRename(+span.dataset.exIdx));
+    span.addEventListener('click', () => startExRename(+span.dataset.renameIdx));
   });
 
   document.querySelectorAll('.ex-info').forEach((btn) => {
@@ -9381,16 +9381,20 @@ function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
   });
 
   function syncSetsFromDOM(target) {
-    // Captura também a data escolhida no picker (caso o usuário tenha mudado
-    // mas não ainda disparado o evento change).
     const dv = document.getElementById('workout-date')?.value;
     if (dv && /^\d{4}-\d{2}-\d{2}$/.test(dv)) target.date = dv;
-    document.querySelectorAll('[data-ex-idx]').forEach((card) => {
+    // CRÍTICO: só processa CARDS reais (q-card.q-card), não spans/buttons
+    // internos com mesmo data-ex-idx (causava wipe das sets em renames).
+    document.querySelectorAll('.q-card[data-ex-idx]').forEach((card) => {
       const exIdx = +card.dataset.exIdx;
-      target.exercises[exIdx].sets = [...card.querySelectorAll('[data-set-idx]')].map((row) => ({
-        technique: row.querySelector('.set-tech').value,
-        reps:      row.querySelector('.set-reps').value,
-        weight:    row.querySelector('.set-weight').value,
+      const rows = [...card.querySelectorAll('[data-set-idx]')];
+      // GUARD: se não há rows visíveis no DOM (mid-render/animação), NÃO
+      // sobrescreve o array. Preserva o que já existe na memória.
+      if (rows.length === 0) return;
+      target.exercises[exIdx].sets = rows.map((row) => ({
+        technique: row.querySelector('.set-tech')?.value || '',
+        reps:      row.querySelector('.set-reps')?.value || '',
+        weight:    row.querySelector('.set-weight')?.value || '',
       }));
     });
   }
