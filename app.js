@@ -5556,17 +5556,20 @@ function todayWorkoutDone() {
   return state.workouts.find(w => w.date === today);
 }
 
+// Atributos = progressão LONG-TERM acumulada (RPG-style).
+// Display names seguem o brief MVP: Força · Stamina · Disciplina · Nutrição · Recuperação.
+// Internal keys mantidos pra não quebrar migração/state existente.
 const ATTRIBUTES = [
-  { key: 'forca',       name: 'Força',       ko: '힘',     color: '#B8242E', icon: '💪', fighter: 'kano',
-    desc: 'Cresce com treinos pesados (compostos, séries baixas).' },
-  { key: 'resistencia', name: 'Resistência', ko: '지구력', color: '#E84A1A', icon: '🔥', fighter: 'liukang',
-    desc: 'Cresce com cardio, passos e dança.' },
-  { key: 'sabedoria',   name: 'Sabedoria',   ko: '지혜',   color: '#FFE08F', icon: '⚡', fighter: 'raiden',
-    desc: 'Cresce com leitura, estudo e foco.' },
-  { key: 'disciplina',  name: 'Disciplina',  ko: '절제',   color: '#7BB8FF', icon: '❄️', fighter: 'subzero',
-    desc: 'Cresce com proteína na meta + sono regular.' },
-  { key: 'vitalidade',  name: 'Vitalidade',  ko: '활력',   color: '#3FBF7F', icon: '🕶️', fighter: 'cage',
-    desc: 'Cresce com streaks e quests.' },
+  { key: 'forca',       name: 'Força',       ko: '힘',     color: '#B8242E', icon: '💪',
+    desc: 'Cargas, compostos, hipertrofia. Cresce com treino resistido.' },
+  { key: 'resistencia', name: 'Stamina',     ko: '지구력', color: '#3FBF7F', icon: '⚡',
+    desc: 'Cardio aeróbico, passos, fôlego. Cresce com movimento constante.' },
+  { key: 'disciplina',  name: 'Disciplina',  ko: '절제',   color: '#7BB8FF', icon: '🔥',
+    desc: 'Rotina, sequência, planejamento cumprido. Cresce com consistência.' },
+  { key: 'sabedoria',   name: 'Nutrição',    ko: '영양',   color: '#FFD8A8', icon: '🥩',
+    desc: 'Proteína, calorias, refeições conscientes. Cresce com alimentação alinhada.' },
+  { key: 'vitalidade',  name: 'Recuperação', ko: '회복',   color: '#B7B5FF', icon: '🌙',
+    desc: 'Sono, descanso, mobilidade. Cresce com pausa intencional.' },
 ];
 
 // Biblioteca de exercícios pré-cadastrados.
@@ -7837,6 +7840,66 @@ function viewDashboard() {
     const intention = todayLog.intention || '';
     const intentionDone = !!todayLog.intentionDone;
     return `
+    <!-- ===== Character Hero Card — personagem em cena contextual (RPG) =====
+         Pacote visual do personagem do dia. Imagem muda conforme a ação
+         inferida pelo contexto (treino recente, hora, refeição). Quando o
+         user dropar assets em icons/characters/<id>/actions/<action>.webp,
+         o app pega automaticamente. -->
+    ${(() => {
+      const ch = activeCharacter();
+      if (!ch) return '';
+      const action = inferCurrentAction();
+      const actionInfo = getCharacterActionImage(action) || {};
+      const imgPrimary = typeof actionInfo === 'string' ? actionInfo : actionInfo.primary;
+      const imgFallback = typeof actionInfo === 'string' ? null : actionInfo.fallback;
+      const label = actionLabel(action);
+      return `
+      <section class="px-4 mt-2">
+        <div class="character-hero" style="--char-accent: ${ch.accent || '#B7B5FF'}; --char-accent-glow: ${ch.accentGlow || '#D8D6FF'}">
+          <div class="character-hero-image">
+            <img src="${imgPrimary}"
+                 ${imgFallback ? `onerror="this.onerror=null;this.src='${imgFallback}'"` : ''}
+                 alt="${ch.name} · ${label}" loading="lazy" />
+            <div class="character-hero-overlay"></div>
+          </div>
+          <div class="character-hero-text">
+            <div class="character-hero-slot">${ch.slot} · PLAYER DO DIA</div>
+            <div class="character-hero-name">${ch.name}</div>
+            <div class="character-hero-action">${label}</div>
+          </div>
+        </div>
+      </section>`;
+    })()}
+
+    <!-- ===== Status meters (5 estados transitórios do dia) =====
+         Diferente dos atributos (progressão long-term), STATUS são
+         estados do dia. Variam a cada ação registrada. -->
+    ${(() => {
+      const s = computeDailyStatus();
+      const meters = [
+        { key: 'energia',    label: 'Energia',    icon: '⚡', value: s.energia,    color: '#FFD341' },
+        { key: 'fadiga',     label: 'Fadiga',     icon: '🪨', value: s.fadiga,     color: '#8E8E93', invert: true },
+        { key: 'hidratacao', label: 'Hidratação', icon: '💧', value: s.hidratacao, color: '#7BB8FF' },
+        { key: 'sono',       label: 'Sono',       icon: '🌙', value: s.sono,       color: '#B7B5FF' },
+        { key: 'motivacao',  label: 'Motivação',  icon: '🔥', value: s.motivacao,  color: '#FFB7C5' },
+      ];
+      return `
+      <section class="px-4 mt-3">
+        <div class="text-[10px] uppercase tracking-widest text-ink/45 dark:text-paper/45 mb-1.5 px-1">Status do dia</div>
+        <div class="status-meters">
+          ${meters.map(m => `
+            <div class="status-meter ${m.invert && m.value > 60 ? 'is-warning' : ''}" title="${m.label}: ${m.value}%">
+              <div class="status-meter-icon" style="color: ${m.color}">${m.icon}</div>
+              <div class="status-meter-bar">
+                <div class="status-meter-fill" style="width: ${m.value}%; background: ${m.color}"></div>
+              </div>
+              <div class="status-meter-label">${m.label}</div>
+            </div>
+          `).join('')}
+        </div>
+      </section>`;
+    })()}
+
     <!-- ===== Treino de hoje (Smartfit-style) — card grande em destaque ===== -->
     ${(() => {
       const planned = plannedToday();
@@ -16443,6 +16506,129 @@ function resetElo() {
 /** Helper — devolve o personagem ativo (ou null) sem replicar a busca em todo lugar. */
 function activeCharacter() {
   return CHARACTERS.find((c) => c.id === state?.user?.activeCharacter) || null;
+}
+
+/** Pega a imagem contextual do personagem pra uma ação específica.
+ *  Ações suportadas: neutral, chest, back, legs, abs, cardio, nutrition,
+ *  hydration, recovery, victory, tired.
+ *
+ *  Resolução em 3 camadas (anti-bloqueio quando user não tem assets):
+ *  1. character.actionImages[action] — quando o user dropar imagens dedicadas
+ *  2. Mapeia ação → workout existente do personagem (chest→peito, etc)
+ *  3. Fallback pro character.img (carta principal) ou null
+ *
+ *  Path convencional pros assets futuros:
+ *    icons/characters/<id>/actions/<action>.webp
+ *  User pode dropar as imagens lá e o app pega automaticamente. */
+function getCharacterActionImage(action, charId = null) {
+  const ch = charId
+    ? CHARACTERS.find(c => c.id === charId)
+    : activeCharacter();
+  if (!ch) return null;
+  // Layer 1: actionImages dedicado (futuro)
+  if (ch.actionImages?.[action]) return ch.actionImages[action];
+  // Layer 2: convencional — tenta o path mesmo sem registrar no objeto
+  // (assim user só precisa dropar arquivos pra ativar)
+  const conventional = `icons/characters/${ch.id}/actions/${action}.webp`;
+  // Layer 3: fallback nos workouts existentes
+  const fallback = {
+    chest:       ch.workouts?.['icons/workouts/peito.webp'],
+    back:        ch.workouts?.['icons/workouts/dorsal.webp'],
+    legs:        ch.workouts?.['icons/workouts/pernas.webp'],
+    abs:         ch.workouts?.['icons/workouts/abs.webp'],
+    cardio:      ch.workouts?.['icons/workouts/caminhada.webp'],
+    nutrition:   ch.img,
+    hydration:   ch.img,
+    recovery:    ch.bodyStates?.lean,
+    victory:     ch.img,
+    tired:       ch.bodyStates?.magrelo,
+    neutral:     ch.img,
+  };
+  // Retorna o convencional + fallback como tupla pra src+onerror
+  return { primary: conventional, fallback: fallback[action] || ch.img };
+}
+
+/** Sugere a "ação" do personagem agora baseado no contexto atual.
+ *  Considera última atividade registrada hoje + hora. */
+function inferCurrentAction() {
+  const log = state.dailyLogs?.find(l => l.date === todayISO());
+  const hour = new Date().getHours();
+  if (log) {
+    // Treino agora ou recente? → categoria do treino
+    const lastWorkout = state.workouts?.filter(w => w.date === todayISO()).slice(-1)[0];
+    if (lastWorkout) {
+      const t = lastWorkout.type.toLowerCase();
+      if (/peito|push|tríceps/.test(t)) return 'chest';
+      if (/costas|dorsal|pull|bíceps/.test(t)) return 'back';
+      if (/pernas|leg|c ·/.test(t)) return 'legs';
+      if (/abs|core/.test(t)) return 'abs';
+      if (/caminh|cardio/.test(t)) return 'cardio';
+    }
+    // Refeição recente?
+    if (log.meals?.length > 0) {
+      const lastMeal = log.meals[log.meals.length - 1];
+      // Refeição nos últimos 30min? (sem timestamp exato, aproxima)
+      if (log.meals.length >= 3) return 'nutrition';
+    }
+    // Dia completo?
+    if (log.training?.done && log.protein?.hit && (log.sleep?.hours || 0) >= 7) return 'victory';
+  }
+  // Por hora do dia
+  if (hour < 6 || hour >= 22) return 'recovery';
+  if (hour >= 19) return 'tired';
+  return 'neutral';
+}
+
+/** Computa os 5 STATUS do dia (transitórios, 0-100). Diferente dos
+ *  atributos que são progressão acumulada de longo prazo, status são
+ *  estados do agora — variam todo dia conforme o que o user fez. */
+function computeDailyStatus() {
+  const today = todayISO();
+  const log = state.dailyLogs?.find(l => l.date === today);
+  const last7 = (state.dailyLogs || []).slice(-7);
+  const yesterdayLog = state.dailyLogs?.find(l => {
+    const d = new Date(today); d.setDate(d.getDate() - 1);
+    return l.date === isoDate(d);
+  });
+
+  // ENERGIA — sono ontem (40%) + treino feito hoje (-20% se sim, +20% se descanso) + hora do dia
+  const sleepY = yesterdayLog?.sleep?.hours || 0;
+  const trainedToday = !!log?.training?.done;
+  const trainBoost = trainedToday ? -15 : 0;
+  const hour = new Date().getHours();
+  const timeBoost = (hour < 8) ? -10 : (hour > 21) ? -20 : 0;
+  const energia = Math.max(0, Math.min(100, Math.round(sleepY * 12.5 + trainBoost + timeBoost + 25)));
+
+  // FADIGA — dias de treino seguidos sem descanso recente (+ acúmulo)
+  const trainDays = last7.filter(l => l.training?.done).length;
+  const overtrained = trainDays > 5;
+  const fadiga = Math.min(100, Math.max(0, Math.round(trainDays * 14 + (overtrained ? 20 : 0))));
+
+  // HIDRATAÇÃO — placeholder usando refeições (proxy: 25% por refeição com volume)
+  const meals = log?.meals?.length || 0;
+  const hidratacao = Math.min(100, meals * 25);
+
+  // SONO — hoje (log atual). 7-9h = 100, escala linear
+  const sleepH = log?.sleep?.hours || 0;
+  const sono = Math.max(0, Math.min(100, Math.round((sleepH / 8) * 100)));
+
+  // MOTIVAÇÃO — streak + ações de hoje
+  const streakInfo = streaks();
+  const totalStreak = (streakInfo.treino || 0) + (streakInfo.sono || 0) + (streakInfo.proteina || 0);
+  const todayActions = (trainedToday ? 1 : 0) + (log?.protein?.hit ? 1 : 0) + (meals > 0 ? 1 : 0);
+  const motivacao = Math.min(100, Math.round(totalStreak * 5 + todayActions * 15 + 25));
+
+  return { energia, fadiga, hidratacao, sono, motivacao };
+}
+
+/** Label PT de uma ação pra mostrar no UI. */
+function actionLabel(action) {
+  return ({
+    neutral: 'Pronto pra começar', chest: 'Treino de peito', back: 'Treino de costas',
+    legs: 'Treino de pernas', abs: 'Trabalho de core', cardio: 'Cardio em andamento',
+    nutrition: 'Reabastecendo', hydration: 'Hidratando', recovery: 'Modo recuperação',
+    victory: 'Quest concluída', tired: 'Final do dia',
+  })[action] || 'Em ação';
 }
 
 /** Modal de ficha do personagem (acionado tocando no portrait do Elo). */

@@ -799,6 +799,134 @@ html.dark body {
 @keyframes popIn { from {transform:scale(.7); opacity:0} to {transform:scale(1); opacity:1} }
 
 /* ============================================================
+   CHARACTER HERO CARD — pacote visual do personagem em cena (RPG)
+   ============================================================ */
+.character-hero {
+  position: relative;
+  width: 100%;
+  height: 180px;
+  border-radius: 18px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #1A1A2E 0%, #2A2A4E 100%);
+  border: 1px solid var(--char-accent, rgba(255,255,255,0.08));
+  box-shadow:
+    0 8px 28px rgba(0,0,0,0.18),
+    inset 0 1px 0 var(--char-accent-glow, rgba(255,255,255,0.06));
+}
+.character-hero-image {
+  position: absolute;
+  inset: 0;
+}
+.character-hero-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 25%;
+  display: block;
+}
+.character-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, transparent 40%, rgba(15,23,41,0.85) 100%),
+    linear-gradient(90deg, rgba(15,23,41,0.55) 0%, transparent 50%);
+  pointer-events: none;
+}
+.character-hero-text {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  right: 16px;
+  z-index: 2;
+  color: #FFFFFF;
+}
+.character-hero-slot {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 9px;
+  letter-spacing: 0.25em;
+  font-weight: 700;
+  color: var(--char-accent-glow, rgba(255,255,255,0.7));
+  text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+}
+.character-hero-name {
+  font-family: 'Russo One', 'Inter', sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  margin-top: 3px;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.5);
+}
+.character-hero-action {
+  font-size: 12px;
+  font-weight: 600;
+  opacity: 0.88;
+  margin-top: 4px;
+  letter-spacing: 0.02em;
+}
+
+/* ============================================================
+   STATUS METERS — 5 estados transitórios do dia
+   ============================================================ */
+.status-meters {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+.status-meter {
+  background: #FFFFFF;
+  border: 1px solid rgba(26,26,46,0.06);
+  border-radius: 12px;
+  padding: 8px 4px 9px;
+  text-align: center;
+  position: relative;
+  transition: transform .15s ease;
+}
+.dark .status-meter {
+  background: #161B28;
+  border-color: rgba(255,255,255,0.04);
+}
+.status-meter:active {
+  transform: scale(0.96);
+}
+.status-meter.is-warning {
+  border-color: rgba(255,107,61,0.45);
+  background: linear-gradient(180deg, #FFFFFF 0%, rgba(255,107,61,0.04) 100%);
+}
+.dark .status-meter.is-warning {
+  background: linear-gradient(180deg, #161B28 0%, rgba(255,107,61,0.08) 100%);
+}
+.status-meter-icon {
+  font-size: 16px;
+  line-height: 1;
+}
+.status-meter-bar {
+  margin: 6px 4px 4px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(26,26,46,0.08);
+  overflow: hidden;
+}
+.dark .status-meter-bar {
+  background: rgba(255,255,255,0.08);
+}
+.status-meter-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width .25s ease;
+}
+.status-meter-label {
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: rgba(26,26,46,0.6);
+  text-transform: uppercase;
+}
+.dark .status-meter-label {
+  color: rgba(255,255,255,0.6);
+}
+
+/* ============================================================
    SMARTFIT-STYLE — Treino de hoje (featured card) + calendário semanal
    ============================================================ */
 .today-workout-card {
