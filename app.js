@@ -9091,7 +9091,8 @@ function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
           <div class="flex items-start justify-between gap-2">
             <div class="min-w-0 flex-1">
               <div class="font-bold flex items-center gap-2">
-                <span>${ex.name}</span>
+                <span class="ex-name" data-ex-idx="${exIdx}" title="Toque pra renomear">${ex.name}</span>
+                <button class="ex-rename text-ink/40 dark:text-paper/40 hover:text-lavender flex-shrink-0" data-ex-idx="${exIdx}" aria-label="Renomear exercício" style="font-size:11px">✎</button>
                 ${targetInfo?.ko ? `<span class="font-display text-xs text-ink/45 dark:text-paper/45">${targetInfo.ko}</span>` : ''}
               </div>
               <div class="text-xs text-ink/50 dark:text-paper/50">${targetInfo?.target || ''} ${targetInfo?.muscles ? '· ' + targetInfo.muscles : ''}</div>
@@ -9196,6 +9197,50 @@ function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
   });
 
   // Info popover por exercício --------------------------------------
+  // Renomear exercício — clica no ✎ ou no nome direto
+  function startExRename(exIdx) {
+    const ex = start.exercises[exIdx];
+    if (!ex) return;
+    const novo = prompt('Novo nome do exercício:', ex.name);
+    if (novo === null) return;
+    const clean = novo.trim();
+    if (!clean) { toast('Nome vazio — mantido o original'); return; }
+    if (clean === ex.name) return;
+    // Salva os dados do DOM antes de re-render (peso/reps que o user já digitou)
+    syncSetsFromDOM(start);
+    ex.name = clean;
+    // Re-categoriza com base no novo nome (técnica das options/colunas atualiza)
+    const newCat = exerciseCategory(ex);
+    const exCard = document.querySelector(`[data-ex-idx="${exIdx}"]`);
+    if (exCard) {
+      exCard.dataset.exCat = newCat;
+      // Re-render: o nome muda no header (precisa de update direto), mas a área
+      // mutável já cuida das colunas/técnica via renderExerciseMutable.
+      const nameSpan = exCard.querySelector('.ex-name');
+      if (nameSpan) nameSpan.textContent = clean;
+      const mutableArea = exCard.querySelector(`[data-ex-mutable="${exIdx}"]`);
+      if (mutableArea) {
+        const techOpts = TECH_BY_CAT[newCat] || TECH_BY_CAT.strength;
+        const exCols = COLS_BY_CAT[newCat] || COLS_BY_CAT.strength;
+        const exRepsMax = exCols.isCardio ? 500 : 50;
+        const exWeightStep = exCols.isCardio ? 0.1 : 0.5;
+        mutableArea.innerHTML = renderExerciseMutable(ex, techOpts, exCols, exRepsMax, exWeightStep);
+      }
+    }
+    toast(`Renomeado pra "${clean}"`);
+  }
+  document.querySelectorAll('.ex-rename').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      startExRename(+btn.dataset.exIdx);
+    });
+  });
+  document.querySelectorAll('.ex-name').forEach((span) => {
+    span.style.cursor = 'pointer';
+    span.addEventListener('click', () => startExRename(+span.dataset.exIdx));
+  });
+
   document.querySelectorAll('.ex-info').forEach((btn) => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
@@ -9229,9 +9274,13 @@ function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
   // Hooks pros botões de iniciar timer — toda lógica do timer roda em
   // módulo (vide startRestTimer / _restEndTs) pra sobreviver re-renders,
   // troca de tab e modal closes.
-  document.querySelectorAll('.rest-btn').forEach((btn) => {
+  // Aceita .rest-btn (legado) e .rest-btn-mini (refactor floating timer)
+  document.querySelectorAll('.rest-btn, .rest-btn-mini').forEach((btn) => {
     btn.addEventListener('click', () => {
       const sec = +btn.dataset.sec;
+      // Visual feedback: marca como ativo
+      document.querySelectorAll('.rest-btn-mini').forEach((b) => b.classList.remove('is-active'));
+      btn.classList.add('is-active');
       startRestTimer(sec);
     });
   });
