@@ -335,18 +335,18 @@ const THEMES = {
       { primary: '천 리 길도 한 걸음부터', secondary: '"Mil milhas começam com um passo"' },
       { primary: '오늘의 나는 어제보다 강하다', secondary: '"Hoje sou mais forte que ontem"' },
       { primary: '시작이 반이다',            secondary: '"Começar já é metade"' },
-      { primary: 'TEST YOUR MIGHT.',        secondary: '"Hoje você é seu adversário." — MK' },
-      { primary: 'GET OVER HERE!',          secondary: '"Levanta. Hoje é dia de luta." — Scorpion' },
+      { primary: 'O CORPO É O ÚLTIMO HARDWARE.', secondary: '"No protocolo VHYX, evolução veio de disciplina."' },
+      { primary: 'DRILL HOJE. SOBREVIVÊNCIA AMANHÃ.', secondary: '"Briefing diário VHYX"' },
       { primary: '꾸준함이 답이다',          secondary: '"Consistência é a resposta"' },
     ],
-    greeting: { primary: '안녕하세요', secondary: '' },
-    tags: { home: '⚔ KOMBAT IS LIFE ⚔', workout: '⚔ TEST YOUR MIGHT ⚔', nutri: '🔥 FUEL FOR BATTLE 🔥', insights: '⚡ BATTLE REPORT ⚡', goals: '🎯 VISION · GOALS', dance: '🎵 DANCE ARENA 🎵' },
+    greeting: { primary: 'VHYX // ATIVO', secondary: '' },
+    tags: { home: '◆ OPERADOR EM CAMPO ◆', workout: '▸ DRILL EM EXECUÇÃO', nutri: '▸ INTAKE PROTOCOL', insights: '▸ RELATÓRIO DE CAMPO', goals: '◆ OBJETIVOS LONGOS', dance: '▸ ESTÚDIO DE MOVIMENTO' },
     labels: {
-      finishBtn: 'FINISH IT!',
-      arsenal:   '⚔ ARSENAL ⚔',
-      footer:    '— MORTAL KOMBAT NEVER ENDS —',
-      register:  'Registrar dia',
-      logCta:    'Registrar dia',
+      finishBtn: '▸ FECHAR OPERAÇÃO',
+      arsenal:   '▸ MÓDULOS ◂',
+      footer:    '— VHYX // PROTOCOLO 2087 //  OPERAÇÃO CONTÍNUA —',
+      register:  'Registrar operação',
+      logCta:    'Registrar operação',
     },
     showKombatant: true,
     quests: [
@@ -3554,8 +3554,8 @@ function hasPR(s) {
   return false;
 }
 
-// Quotes do dia — mistura ditados coreanos (~50%) com falas Mortal Kombat (~50%).
-// Lado kombat: { kombat: 'TEXTO', pt: 'tradução', source: 'origem' }
+// Quotes do dia — mistura ditados coreanos (~50%) com falas do universo VHYX (~50%).
+// Lado VHYX: { vhyx: 'TEXTO', pt: 'tradução', source: 'autor in-world' }
 // Lado coreano: { ko: '...', pt: '...' }
 const QUOTES = [
   // === Coreano (50%) ===
@@ -3570,17 +3570,17 @@ const QUOTES = [
   { ko: '시작이 반이다',              pt: 'Começar já é metade' },
   { ko: '꾸준함이 답이다',            pt: 'Consistência é a resposta' },
 
-  // === Mortal Kombat (50%) ===
-  { kombat: 'TEST YOUR MIGHT.',                   pt: 'Hoje você é seu próprio adversário.', source: 'MK' },
-  { kombat: 'THERE IS NO KNOWLEDGE THAT IS NOT POWER.', pt: 'Não há conhecimento que não seja poder.', source: 'MK3' },
-  { kombat: 'FATALITY IS NOT THE END — IT IS THE PROOF.', pt: 'O fim não é o fim — é a prova.', source: 'MK' },
-  { kombat: 'YOUR SOUL IS MINE.',                 pt: 'Seu progresso é seu — ninguém tira.', source: 'Shang Tsung' },
-  { kombat: 'POWER. STRENGTH. DISCIPLINE.',       pt: 'Os três pilares do treino.', source: 'MK' },
-  { kombat: 'GET OVER HERE!',                     pt: 'Levanta. Hoje é dia de luta.', source: 'Scorpion' },
-  { kombat: 'WE FIGHT NOT FOR HONOR, BUT FOR LIFE.', pt: 'Treinamos pela vida, não pela glória.', source: 'Liu Kang' },
-  { kombat: 'FLAWLESS VICTORY AWAITS THE PATIENT.', pt: 'A vitória impecável recompensa quem persiste.', source: 'MK' },
-  { kombat: 'IT HAS BEGUN.',                      pt: 'A jornada começou.', source: 'Shao Kahn' },
-  { kombat: 'KOMBAT NEVER ENDS.',                 pt: 'A disciplina é o combate diário.', source: 'MK' },
+  // === VHYX in-world (50%) — lore pós-Colapso, mundo dos Operadores ===
+  { vhyx: 'O CORPO É O ÚLTIMO HARDWARE.',          pt: 'No protocolo VHYX, evolução não veio de chip — veio de disciplina.', source: 'Codex 001' },
+  { vhyx: 'CADA REP É UMA LINHA DE CÓDIGO.',       pt: 'O corpo se reescreve.', source: 'Manual do Operador' },
+  { vhyx: 'NO COLAPSO, QUEM TREINOU SOBREVIVEU.',  pt: 'História oficial dos Subúrbios Lentos.', source: 'Arquivo VHYX' },
+  { vhyx: 'A ROTINA É A ARMA. A ARMA É VOCÊ.',     pt: 'Doutrina dos Operadores.', source: 'Doutrina I' },
+  { vhyx: 'SEM PROTOCOLO, NÃO HÁ AWAKENED.',       pt: 'Quem pula etapa não chega ao S.', source: 'Codex 012' },
+  { vhyx: 'DRILL HOJE. SOBREVIVÊNCIA AMANHÃ.',     pt: 'O treino de hoje é a vantagem de amanhã.', source: 'Briefing diário' },
+  { vhyx: 'FORÇA SEM STAMINA É ESCOMBRO.',         pt: 'Equilíbrio entre atributos.', source: 'Codex 023' },
+  { vhyx: 'O OPERADOR QUE DESCANSA, RETORNA.',     pt: 'Recuperação é tática, não recuo.', source: 'Codex 044' },
+  { vhyx: 'NÃO HÁ FALHA, HÁ DADO.',                pt: 'Toda métrica é leitura, não julgamento.', source: 'Protocolo Mental' },
+  { vhyx: 'VHYX NÃO PARA. VOCÊ PARA.',             pt: 'O sistema continua. Você decide voltar.', source: 'Arquivo VHYX' },
 ];
 
 // Pool de coreografias K-pop para sorteio (apenas metadados — sem letras).
@@ -4714,22 +4714,22 @@ const _LEGACY_BODY_CHALLENGES_REMOVED = [
   { id: 'c01', name: 'Bíceps do Kano',        inspiration: 'Kano (MK)',         focus: 'bíceps',     xp: 5, icon: '💪',
     sets: 'Método 21s: 7 reps meia-amplitude baixa + 7 meia-amplitude alta + 7 completas. 3 séries.',
     tip: 'Carga moderada. Sente cada porção do movimento.' },
-  { id: 'c02', name: 'Peito do Liu Kang',      inspiration: 'Liu Kang (MK)',     focus: 'peito',      xp: 6, icon: '🔥',
+  { id: 'c02', name: 'Peito do Iron Core',     inspiration: 'Iron Core · Op. Pesado',    focus: 'peito',      xp: 6, icon: '🔥',
     sets: '4× supino reto até a falha (8-12 reps) + 3× crucifixo polia (12-15). Pausa 90s.',
     tip: 'Aperto máximo no topo do crucifixo, 1s de pausa.' },
-  { id: 'c03', name: 'Costas do Sub-Zero',     inspiration: 'Sub-Zero (MK)',     focus: 'dorsal',     xp: 6, icon: '❄️',
+  { id: 'c03', name: 'Costas do Protocol',     inspiration: 'Protocol · Op. Defesa',     focus: 'dorsal',     xp: 6, icon: '❄️',
     sets: '5× pull-up AMRAP + 3× remada curvada (8-10) + 3× pulldown pegada fechada (12).',
     tip: 'Foco em escápula retraída antes do braço se mexer.' },
-  { id: 'c04', name: 'Ombros do Scorpion',     inspiration: 'Scorpion (MK)',     focus: 'ombro',      xp: 5, icon: '🟡',
+  { id: 'c04', name: 'Ombros do Pulse',        inspiration: 'Pulse · Op. Combate',       focus: 'ombro',      xp: 5, icon: '🟡',
     sets: '4× desenvolvimento militar (6-10) + drop set elevação lateral (15→12→10).',
     tip: 'Cotovelo guia o movimento na lateral, não o pulso.' },
-  { id: 'c05', name: 'Pernas da Kitana',       inspiration: 'Kitana (MK)',       focus: 'perna+glúteo', xp: 7, icon: '🦵',
+  { id: 'c05', name: 'Pernas da Cardio Knight', inspiration: 'Cardio Knight · Op. Velocidade', focus: 'perna+glúteo', xp: 7, icon: '🦵',
     sets: '5× agachamento (8-12) + 4× afundo passada (10/perna) + 3× hip thrust (12).',
     tip: 'Aperta glúteo 1s no topo do hip thrust.' },
-  { id: 'c06', name: 'Antebraço do Raiden',    inspiration: 'Raiden (MK)',       focus: 'antebraço',  xp: 4, icon: '⚡',
+  { id: 'c06', name: 'Antebraço do Bio-Tuner', inspiration: 'Bio-Tuner · Op. Precisão',  focus: 'antebraço',  xp: 4, icon: '⚡',
     sets: '4× farmer\'s walk 30 passos + 3× rosca punho (15).',
     tip: 'Pegada firme, ombros pra trás durante o walk.' },
-  { id: 'c07', name: 'Pescoço do Shao Kahn',   inspiration: 'Shao Kahn (MK)',    focus: 'pescoço/trapézio', xp: 4, icon: '👹',
+  { id: 'c07', name: 'Pescoço do Titan',       inspiration: 'Titan · Op. Frame',         focus: 'pescoço/trapézio', xp: 4, icon: '👹',
     sets: '4× encolhimento halteres pesado (12) + 3× face pull (15).',
     tip: 'Face pull obrigatório — equilibra postura.' },
 
@@ -4861,10 +4861,10 @@ const BODY_CHALLENGES = [
 // Eventos celebratórios (overlays). Variam por tema — KOMBAT_EVENTS é só
 // o default kpop_anime; os outros temas têm seus próprios textos.
 const KOMBAT_EVENTS = {
-  flawless:  { title: 'FLAWLESS VICTORY',    sub: 'Dia 7/7 XP — perfeito' },
-  fatality:  { title: 'FATALITY',            sub: 'Weekly quest derrotada' },
-  brutality: { title: 'BRUTALITY',           sub: 'PERSONAL RECORD batido' },
-  finish:    { title: 'FINISH IT!',          sub: 'Dia registrado' },
+  flawless:  { title: 'OPERAÇÃO IMPECÁVEL',  sub: 'Dia 7/7 XP — protocolo perfeito' },
+  fatality:  { title: 'MISSÃO COMPLETA',     sub: 'Briefing semanal concluído' },
+  brutality: { title: 'NOVO RECORDE',        sub: 'PR registrado pelo Codex' },
+  finish:    { title: 'OPERAÇÃO REGISTRADA', sub: 'Dia fechado · biometria atualizada' },
   outstanding:{ title: 'OUTSTANDING!',       sub: 'Promoção de rank' },
   toasty:    { title: 'TOASTY!',             sub: 'Surpresa de combo' },
 };
@@ -4903,16 +4903,16 @@ function themeEvent(kind) {
   return events[kind] || KOMBAT_EVENTS[kind];
 }
 
-// Lutadores Mortal Kombat — apenas metadados (sem SVG).
-// O fighterHtml() carrega imagem real de icons/fighters/<key>.{webp,png,jpg};
-// se não existir, mostra um placeholder limpo com o nome.
+// Operadores arquetipais VHYX — usados nos overlays celebratórios.
+// As keys são mantidas (kano/cage/scorpion/...) só pra compat com referências
+// internas; o nome exibido e tagline vêm do universo VHYX.
 const FIGHTERS = {
-  kano:     { name: 'Kano',        accent: '#B8242E', tagline: 'BRUTAL POWER',       attr: 'forca' },
-  cage:     { name: 'Johnny Cage', accent: '#3FBF7F', tagline: 'HOLLYWOOD APPROVES', attr: 'vitalidade' },
-  scorpion: { name: 'Scorpion',    accent: '#E8C56B', tagline: 'GET OVER HERE!',     attr: null },
-  subzero:  { name: 'Sub-Zero',    accent: '#7BB8FF', tagline: 'FROZEN DISCIPLINE',  attr: 'disciplina' },
-  raiden:   { name: 'Raiden',      accent: '#FFE08F', tagline: 'THUNDER GOD',        attr: 'sabedoria' },
-  liukang:  { name: 'Liu Kang',    accent: '#E84A1A', tagline: 'ENDURING FIRE',      attr: 'resistencia' },
+  kano:     { name: 'Iron Core',          accent: '#B8242E', tagline: 'QUEBRA A PAREDE',   attr: 'forca' },
+  cage:     { name: 'Showtime',           accent: '#3FBF7F', tagline: 'OPERAÇÃO LIMPA',    attr: 'vitalidade' },
+  scorpion: { name: 'Pulse',              accent: '#E8C56B', tagline: 'NÃO PARA',          attr: null },
+  subzero:  { name: 'Protocol',           accent: '#7BB8FF', tagline: 'DISCIPLINA FRIA',   attr: 'disciplina' },
+  raiden:   { name: 'Bio-Tuner',          accent: '#FFE08F', tagline: 'SISTEMA OTIMIZADO', attr: 'sabedoria' },
+  liukang:  { name: 'Endurance Knight',   accent: '#E84A1A', tagline: 'CHAMA CONTÍNUA',    attr: 'resistencia' },
 };
 
 /** Extensões que o fighterHtml() tenta em ordem antes de desistir. */
@@ -7631,12 +7631,12 @@ function attrInfo(xp) {
 // até um personagem/conceito icônico do tema.
 const ATTR_TIERS_BY_THEME = {
   kpop_anime: {
-    // Mortal Kombat + fighters
-    forca:       ['Crybaby','Frangote','Iniciante','Frequentador','Marombeiro','Brawler','Liu Kang','Kano','Sektor','Jax','Sub-Zero','Kintaro','Goro','Shao Kahn'],
-    resistencia: ['Lambada','Sofá-rei','Trotador','Caminhante','Corredor casual','Atleta amador','Maratonista','Triatleta','Smoke','Scorpion','Cassie Cage','Sonya Blade','Liu Kang','Raiden'],
-    sabedoria:   ['Distraído','Esquecido','Curioso','Estudante','Aprendiz','Pesquisador','Polímata','Kung Lao','Kenshi','Shang Tsung','Quan Chi','Bo\' Rai Cho','Old Liu Kang','Raiden'],
-    disciplina:  ['Procrastinador','Bagunceiro','Aspirante','Determinado','Persistente','Focado','Implacável','Cyrax','Sektor','Noob Saibot','Reptile','Scorpion','Sub-Zero','Bi-Han'],
-    vitalidade:  ['Letárgico','Cansado','Disposto','Animado','Energético','Vibrante','Radiante','Stryker','Jacqui Briggs','Jax Briggs','Cassie Cage','Liu Kang','Hollywood','Johnny Cage'],
+    // VHYX in-world — tiers 1-7 humanos comuns, 8-14 ranks de Operador.
+    forca:       ['Crybaby','Frangote','Iniciante','Frequentador','Marombeiro','Brawler','Heavyweight','Iron Core','Crusher','Wallbreaker','Apex Frame','Titan','Iron Sovereign','Mythic Forge'],
+    resistencia: ['Lambada','Sofá-rei','Trotador','Caminhante','Corredor casual','Atleta amador','Maratonista','Pulse Runner','Cardio Knight','Endurance Spec','Marathon Awakened','Storm Lung','Eternal Engine','Apex Stride'],
+    sabedoria:   ['Distraído','Esquecido','Curioso','Estudante','Aprendiz','Pesquisador','Polímata','Macro Master','Meal Architect','Intake Strategist','Fuel Sovereign','Bio-Tuner','Apex Chef','Living Refinery'],
+    disciplina:  ['Procrastinador','Bagunceiro','Aspirante','Determinado','Persistente','Focado','Implacável','Codex Reader','Protocol Adept','Iron Routine','Ritual Master','Unbreakable','Stoic Sovereign','Mythic Discipline'],
+    vitalidade:  ['Letárgico','Cansado','Disposto','Animado','Energético','Vibrante','Radiante','Sleep Architect','Recovery Tactician','Regen Spec','Phoenix Cycle','Eternal Rest','Awakened Renewal','Mythic Restore'],
   },
   inside_out: {
     // Inside Out (Pixar) — emoções e crescimento interior
@@ -8939,7 +8939,7 @@ function viewDashboard() {
 
   <section class="px-4 mt-6">
     <button id="open-log" class="q-btn q-btn-finish w-full py-4 text-base">
-      <span class="w-5 h-5">${I.flame}</span> ${theme.labels?.finishBtn || 'FINISH IT!'} <span class="w-5 h-5">${I.flame}</span>
+      <span class="w-5 h-5">${I.flame}</span> ${theme.labels?.finishBtn || 'FECHAR OPERAÇÃO'} <span class="w-5 h-5">${I.flame}</span>
     </button>
     <p class="text-center text-xs text-ink/45 dark:text-paper/45 mt-2">
       ${theme.labels?.register || 'Registrar dia'} · ${dayXP}/${DAILY_XP_CAP} XP capturados hoje
@@ -8985,7 +8985,7 @@ function viewDashboard() {
 
   ${theme.labels?.footer ? `
   <section class="px-4 mt-6 pb-2 text-center">
-    <div class="font-kombat text-[10px] text-blood/50 dark:text-ember/50 tracking-[0.4em]">${theme.labels.footer}</div>
+    <div class="font-display text-[10px] tracking-[0.32em]" style="color: var(--vhyx-cyan-deep, #2A8AAF); opacity: 0.7;">${theme.labels.footer}</div>
   </section>` : ''}
   `;
 }
@@ -11516,7 +11516,7 @@ function miniStat(label, value, unit, color) {
 function nextStepRec(logs) {
   if (!logs.length) return {
     title: 'Faça seu primeiro registro',
-    tip: `Toque em "${getTheme(state).labels?.finishBtn || 'FINISH IT!'}" na home pra registrar o dia.`,
+    tip: `Toque em "${getTheme(state).labels?.finishBtn || 'FECHAR OPERAÇÃO'}" na home pra registrar o dia.`,
     color: '#B7B5FF',
   };
   const trainPct   = logs.filter((l) => l.training?.done).length / logs.length;
@@ -12841,7 +12841,7 @@ const ATTR_LEVEL_UP_TIPS = {
     tips: [
       { icon: '🏃', text: 'Treino tipo Caminhada salvo (com cardio) = XP nesse atributo.' },
       { icon: '⌚', text: 'Importar do Polar/Garmin/Strava (botão no header de Treino) conta cardio.' },
-      { icon: '👣', text: 'Bater 8.000 passos no dia (FINISH IT!) = +1 XP + atributo.' },
+      { icon: '👣', text: 'Bater 8.000 passos no dia (Fechar operação) = +1 XP + atributo.' },
       { icon: '🎯', text: 'Quests com tag "cardio" (q11, q57, q93, q94, q95, q96, q97).' },
       { icon: '🕺', text: 'Dança K-pop (sortear no Arsenal e marcar como aprendido) também sobe.' },
     ],
@@ -12850,7 +12850,7 @@ const ATTR_LEVEL_UP_TIPS = {
     title: 'Como subir Sabedoria',
     subtitle: 'Leitura, estudo e foco profundo sobem esse atributo.',
     tips: [
-      { icon: '📖', text: 'Bater ≥15min de leitura no dia (FINISH IT!) = +1 XP + atributo.' },
+      { icon: '📖', text: 'Bater ≥15min de leitura no dia (Fechar operação) = +1 XP + atributo.' },
       { icon: '📚', text: 'Sessão de leitura via timer (na aba Leitura) — cada minuto conta.' },
       { icon: '🎯', text: 'Quests com tag "foco" (Pomodoro, estudar coreano, deep work, ler artigo).' },
       { icon: '🧠', text: 'Aprender uma habilidade nova (q39), TED de 15min (q119), problemas de lógica (q121).' },
