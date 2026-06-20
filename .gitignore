@@ -160,3 +160,13 @@ icons/goals/*.gif
 /Coxas.jpg
 /Coxas.png
 /Coxas.webp
+
+# Sources dos novos personagens (char_NN_*.png) — dropados no root antes de
+# processarmos pra icons/characters/<id>/actions/*.webp. Copyright fica fora
+# do repo público; só as webps compactadas vão pro git.
+/char_*.png
+/char_*.jpg
+/char_*.webp
+/Kai Ryuen*.png
+/Kai Ryuen*.jpg
+/Kai Ryuen*.webp
