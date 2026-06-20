@@ -13883,27 +13883,6 @@ function viewConfig() {
       </button>
     </div>`}
 
-    <!-- ===== Forçar atualização do app =====
-         Quando uma versão nova do app sobe e o Service Worker antigo continua
-         servindo do cache, esse botão limpa TUDO (caches + SW) e recarrega.
-         Idealmente o auto-reload em controllerchange já resolve, mas serve
-         como escape hatch garantido se alguma coisa não chegar. -->
-    <div class="q-card p-4" style="border:1px solid rgba(255,179,71,0.45); background:linear-gradient(135deg, rgba(255,179,71,0.06), transparent)">
-      <div class="text-xs uppercase tracking-wider text-kgold">🔄 Versão do app</div>
-      <div class="font-bold mt-0.5">Forçar atualização</div>
-      <p class="text-xs text-ink/55 dark:text-paper/55 mt-1 leading-relaxed">
-        Limpa o cache local e baixa a versão mais recente do app.
-        Use se você está vendo conteúdo antigo (personagens, layout, imagens) que
-        deveria ter mudado.
-      </p>
-      <button id="cfg-force-update" class="q-btn q-btn-primary w-full mt-3 text-sm">
-        🔄 Atualizar app agora
-      </button>
-      <div id="cfg-app-version" class="text-[10px] text-ink/45 dark:text-paper/45 mt-2 text-center">
-        Versão atual: <code>quest-v1.81.0</code>
-      </div>
-    </div>
-
     <!-- ===== Spotify (Now Playing + controles) ===== -->
     ${(() => {
       const sp = state.user.spotify || {};
@@ -15390,33 +15369,6 @@ Regras:
   document.getElementById('cfg-logout')?.addEventListener('click', () => {
     if (!confirm('Sair da conta? Seus dados continuam salvos.')) return;
     logoutAccount();
-  });
-
-  // Força atualização do app — desregistra SW + apaga TODOS os caches do
-  // CacheStorage + reload. Resolve "vejo conteúdo antigo" quando o SW
-  // antigo segura o controle e a versão nova não chega.
-  document.getElementById('cfg-force-update')?.addEventListener('click', async () => {
-    const btn = document.getElementById('cfg-force-update');
-    if (!btn) return;
-    btn.disabled = true; btn.textContent = '⏳ Limpando cache…';
-    try {
-      if ('serviceWorker' in navigator) {
-        const regs = await navigator.serviceWorker.getRegistrations();
-        await Promise.all(regs.map((r) => r.unregister()));
-      }
-      if (typeof caches !== 'undefined') {
-        const keys = await caches.keys();
-        await Promise.all(keys.map((k) => caches.delete(k)));
-      }
-      // Limpa o guard do controllerchange pra próxima carga não pular o reload
-      try { sessionStorage.removeItem('__sw_reloaded__'); } catch(e){}
-      btn.textContent = '✓ Recarregando…';
-      // Bypass do cache HTTP também
-      setTimeout(() => window.location.reload(true), 350);
-    } catch (err) {
-      btn.disabled = false; btn.textContent = '🔄 Atualizar app agora';
-      toast('Erro ao limpar cache: ' + err.message);
-    }
   });
   document.getElementById('cfg-switch-fighter')?.addEventListener('click', () => {
     if (!confirm('Trocar de personagem? Você volta pra tela de seleção.')) return;
