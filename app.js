@@ -90,6 +90,13 @@ const ATTR_IMAGE_BY_CHARACTER = {
     sabedoria:   'icons/characters/kairyuen/actions/nutrition.webp',
     vitalidade:  'icons/characters/kairyuen/actions/recovery.webp',
   },
+  luansantos: {
+    forca:       'icons/characters/luansantos/actions/strength.webp',
+    resistencia: 'icons/characters/luansantos/actions/cardio.webp',
+    disciplina:  'icons/characters/luansantos/actions/rhythm.webp',
+    sabedoria:   'icons/characters/luansantos/actions/nutrition.webp',
+    vitalidade:  'icons/characters/luansantos/actions/recovery.webp',
+  },
 };
 function getAttrImageFor(attrKey, charId) {
   return ATTR_IMAGE_BY_CHARACTER[charId]?.[attrKey] || `icons/attrs/${attrKey}.webp`;
@@ -5175,11 +5182,62 @@ const CHARACTERS = [
       'icons/characters/kairyuen/actions/calisthenics.webp': 'center 45%',
     },
   },
-  // ===== Slots de operadores ainda não liberados =====
-  // Aparecem como "?" no SELECT OPERATOR pra mostrar que o roster expande.
-  // Conforme o user criar/dropar arte nova, basta setar unlocked: true +
-  // preencher os mesmos campos dos chars existentes.
-  { id: 'op3', slot: '3P', name: '???', title: 'CLASSIFICADO', unlocked: false },
+  { id: 'luansantos', slot: '3P', name: 'LUAN SANTOS', title: 'THE DANCE MAGICIAN',
+    img: 'icons/characters/luansantos.webp', unlocked: true,
+    stats: { ATAQUE: 60, VELOCIDADE: 90, DEFESA: 65, TÉCNICA: 95, CARISMA: 100 },
+    desc: 'Cresceu em pista clandestina dos Subúrbios Lentos. Cada coreografia é um protocolo de mobilidade.',
+    buff: 'disciplina',
+    accent: '#B7B5FF', accentDeep: '#6B5FB8', accentGlow: '#D8D6FF',
+    lore: 'A rua descobriu antes do VHYX: ritmo desbloqueia o corpo. Cresceu em pistas clandestinas dos Subúrbios Lentos onde cada movimento valia um cigarro ou uma noite de teto. Hoje é o único Operador com codinome "Mágico" — porque ninguém previu que dança fosse caminho pra Awakened.',
+    age: 24, origin: 'Distrito Lúmen (cultura subterrânea)', style: 'Dance Magician · Rhythm Protocol',
+    passives: [
+      { icon: '🕺', text: '+20% XP em Dança e coreografia' },
+      { icon: '🌀', text: '+10% XP em mobilidade e flexibilidade' },
+    ],
+    signature: { name: 'RHYTHM CASCADE · 韻律', icon: '✨',
+      desc: 'Sequências de dança acima de 20min rendem +30% XP. O ritmo não quebra, o corpo flui.' },
+    actionImages: {
+      neutral:      'icons/characters/luansantos/actions/neutral.webp',
+      dance:        'icons/characters/luansantos/actions/dance.webp',
+      cardio:       'icons/characters/luansantos/actions/cardio.webp',
+      abs:          'icons/characters/luansantos/actions/abs.webp',
+      calisthenics: 'icons/characters/luansantos/actions/calisthenics.webp',
+      freestyle:    'icons/characters/luansantos/actions/freestyle.webp',
+      strength:     'icons/characters/luansantos/actions/strength.webp',
+      chest:        'icons/characters/luansantos/actions/strength.webp', // fallback
+      back:         'icons/characters/luansantos/actions/calisthenics.webp', // fallback
+      legs:         'icons/characters/luansantos/actions/mobility.webp',
+      mobility:     'icons/characters/luansantos/actions/mobility.webp',
+      power:        'icons/characters/luansantos/actions/power.webp',
+      rhythm:       'icons/characters/luansantos/actions/rhythm.webp',
+      hydration:    'icons/characters/luansantos/actions/hydration.webp',
+      nutrition:    'icons/characters/luansantos/actions/nutrition.webp',
+      recovery:     'icons/characters/luansantos/actions/recovery.webp',
+      victory:      'icons/characters/luansantos/actions/victory.webp',
+      tired:        'icons/characters/luansantos/actions/tired.webp',
+    },
+    workouts: {
+      'icons/workouts/peito.webp':      'icons/characters/luansantos/actions/strength.webp',
+      'icons/workouts/dorsal.webp':     'icons/characters/luansantos/actions/calisthenics.webp',
+      'icons/workouts/abs.webp':        'icons/characters/luansantos/actions/abs.webp',
+      'icons/workouts/pernas.webp':     'icons/characters/luansantos/actions/mobility.webp',
+      'icons/workouts/caminhada.webp':  'icons/characters/luansantos/actions/cardio.webp',
+      'icons/workouts/calistenia.webp': 'icons/characters/luansantos/actions/calisthenics.webp',
+      'icons/workouts/bracos.webp':     'icons/characters/luansantos/actions/strength.webp',
+      'icons/workouts/core.webp':       'icons/characters/luansantos/actions/abs.webp',
+      'icons/workouts/ombros.webp':     'icons/characters/luansantos/actions/calisthenics.webp',
+      'icons/workouts/ombros2.webp':    'icons/characters/luansantos/actions/dance.webp',
+    },
+    workoutPositions: {
+      'icons/characters/luansantos/actions/strength.webp':     'center 35%',
+      'icons/characters/luansantos/actions/calisthenics.webp': 'center 35%',
+      'icons/characters/luansantos/actions/abs.webp':          'center 40%',
+      'icons/characters/luansantos/actions/mobility.webp':     'center 50%',
+      'icons/characters/luansantos/actions/cardio.webp':       'center 30%',
+      'icons/characters/luansantos/actions/dance.webp':        'center 40%',
+    },
+  },
+  // ===== Slots ainda não liberados =====
   { id: 'op4', slot: '4P', name: '???', title: 'CLASSIFICADO', unlocked: false },
   { id: 'op5', slot: '5P', name: '???', title: 'CLASSIFICADO', unlocked: false },
   { id: 'op6', slot: '6P', name: '???', title: 'CLASSIFICADO', unlocked: false },
@@ -7355,7 +7413,7 @@ function migrateState(s) {
   // Roster reduzido (v1.79+) — só 2 lutadores: AXEL KAEL e KAI RYUEN.
   // Quem tinha yeonjun/cagemorgan/sanji/joehigashi (ou qualquer outro removido)
   // como ativo, limpa pra forçar reseleção na próxima abertura.
-  const VALID_CHARS = new Set(['axelkael', 'kairyuen']);
+  const VALID_CHARS = new Set(['axelkael', 'kairyuen', 'luansantos']);
   if (s.user.activeCharacter && !VALID_CHARS.has(s.user.activeCharacter)) {
     delete s.user.activeCharacter;
   }
