@@ -1993,6 +1993,365 @@ input[type=number] { -moz-appearance: textfield; }
   max-width: 420px;
 }
 
+/* === NOVO (VHYX) — Grid de ROSTOS dos operadores, sem scroll === */
+.cs-screen-grid {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+.cs-deck-faces {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  max-width: 480px;
+  width: 100%;
+  flex: 1;
+  align-content: center;
+  padding-bottom: 16px;
+}
+.cs-face {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 0;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  overflow: hidden;
+  background: linear-gradient(180deg, #1B1F36 0%, #0F1426 100%);
+  box-shadow: 0 8px 22px rgba(0,0,0,0.55);
+  cursor: pointer;
+  transition: transform .15s ease, box-shadow .2s ease, border-color .2s ease;
+  color: #F4E9C8;
+  text-align: left;
+}
+.cs-face:hover, .cs-face:active {
+  transform: translateY(-3px);
+  border-color: var(--char-accent, rgba(255,255,255,0.4));
+  box-shadow:
+    0 14px 32px rgba(0,0,0,0.65),
+    0 0 0 1px var(--char-accent, rgba(255,255,255,0.3)),
+    0 0 28px var(--char-accent-glow, rgba(214,169,62,0.35));
+}
+.cs-face-portrait {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: #0A0E1A;
+}
+.cs-face-portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 12%; /* mostra rosto + ombros */
+  display: block;
+}
+.cs-face-portrait::after { /* gradiente sutil pra info ficar legível */
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 60%, rgba(15,20,38,0.55) 100%);
+  pointer-events: none;
+}
+.cs-face-info {
+  padding: 8px 10px 10px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  background: linear-gradient(180deg, rgba(0,0,0,0.25), transparent);
+}
+.cs-face-slot {
+  font-family: "JetBrains Mono", "Russo One", monospace;
+  font-size: 9px;
+  letter-spacing: 0.25em;
+  color: var(--char-accent-glow, #FFE9A8);
+  opacity: 0.85;
+}
+.cs-face-codename {
+  font-family: "Russo One", Impact, system-ui, sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  margin-top: 1px;
+  color: #FFF;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cs-face-tier {
+  font-size: 9.5px;
+  letter-spacing: 0.06em;
+  margin-top: 2px;
+  color: rgba(255,255,255,0.55);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cs-face-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 2;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  background: var(--char-accent, #D6A93E);
+  color: #0A0E1A;
+  font-weight: 800;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+.cs-face-last {
+  border-color: var(--char-accent, #D6A93E);
+  box-shadow:
+    0 0 0 1px var(--char-accent, #D6A93E),
+    0 14px 32px rgba(0,0,0,0.65),
+    0 0 28px var(--char-accent-glow, rgba(214,169,62,0.4));
+}
+.cs-face-locked {
+  cursor: not-allowed;
+  opacity: 0.55;
+  filter: grayscale(0.7);
+}
+.cs-face-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    repeating-linear-gradient(45deg, rgba(255,255,255,0.03) 0 8px, transparent 8px 16px),
+    #1A1F30;
+  position: relative;
+}
+.cs-face-q {
+  font-family: "Russo One", Impact, system-ui, sans-serif;
+  font-size: 64px;
+  color: rgba(255,255,255,0.12);
+}
+.cs-face-lock {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 14px;
+  opacity: 0.6;
+}
+
+/* === Tela EXPANDIDA — Operador selecionado pra preview === */
+.cs-screen-expanded {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 0;
+  background: #0A0E1A;
+  color: #F4E9C8;
+}
+.cs-back {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 5;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(10,14,26,0.78);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.18);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: #FFF;
+  cursor: pointer;
+}
+.cs-expanded-art {
+  position: relative;
+  width: 100%;
+  height: 52vh;
+  min-height: 320px;
+  max-height: 540px;
+  background: #0A0E1A;
+  overflow: hidden;
+}
+.cs-expanded-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+}
+.cs-expanded-art::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 45%, rgba(10,14,26,0.6) 75%, #0A0E1A 100%);
+  pointer-events: none;
+}
+.cs-expanded-overlay {
+  position: relative;
+  margin-top: -60px;
+  z-index: 2;
+  padding: 0 18px 100px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.cs-expanded-head {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+}
+.cs-expanded-slot {
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: var(--char-accent, #D6A93E);
+  color: #0A0E1A;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  font-weight: 800;
+  box-shadow: 0 4px 14px var(--char-accent-glow, rgba(0,0,0,0.4));
+}
+.cs-expanded-name {
+  font-family: "Russo One", Impact, system-ui, sans-serif;
+  font-size: 28px;
+  letter-spacing: 0.06em;
+  margin: 0;
+  color: #FFF;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.6);
+}
+.cs-expanded-title {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  color: var(--char-accent-glow, #FFE9A8);
+  margin-top: 2px;
+}
+.cs-expanded-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.cs-tag {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid var(--char-accent, rgba(255,255,255,0.18));
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.85);
+}
+.cs-tag-ghost {
+  border-color: rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.55);
+}
+.cs-expanded-lore {
+  font-size: 13px;
+  line-height: 1.6;
+  color: rgba(244,233,200,0.78);
+  margin: 0;
+}
+.cs-expanded-passives {
+  display: grid;
+  gap: 6px;
+}
+.cs-passive {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.04);
+  border-left: 2px solid var(--char-accent, #D6A93E);
+  font-size: 12px;
+  color: rgba(244,233,200,0.9);
+}
+.cs-passive-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+.cs-signature {
+  padding: 12px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--char-accent, #D6A93E)22, transparent 70%);
+  border: 1px solid var(--char-accent, #D6A93E);
+}
+.cs-signature-label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  color: var(--char-accent-glow, #FFE9A8);
+}
+.cs-signature-name {
+  font-family: "Russo One", Impact, system-ui, sans-serif;
+  font-size: 14px;
+  letter-spacing: 0.06em;
+  margin-top: 3px;
+  color: #FFF;
+}
+.cs-signature-desc {
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: rgba(244,233,200,0.72);
+  margin-top: 3px;
+}
+.cs-expanded-stats {
+  display: grid;
+  gap: 7px;
+}
+.cs-stat {
+  display: grid;
+  gap: 3px;
+}
+.cs-stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.cs-stat-label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.18em;
+  color: rgba(244,233,200,0.65);
+}
+.cs-stat-num {
+  font-family: "Russo One", Impact, system-ui, sans-serif;
+  font-size: 12px;
+  color: var(--char-accent, #FFE9A8);
+}
+.cs-stat-bar {
+  height: 4px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.cs-stat-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--char-accent, #D6A93E), var(--char-accent-glow, #FFE9A8));
+  transition: width .4s ease;
+}
+.cs-deploy {
+  position: sticky;
+  bottom: 16px;
+  margin-top: 6px;
+  width: 100%;
+  padding: 16px;
+  border-radius: 12px;
+  border: 0;
+  background: linear-gradient(135deg, var(--char-accent, #D6A93E), var(--char-accent-deep, #8C5A1A));
+  color: #0A0E1A;
+  font-family: "Russo One", Impact, system-ui, sans-serif;
+  font-size: 16px;
+  letter-spacing: 0.25em;
+  cursor: pointer;
+  box-shadow:
+    0 8px 28px var(--char-accent-glow, rgba(214,169,62,0.55)),
+    inset 0 -3px 0 rgba(0,0,0,0.25),
+    inset 0 1px 0 rgba(255,255,255,0.35);
+  transition: transform .12s ease;
+}
+.cs-deploy:hover, .cs-deploy:active {
+  transform: scale(1.02);
+}
+
 .cs-card {
   position: relative;
   display: block;

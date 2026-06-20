@@ -8196,78 +8196,154 @@ function go(tab) {
   render();
 }
 
-// ----- 6.0 Choose Your Fighter (onboarding) ------------------
+// ----- 6.0 SELECT OPERATOR (onboarding) ------------------
+// VHYX boot sequence — 2 etapas:
+//   1. Grid 2×N com ROSTOS dos operadores (sem scroll, viewport-fit)
+//   2. Tap num rosto → vista expandida com full-body, lore, stats, DEPLOY
+// _selectedFighterPreview controla qual etapa renderizar.
+
+let _selectedFighterPreview = null;
 
 function viewCharacterSelect() {
-  // Cada imagem JÁ é uma carta "Choose Your Fighter" completa (slot, título,
-  // stats e PRESS START desenhados na arte). Mostro full-bleed em coluna única
-  // e adiciono apenas o overlay de tap + variante travada para slots vazios.
+  if (_selectedFighterPreview) {
+    const ch = CHARACTERS.find((c) => c.id === _selectedFighterPreview);
+    if (ch) return viewOperatorExpanded(ch);
+    _selectedFighterPreview = null;
+  }
+  return viewOperatorGrid();
+}
+
+function viewOperatorGrid() {
   const lastPick = state.user?.activeCharacter || null;
   const cards = CHARACTERS.map((c) => {
     if (!c.unlocked) {
       return `
-        <button class="cs-card cs-locked" data-id="${c.id}">
-          <div class="cs-locked-inner">
-            <div class="cs-locked-slot">${c.slot}</div>
-            <div class="cs-locked-q">?</div>
-            <div class="cs-locked-name">???</div>
-            <div class="cs-locked-title">EM BREVE</div>
-            <div class="cs-lock">🔒</div>
+        <button class="cs-face cs-face-locked" data-id="${c.id}" disabled>
+          <div class="cs-face-portrait cs-face-empty">
+            <span class="cs-face-q">?</span>
+            <span class="cs-face-lock">🔒</span>
+          </div>
+          <div class="cs-face-info">
+            <div class="cs-face-codename">???</div>
+            <div class="cs-face-tier">EM BREVE</div>
           </div>
         </button>`;
     }
     const isLast = c.id === lastPick;
     return `
-      <button class="cs-card cs-unlocked ${isLast ? 'cs-last' : ''}" data-id="${c.id}">
-        ${isLast ? '<div class="cs-last-badge">★ ÚLTIMO ESCOLHIDO</div>' : ''}
-        <img src="${c.img}" alt="${c.name} — ${c.title}" loading="lazy" />
-        <div class="cs-tap-overlay">
-          <span>▶ ${isLast ? 'CONTINUAR COM' : 'SELECIONAR'} ${c.slot}</span>
+      <button class="cs-face ${isLast ? 'cs-face-last' : ''}" data-id="${c.id}"
+              style="--char-accent:${c.accent}; --char-accent-glow:${c.accentGlow}">
+        ${isLast ? '<span class="cs-face-badge">ATIVO</span>' : ''}
+        <div class="cs-face-portrait">
+          <img src="${c.img}" alt="${c.name}" loading="eager" />
+        </div>
+        <div class="cs-face-info">
+          <div class="cs-face-slot">${c.slot}</div>
+          <div class="cs-face-codename">${c.name}</div>
+          <div class="cs-face-tier">${c.title}</div>
         </div>
       </button>`;
   }).join('');
 
   return `
-    <section class="cs-screen animate-fade-up">
+    <section class="cs-screen cs-screen-grid animate-fade-up">
       <div class="cs-header">
-        <div class="cs-eyebrow">QUEST · SELECT MODE</div>
-        <h1 class="cs-title-big">CHOOSE YOUR FIGHTER</h1>
-        <div class="cs-sub">선수 선택 — escolha quem vai te representar nessa jornada</div>
+        <div class="cs-eyebrow">VHYX · BOOT SEQUENCE</div>
+        <h1 class="cs-title-big">SELECT OPERATOR</h1>
+        <div class="cs-sub">Quem entra em campo hoje?</div>
       </div>
-
-      <div class="cs-deck">
+      <div class="cs-deck cs-deck-faces">
         ${cards}
       </div>
+    </section>
+  `;
+}
 
-      <div class="cs-foot">
-        <div class="cs-coin">▶ INSERT COIN</div>
-        <div class="cs-hint">Toque na carta para entrar em combate.</div>
+function viewOperatorExpanded(ch) {
+  const stats = Object.entries(ch.stats || {}).map(([k, v]) => `
+    <div class="cs-stat">
+      <div class="cs-stat-row"><span class="cs-stat-label">${k}</span><b class="cs-stat-num">${v}</b></div>
+      <div class="cs-stat-bar"><div class="cs-stat-fill" style="width:${v}%"></div></div>
+    </div>
+  `).join('');
+
+  const passives = (ch.passives || []).map((p) => `
+    <div class="cs-passive"><span class="cs-passive-icon">${p.icon}</span><span>${p.text}</span></div>
+  `).join('');
+
+  const sig = ch.signature ? `
+    <div class="cs-signature">
+      <div class="cs-signature-label">SIGNATURE</div>
+      <div class="cs-signature-name">${ch.signature.icon} ${ch.signature.name}</div>
+      <div class="cs-signature-desc">${ch.signature.desc}</div>
+    </div>` : '';
+
+  return `
+    <section class="cs-screen cs-screen-expanded animate-fade-up"
+             style="--char-accent:${ch.accent}; --char-accent-deep:${ch.accentDeep}; --char-accent-glow:${ch.accentGlow}">
+      <button class="cs-back" data-cs-back aria-label="Voltar">← BOOT</button>
+      <div class="cs-expanded-art">
+        <img src="${ch.img}" alt="${ch.name}" />
+      </div>
+      <div class="cs-expanded-overlay">
+        <div class="cs-expanded-head">
+          <div class="cs-expanded-slot">${ch.slot}</div>
+          <div>
+            <h2 class="cs-expanded-name">${ch.name}</h2>
+            <div class="cs-expanded-title">${ch.title}</div>
+          </div>
+        </div>
+        <div class="cs-expanded-tags">
+          <span class="cs-tag">${ch.style || ''}</span>
+          ${ch.origin ? `<span class="cs-tag cs-tag-ghost">${ch.origin}</span>` : ''}
+        </div>
+        <p class="cs-expanded-lore">${ch.lore || ''}</p>
+        ${passives ? `<div class="cs-expanded-passives">${passives}</div>` : ''}
+        ${sig}
+        <div class="cs-expanded-stats">${stats}</div>
+        <button class="cs-deploy" data-cs-deploy>▶ DEPLOY</button>
       </div>
     </section>
   `;
 }
 
 function attachCharacterSelectHandlers() {
-  document.querySelectorAll('.cs-card').forEach((btn) => {
+  // Grid: tap num rosto expande pra vista detalhada
+  document.querySelectorAll('.cs-face:not([disabled])').forEach((btn) => {
     btn.addEventListener('click', () => {
       const id = btn.dataset.id;
       const ch = CHARACTERS.find((c) => c.id === id);
-      if (!ch) return;
-      if (!ch.unlocked) {
-        toast('Em breve 🔒');
-        btn.classList.add('animate-shake');
-        setTimeout(() => btn.classList.remove('animate-shake'), 400);
-        return;
-      }
-      // Confirma seleção
-      state.user.activeCharacter = ch.id;
-      saveState();
-      _characterPickedThisSession = true;
-      toast(`${ch.name} entrou em combate!`);
-      // Pequeno efeito antes de carregar a home
-      btn.classList.add('cs-chosen');
-      setTimeout(() => { currentTab = 'home'; render(); }, 380);
+      if (!ch || !ch.unlocked) return;
+      vibrate(8);
+      _selectedFighterPreview = id;
+      render();
     });
+  });
+  // Locked: shake + toast
+  document.querySelectorAll('.cs-face[disabled]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      toast('Operador em breve 🔒');
+      btn.classList.add('animate-shake');
+      setTimeout(() => btn.classList.remove('animate-shake'), 400);
+    });
+  });
+  // Expanded: voltar pro grid
+  document.querySelector('[data-cs-back]')?.addEventListener('click', () => {
+    _selectedFighterPreview = null;
+    render();
+  });
+  // Expanded: DEPLOY confirma e vai pra home
+  document.querySelector('[data-cs-deploy]')?.addEventListener('click', () => {
+    const id = _selectedFighterPreview;
+    const ch = CHARACTERS.find((c) => c.id === id);
+    if (!ch) return;
+    state.user.activeCharacter = ch.id;
+    saveState();
+    _characterPickedThisSession = true;
+    _selectedFighterPreview = null;
+    toast(`${ch.name} em campo.`);
+    vibrate(15);
+    setTimeout(() => { currentTab = 'home'; render(); }, 300);
   });
 }
 

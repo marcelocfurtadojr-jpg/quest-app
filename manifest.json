@@ -1,13 +1,13 @@
 {
-  "name": "QUEST — sua jornada diária",
-  "short_name": "QUEST",
-  "description": "Acompanhamento gamificado de hábitos, treino, nutrição e sono.",
+  "name": "VHYX — Codex do Operador",
+  "short_name": "VHYX",
+  "description": "Evolução biométrica em mundo pós-Colapso. Treino físico desbloqueia habilidades.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#FBFAF7",
-  "theme_color": "#0F1729",
+  "background_color": "#0A0E1A",
+  "theme_color": "#0A0E1A",
   "lang": "pt-BR",
   "icons": [
     {
