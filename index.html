@@ -141,10 +141,22 @@
 
   <script src="app.js" type="module"></script>
   <script>
-    // Registro do service worker (PWA)
+    // Registro do service worker (PWA) + auto-reload em nova versão.
+    // O SW novo (skipWaiting + clients.claim) toma controle assim que instalado.
+    // O 'controllerchange' dispara → recarregamos UMA vez pra pegar todo o
+    // bundle atualizado. Guard com sessionStorage pra evitar loop infinito.
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('sw.js').catch(() => {});
+      });
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (sessionStorage.getItem('__sw_reloaded__') === '1') return;
+        sessionStorage.setItem('__sw_reloaded__', '1');
+        window.location.reload();
+      });
+      // Limpa o flag quando o user navega manualmente (próxima carga "fresca")
+      window.addEventListener('beforeunload', () => {
+        // Não limpa aqui — só queremos zerar quando a sessão fechar de fato.
       });
     }
   </script>
