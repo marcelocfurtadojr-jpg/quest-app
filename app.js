@@ -72,6 +72,29 @@ function baseRankIndex(rankKey) {
 // Diamante I (2860) → 286 XP/sem. Ouro IV (510) → 51 XP/sem (semana decente).
 const RANK_DECAY = 0.10;
 
+// VHYX — mapeia atributo → action image do operador ativo, pra que o
+// STATS SHEET use só imagens DO personagem selecionado (Axel ou Kai).
+// Fallback pros webps fixos em icons/attrs/<key>.webp se não houver match.
+const ATTR_IMAGE_BY_CHARACTER = {
+  axelkael: {
+    forca:       'icons/characters/axelkael/actions/strength.webp',
+    resistencia: 'icons/characters/axelkael/actions/cardio.webp',
+    disciplina:  'icons/characters/axelkael/actions/power.webp',
+    sabedoria:   'icons/characters/axelkael/actions/nutrition.webp',
+    vitalidade:  'icons/characters/axelkael/actions/recovery.webp',
+  },
+  kairyuen: {
+    forca:       'icons/characters/kairyuen/actions/chest.webp',
+    resistencia: 'icons/characters/kairyuen/actions/stamina.webp',
+    disciplina:  'icons/characters/kairyuen/actions/calisthenics.webp',
+    sabedoria:   'icons/characters/kairyuen/actions/nutrition.webp',
+    vitalidade:  'icons/characters/kairyuen/actions/recovery.webp',
+  },
+};
+function getAttrImageFor(attrKey, charId) {
+  return ATTR_IMAGE_BY_CHARACTER[charId]?.[attrKey] || `icons/attrs/${attrKey}.webp`;
+}
+
 // VHYX — mapeamento dos ranks legados pro TIER do universo (E → SSR+).
 // Não muda a lógica de XP/threshold, só o DISPLAY na UI.
 const BASE_TO_TIER = {
@@ -8757,10 +8780,12 @@ function viewDashboard() {
           const xp = attrs[a.key] || 0;
           const info = attrInfo(xp);
           const tier = attrTierFor(a.key, info.level);
+          const activeCh = activeCharacter();
+          const thumbSrc = getAttrImageFor(a.key, activeCh?.id);
           return `
           <button class="vhyx-stat-row attr-tile" data-attr="${a.key}" style="--row-accent:${a.color}" aria-label="${a.name}: ${tier.current} (lvl ${info.level})">
             <div class="vhyx-stat-thumb">
-              <img src="icons/attrs/${a.key}.webp" alt="${a.name}" loading="lazy"
+              <img src="${thumbSrc}" alt="${a.name}" loading="lazy"
                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'" />
               <div class="vhyx-stat-thumb-fallback" data-fallback="${a.icon}">${a.icon}</div>
             </div>
@@ -8772,7 +8797,7 @@ function viewDashboard() {
               <div class="vhyx-stat-bar"><div class="vhyx-stat-fill" style="width:${info.pctToNext}%; background:${a.color}"></div></div>
               <div class="vhyx-stat-bot">
                 <span class="vhyx-stat-tier">${tier.current}</span>
-                <span class="vhyx-stat-pct">${info.pctToNext}%</span>
+                <span class="vhyx-stat-pct">${Math.round(info.pctToNext)}%</span>
               </div>
             </div>
           </button>`;
