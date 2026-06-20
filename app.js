@@ -72,6 +72,27 @@ function baseRankIndex(rankKey) {
 // Diamante I (2860) → 286 XP/sem. Ouro IV (510) → 51 XP/sem (semana decente).
 const RANK_DECAY = 0.10;
 
+// VHYX — mapeamento dos ranks legados pro TIER do universo (E → SSR+).
+// Não muda a lógica de XP/threshold, só o DISPLAY na UI.
+const BASE_TO_TIER = {
+  iron:       { letter: 'E',   label: 'Recruta'      },
+  bronze:     { letter: 'D',   label: 'Aprendiz'     },
+  silver:     { letter: 'C',   label: 'Operador'     },
+  gold:       { letter: 'B',   label: 'Veterano'     },
+  platinum:   { letter: 'A',   label: 'Especialista' },
+  emerald:    { letter: 'A+',  label: 'Elite'        },
+  diamond:    { letter: 'S',   label: 'Awakened'     },
+  master:     { letter: 'SS',  label: 'Sovereign'    },
+  gm:         { letter: 'SSR', label: 'Mythic'       },
+  challenger: { letter: 'SSR+',label: 'Apex'         },
+};
+const ROMAN = ['', 'I', 'II', 'III', 'IV'];
+/** Retorna { letter, label, divLabel } pro rank. Ex: "S III · Awakened" */
+function tierFromRank(rank) {
+  const t = BASE_TO_TIER[rank.base] || BASE_TO_TIER.iron;
+  return { letter: t.letter, label: t.label, div: rank.div ? ROMAN[rank.div] : '' };
+}
+
 // Quantas daily quests aparecem na home por padrão.
 // Reduzido 5→3 pra carga executiva menor (TDAH-friendly). 3 escolhas
 // realistas vs 5 que viram paralisia de decisão e "abandono".
@@ -8425,23 +8446,30 @@ function viewDashboard() {
   </header>
 
   ${(() => {
-    // ===== Player Title Card — título do atributo dominante =====
+    // ===== POWER CORE — Power Level total (VHYX) =====
+    // Substitui o "Player Title Card" antigo. Mostra a soma dos níveis dos
+    // 5 atributos como métrica única (estilo Solo Leveling — POWER LEVEL).
+    // Acentua o atributo dominante com a cor dele no glow.
     const ranked = ATTRIBUTES
-      .map(a => ({ a, xp: attrs[a.key] || 0, info: attrInfo(attrs[a.key] || 0) }))
-      .filter(x => x.info.level > 0)
+      .map(a => ({ a, info: attrInfo(attrs[a.key] || 0) }))
       .sort((x, y) => y.info.level - x.info.level);
-    if (!ranked.length) return '';
+    const totalPower = ranked.reduce((s, x) => s + x.info.level, 0);
+    if (totalPower === 0) return '';
     const top = ranked[0];
-    const tier = attrTierFor(top.a.key, top.info.level);
-    const c1 = top.a.color;
-    const c2 = ranked[1]?.a.color || top.a.color;
+    const dominant = top.info.level > 0 ? top.a : null;
+    const accentC = dominant?.color || '#6EEEFF';
     return `
     <section class="px-4 mt-2">
-      <div class="title-banner text-[11px] flex items-center gap-1.5" style="--title-c1:${c1}33; --title-c2:${c2}33">
-        <span>⚔</span>
-        <span class="opacity-75 text-[9px] uppercase tracking-widest shrink-0">${top.a.name}</span>
-        <span class="font-bold flex-1 truncate min-w-0">${tier.current}</span>
-        <span class="text-[9px] opacity-65 shrink-0">lvl ${top.info.level}</span>
+      <div class="vhyx-power-core" style="--pwr-accent:${accentC}">
+        <div class="vhyx-power-core-orb">
+          <div class="vhyx-power-core-value">${totalPower}</div>
+          <div class="vhyx-power-core-label">PWR</div>
+        </div>
+        <div class="vhyx-power-core-meta">
+          <div class="vhyx-power-core-eyebrow">POWER LEVEL</div>
+          <div class="vhyx-power-core-title">${dominant ? `Foco em ${dominant.name}` : 'Multidisciplinar'}</div>
+          <div class="vhyx-power-core-sub">${ranked.filter(x => x.info.level > 0).length}/${ATTRIBUTES.length} atributos ativos</div>
+        </div>
       </div>
     </section>`;
   })()}
@@ -8450,40 +8478,43 @@ function viewDashboard() {
     ${(() => {
       const ch = activeCharacter();
       const hasFighter = ch && ch.img;
-      const rankInitial = r.name.replace(/\s.*/, '').slice(0,1).toUpperCase();
-      const rankDiv = r.div || '';
+      const tier = tierFromRank(r);
+      const nextTier = next ? tierFromRank(next) : null;
       const focusName = hasFighter ? ((ATTRIBUTES.find(a => a.key === ch.buff)?.name) || '—') : null;
       return `
-      <div class="q-card p-3 elo-card ${baseRankIndex(r.key) >= 4 ? 'rank-elite' : ''} relative overflow-hidden"
+      <div class="q-card p-3 elo-card ${baseRankIndex(r.key) >= 4 ? 'rank-elite' : ''} relative overflow-hidden vhyx-elo"
            style="background: linear-gradient(135deg, ${r.color}11 0%, transparent 60%), linear-gradient(180deg, var(--char-accent-soft, transparent) 0%, transparent 70%)">
         <div class="elo-row">
-          <!-- ESQUERDA: portrait do lutador OU emblema do rank (fallback) -->
+          <!-- ESQUERDA: portrait do operador OU TIER badge (fallback) -->
           ${hasFighter ? `
-          <button class="elo-portrait" style="--rank-color:${r.color}" title="Abrir ficha · ${ch.name} · ${ch.title}" data-action="open-char-sheet" data-id="${ch.id}">
+          <button class="elo-portrait" style="--rank-color:${r.color}" title="Ficha · ${ch.name} · TIER ${tier.letter}" data-action="open-char-sheet" data-id="${ch.id}">
             <img src="${ch.img}" alt="${ch.name}" loading="lazy" />
             <div class="elo-portrait-slot">${ch.slot}</div>
-            <div class="elo-portrait-rank">${rankInitial}${rankDiv ? `<sub>${rankDiv}</sub>` : ''}</div>
+            <div class="elo-portrait-rank">${tier.letter}${tier.div ? `<sub>${tier.div}</sub>` : ''}</div>
             <div class="elo-portrait-hint">FICHA</div>
           </button>` : `
           <div class="rank-badge text-paper shrink-0" style="background:${r.color}; box-shadow: 0 4px 18px ${r.color}55; width:84px; height:84px; border-radius:16px; font-size:1.25rem;">
-            ${rankInitial}${rankDiv ? `<sub style="font-size:.6em; opacity:.85; margin-left:1px">${rankDiv}</sub>` : ''}
+            ${tier.letter}${tier.div ? `<sub style="font-size:.6em; opacity:.85; margin-left:1px">${tier.div}</sub>` : ''}
           </div>`}
 
-          <!-- DIREITA: rank name, xp bar, stats e info do lutador -->
+          <!-- DIREITA: TIER name, xp bar, stats e info do operador -->
           <div class="elo-info">
             <div class="elo-rank-row">
-              <div class="font-kombat uppercase tracking-wider truncate" style="color:${r.color}">${r.name}</div>
+              <div class="vhyx-tier-line">
+                <span class="vhyx-tier-letter" style="color:${r.color}">${tier.letter}${tier.div ? ` ${tier.div}` : ''}</span>
+                <span class="vhyx-tier-label">${tier.label}</span>
+              </div>
               <div class="elo-next-xp">
-                ${next ? `→ <b>${next.threshold - rxp}</b> XP` : '👑 TOPO'}
+                ${next ? `→ ${nextTier.letter}${nextTier.div ? ` ${nextTier.div}` : ''} · <b>${next.threshold - rxp}</b> XP` : '◆ APEX'}
               </div>
             </div>
             <div class="xp-track is-kombat mt-1.5"><div class="xp-fill" style="width:${progress}%"></div></div>
             <div class="elo-stats">
-              <span>Total <b>${rxp}</b></span>
+              <span>TOTAL <b>${rxp}</b></span>
               <span class="elo-stats-sep">·</span>
-              <span>Sem <b>${wxp}</b></span>
+              <span>SEM <b>${wxp}</b></span>
               <span class="elo-stats-sep">·</span>
-              <span>Hoje <b>${dayXP}/${DAILY_XP_CAP}</b></span>
+              <span>HOJE <b>${dayXP}/${DAILY_XP_CAP}</b></span>
             </div>
             ${hasFighter ? `
             <div class="elo-fighter-line">
@@ -8711,30 +8742,39 @@ function viewDashboard() {
     </div>
   </section>
 
+  <!-- ===== STATS SHEET — atributos como ficha RPG (VHYX) ===== -->
   <section class="px-4 mt-4">
-    <div class="q-card p-3">
-      <div class="flex items-center justify-between mb-3">
-        <h3 class="font-bold text-sm tracking-wider uppercase opacity-70">Atributos</h3>
-        <span class="text-xs text-ink/45 dark:text-paper/45">total ${ATTRIBUTES.reduce((s,a)=>s+attrInfo(attrs[a.key]||0).level,0)} lvl</span>
+    <div class="q-card p-3 vhyx-stats-card">
+      <div class="vhyx-stats-head">
+        <div>
+          <div class="vhyx-stats-eyebrow">▸ STATS SHEET</div>
+          <div class="vhyx-stats-title">Atributos do Operador</div>
+        </div>
+        <span class="vhyx-stats-total">${ATTRIBUTES.reduce((s,a)=>s+attrInfo(attrs[a.key]||0).level,0)} <small>LVL</small></span>
       </div>
-      <div class="grid grid-cols-5 gap-1">
+      <div class="vhyx-stats-list">
         ${ATTRIBUTES.map(a => {
           const xp = attrs[a.key] || 0;
           const info = attrInfo(xp);
           const tier = attrTierFor(a.key, info.level);
           return `
-          <button class="flex flex-col items-center gap-1 attr-tile" data-attr="${a.key}" aria-label="${a.name}: ${tier.current} (lvl ${info.level})">
-            <!-- Portrait image (com fallback pro chip emoji se 404) -->
-            <div class="attr-portrait" style="--accent:${a.color}">
+          <button class="vhyx-stat-row attr-tile" data-attr="${a.key}" style="--row-accent:${a.color}" aria-label="${a.name}: ${tier.current} (lvl ${info.level})">
+            <div class="vhyx-stat-thumb">
               <img src="icons/attrs/${a.key}.webp" alt="${a.name}" loading="lazy"
                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'" />
-              <div class="attr-chip attr-chip-fallback" style="--accent:${a.color}; display:none" data-fallback="${a.icon}">
-                <span class="attr-ko">${a.ko || a.icon}</span>
+              <div class="vhyx-stat-thumb-fallback" data-fallback="${a.icon}">${a.icon}</div>
+            </div>
+            <div class="vhyx-stat-body">
+              <div class="vhyx-stat-top">
+                <span class="vhyx-stat-name">${a.name}</span>
+                <span class="vhyx-stat-lvl">LVL ${info.level}</span>
+              </div>
+              <div class="vhyx-stat-bar"><div class="vhyx-stat-fill" style="width:${info.pctToNext}%; background:${a.color}"></div></div>
+              <div class="vhyx-stat-bot">
+                <span class="vhyx-stat-tier">${tier.current}</span>
+                <span class="vhyx-stat-pct">${info.pctToNext}%</span>
               </div>
             </div>
-            <div class="w-full xp-track" style="height:5px"><div class="xp-fill" style="width:${info.pctToNext}%; background:${a.color}"></div></div>
-            <div class="text-[10px] font-bold leading-tight text-center truncate w-full" style="color:${a.color}" title="${tier.current} · lvl ${info.level}">${tier.current}</div>
-            <div class="text-[9px] text-ink/55 dark:text-paper/55 leading-tight text-center">${a.name} <span class="opacity-60">${info.level}</span></div>
           </button>`;
         }).join('')}
       </div>
@@ -8873,10 +8913,30 @@ function viewDashboard() {
     </p>
   </section>
 
-  <!-- (Histórico de batalhas saiu da home na Fase 2 VHYX —
-       será adicionado como FIELD LOG colapsado na Fase 3.
-       state.user.battleLog continua sendo populado normalmente, só não
-       exibido aqui.) -->
+  <!-- ===== FIELD LOG — operações recentes (colapsado) ===== -->
+  ${(() => {
+    const log = (state.user.battleLog || []).slice(0, 8);
+    if (!log.length) return '';
+    return `
+    <section class="px-4 mt-5">
+      <details class="vhyx-field-log">
+        <summary class="vhyx-field-log-summary">
+          <span class="vhyx-field-log-eyebrow">▸ FIELD LOG</span>
+          <span class="vhyx-field-log-count">${log.length} ops</span>
+          <span class="vhyx-field-log-chev">▾</span>
+        </summary>
+        <div class="vhyx-field-log-body">
+          ${log.map((ev) => `
+            <div class="vhyx-field-log-entry ${ev.kind === 'pr' ? 'is-pr' : ev.kind === 'loss' ? 'is-loss' : ''}">
+              <span class="vhyx-field-log-time">${timeAgoShort(new Date(ev.ts))}</span>
+              <span class="vhyx-field-log-text">${ev.text}</span>
+            </div>
+          `).join('')}
+          <button class="vhyx-field-log-clear" data-clear-battlelog>limpar histórico</button>
+        </div>
+      </details>
+    </section>`;
+  })()}
 
   <section class="px-4 mt-6">
     <div class="kombat-divider">${theme.labels?.arsenal || '⚔ ARSENAL ⚔'}</div>

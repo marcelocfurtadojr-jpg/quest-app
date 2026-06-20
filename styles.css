@@ -1,6 +1,24 @@
 /* ============================================================
-   QUEST — estilos custom (complementam o Tailwind)
+   VHYX — Codex do Operador (rebranded de QUEST)
    ============================================================ */
+
+/* ===== Paleta VHYX (chrome técnico, ríspido) =====
+   Substitui o gold-arcade legado pelo cyan VHYX como cor primária
+   neutra do chrome. Personagens (Axel laranja, Kai rosa) continuam
+   sendo overlay via --char-accent. */
+:root {
+  --vhyx-cyan:      #6EEEFF;
+  --vhyx-cyan-deep: #2A8AAF;
+  --vhyx-cyan-glow: rgba(110, 238, 255, 0.45);
+  --vhyx-cyan-soft: rgba(110, 238, 255, 0.12);
+  --vhyx-bg:        #0A0E1A;
+  --vhyx-bg-card:   #131826;
+  --vhyx-bg-alt:    #1A1F30;
+  --vhyx-text:      #F4F6FA;
+  --vhyx-text-mid:  rgba(244, 246, 250, 0.65);
+  --vhyx-text-low:  rgba(244, 246, 250, 0.40);
+  --vhyx-border:    rgba(255, 255, 255, 0.08);
+}
 
 /* Reset / base ---------------------------------------------- */
 *,
@@ -3934,5 +3952,376 @@ html[data-character] .kombat-divider::after {
   color: #1DB954;
   word-break: break-all;
   user-select: all;
+}
+
+/* ============================================================
+   VHYX Fase 3 — POWER CORE, STATS SHEET, TIER, FIELD LOG
+   ============================================================ */
+
+/* === POWER CORE — orbe central com valor total === */
+.vhyx-power-core {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(10,14,26,0.85) 0%, rgba(19,24,38,0.7) 100%);
+  border: 1px solid var(--vhyx-border);
+  position: relative;
+  overflow: hidden;
+}
+.vhyx-power-core::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(50% 80% at 0% 50%, var(--pwr-accent, var(--vhyx-cyan))22 0%, transparent 65%);
+  pointer-events: none;
+}
+.vhyx-power-core-orb {
+  position: relative;
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background:
+    radial-gradient(circle at 35% 30%, rgba(255,255,255,0.1) 0%, transparent 50%),
+    radial-gradient(circle, var(--pwr-accent, var(--vhyx-cyan)) 0%, transparent 70%),
+    var(--vhyx-bg);
+  border: 2px solid var(--pwr-accent, var(--vhyx-cyan));
+  box-shadow:
+    0 0 28px var(--pwr-accent, var(--vhyx-cyan))66,
+    inset 0 0 18px rgba(0,0,0,0.45);
+  animation: vhyxPulse 2.6s ease-in-out infinite;
+}
+.vhyx-power-core-orb::after { /* anel rotacional decorativo */
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 1px dashed var(--pwr-accent, var(--vhyx-cyan));
+  opacity: 0.35;
+  animation: vhyxSpin 18s linear infinite;
+}
+.vhyx-power-core-value {
+  font-family: "Russo One", Impact, sans-serif;
+  font-size: 28px;
+  line-height: 1;
+  color: #FFF;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.7), 0 0 12px var(--pwr-accent, var(--vhyx-cyan));
+}
+.vhyx-power-core-label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 9px;
+  letter-spacing: 0.25em;
+  color: rgba(255,255,255,0.8);
+  margin-top: 2px;
+}
+.vhyx-power-core-meta {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  z-index: 1;
+}
+.vhyx-power-core-eyebrow {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  color: var(--pwr-accent, var(--vhyx-cyan));
+  opacity: 0.95;
+}
+.vhyx-power-core-title {
+  font-family: "Russo One", Impact, sans-serif;
+  font-size: 16px;
+  letter-spacing: 0.04em;
+  color: #FFF;
+  margin-top: 2px;
+}
+.vhyx-power-core-sub {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  color: var(--vhyx-text-mid);
+  margin-top: 3px;
+  letter-spacing: 0.05em;
+}
+@keyframes vhyxPulse {
+  0%, 100% { box-shadow: 0 0 28px var(--pwr-accent, var(--vhyx-cyan))66, inset 0 0 18px rgba(0,0,0,0.45); }
+  50%      { box-shadow: 0 0 42px var(--pwr-accent, var(--vhyx-cyan))aa, inset 0 0 18px rgba(0,0,0,0.45); }
+}
+@keyframes vhyxSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* === ELO CARD — TIER display === */
+.vhyx-tier-line {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+.vhyx-tier-letter {
+  font-family: "Russo One", Impact, sans-serif;
+  font-size: 18px;
+  letter-spacing: 0.06em;
+  text-shadow: 0 0 12px currentColor;
+}
+.vhyx-tier-label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--vhyx-text-mid);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.vhyx-elo .elo-stats {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+}
+
+/* === STATS SHEET — atributos em formato ficha RPG vertical === */
+.vhyx-stats-card {
+  position: relative;
+  background:
+    linear-gradient(135deg, var(--vhyx-cyan-soft) 0%, transparent 40%),
+    var(--vhyx-bg-card) !important;
+  border: 1px solid var(--vhyx-border) !important;
+}
+.vhyx-stats-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--vhyx-border);
+}
+.vhyx-stats-eyebrow {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  color: var(--vhyx-cyan);
+}
+.vhyx-stats-title {
+  font-family: "Russo One", Impact, sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  color: var(--vhyx-text);
+  margin-top: 2px;
+}
+.vhyx-stats-total {
+  font-family: "Russo One", Impact, sans-serif;
+  font-size: 22px;
+  color: var(--vhyx-cyan);
+  text-shadow: 0 0 14px var(--vhyx-cyan-glow);
+  line-height: 1;
+}
+.vhyx-stats-total small {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: var(--vhyx-text-mid);
+  margin-left: 4px;
+}
+.vhyx-stats-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.vhyx-stat-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 8px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--vhyx-border);
+  border-left: 3px solid var(--row-accent, var(--vhyx-cyan));
+  cursor: pointer;
+  transition: background .15s, transform .12s, border-color .2s;
+  text-align: left;
+  width: 100%;
+  appearance: none;
+  color: var(--vhyx-text);
+}
+.vhyx-stat-row:hover, .vhyx-stat-row:active {
+  background: rgba(255,255,255,0.06);
+  transform: translateX(2px);
+}
+.vhyx-stat-thumb {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--vhyx-bg);
+  flex-shrink: 0;
+  border: 1px solid var(--vhyx-border);
+}
+.vhyx-stat-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 12%;
+  display: block;
+}
+.vhyx-stat-thumb-fallback {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 20px;
+}
+.vhyx-stat-body {
+  flex: 1;
+  min-width: 0;
+}
+.vhyx-stat-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 4px;
+}
+.vhyx-stat-name {
+  font-family: "Russo One", Impact, sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--row-accent, var(--vhyx-text));
+  text-transform: uppercase;
+}
+.vhyx-stat-lvl {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  color: var(--vhyx-text);
+  font-weight: 700;
+}
+.vhyx-stat-bar {
+  height: 4px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.vhyx-stat-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width .35s ease;
+  box-shadow: 0 0 6px currentColor;
+}
+.vhyx-stat-bot {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+}
+.vhyx-stat-tier {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  color: var(--vhyx-text-mid);
+  text-transform: uppercase;
+}
+.vhyx-stat-pct {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 9px;
+  color: var(--vhyx-text-low);
+}
+
+/* === FIELD LOG — collapsed log de operações === */
+.vhyx-field-log {
+  border-radius: 12px;
+  background: var(--vhyx-bg-card);
+  border: 1px solid var(--vhyx-border);
+  overflow: hidden;
+}
+.vhyx-field-log-summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+.vhyx-field-log-summary::-webkit-details-marker { display: none; }
+.vhyx-field-log-eyebrow {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  color: var(--vhyx-cyan);
+  flex: 1;
+}
+.vhyx-field-log-count {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--vhyx-text-mid);
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--vhyx-border);
+}
+.vhyx-field-log-chev {
+  font-size: 10px;
+  color: var(--vhyx-text-low);
+  transition: transform .2s;
+}
+.vhyx-field-log[open] .vhyx-field-log-chev { transform: rotate(180deg); }
+.vhyx-field-log-body {
+  padding: 0 14px 12px;
+  border-top: 1px solid var(--vhyx-border);
+}
+.vhyx-field-log-entry {
+  display: flex;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px dashed rgba(255,255,255,0.04);
+  align-items: baseline;
+}
+.vhyx-field-log-entry:last-of-type { border-bottom: 0; }
+.vhyx-field-log-time {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: var(--vhyx-text-low);
+  flex-shrink: 0;
+  min-width: 28px;
+}
+.vhyx-field-log-text {
+  font-size: 12px;
+  color: var(--vhyx-text);
+  flex: 1;
+  line-height: 1.4;
+}
+.vhyx-field-log-entry.is-pr .vhyx-field-log-text {
+  color: #FFD341;
+  font-weight: 600;
+}
+.vhyx-field-log-entry.is-loss .vhyx-field-log-text {
+  color: rgba(244,246,250,0.55);
+}
+.vhyx-field-log-clear {
+  display: block;
+  width: 100%;
+  text-align: center;
+  margin-top: 6px;
+  padding: 6px;
+  border-radius: 6px;
+  border: 0;
+  background: transparent;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: var(--vhyx-text-low);
+  cursor: pointer;
+  text-transform: uppercase;
+}
+.vhyx-field-log-clear:hover {
+  color: #FF6B6B;
 }
 
