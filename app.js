@@ -12996,8 +12996,12 @@ function modalAttributeDetail(attrKey) {
     });
   }).slice(0, 5);
 
+  // Imagem do hero — puxa do operador ativo (Axel/Kai/Luan) via mapping
+  // dinâmico. Fallback pros webps fixos de icons/attrs/ se não houver match.
+  const activeCh = activeCharacter();
+  const heroSrc = getAttrImageFor(attrKey, activeCh?.id);
   openModal(`
-    <div class="attr-hero" style="background-image: url('icons/attrs/${attrKey}.webp')">
+    <div class="attr-hero" style="background-image: url('${heroSrc}')">
       <button class="workout-hero-btn workout-hero-btn-right modal-close" aria-label="Fechar">✕</button>
       <div class="workout-hero-overlay">
         <div class="font-display text-[10px] uppercase tracking-[0.3em] text-white/70">atributo · ${a.name}</div>
