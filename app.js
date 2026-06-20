@@ -5175,6 +5175,14 @@ const CHARACTERS = [
       'icons/characters/kairyuen/actions/calisthenics.webp': 'center 45%',
     },
   },
+  // ===== Slots de operadores ainda não liberados =====
+  // Aparecem como "?" no SELECT OPERATOR pra mostrar que o roster expande.
+  // Conforme o user criar/dropar arte nova, basta setar unlocked: true +
+  // preencher os mesmos campos dos chars existentes.
+  { id: 'op3', slot: '3P', name: '???', title: 'CLASSIFICADO', unlocked: false },
+  { id: 'op4', slot: '4P', name: '???', title: 'CLASSIFICADO', unlocked: false },
+  { id: 'op5', slot: '5P', name: '???', title: 'CLASSIFICADO', unlocked: false },
+  { id: 'op6', slot: '6P', name: '???', title: 'CLASSIFICADO', unlocked: false },
 ];
 
 /** Computa o estado do corpo do Matthew baseado na nutrição/treino de hoje.

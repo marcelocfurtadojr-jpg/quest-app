@@ -2063,8 +2063,11 @@ input[type=number] { -moz-appearance: textfield; }
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 12%; /* mostra rosto + ombros */
+  object-position: center top;
   display: block;
+  /* Zoom forte pra mostrar SÓ rosto/cabeça, estilo seleção de jogo de luta */
+  transform: scale(1.7);
+  transform-origin: center 16%;
 }
 .cs-face-portrait::after { /* gradiente sutil pra info ficar legível */
   content: "";
@@ -2128,8 +2131,14 @@ input[type=number] { -moz-appearance: textfield; }
 }
 .cs-face-locked {
   cursor: not-allowed;
-  opacity: 0.55;
-  filter: grayscale(0.7);
+  opacity: 0.6;
+  border-style: dashed;
+  border-color: rgba(255,255,255,0.15);
+}
+.cs-face-locked:hover, .cs-face-locked:active {
+  transform: none;
+  opacity: 0.75;
+  box-shadow: 0 8px 22px rgba(0,0,0,0.55);
 }
 .cs-face-empty {
   display: flex;
@@ -2137,13 +2146,16 @@ input[type=number] { -moz-appearance: textfield; }
   justify-content: center;
   background:
     repeating-linear-gradient(45deg, rgba(255,255,255,0.03) 0 8px, transparent 8px 16px),
-    #1A1F30;
+    radial-gradient(circle at 50% 35%, rgba(110,238,255,0.06) 0%, transparent 60%),
+    var(--vhyx-bg);
   position: relative;
 }
 .cs-face-q {
   font-family: "Russo One", Impact, system-ui, sans-serif;
-  font-size: 64px;
-  color: rgba(255,255,255,0.12);
+  font-size: 72px;
+  line-height: 1;
+  color: rgba(110,238,255,0.18);
+  text-shadow: 0 0 18px rgba(110,238,255,0.15);
 }
 .cs-face-lock {
   position: absolute;
