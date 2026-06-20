@@ -3967,6 +3967,81 @@ html[data-character] .kombat-divider::after {
 }
 
 /* ============================================================
+   VHYX — Hero da aba Nutri (full-bleed + overlay) — Fase 4
+   ============================================================ */
+.vhyx-nutri-hero {
+  position: relative;
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+  background: var(--vhyx-bg, #0A0E1A);
+}
+.vhyx-nutri-hero img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 18%;
+  display: block;
+}
+.vhyx-nutri-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(10,14,26,0.15) 0%, rgba(10,14,26,0.5) 60%, rgba(10,14,26,0.92) 100%);
+  pointer-events: none;
+}
+.vhyx-nutri-hero-overlay {
+  position: absolute;
+  left: 20px; right: 20px; bottom: 14px;
+  z-index: 2;
+  color: #FFF;
+}
+.vhyx-nutri-hero-eyebrow {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  color: var(--vhyx-cyan, #6EEEFF);
+  opacity: 0.9;
+}
+.vhyx-nutri-hero-title {
+  font-family: "Russo One", Impact, sans-serif;
+  font-size: 26px;
+  letter-spacing: 0.04em;
+  margin: 2px 0 4px;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.7);
+}
+.vhyx-nutri-hero-sub {
+  font-size: 12px;
+  color: rgba(255,255,255,0.75);
+  margin: 0;
+}
+
+/* === Badges das conquistas (Codex Honoris) === */
+.vhyx-ach-badge {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: var(--vhyx-bg, #0A0E1A);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.55);
+}
+.vhyx-ach-locked {
+  filter: grayscale(1) brightness(0.55) contrast(1.05);
+  opacity: 0.7;
+}
+
+/* === Icone recortado dos passives (em vez de emoji) === */
+.cs-passive-icon-img {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border-radius: 6px;
+  object-fit: cover;
+  background: rgba(0,0,0,0.3);
+}
+
+/* ============================================================
    VHYX Fase 3 — POWER CORE, STATS SHEET, TIER, FIELD LOG
    ============================================================ */
 

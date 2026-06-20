@@ -3528,6 +3528,32 @@ const ACHIEVEMENTS = [
     cond: (s) => hasPR(s) },
 ];
 
+// VHYX — mapeia achievement id → badge fatiado (icons/badges/<name>.webp).
+// 8 badges visuais cobrem 19 das 20 conquistas. Tema do badge casa com o
+// tipo de progressão (streak → consistency, treino → cardio, etc).
+const ACHIEVEMENT_BADGE = {
+  first_log:    'stamina',
+  streak3:      'consistency',
+  streak7:      'consistency',
+  streak30:     'energy',
+  protein5:     'hydration',
+  protein30:    'hydration',
+  workout10:    'cardio',
+  workout50:    'cardio',
+  sleep7d:      'recovery',
+  reading7:     'energy',
+  reading_book: 'energy',
+  steps_10k:    'cardio',
+  reach_gold:   'victory',
+  reach_plat:   'victory',
+  reach_dia:    'victory',
+  reach_master: 'victory',
+  reach_chall:  'victory',
+  quest_50:     'return',
+  pr:           'return',
+  // photo_pair fica só com emoji
+};
+
 // Helpers usados por ACHIEVEMENTS (definidos antes para evitar TDZ no array).
 function getMaxLogStreak(s) {
   if (!s.dailyLogs.length) return 0;
@@ -5089,8 +5115,8 @@ const CHARACTERS = [
     lore: 'Cresceu em ginásios industriais sem ar condicionado. Hoje empilha ferro como hobby e PR como rotina. Quanto mais peso na barra, mais ele sorri. O núcleo dele é aço fundido.',
     age: 28, origin: 'New Eden Iron District', style: 'Powerlifter · Iron Core',
     passives: [
-      { icon: '🏋️', text: '+15% XP em treinos compostos pesados (peito/costas/pernas)' },
-      { icon: '💪', text: '+10% XP em Força (Atributo)' },
+      { icon: '🏋️', iconImg: 'icons/icons/axel/4.webp', text: '+15% XP em treinos compostos pesados (peito/costas/pernas)' },
+      { icon: '💪', iconImg: 'icons/icons/axel/0.webp', text: '+10% XP em Força (Atributo)' },
     ],
     signature: { name: 'IRON WILL · 鉄の意志', icon: '🔥',
       desc: 'Sets acima de 8 reps com carga alta rendem +25% XP. A barra obedece.' },
@@ -5141,8 +5167,8 @@ const CHARACTERS = [
     lore: 'Cavaleiro do cardio vindo de Neo-Tóquio. Treina correndo por túneis de néon. A aura azul aparece quando os pulmões já reclamaram três vezes — e ele decidiu continuar.',
     age: 22, origin: 'Neo-Tóquio', style: 'Cardio Knight · Endurance',
     passives: [
-      { icon: '🏃', text: '+20% XP em Cardio e Caminhada' },
-      { icon: '⚡', text: '+10% XP em treinos longos (acima de 40min)' },
+      { icon: '🏃', iconImg: 'icons/icons/kai/4.webp', text: '+20% XP em Cardio e Caminhada' },
+      { icon: '⚡', iconImg: 'icons/icons/kai/1.webp', text: '+10% XP em treinos longos (acima de 40min)' },
     ],
     signature: { name: 'BLUE PULSE · 蒼脈', icon: '💨',
       desc: 'Cardio acima de 30min dá +30% XP. O pulso azul não para.' },
@@ -5191,8 +5217,8 @@ const CHARACTERS = [
     lore: 'A rua descobriu antes do VHYX: ritmo desbloqueia o corpo. Cresceu em pistas clandestinas dos Subúrbios Lentos onde cada movimento valia um cigarro ou uma noite de teto. Hoje é o único Operador com codinome "Mágico" — porque ninguém previu que dança fosse caminho pra Awakened.',
     age: 24, origin: 'Distrito Lúmen (cultura subterrânea)', style: 'Dance Magician · Rhythm Protocol',
     passives: [
-      { icon: '🕺', text: '+20% XP em Dança e coreografia' },
-      { icon: '🌀', text: '+10% XP em mobilidade e flexibilidade' },
+      { icon: '🕺', iconImg: 'icons/icons/luan/0.webp', text: '+20% XP em Dança e coreografia' },
+      { icon: '🌀', iconImg: 'icons/icons/luan/9.webp', text: '+10% XP em mobilidade e flexibilidade' },
     ],
     signature: { name: 'RHYTHM CASCADE · 韻律', icon: '✨',
       desc: 'Sequências de dança acima de 20min rendem +30% XP. O ritmo não quebra, o corpo flui.' },
@@ -8377,9 +8403,12 @@ function viewOperatorExpanded(ch) {
     </div>
   `).join('');
 
-  const passives = (ch.passives || []).map((p) => `
-    <div class="cs-passive"><span class="cs-passive-icon">${p.icon}</span><span>${p.text}</span></div>
-  `).join('');
+  const passives = (ch.passives || []).map((p) => {
+    const ic = p.iconImg
+      ? `<img class="cs-passive-icon-img" src="${p.iconImg}" alt="" loading="lazy" />`
+      : `<span class="cs-passive-icon">${p.icon}</span>`;
+    return `<div class="cs-passive">${ic}<span>${p.text}</span></div>`;
+  }).join('');
 
   const sig = ch.signature ? `
     <div class="cs-signature">
@@ -10476,15 +10505,18 @@ function viewNutrition() {
   const isRetro = viewDate !== todayReal;
 
   return `
-  <header class="pt-7 pb-3 px-5 kombat-hero">
-    <div class="kombat-tagline text-xs">${getTheme(state).tags.nutri}</div>
-    <h1 class="text-2xl font-extrabold mt-1">Nutrição${isRetro ? ` <span class="text-xs text-pink">(retroativo)</span>` : ''}</h1>
-    <p class="text-sm text-ink/55 dark:text-paper/55">Toque em um alimento pra adicionar.</p>
-    <label class="block mt-2 text-[10px] text-ink/55 dark:text-paper/55">
-      Data <input type="date" id="nutri-date" class="q-input p-1 text-xs ml-1" style="width:auto;display:inline-block" value="${viewDate}" max="${todayReal}" />
-      ${isRetro ? `<button id="nutri-go-today" class="ml-2 text-[10px] text-lavender underline">voltar pra hoje</button>` : ''}
-    </label>
-  </header>
+  <div class="vhyx-nutri-hero">
+    <img src="icons/nutri-hero.webp" alt="Intake Protocol" loading="lazy" />
+    <div class="vhyx-nutri-hero-overlay">
+      <div class="vhyx-nutri-hero-eyebrow">${getTheme(state).tags.nutri}</div>
+      <h1 class="vhyx-nutri-hero-title">Nutrição${isRetro ? ` <span class="text-xs text-pink">(retroativo)</span>` : ''}</h1>
+      <p class="vhyx-nutri-hero-sub">Toque em um alimento pra adicionar.</p>
+      <label class="block mt-2 text-[10px] text-white/75">
+        Data <input type="date" id="nutri-date" class="q-input p-1 text-xs ml-1" style="width:auto;display:inline-block;background:rgba(0,0,0,0.45);color:#FFF;border-color:rgba(255,255,255,0.3)" value="${viewDate}" max="${todayReal}" />
+        ${isRetro ? `<button id="nutri-go-today" class="ml-2 text-[10px] text-lavender underline">voltar pra hoje</button>` : ''}
+      </label>
+    </div>
+  </div>
 
   <section class="px-4 mb-4">
     <div class="q-card p-4">
@@ -13419,8 +13451,8 @@ function modalAchievements() {
   openModal(`
     <header class="flex items-center justify-between p-4 border-b border-ink/5 dark:border-paper/5">
       <div>
-        <div class="kombat-tagline text-[10px]">⚔ HALL OF FAME ⚔</div>
-        <h2 class="font-extrabold text-lg mt-0.5">Conquistas <span class="text-sm font-normal text-ink/55 dark:text-paper/55">${unlocked.length}/${total}</span></h2>
+        <div class="text-[10px] uppercase tracking-[0.25em]" style="color:var(--vhyx-cyan,#6EEEFF)">▸ ARQUIVO DE CONQUISTAS</div>
+        <h2 class="font-extrabold text-lg mt-0.5">Codex Honoris <span class="text-sm font-normal text-ink/55 dark:text-paper/55">${unlocked.length}/${total}</span></h2>
       </div>
       <button class="modal-close p-1"><span class="w-5 h-5">${I.close}</span></button>
     </header>
@@ -13429,9 +13461,13 @@ function modalAchievements() {
       <div class="space-y-2">
         ${ACHIEVEMENTS.map(a => {
           const ok = unlocked.includes(a.id);
+          const badge = ACHIEVEMENT_BADGE[a.id];
+          const visual = badge
+            ? `<img src="icons/badges/${badge}.webp" alt="${a.name}" class="vhyx-ach-badge ${ok ? '' : 'vhyx-ach-locked'}" loading="lazy" />`
+            : `<div class="text-3xl">${ok ? a.icon : '🔒'}</div>`;
           return `
           <div class="q-card p-3 flex items-center gap-3 ${ok ? '' : 'opacity-55'}">
-            <div class="text-3xl">${ok ? a.icon : '🔒'}</div>
+            ${visual}
             <div class="flex-1 min-w-0">
               <div class="font-bold flex items-center gap-2">
                 <span>${a.name}</span>
