@@ -421,17 +421,31 @@ html.dark body {
 }
 .workout-hero-btn:hover { background: rgba(15,23,41,0.85); }
 .workout-hero-btn-left { left: .8rem; }
-.workout-hero-btn-center {
-  left: 50%;
-  transform: translateX(-50%);
+/* Stack de botões no canto esquerdo (Técnicas + Variar lado a lado,
+   pra não cobrir o personagem no centro do hero). */
+.workout-hero-actions {
+  position: absolute;
+  top: .8rem;
+  left: .8rem;
+  z-index: 3;
+  display: flex;
+  gap: .4rem;
+  flex-wrap: wrap;
+  max-width: calc(100% - 4rem); /* deixa espaço pro botão de fechar à direita */
+}
+.workout-hero-btn-stack {
+  position: static; /* override do absolute do .workout-hero-btn pai */
+  top: auto; left: auto;
+}
+.workout-hero-btn-vary {
   background: linear-gradient(135deg, #FFD341, #E84A1A);
   color: #1A1A2E;
   border-color: rgba(255,255,255,0.4);
   box-shadow: 0 3px 10px rgba(232,74,26,0.4);
 }
-.workout-hero-btn-center:hover {
+.workout-hero-btn-vary:hover {
   background: linear-gradient(135deg, #FFE08F, #FF5C2C);
-  transform: translateX(-50%) scale(1.05);
+  transform: scale(1.05);
 }
 .workout-hero-btn-right {
   right: .8rem;
