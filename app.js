@@ -7070,7 +7070,7 @@ let state = null;
 function makeEmptyState() {
   return {
     user: {
-      name: 'Jogador',
+      name: 'Operador',
       currentRank: 'iron4',
       totalXP: 0,
       rankXP: 0, // pontuação acumulada que determina o rank (sofre decay semanal)
@@ -8396,14 +8396,18 @@ function viewDashboard() {
     <div class="font-display text-base text-ink/80 dark:text-paper/80">${q.primary}</div>
     ${q.secondary ? `<div class="text-xs italic text-ink/55 dark:text-paper/55">${q.secondary}</div>` : ''}`;
   const borderClass = 'border-pink/60 dark:border-pink/50';
-  const greetingTop = theme.greeting?.primary || g.ko;
+  // VHYX: a saudação prioriza o CODENAME do operador ativo.
+  // Fallback pro nome do user (default 'Operador') se nenhum char selecionado.
+  const ch = activeCharacter();
+  const opName = ch?.name || (u.name && u.name !== 'Jogador' ? u.name : 'Operador');
+  const greetingTop = ch ? `VHYX · ${ch.slot} EM CAMPO` : 'VHYX · SISTEMA ATIVO';
 
   return `
   <header class="pt-7 pb-3 px-5 kombat-hero">
     <div class="flex items-center justify-between relative">
       <div class="min-w-0 flex-1">
         <div class="font-display text-xs uppercase tracking-widest text-ink/40 dark:text-paper/40">${greetingTop}</div>
-        <h1 class="text-2xl font-extrabold mt-0.5 truncate">${g.pt}, ${u.name}.</h1>
+        <h1 class="text-2xl font-extrabold mt-0.5 truncate">${g.pt}, ${opName}.</h1>
       </div>
       <button id="toggle-dark" class="q-btn q-btn-ghost px-3 py-2 shrink-0" aria-label="modo escuro">
         ${state.user.darkMode ? '☀️' : '🌙'}
@@ -8539,7 +8543,7 @@ function viewDashboard() {
             <div class="character-hero-overlay"></div>
           </div>
           <div class="character-hero-text">
-            <div class="character-hero-slot">${ch.slot} · PLAYER DO DIA</div>
+            <div class="character-hero-slot">${ch.slot} · OPERADOR EM CAMPO</div>
             <div class="character-hero-name">${ch.name}</div>
             <div class="character-hero-action">${label}</div>
           </div>
@@ -8547,34 +8551,9 @@ function viewDashboard() {
       </section>`;
     })()}
 
-    <!-- ===== Status meters (5 estados transitórios do dia) =====
-         Diferente dos atributos (progressão long-term), STATUS são
-         estados do dia. Variam a cada ação registrada. -->
-    ${(() => {
-      const s = computeDailyStatus();
-      const meters = [
-        { key: 'energia',    label: 'Energia',    icon: '⚡', value: s.energia,    color: '#FFD341' },
-        { key: 'fadiga',     label: 'Fadiga',     icon: '🪨', value: s.fadiga,     color: '#8E8E93', invert: true },
-        { key: 'hidratacao', label: 'Hidratação', icon: '💧', value: s.hidratacao, color: '#7BB8FF' },
-        { key: 'sono',       label: 'Sono',       icon: '🌙', value: s.sono,       color: '#B7B5FF' },
-        { key: 'motivacao',  label: 'Motivação',  icon: '🔥', value: s.motivacao,  color: '#FFB7C5' },
-      ];
-      return `
-      <section class="px-4 mt-3">
-        <div class="text-[10px] uppercase tracking-widest text-ink/45 dark:text-paper/45 mb-1.5 px-1">Status do dia</div>
-        <div class="status-meters">
-          ${meters.map(m => `
-            <div class="status-meter ${m.invert && m.value > 60 ? 'is-warning' : ''}" title="${m.label}: ${m.value}%">
-              <div class="status-meter-icon" style="color: ${m.color}">${m.icon}</div>
-              <div class="status-meter-bar">
-                <div class="status-meter-fill" style="width: ${m.value}%; background: ${m.color}"></div>
-              </div>
-              <div class="status-meter-label">${m.label}</div>
-            </div>
-          `).join('')}
-        </div>
-      </section>`;
-    })()}
+    <!-- (Status do dia removido na Fase 2 VHYX — a estética de medidores
+         transitórios duplicava sinal sem ação clara. Mantemos só os Atributos
+         long-term + os streaks de hábito.) -->
 
     <!-- ===== Treino de hoje (Smartfit-style) — card grande em destaque ===== -->
     ${(() => {
@@ -8644,35 +8623,8 @@ function viewDashboard() {
       </section>`;
     })()}
 
-    <!-- ===== Última atividade — feed compacto dos últimos 3 registros ===== -->
-    ${(() => {
-      const items = [];
-      // Último treino
-      const lw = state.workouts.slice().reverse()[0];
-      if (lw) items.push({ t: `🏋 ${lw.type}`, d: lw.date, sub: `${lw.exercises.length} exercícios` });
-      // Última medida corporal
-      const lm = state.bodyMeasurements?.slice().reverse()[0];
-      if (lm) items.push({ t: '📐 Medidas atualizadas', d: lm.date, sub: lm.weight ? `${lm.weight}kg` : '' });
-      // Último log diário com sleep > 0
-      const ll = (state.dailyLogs || []).filter(l => !l.autoClosed && (l.sleep?.hours || 0) > 0).slice(-1)[0];
-      if (ll) items.push({ t: '🌙 Sono registrado', d: ll.date, sub: `${ll.sleep.hours}h` });
-      if (items.length === 0) return '';
-      items.sort((a, b) => (b.d || '').localeCompare(a.d || ''));
-      return `
-      <section class="px-4 mt-3">
-        <div class="text-[10px] uppercase tracking-widest text-ink/45 dark:text-paper/45 mb-1.5 px-1">Última atividade</div>
-        <div class="q-card divide-y divide-ink/5 dark:divide-paper/5">
-          ${items.slice(0, 3).map(i => `
-            <div class="p-3 flex items-center gap-2 text-sm">
-              <div class="flex-1 min-w-0">
-                <div class="font-semibold truncate">${i.t}</div>
-                <div class="text-[10px] text-ink/55 dark:text-paper/55">${i.sub}${i.sub ? ' · ' : ''}${formatDateBR(i.d)}</div>
-              </div>
-            </div>
-          `).join('')}
-        </div>
-      </section>`;
-    })()}
+    <!-- (Última atividade removida na Fase 2 VHYX — info redundante
+         com o FIELD LOG que será adicionado na Fase 3.) -->
 
     <!-- CTA "Personalize suas quests" — sempre visível enquanto não houver
          customQuests cadastradas. Sumiu quando user gerar. -->
@@ -8744,41 +8696,10 @@ function viewDashboard() {
       </div>
     </section>
 
-    <section class="px-4 mt-3">
-      <div class="q-card p-3">
-        <div class="flex items-center justify-between mb-2">
-          <div class="text-[10px] uppercase tracking-widest text-ink/45 dark:text-paper/45">🍽 Hoje no prato</div>
-          <button class="text-[10px] text-lavender" data-quick-meal-edit>editar</button>
-        </div>
-        <div class="grid grid-cols-2 gap-2 text-[11px]">
-          <div>
-            <div class="flex justify-between mb-0.5">
-              <span>Proteína</span>
-              <span class="font-bold">${proteinG}/${pGoal}g</span>
-            </div>
-            <div class="xp-track" style="height:5px"><div class="xp-fill" style="width:${proteinPct}%; background:#FFB7C5"></div></div>
-          </div>
-          <div>
-            <div class="flex justify-between mb-0.5">
-              <span>Calorias</span>
-              <span class="font-bold">${kcalToday}/${kGoal}</span>
-            </div>
-            <div class="xp-track" style="height:5px"><div class="xp-fill" style="width:${kcalPct}%; background:#A8E6CF"></div></div>
-          </div>
-        </div>
-        <div class="grid grid-cols-3 gap-1.5 mt-3">
-          <button class="q-btn q-btn-ghost text-[11px] py-2" data-quick-add="protein-light"
-                  title="Whey + 1 fruta">+25g 🥤</button>
-          <button class="q-btn q-btn-ghost text-[11px] py-2" data-quick-add="protein-meal"
-                  title="Refeição com proteína">+40g 🍗</button>
-          <button class="q-btn q-btn-ghost text-[11px] py-2" data-quick-add="protein-heavy"
-                  title="Refeição forte">+55g 💪</button>
-        </div>
-        <p class="text-[9px] text-ink/45 dark:text-paper/45 mt-2 leading-tight">
-          1 toque = registro genérico. Não substitui o log na aba Nutri, mas serve quando a fricção é alta.
-        </p>
-      </div>
-    </section>`;
+    <!-- (Hoje no prato removido na Fase 2 VHYX — quick-add gerava ruído
+         no log de nutrição. Refeições registradas só pela aba Nutri, que tem
+         IA de detecção + macros precisos.) -->
+    `;
   })()}
 
   <section class="px-4 mt-3">
@@ -8846,7 +8767,7 @@ function viewDashboard() {
 
   <!-- (Mascote do dia removido) -->
 
-  <div class="px-4"><div class="section-divider">⚔ 일일 미션 · DAILY MISSIONS ⚔</div></div>
+  <div class="px-4"><div class="section-divider">▸ BRIEFING ◂</div></div>
   <section class="px-4">
     ${(() => {
       const totalQ = da.items.length;
@@ -8952,26 +8873,10 @@ function viewDashboard() {
     </p>
   </section>
 
-  ${(() => {
-    // ===== Histórico de batalhas — feed de eventos recentes =====
-    const log = (state.user.battleLog || []).slice(0, 6);
-    if (!log.length) return '';
-    return `
-    <section class="px-4 mt-5">
-      <div class="flex items-center justify-between mb-2">
-        <h2 class="font-extrabold text-sm uppercase tracking-wider text-ink/55 dark:text-paper/55">Histórico de batalhas</h2>
-        <button class="text-[10px] text-ink/45 dark:text-paper/45 underline" data-clear-battlelog>limpar</button>
-      </div>
-      <div class="space-y-1">
-        ${log.map((ev) => `
-          <div class="battle-log-entry ${ev.kind === 'pr' ? 'is-pr' : ev.kind === 'loss' ? 'is-loss' : ''}">
-            <span class="text-[9px] text-ink/45 dark:text-paper/45 tabular-nums whitespace-nowrap">${timeAgoShort(new Date(ev.ts))}</span>
-            <span class="flex-1 text-ink/80 dark:text-paper/80">${ev.text}</span>
-          </div>
-        `).join('')}
-      </div>
-    </section>`;
-  })()}
+  <!-- (Histórico de batalhas saiu da home na Fase 2 VHYX —
+       será adicionado como FIELD LOG colapsado na Fase 3.
+       state.user.battleLog continua sendo populado normalmente, só não
+       exibido aqui.) -->
 
   <section class="px-4 mt-6">
     <div class="kombat-divider">${theme.labels?.arsenal || '⚔ ARSENAL ⚔'}</div>
@@ -15412,7 +15317,7 @@ Regras:
     card.querySelector('input[type="radio"]').checked = true;
   });
   document.getElementById('cfg-save')?.addEventListener('click', () => {
-    state.user.name  = document.getElementById('cfg-name').value || 'Jogador';
+    state.user.name  = document.getElementById('cfg-name').value || 'Operador';
     state.user.goals = document.getElementById('cfg-goals').value;
     state.user.reminders.proteinTimes = document.getElementById('cfg-reminders').value.split(',').map(s=>s.trim()).filter(Boolean);
     // Perfil físico
@@ -16759,7 +16664,7 @@ function aiBuildUserContext() {
     bipolar: 'bipolaridade',
   };
   return [
-    `Nome: ${u.name || 'Jogador'}`,
+    `Nome: ${u.name || 'Operador'}`,
     ch ? `Personagem ativo no app: ${ch.name} · ${ch.title}` : '',
     u.height ? `Altura: ${u.height}cm` : '',
     u.age ? `Idade: ${u.age}` : '',
