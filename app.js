@@ -5120,6 +5120,17 @@ const CHARACTERS = [
     ],
     signature: { name: 'IRON WILL · 鉄の意志', icon: '🔥',
       desc: 'Sets acima de 8 reps com carga alta rendem +25% XP. A barra obedece.' },
+    mantra: 'O ferro não negocia. Só responde.',
+    history: 'Filho de um operário da fundição em New Eden Iron District. Viu o pai morrer cedo, exausto antes do tempo, sem ninguém forte o suficiente pra carregar a carga que ele largou. Jurou ali, aos 14, que ninguém mais cairia por falta de Força debaixo do nome dele. Quando o Colapso liberou os primeiros protocolos VHYX, foi o primeiro voluntário do programa Iron Core. Nem perguntou os efeitos colaterais.',
+    powerOrigin: 'Treinou 8 anos no Fundo — galpão clandestino onde sobreviventes adaptavam ferro queimado pós-Colapso. Seu poder não veio de implante, droga ou ritual: só barra, prato e disciplina. O selo Iron Core foi atribuído quando puxou 4× o próprio peso em deadlift, três semanas seguidas sem pausa. Massa muscular hipertrófica densa o suficiente pra absorver impacto que partiria osso comum.',
+    allies: [
+      { id: 'kairyuen',   relation: 'Parceira de operação · ela faz reconhecimento, ele entra na linha de frente' },
+      { id: 'luansantos', relation: 'Mentor de mobilidade · Luan ensinou Axel a se mover quando o corpo travou aos 26' },
+    ],
+    enemies: [
+      { name: 'O CÔNCLAVE', desc: 'Facção que defende implantes metálicos como atalho evolutivo. Axel despreza: "Não é evolução se vem de fora."' },
+      { name: 'BARÕES DO FUNDO', desc: 'Cartel que vende anabolizantes ilegais nos Subúrbios Lentos. Axel destruiu três entrepostos sozinho.' },
+    ],
     actionImages: {
       neutral:      'icons/characters/axelkael/actions/neutral.webp',
       chest:        'icons/characters/axelkael/actions/chest.webp',
@@ -5172,6 +5183,17 @@ const CHARACTERS = [
     ],
     signature: { name: 'BLUE PULSE · 蒼脈', icon: '💨',
       desc: 'Cardio acima de 30min dá +30% XP. O pulso azul não para.' },
+    mantra: 'Quem para, perde. Quem desacelera, morre.',
+    history: 'Órfã antes mesmo de saber soletrar o próprio nome. Cresceu correndo telhados de Neo-Tóquio pra fugir de cartéis que recrutavam crianças pra coleta de sucata. Aos 12 anos já tinha pulmão de atleta sem nunca ter treinado um dia formal. Aos 19 foi descoberta por um scout VHYX que assistia uma perseguição clandestina — Kai cruzou cinco quadras em 47 segundos por telhados quebrados. Recebeu o codinome Cardio Knight no mesmo dia.',
+    powerOrigin: 'A aura azul não é decorativa — é manifestação visual de hiperoxigenação. Os pulmões dela carregam ~40% mais ar que humano comum, sem nenhum implante. Treina hipóxia controlada (corre até desmaiar 1× por semana) pra forçar o corpo a reescrever capacidade respiratória. Cientistas VHYX ainda não explicam como o sangue dela libera tanto O₂ por batimento.',
+    allies: [
+      { id: 'axelkael',   relation: 'Parceiro de campo · ela abre rota, ele segura posição. Combinam força bruta + agilidade urbana' },
+      { id: 'luansantos', relation: 'Sincronia de treino · faz cardio enquanto Luan dança, retroalimentando energia rítmica' },
+    ],
+    enemies: [
+      { name: 'REDE LENTA', desc: 'Coletivo anti-protocolo que prega "humanidade desacelerada". Acusa Operadores de abandonar os comuns. Kai não os odeia — recusa desacelerar pra acomodar ninguém.' },
+      { name: 'CAÇADORES DA SUCATA', desc: 'Cartel da infância dela. Ainda recruta crianças em Neo-Tóquio. Toda missão de Kai naquela zona é pessoal.' },
+    ],
     actionImages: {
       neutral:      'icons/characters/kairyuen/actions/neutral.webp',
       chest:        'icons/characters/kairyuen/actions/chest.webp',
@@ -5222,6 +5244,17 @@ const CHARACTERS = [
     ],
     signature: { name: 'RHYTHM CASCADE · 韻律', icon: '✨',
       desc: 'Sequências de dança acima de 20min rendem +30% XP. O ritmo não quebra, o corpo flui.' },
+    mantra: 'O ritmo decide. O corpo segue.',
+    history: 'Cresceu em festas clandestinas dos Subúrbios Lentos onde batalhas de dança valiam comida, teto e respeito. Sem dinheiro pra academia, descobriu aos 17 que sequências longas de movimento desbloqueavam mobilidade que nenhum personal treinava. Dançava 8 horas seguidas só pra ter onde dormir. Aos 20 anos, um agente VHYX disfarçado de DJ filmou um freestyle dele numa rooftop party — três semanas depois o convite oficial chegou. Único Operador com codinome "Mágico", porque ninguém previu que dança fosse caminho pra Awakened.',
+    powerOrigin: 'O "magic" não é metáfora. Sequências rítmicas acima de 20min levam o cérebro dele a um estado de fluxo neural raro. Tomografias mostram reconexão neuromuscular acelerada — o corpo literalmente se reescreve durante a coreografia. Ninguém replicou ainda. Cientistas VHYX suspeitam que a música sintetiza dopamina/BDNF em níveis que treinos lineares não atingem.',
+    allies: [
+      { id: 'axelkael', relation: 'Aluno de mobilidade · ensinou Axel a se soltar quando o corpo travou' },
+      { id: 'kairyuen', relation: 'Parceira de cardio-dança · treinam coreografias longas que viraram protocolo oficial' },
+    ],
+    enemies: [
+      { name: 'ACADÊMICOS RÍGIDOS', desc: 'Facção pró-programação linear de treino. Acusam Luan de "vender ilusão". Luan responde dançando.' },
+      { name: 'SILÊNCIO ESTÉRIL', desc: 'Movimento underground que prega treino em silêncio absoluto. Acreditam que música corrompe disciplina. Luan os vê como inimigos do próprio corpo.' },
+    ],
     actionImages: {
       neutral:      'icons/characters/luansantos/actions/neutral.webp',
       dance:        'icons/characters/luansantos/actions/dance.webp',
@@ -8440,6 +8473,7 @@ function viewOperatorExpanded(ch) {
         ${passives ? `<div class="cs-expanded-passives">${passives}</div>` : ''}
         ${sig}
         <div class="cs-expanded-stats">${stats}</div>
+        <button class="cs-lore-btn" data-cs-lore data-id="${ch.id}">📖 LORE COMPLETA</button>
         <button class="cs-deploy" data-cs-deploy>▶ DEPLOY</button>
       </div>
     </section>
@@ -8470,6 +8504,12 @@ function attachCharacterSelectHandlers() {
   document.querySelector('[data-cs-back]')?.addEventListener('click', () => {
     _selectedFighterPreview = null;
     render();
+  });
+  // Expanded: LORE — abre modal com a história completa
+  document.querySelector('[data-cs-lore]')?.addEventListener('click', (e) => {
+    const id = e.currentTarget.dataset.id;
+    vibrate(10);
+    modalCharacterLore(id);
   });
   // Expanded: DEPLOY confirma e vai pra home
   document.querySelector('[data-cs-deploy]')?.addEventListener('click', () => {
@@ -12978,6 +13018,96 @@ const ATTR_LEVEL_UP_TIPS = {
     ],
   },
 };
+
+/** Modal de LORE completa do operador — história, origem dos poderes,
+ *  aliados, inimigos. Acessível via botão na tela expandida do SELECT
+ *  OPERATOR e via botão na ficha do Elo Card da home. */
+function modalCharacterLore(charId) {
+  const ch = CHARACTERS.find((c) => c.id === charId);
+  if (!ch || !ch.unlocked) return;
+  const accent = ch.accent || 'var(--vhyx-cyan, #6EEEFF)';
+  const allyById = (id) => CHARACTERS.find((c) => c.id === id);
+  const allies = (ch.allies || []).map((a) => {
+    const al = allyById(a.id);
+    if (!al) return '';
+    return `
+      <div class="vhyx-lore-relation vhyx-lore-ally">
+        <img src="${al.img}" alt="${al.name}" loading="lazy" />
+        <div>
+          <div class="vhyx-lore-relation-name" style="color:${al.accent}">${al.name}</div>
+          <div class="vhyx-lore-relation-desc">${a.relation}</div>
+        </div>
+      </div>`;
+  }).join('');
+  const enemies = (ch.enemies || []).map((e) => `
+    <div class="vhyx-lore-relation vhyx-lore-enemy">
+      <div class="vhyx-lore-enemy-skull">⚠</div>
+      <div>
+        <div class="vhyx-lore-relation-name vhyx-lore-enemy-name">${e.name}</div>
+        <div class="vhyx-lore-relation-desc">${e.desc}</div>
+      </div>
+    </div>`).join('');
+
+  openModal(`
+    <div class="vhyx-lore-hero" style="background-image: url('${ch.img}')">
+      <button class="workout-hero-btn workout-hero-btn-right modal-close" aria-label="Fechar">✕</button>
+      <div class="vhyx-lore-hero-overlay">
+        <div class="vhyx-lore-eyebrow" style="color:${accent}">▸ CODEX DO OPERADOR · ${ch.slot}</div>
+        <h2 class="vhyx-lore-title">${ch.name}</h2>
+        <div class="vhyx-lore-subtitle">${ch.title}</div>
+        ${ch.mantra ? `<div class="vhyx-lore-mantra">"${ch.mantra}"</div>` : ''}
+      </div>
+    </div>
+    <div class="vhyx-lore-body">
+      <section class="vhyx-lore-section">
+        <div class="vhyx-lore-section-head" style="border-color:${accent}">
+          <span class="vhyx-lore-section-icon">📖</span>
+          <h3>História</h3>
+        </div>
+        <p>${ch.history || ch.lore || '—'}</p>
+      </section>
+
+      <section class="vhyx-lore-section">
+        <div class="vhyx-lore-section-head" style="border-color:${accent}">
+          <span class="vhyx-lore-section-icon">⚡</span>
+          <h3>Origem dos Poderes</h3>
+        </div>
+        <p>${ch.powerOrigin || 'Mistério ainda sob investigação do VHYX.'}</p>
+      </section>
+
+      ${allies ? `
+      <section class="vhyx-lore-section">
+        <div class="vhyx-lore-section-head" style="border-color:${accent}">
+          <span class="vhyx-lore-section-icon">🤝</span>
+          <h3>Aliados</h3>
+        </div>
+        <div class="vhyx-lore-relations">${allies}</div>
+      </section>` : ''}
+
+      ${enemies ? `
+      <section class="vhyx-lore-section">
+        <div class="vhyx-lore-section-head" style="border-color:#FF6B6B">
+          <span class="vhyx-lore-section-icon">⚔</span>
+          <h3>Inimigos</h3>
+        </div>
+        <div class="vhyx-lore-relations">${enemies}</div>
+      </section>` : ''}
+
+      <section class="vhyx-lore-section">
+        <div class="vhyx-lore-section-head" style="border-color:${accent}">
+          <span class="vhyx-lore-section-icon">⚙</span>
+          <h3>Ficha Técnica</h3>
+        </div>
+        <dl class="vhyx-lore-spec">
+          <dt>Origem</dt><dd>${ch.origin || '—'}</dd>
+          <dt>Estilo</dt><dd>${ch.style || '—'}</dd>
+          <dt>Idade</dt><dd>${ch.age || '—'} anos</dd>
+          <dt>Categoria</dt><dd>${ch.slot}</dd>
+        </dl>
+      </section>
+    </div>
+  `);
+}
 
 function modalAttributeDetail(attrKey) {
   const a = ATTRIBUTES.find((x) => x.key === attrKey);
@@ -17490,10 +17620,17 @@ function modalCharacterSheet(charId) {
           </div>
         </div>` : ''}
 
+        <button class="cs-lore-btn w-full mt-2" data-open-lore="${ch.id}">📖 LORE COMPLETA</button>
         <button class="q-btn q-btn-ghost w-full mt-2 modal-close text-sm">FECHAR</button>
       </div>
     </div>
   `);
+  // Liga o botão LORE — abre o modal completo
+  document.querySelector('[data-open-lore]')?.addEventListener('click', (e) => {
+    const id = e.currentTarget.dataset.openLore;
+    closeModal();
+    setTimeout(() => modalCharacterLore(id), 100);
+  });
 }
 
 /** Pinta o tema do personagem ativo via CSS variables — sem mexer na base.
