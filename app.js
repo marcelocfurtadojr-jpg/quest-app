@@ -8535,18 +8535,19 @@ function viewDashboard() {
     <div class="font-display text-base text-ink/80 dark:text-paper/80">${q.primary}</div>
     ${q.secondary ? `<div class="text-xs italic text-ink/55 dark:text-paper/55">${q.secondary}</div>` : ''}`;
   const borderClass = 'border-pink/60 dark:border-pink/50';
-  // VHYX: a saudação prioriza o CODENAME do operador ativo.
-  // Fallback pro nome do user (default 'Operador') se nenhum char selecionado.
+  // VHYX: header mostra o codinome do operador NO EYEBROW (VHYX · 3P EM CAMPO),
+  // mas a saudação principal é com o NOME DO JOGADOR (humano por trás do app),
+  // não o codinome do personagem.
   const ch = activeCharacter();
-  const opName = ch?.name || (u.name && u.name !== 'Jogador' ? u.name : 'Operador');
-  const greetingTop = ch ? `VHYX · ${ch.slot} EM CAMPO` : 'VHYX · SISTEMA ATIVO';
+  const playerName = (u.name && u.name.trim() && u.name !== 'Jogador') ? u.name : 'Operador';
+  const greetingTop = ch ? `VHYX · ${ch.slot} EM CAMPO · ${ch.name}` : 'VHYX · SISTEMA ATIVO';
 
   return `
   <header class="pt-7 pb-3 px-5 kombat-hero">
     <div class="flex items-center justify-between relative">
       <div class="min-w-0 flex-1">
-        <div class="font-display text-xs uppercase tracking-widest text-ink/40 dark:text-paper/40">${greetingTop}</div>
-        <h1 class="text-2xl font-extrabold mt-0.5 truncate">${g.pt}, ${opName}.</h1>
+        <div class="font-display text-xs uppercase tracking-widest text-ink/40 dark:text-paper/40 truncate">${greetingTop}</div>
+        <h1 class="text-2xl font-extrabold mt-0.5 truncate">${g.pt}, ${playerName}.</h1>
       </div>
       <button id="toggle-dark" class="q-btn q-btn-ghost px-3 py-2 shrink-0" aria-label="modo escuro">
         ${state.user.darkMode ? '☀️' : '🌙'}
