@@ -10505,9 +10505,16 @@ function viewNutrition() {
 
   const isRetro = viewDate !== todayReal;
 
+  // Hero usa nutrition.webp DO OPERADOR ATIVO. Fallback pro genérico se
+  // nenhum char selecionado ou se a action não existir.
+  const nutriCh = activeCharacter();
+  const nutriHero = nutriCh
+    ? `icons/characters/${nutriCh.id}/actions/nutrition.webp`
+    : 'icons/nutri-hero.webp';
   return `
   <div class="vhyx-nutri-hero">
-    <img src="icons/nutri-hero.webp" alt="Intake Protocol" loading="lazy" />
+    <img src="${nutriHero}" alt="Intake Protocol" loading="lazy"
+         onerror="this.src='icons/nutri-hero.webp'" />
     <div class="vhyx-nutri-hero-overlay">
       <div class="vhyx-nutri-hero-eyebrow">${getTheme(state).tags.nutri}</div>
       <h1 class="vhyx-nutri-hero-title">Nutrição${isRetro ? ` <span class="text-xs text-pink">(retroativo)</span>` : ''}</h1>
