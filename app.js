@@ -10647,6 +10647,144 @@ function lastSessionsFor(exName, n) {
     .slice(0, n);
 }
 
+/** Analisa o histórico real de refeições e retorna achados + tips
+ *  contextuais focados em REDUÇÃO DE GORDURA LOCALIZADA.
+ *  Considera últimos 30 dias com refeições registradas.
+ *  Retorna null se não há amostra mínima (3+ dias). */
+function analyzeMealsForFatLoss(state) {
+  const logs = (state.dailyLogs || []).filter(l => Array.isArray(l.meals) && l.meals.length > 0).slice(-30);
+  if (logs.length < 3) return null;
+
+  const JUNK_CATS = new Set(['erro', 'doce', 'snack']);
+  let daysCount = 0, kcalSum = 0, pSum = 0, cSum = 0, fSum = 0, junkKcalSum = 0;
+  let totalMeals = 0, daysHittingProtein = 0;
+  const proteinPerDay = [];
+
+  for (const l of logs) {
+    let dayKcal = 0, dayP = 0, dayC = 0, dayF = 0, dayJunk = 0;
+    for (const m of l.meals) {
+      dayKcal += m.kcal || 0;
+      dayP    += m.p    || 0;
+      dayC    += m.c    || 0;
+      dayF    += m.f    || 0;
+      if (JUNK_CATS.has(m.cat)) dayJunk += m.kcal || 0;
+      totalMeals++;
+    }
+    daysCount++;
+    kcalSum += dayKcal;
+    pSum    += dayP;
+    cSum    += dayC;
+    fSum    += dayF;
+    junkKcalSum += dayJunk;
+    proteinPerDay.push(dayP);
+    if (l.protein?.hit) daysHittingProtein++;
+  }
+
+  const avg = {
+    kcal:           kcalSum / daysCount,
+    p:              pSum    / daysCount,
+    c:              cSum    / daysCount,
+    f:              fSum    / daysCount,
+    junkPct:        kcalSum > 0 ? (junkKcalSum / kcalSum) * 100 : 0,
+    proteinPerMeal: totalMeals > 0 ? pSum / totalMeals : 0,
+    mealsPerDay:    totalMeals / daysCount,
+    proteinHitRate: (daysHittingProtein / daysCount) * 100,
+  };
+
+  // Variabilidade de proteína (desvio padrão simples)
+  const pMean = avg.p;
+  const pVar = proteinPerDay.reduce((s, x) => s + Math.pow(x - pMean, 2), 0) / daysCount;
+  const pStdDev = Math.sqrt(pVar);
+  const pCv = pMean > 0 ? (pStdDev / pMean) * 100 : 0; // coef de variação %
+
+  const kcalGoal  = (typeof getKcalGoal    === 'function') ? getKcalGoal()    : 2200;
+  const pGoal     = (typeof getProteinGoal === 'function') ? getProteinGoal() : 145;
+  const weightKg  = +state.user?.weight || 70;
+  const targetP   = Math.round(weightKg * 1.8); // proteína recomendada pra fat loss
+  const tips = [];
+
+  // 1. JUNK ALTO — maior alavanca pra gordura localizada (insulina spike + calorias vazias)
+  if (avg.junkPct > 25) {
+    tips.push({ icon: '🍕', severity: 'high',
+      finding: `${Math.round(avg.junkPct)}% das suas kcal vêm de junk/doce/snack (alvo: < 15%).`,
+      tip: 'Pra perder gordura abdominal, junk precisa baixar. Substitua 1 doce/snack por dia por iogurte grego + 1 fruta — mesma satisfação, sem o spike de insulina que estoca gordura no abdome.' });
+  } else if (avg.junkPct > 15) {
+    tips.push({ icon: '🍪', severity: 'medium',
+      finding: `${Math.round(avg.junkPct)}% das kcal vêm de junk. Está OK, mas dá pra otimizar.`,
+      tip: 'Reduzir pra <10% acelera fat loss em 3-4 semanas. Concentre junk em 1 refeição da semana (cheat meal estratégico) em vez de espalhar.' });
+  }
+
+  // 2. PROTEÍNA BAIXA — crítico em deficit (preserva massa magra)
+  if (avg.p < targetP * 0.85) {
+    tips.push({ icon: '🥩', severity: 'high',
+      finding: `Proteína média de ${Math.round(avg.p)}g/dia. Alvo pra fat loss: ${targetP}g (1.8g/kg do seu peso).`,
+      tip: 'Em déficit calórico SEM proteína suficiente, o corpo queima músculo junto com gordura — você fica menor mas com mesma % de gordura. Adicione 1 scoop de whey (24g) e 150g de frango (45g) por dia distribuídos em 3-4 refeições.' });
+  }
+
+  // 3. PROTEÍNA POR REFEIÇÃO BAIXA — distribuição ruim
+  if (avg.proteinPerMeal < 20 && avg.mealsPerDay >= 2) {
+    tips.push({ icon: '🍽', severity: 'medium',
+      finding: `Média de ${avg.proteinPerMeal.toFixed(1)}g de proteína por refeição.`,
+      tip: 'Síntese proteica máxima ocorre com 25-40g por refeição (acima disso o corpo desperdiça). Garanta uma fonte clara em CADA refeição: ovos no café, frango/peixe no almoço, whey pós-treino, iogurte grego antes de dormir.' });
+  }
+
+  // 4. CALORIAS ACIMA DA META — sem déficit, sem fat loss
+  if (avg.kcal > kcalGoal * 1.05) {
+    const overshoot = Math.round(avg.kcal - kcalGoal);
+    tips.push({ icon: '⚖', severity: 'high',
+      finding: `Média de ${Math.round(avg.kcal)} kcal/dia · ${overshoot} acima da sua meta de ${kcalGoal}.`,
+      tip: `Sem déficit calórico, não há perda de gordura — só recomposição (lenta) ou ganho. Cortar ${overshoot} kcal/dia (ex: 1 colher de azeite a menos OU pular 1 cerveja OU trocar arroz por couve-flor) gera ~${Math.round(overshoot * 7 / 7700 * 1000)}g de perda/semana.` });
+  } else if (avg.kcal < kcalGoal * 0.8) {
+    tips.push({ icon: '⚠', severity: 'medium',
+      finding: `Média de ${Math.round(avg.kcal)} kcal/dia · MUITO abaixo da sua meta (${kcalGoal}).`,
+      tip: 'Déficit agressivo demais derruba metabolismo e libera cortisol — que aumenta gordura abdominal mesmo em fome. Volte pra 85-90% da meta. Fat loss sustentável é 300-500 kcal abaixo, não 600+.' });
+  }
+
+  // 5. GORDURA ALTA — atrapalha déficit (gordura tem 2.25× kcal de carbo/proteína)
+  const fPct = avg.kcal > 0 ? (avg.f * 9 / avg.kcal) * 100 : 0;
+  if (fPct > 35) {
+    tips.push({ icon: '🥑', severity: 'medium',
+      finding: `${Math.round(fPct)}% das kcal vêm de gordura (alvo: 20-30% pra fat loss).`,
+      tip: 'Gordura não é vilã, mas é DENSA (9 kcal/g vs 4 das outras). Reduza fritura, queijo amarelo e ultraprocessados. Mantenha as boas: azeite (1 colher/refeição), abacate (1/4 unidade), castanhas (15-20g).' });
+  }
+
+  // 6. CARBOS MAL DISTRIBUÍDOS — alto + sedentarismo = estoque
+  const cPct = avg.kcal > 0 ? (avg.c * 4 / avg.kcal) * 100 : 0;
+  if (cPct > 55) {
+    tips.push({ icon: '🍚', severity: 'medium',
+      finding: `${Math.round(cPct)}% das kcal vêm de carboidrato.`,
+      tip: 'Carbo não é problema — é a JANELA. Concentre 60-70% dos carbos próximo ao treino (1h antes e 2h depois). Fora isso, prioriza proteína + vegetal. Carbo isolado à noite tende a virar estoque abdominal.' });
+  }
+
+  // 7. PROTEÍNA INCONSISTENTE — sobe/desce demais entre dias
+  if (pCv > 35 && daysCount >= 7) {
+    tips.push({ icon: '📊', severity: 'low',
+      finding: `Proteína varia muito entre dias (CV ${Math.round(pCv)}%). Picos altos e dias baixos.`,
+      tip: 'Consistência > pico. 145g todo dia bate 200g 3 dias + 90g nos outros 4. Defina uma "porção base" obrigatória pra refeições principais — 1 frango grelhado no almoço sempre, por exemplo.' });
+  }
+
+  // 8. POUCAS REFEIÇÕES REGISTRADAS — sub-log
+  if (avg.mealsPerDay < 2.5) {
+    tips.push({ icon: '⏰', severity: 'low',
+      finding: `Apenas ${avg.mealsPerDay.toFixed(1)} refeições registradas por dia.`,
+      tip: 'Provavelmente é sub-registro (comeu e não anotou) — bem comum. Registre TUDO por 7 dias seguidos pra análise virar precisa. Inclusive o "só uma mordida".' });
+  }
+
+  // 9. TUDO ALINHADO — reforço positivo
+  if (tips.length === 0) {
+    tips.push({ icon: '✓', severity: 'good',
+      finding: `Padrão alinhado com fat loss. Junk ${Math.round(avg.junkPct)}%, proteína ${Math.round(avg.p)}g, ${Math.round(avg.kcal)} kcal/dia.`,
+      tip: 'Mantém esse ritmo + treino consistente + 7h+ de sono. Gordura localizada cai em 4-8 semanas com esses números. Estresse e álcool são os 2 únicos sabotadores invisíveis — fica atento.' });
+  }
+
+  return {
+    avg, tips,
+    daysAnalyzed: daysCount,
+    totalMeals,
+    targetP, kcalGoal, pGoal,
+  };
+}
+
 // ----- 6.3b Nutrition view (식단) --------------------------
 
 function viewNutrition() {
@@ -10741,6 +10879,52 @@ function viewNutrition() {
       </div>
     </div>
   </section>
+
+  ${(() => {
+    // FAT LOSS COACH — análise contextual do histórico real
+    const analysis = analyzeMealsForFatLoss(state);
+    if (!analysis) {
+      return `
+      <section class="px-4 mb-4">
+        <div class="q-card vhyx-fatloss-card vhyx-fatloss-empty">
+          <div class="vhyx-fatloss-eyebrow">▸ FAT LOSS COACH</div>
+          <div class="vhyx-fatloss-empty-msg">
+            Registre refeições por <b>3+ dias</b> pra ativar a análise.<br>
+            Vou cruzar seus dados reais e gerar dicas focadas em reduzir gordura localizada.
+          </div>
+        </div>
+      </section>`;
+    }
+    return `
+    <section class="px-4 mb-4">
+      <div class="q-card vhyx-fatloss-card">
+        <div class="vhyx-fatloss-head">
+          <span class="vhyx-fatloss-icon">🎯</span>
+          <div class="flex-1 min-w-0">
+            <div class="vhyx-fatloss-eyebrow">▸ FAT LOSS COACH</div>
+            <div class="vhyx-fatloss-title">Análise dos últimos ${analysis.daysAnalyzed} dias</div>
+            <div class="vhyx-fatloss-sub">
+              ${Math.round(analysis.avg.kcal)} kcal/d · ${Math.round(analysis.avg.p)}g P/d · ${Math.round(analysis.avg.junkPct)}% junk
+            </div>
+          </div>
+        </div>
+        <div class="vhyx-fatloss-tips">
+          ${analysis.tips.map(t => `
+            <div class="vhyx-fatloss-tip vhyx-fatloss-tip-${t.severity}">
+              <span class="vhyx-fatloss-tip-icon">${t.icon}</span>
+              <div class="flex-1 min-w-0">
+                <div class="vhyx-fatloss-finding">${t.finding}</div>
+                <div class="vhyx-fatloss-action">${t.tip}</div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+        <div class="vhyx-fatloss-footer">
+          Análise de ${analysis.totalMeals} refeições registradas. Mais dados = análise mais precisa.
+        </div>
+      </div>
+    </section>`;
+  })()}
 
   <section class="px-4 mb-3">
     <input id="food-search" class="q-input" placeholder="🔍 Buscar (ex: pizza, frango, kimchi, hambúrguer, whey)" />

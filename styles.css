@@ -4136,6 +4136,100 @@ html[data-character] .kombat-divider::after {
   color: var(--vhyx-text, #F4F6FA);
 }
 
+/* === FAT LOSS COACH — análise contextual do histórico === */
+.vhyx-fatloss-card {
+  padding: 14px !important;
+  background: linear-gradient(135deg, rgba(110,238,255,0.04), transparent) !important;
+  border: 1px solid var(--vhyx-cyan, #6EEEFF)33 !important;
+}
+.vhyx-fatloss-empty {
+  text-align: center;
+  padding: 18px !important;
+}
+.vhyx-fatloss-empty-msg {
+  font-size: 12px;
+  color: var(--vhyx-text-mid, rgba(244,246,250,0.65));
+  line-height: 1.6;
+  margin-top: 8px;
+}
+.vhyx-fatloss-head {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--vhyx-border, rgba(255,255,255,0.06));
+  margin-bottom: 10px;
+}
+.vhyx-fatloss-icon {
+  font-size: 28px;
+  flex-shrink: 0;
+}
+.vhyx-fatloss-eyebrow {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  color: var(--vhyx-cyan, #6EEEFF);
+}
+.vhyx-fatloss-title {
+  font-family: "Russo One", Impact, sans-serif;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  margin-top: 2px;
+  color: var(--vhyx-text, #F4F6FA);
+}
+.vhyx-fatloss-sub {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  color: var(--vhyx-text-mid, rgba(244,246,250,0.6));
+  margin-top: 3px;
+}
+.vhyx-fatloss-tips {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.vhyx-fatloss-tip {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.03);
+  border-left: 3px solid;
+}
+.vhyx-fatloss-tip-high   { border-left-color: #FF6B6B; }
+.vhyx-fatloss-tip-medium { border-left-color: #FFD341; }
+.vhyx-fatloss-tip-low    { border-left-color: var(--vhyx-cyan, #6EEEFF); }
+.vhyx-fatloss-tip-good   { border-left-color: #7BFFB0; background: rgba(123,255,176,0.05); }
+.vhyx-fatloss-tip-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+  line-height: 1.2;
+}
+.vhyx-fatloss-finding {
+  font-family: "Russo One", Impact, sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  color: var(--vhyx-text, #F4F6FA);
+  line-height: 1.4;
+}
+.vhyx-fatloss-action {
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--vhyx-text-mid, rgba(244,246,250,0.75));
+  margin-top: 4px;
+}
+.vhyx-fatloss-footer {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--vhyx-border, rgba(255,255,255,0.08));
+  font-family: "JetBrains Mono", monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
+  color: var(--vhyx-text-low, rgba(244,246,250,0.4));
+  text-align: center;
+}
+
 /* === MODAL MUNDO VHYX — crônica completa === */
 .vhyx-univ-header {
   position: relative;
