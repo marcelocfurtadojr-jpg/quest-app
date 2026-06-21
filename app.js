@@ -9291,6 +9291,69 @@ function viewDashboardLegacy() {
 }
 
 // ====================================================================
+// VHYX — PROTOCOLO DIÁRIO (8 comportamentos pra fat loss/definição)
+// ====================================================================
+// Escolhidos por impacto direto em composição corporal e suportados
+// por evidência clínica + análise comportamental (Premack, shaping,
+// reforço imediato). Tudo binário ou contador simples — TDAH-friendly.
+//
+// 4 fixos diretos (já existem como abas/modais): treino · nutri · sono
+// + ações importantes que faltavam tracking diário.
+//
+// State: log.behaviors = { water:n, steps:n, breath:bool, sun:bool,
+//                          noAlcohol:bool, veggies:bool }
+const PROTOCOL_BEHAVIORS = [
+  // Linha 1 — Ações grandes (abrem tela)
+  { key: 'treino', icon: '💪', label: 'TREINO',   action: 'open-workout',
+    eval: (log) => !!log?.training?.done,
+    why: 'Treino de força preserva massa magra em déficit calórico. Sem ele, gordura cai junto com músculo — definição não aparece.' },
+  { key: 'nutri',  icon: '🥩', label: 'NUTRI',    action: 'open-nutri',
+    eval: (log) => !!(log?.meals && log.meals.length > 0),
+    why: 'Proteína alta + déficit moderado = perda de gordura preservando músculo. 1.8g/kg do peso é o alvo.' },
+  { key: 'sono',   icon: '🌙', label: 'SONO',     action: 'open-sleep',
+    eval: (log) => (log?.sleep?.hours || 0) >= 7,
+    why: 'Sono < 7h aumenta cortisol e reduz leptina — fome física + estoque abdominal. Não tem como evitar.' },
+  { key: 'breath', icon: '🧘', label: 'RESPIRAR', action: 'toggle',
+    eval: (log) => !!log?.behaviors?.breath,
+    why: '5 minutos de respiração lenta (4-7-8) baixa cortisol agudo. Cortisol crônico estoca gordura visceral.' },
+  // Linha 2 — Comportamentos diários (contador ou toggle)
+  { key: 'water',  icon: '💧', label: 'ÁGUA',     action: 'water-inc', target: 8,
+    eval: (log) => (log?.behaviors?.water || 0) >= 8,
+    why: 'Saciedade + metabolismo. Sede é confundida com fome em ~37% dos casos. Meta: 8 copos (~2L).' },
+  { key: 'steps',  icon: '👟', label: 'PASSOS',   action: 'steps-input', target: 8000,
+    eval: (log) => (log?.steps || 0) >= 8000,
+    why: 'NEAT (gasto calórico fora do treino) é metade do seu déficit. 8k passos = ~300 kcal extra.' },
+  { key: 'sun',    icon: '☀️', label: 'SOL',      action: 'toggle',
+    eval: (log) => !!log?.behaviors?.sun,
+    why: 'Vitamina D regula testosterona + sensibilidade à insulina. 10 min de sol direto/dia já basta.' },
+  { key: 'noAlc',  icon: '🍷', label: 'S/ ÁLCOOL', action: 'toggle-inv',
+    eval: (log) => log?.behaviors?.noAlcohol !== false,
+    why: 'Álcool bloqueia oxidação de gordura por até 36h. Mesmo 1 dose pausa o fat loss. Evite no ciclo de definição.' },
+];
+
+/** Avalia quantos comportamentos do protocolo foram cumpridos hoje. */
+function dailyProtocolScore() {
+  const today = todayISO();
+  const log = (state.dailyLogs || []).find(l => l.date === today);
+  let done = 0;
+  for (const b of PROTOCOL_BEHAVIORS) if (b.eval(log)) done++;
+  return { done, total: PROTOCOL_BEHAVIORS.length, log };
+}
+
+/** Garante que log.behaviors existe (lazy init). */
+function ensureBehaviors() {
+  const today = todayISO();
+  let log = (state.dailyLogs || []).find(l => l.date === today);
+  if (!log) {
+    log = { date: today, training: { type: 'descanso', done: false }, protein: { grams: 0, hit: false },
+            sleep: { hours: 0 }, reading: { minutes: 0 }, steps: 0, buffs: [], notes: '', meals: [] };
+    state.dailyLogs.push(log);
+  }
+  if (!log.behaviors) log.behaviors = { water: 0, steps: 0, breath: false, sun: false, noAlcohol: true, veggies: false };
+  return log;
+}
+
+// ====================================================================
 // VHYX — HOME TDAH-first (lore-driven)
 // Princípios: carga cognitiva mínima · reforço imediato · urgência
 // narrativa > prazo abstrato · body-doubling permanente · modo névoa
@@ -9695,21 +9758,39 @@ function viewDashboard() {
     <button class="vhyx-mission-alt" id="vhyx-mission-alt">⊘ ${mission.alt}</button>` : ''}
   </section>
 
-  <!-- ZONA 4: ATALHOS DE REGISTRO -->
-  <section class="vhyx-quick">
-    <button class="vhyx-quick-btn" data-quick-go="treino">
-      <span class="vhyx-quick-icon">💪</span>
-      <span class="vhyx-quick-label">TREINO</span>
-    </button>
-    <button class="vhyx-quick-btn" data-quick-go="nutri">
-      <span class="vhyx-quick-icon">🥩</span>
-      <span class="vhyx-quick-label">NUTRI</span>
-    </button>
-    <button class="vhyx-quick-btn" data-quick-go="sono">
-      <span class="vhyx-quick-icon">🌙</span>
-      <span class="vhyx-quick-label">SONO</span>
-    </button>
-  </section>
+  <!-- ZONA 4: PROTOCOLO DIÁRIO — 8 comportamentos pra fat loss/definição -->
+  ${(() => {
+    const score = dailyProtocolScore();
+    const log = score.log;
+    const pct = Math.round((score.done / score.total) * 100);
+    return `
+    <section class="vhyx-protocol">
+      <div class="vhyx-protocol-head">
+        <div class="vhyx-protocol-eyebrow">▸ PROTOCOLO DE HOJE · FAT LOSS</div>
+        <div class="vhyx-protocol-score">${score.done}<span>/${score.total}</span></div>
+      </div>
+      <div class="vhyx-protocol-bar"><div class="vhyx-protocol-fill" style="width:${pct}%"></div></div>
+      <div class="vhyx-protocol-grid">
+        ${PROTOCOL_BEHAVIORS.map(b => {
+          const done = b.eval(log);
+          let valueLabel = '';
+          if (b.action === 'water-inc') valueLabel = `<div class="vhyx-proto-val">${(log?.behaviors?.water || 0)}/${b.target}</div>`;
+          else if (b.action === 'steps-input') valueLabel = `<div class="vhyx-proto-val">${(log?.steps || 0).toLocaleString('pt-BR')}</div>`;
+          else if (b.action === 'toggle-inv') valueLabel = `<div class="vhyx-proto-val">${done ? '✓ evitado' : '⚠ tomou'}</div>`;
+          else if (b.action === 'toggle') valueLabel = `<div class="vhyx-proto-val">${done ? '✓ feito' : '○ pendente'}</div>`;
+          else valueLabel = `<div class="vhyx-proto-val">${done ? '✓ feito' : '○ pendente'}</div>`;
+          return `
+          <button class="vhyx-proto-tile ${done ? 'is-done' : ''}" data-proto="${b.key}" data-action="${b.action}"
+                  title="${b.why}">
+            <span class="vhyx-proto-icon">${b.icon}</span>
+            <span class="vhyx-proto-label">${b.label}</span>
+            ${valueLabel}
+          </button>`;
+        }).join('')}
+      </div>
+      <p class="vhyx-protocol-footer">Toque pra registrar. Pressione e segure pra ver por quê cada um importa pra fat loss.</p>
+    </section>`;
+  })()}
 
   <!-- TRIGGER CODEX (tudo secundário) -->
   <section class="vhyx-codex-trigger-wrap">
@@ -15665,7 +15746,7 @@ function attachHandlers() {
     vibrate(8);
     modalFogMode();
   });
-  // Atalhos de tab
+  // Atalhos de tab (legacy — alguns chamados ainda usam)
   document.querySelectorAll('[data-quick-go]').forEach((btn) => {
     btn.onclick = () => {
       const dest = btn.dataset.quickGo;
@@ -15675,6 +15756,81 @@ function attachHandlers() {
       else if (dest === 'sono') { modalSleep?.(); return; }
       render();
     };
+  });
+
+  // === PROTOCOLO DIÁRIO — 8 comportamentos pra fat loss/definição ===
+  // Cada tile tem ação específica (open-tela, contador, toggle).
+  // Reforço imediato: vibrate + toast curto. Cor muda quando done.
+  document.querySelectorAll('[data-proto]').forEach((tile) => {
+    tile.onclick = () => {
+      const key = tile.dataset.proto;
+      const action = tile.dataset.action;
+      vibrate(8);
+      if (action === 'open-workout') {
+        // Dispara mesma rota do CTA Missão
+        const planned = plannedToday();
+        const tpl = (typeof EXERCISE_LIBRARY !== 'undefined') ? EXERCISE_LIBRARY[planned] : null;
+        if (tpl && tpl.length) {
+          const start = { date: todayISO(), exercises: tpl.map(t => ({ name: t.name, sets: [{reps:'',weight:'',technique:t.defaultTech||''},{reps:'',weight:'',technique:''},{reps:'',weight:'',technique:''}] })) };
+          modalWorkoutSession(planned, todayISO(), start);
+        } else {
+          modalDailyLog();
+        }
+        return;
+      }
+      if (action === 'open-nutri') { currentTab = 'nutri'; render(); return; }
+      if (action === 'open-sleep') { modalSleep?.(); return; }
+      if (action === 'water-inc') {
+        const log = ensureBehaviors();
+        log.behaviors.water = (log.behaviors.water || 0) + 1;
+        if (log.behaviors.water > 8) log.behaviors.water = 0; // reset cíclico (toque longo seria reset, mas simpler)
+        saveState();
+        toast(`💧 ${log.behaviors.water}/8 copos`);
+        render();
+        return;
+      }
+      if (action === 'steps-input') {
+        const log = ensureBehaviors();
+        const v = prompt(`Passos de hoje (atual: ${log.steps || 0})`, log.steps || '');
+        if (v === null) return;
+        const n = parseInt(v, 10);
+        if (!isNaN(n) && n >= 0) {
+          log.steps = n;
+          saveState();
+          toast(`👟 ${n.toLocaleString('pt-BR')} passos`);
+          render();
+        }
+        return;
+      }
+      if (action === 'toggle') {
+        const log = ensureBehaviors();
+        log.behaviors[key === 'breath' ? 'breath' : key === 'sun' ? 'sun' : key] = !log.behaviors[key === 'breath' ? 'breath' : key];
+        saveState();
+        const now = log.behaviors[key === 'breath' ? 'breath' : key];
+        toast(now ? '✓ registrado' : 'desmarcado');
+        render();
+        return;
+      }
+      if (action === 'toggle-inv') {
+        // Inverso: ON = evitou (default), OFF = tomou (=falha)
+        const log = ensureBehaviors();
+        log.behaviors.noAlcohol = log.behaviors.noAlcohol === false ? true : false;
+        saveState();
+        toast(log.behaviors.noAlcohol ? '✓ evitando álcool' : '⚠ marcado álcool hoje');
+        render();
+        return;
+      }
+    };
+    // Long-press → mostra o "porquê" do comportamento (educação ABA)
+    let pressTimer;
+    tile.addEventListener('pointerdown', () => {
+      pressTimer = setTimeout(() => {
+        const why = tile.getAttribute('title');
+        if (why) toast(`ℹ ${why}`, 5000);
+      }, 600);
+    });
+    tile.addEventListener('pointerup', () => clearTimeout(pressTimer));
+    tile.addEventListener('pointerleave', () => clearTimeout(pressTimer));
   });
   // Daily quest toggle (versão compacta da home)
   document.querySelectorAll('[data-quest-toggle]').forEach((btn) => {
