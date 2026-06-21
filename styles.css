@@ -4136,6 +4136,259 @@ html[data-character] .kombat-divider::after {
   color: var(--vhyx-text, #F4F6FA);
 }
 
+/* === MODAL MUNDO VHYX — crônica completa === */
+.vhyx-univ-header {
+  position: relative;
+  padding: 22px 18px 16px;
+  background:
+    repeating-linear-gradient(0deg, rgba(110,238,255,0.03) 0 1px, transparent 1px 4px),
+    linear-gradient(180deg, rgba(0,0,0,0.55), transparent),
+    var(--vhyx-bg, #0A0E1A);
+  border-bottom: 1px dashed var(--vhyx-cyan, #6EEEFF);
+}
+.vhyx-univ-eyebrow {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  color: var(--vhyx-cyan, #6EEEFF);
+}
+.vhyx-univ-title {
+  font-family: "Russo One", Impact, sans-serif;
+  font-size: 28px;
+  letter-spacing: 0.1em;
+  color: #FFF;
+  margin: 4px 0 2px;
+  text-shadow: 0 0 22px var(--vhyx-cyan-glow, rgba(110,238,255,0.4));
+}
+.vhyx-univ-subtitle {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  color: var(--vhyx-text-mid, rgba(244,246,250,0.72));
+  letter-spacing: 0.06em;
+}
+.vhyx-univ-body {
+  padding: 16px;
+  background: var(--vhyx-bg, #0A0E1A);
+  color: var(--vhyx-text, #F4F6FA);
+  overflow-y: auto;
+  max-height: 78vh;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.vhyx-univ-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.vhyx-univ-section-head {
+  font-family: "Russo One", Impact, sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  color: var(--vhyx-cyan, #6EEEFF);
+  border-bottom: 1px solid var(--vhyx-border, rgba(255,255,255,0.08));
+  padding-bottom: 6px;
+}
+
+/* Counts */
+.vhyx-univ-counts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.vhyx-univ-counts > div {
+  padding: 10px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.04);
+  border-left: 3px solid var(--vhyx-cyan, #6EEEFF);
+}
+.vhyx-univ-counts b {
+  display: block;
+  font-family: "Russo One", Impact, sans-serif;
+  font-size: 18px;
+  color: #FFF;
+}
+.vhyx-univ-counts span {
+  font-size: 10.5px;
+  color: var(--vhyx-text-mid, rgba(244,246,250,0.65));
+  letter-spacing: 0.04em;
+}
+
+/* Timeline */
+.vhyx-univ-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+  padding-left: 14px;
+  border-left: 1px dashed rgba(110,238,255,0.35);
+}
+.vhyx-univ-event {
+  position: relative;
+}
+.vhyx-univ-event::before {
+  content: "";
+  position: absolute;
+  left: -19px;
+  top: 8px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--vhyx-cyan, #6EEEFF);
+  box-shadow: 0 0 8px var(--vhyx-cyan-glow, rgba(110,238,255,0.5));
+}
+.vhyx-univ-event-year {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.15em;
+  color: var(--vhyx-cyan, #6EEEFF);
+}
+.vhyx-univ-event-title {
+  font-family: "Russo One", Impact, sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  color: #FFF;
+  margin: 2px 0 4px;
+}
+.vhyx-univ-event-body p {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--vhyx-text-mid, rgba(244,246,250,0.78));
+  margin: 0;
+}
+
+/* Villains */
+.vhyx-univ-villains {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.vhyx-univ-villain {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(255,107,107,0.06), transparent);
+  border: 1px solid rgba(255,107,107,0.3);
+}
+.vhyx-univ-villain-avatar {
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #2a0f0f, #1a0606);
+  border: 1px solid rgba(255,107,107,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  color: #FF6B6B;
+}
+.vhyx-univ-villain-body {
+  flex: 1;
+  min-width: 0;
+}
+.vhyx-univ-villain-name {
+  font-family: "Russo One", Impact, sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  color: #FF6B6B;
+  text-transform: uppercase;
+}
+.vhyx-univ-villain-role {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--vhyx-text-mid, rgba(244,246,250,0.65));
+  margin-top: 1px;
+}
+.vhyx-univ-villain-bio {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--vhyx-text, #F4F6FA);
+  margin: 6px 0 0;
+}
+.vhyx-univ-villain-threat {
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--vhyx-text-mid, rgba(244,246,250,0.7));
+  margin: 6px 0 0;
+  font-style: italic;
+}
+.vhyx-univ-villain-threat b {
+  font-style: normal;
+  color: #FF6B6B;
+  letter-spacing: 0.05em;
+}
+
+/* Nations grid */
+.vhyx-univ-nations {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
+}
+.vhyx-univ-nation {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.03);
+  border-left: 3px solid #FF6B6B;
+}
+.vhyx-univ-nation-code {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: #FF6B6B;
+  font-weight: 700;
+  width: 42px;
+  flex-shrink: 0;
+}
+.vhyx-univ-nation-name {
+  font-family: "Russo One", Impact, sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  color: #FFF;
+}
+.vhyx-univ-nation-meta {
+  font-size: 10.5px;
+  color: var(--vhyx-text-mid, rgba(244,246,250,0.6));
+  margin-top: 1px;
+}
+
+/* Free zones */
+.vhyx-univ-zones {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.vhyx-univ-zone {
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(110,238,255,0.04);
+  border: 1px dashed var(--vhyx-cyan, #6EEEFF);
+}
+.vhyx-univ-zone-name {
+  font-family: "Russo One", Impact, sans-serif;
+  font-size: 12.5px;
+  letter-spacing: 0.08em;
+  color: var(--vhyx-cyan, #6EEEFF);
+}
+.vhyx-univ-zone-region {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--vhyx-text-mid, rgba(244,246,250,0.6));
+  margin-top: 1px;
+}
+.vhyx-univ-zone p {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--vhyx-text, #F4F6FA);
+  margin: 6px 0 0;
+}
+
 /* === Lore expandida: faction pill, bounty, ability cost, universe === */
 .vhyx-lore-faction-pill {
   display: inline-block;

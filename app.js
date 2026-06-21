@@ -115,6 +115,92 @@ const VHYX_WORLD = {
     },
   ],
   protocol: 'A doutrina VHYX afirma que cada Desperto tem uma matriz física específica — força/stamina/disciplina/nutrição/recuperação — e que só o treino consistente desses cinco eixos ativa plenamente o poder herdado. Por isso o Codex pessoal (este app) é obrigatório: rastreia a evolução biométrica como evidência de que o Operador está em protocolo, não em decadência.',
+
+  // === CRÔNICA PRINCIPAL — linha do tempo 2050-2087 ===
+  timeline: [
+    { year: '2050-2068', title: 'A ERA DA CONVERGÊNCIA',
+      body: 'Crise climática + escassez energética + saturação tecnológica colapsam Estados-nação tradicionais. Seis governos (EUA, China, União Europeia, Brasil, Índia, Japão) iniciam em segredo o programa orbital VHYX-1: rede de 6 estações projetadas pra mapeamento genômico em massa, capazes de varrer DNA via ressonância de baixa frequência. Oficialmente, propósito médico. Internamente, nunca explicado.' },
+    { year: '2071-04-08', title: 'O COLAPSO · A NOITE AZUL',
+      body: 'Por causa nunca esclarecida (falha de sincronização ou ato intencional), as 6 estações disparam o pulso ao mesmo tempo em vez de em sequência. O céu inteiro pulsa de azul-elétrico por 47 minutos. 78 milhões morrem nos 30 dias seguintes — síndrome neurológica aguda em quem carregava o gene receptor inativo. Outros 23 mil sobrevivem com o gene ATIVADO. São os primeiros Despertos.' },
+    { year: '2071-2073', title: 'A GRANDE PURGA',
+      body: 'Pânico global. Governos sobreviventes culpam os Despertos pela mortandade. Caça aberta: cerca de 200 mil pessoas (a maioria não-Despertos) são mortas em "tratamentos" pseudo-médicos compulsórios. Movimento de proteção surge nas margens — primeira geração de Operadores começa a esconder Despertos jovens. Karras (mentor de Axel), Itoh (mentora de Kai) e Ayano (mentora de Luan) sobrevivem desse período. Nunca se conheceram pessoalmente — coordenavam por sinais cifrados em rádio amador.' },
+    { year: '2074-01-17', title: 'TRATADO DE GENEBRA-2',
+      body: 'Nove governos sobreviventes formam as NAÇÕES FEDERADAS (NF). Despertos passam a ser oficialmente "ativos estratégicos sob jurisdição estatal" — não cidadãos. Anexo secreto autoriza o PROGRAMA CADEIA: captura legalizada antes dos 25 anos, implantação de chip de obediência. Resistência cresce como reação direta.' },
+    { year: '2076-09-23', title: 'A FUNDAÇÃO VHYX',
+      body: 'Sete Despertos da geração fundadora se encontram clandestinamente nas ruínas do Pireu (Atenas pós-colapso). Decidem NÃO criar organização — criam DOUTRINA. O ex-engenheiro DR. ARYAN HEPHAESTUS projeta o Codex (este app que você usa) como ferramenta universal. Primeira regra: "Quem aceita atalho deixa de ser livre." Os 7 se dispersam pelos continentes pra fundar células independentes.' },
+    { year: '2078-2086', title: 'A GUERRA DAS SOMBRAS · 8 ANOS',
+      body: 'Conflito silencioso. Sem manchete, sem comunicado. Células VHYX crescem de ~80 pra ~2.400 Operadores ativos. CADEIA refina táticas: implantes v2 (2079) e v3 (2083) reduzem reversibilidade. 4 mártires conhecidos do VHYX dessa era: KAREL VOSS (Praga, 2080), MITSUYO TANAKA (Osaka, 2082), MAMA CHIDINMA (Lagos, 2084), JONAS DELGADO (Bogotá, 2085).' },
+    { year: '2086-11-04', title: 'OPERAÇÃO PONTE ZERO',
+      body: 'Primeira operação tripla coordenada. Axel Kael (24), Kai Ryuen (21) e Luan Santos (23) se encontram pela primeira vez em DOMUS NOVA. Resgatam 23 jovens Despertos do complexo CADEIA-3 antes da implantação. Único ferido grave: Axel (queimadura química, 18 dias de regen). NF perde 4 oficiais e 31 agentes. Vira mito interno do VHYX. Os 3 selam pacto de aliança permanente após a missão.' },
+    { year: '2087 · HOJE', title: 'O PRESENTE',
+      body: 'NF mais agressiva que nunca. Programa Sujeito Zero (Axel), Programa Cassia (Kai) e Operação Anti-Flow (Luan) rodam simultaneamente nas 3 frentes mais quentes do continente. Os 3 Operadores estão no auge do poder pessoal — mas todos com arcos convergindo pra confronto direto com a estrutura NF nos próximos 12 meses. É o momento mais crítico desde a Purga.' },
+  ],
+
+  // === VILÕES PRINCIPAIS ===
+  villains: [
+    {
+      name: 'DIRETORA VELA CROWNE',
+      role: 'Comando CADEIA-1 · NEW EDEN (NA)',
+      avatar: '⚙',
+      bio: 'Aristocrata de New Eden, ex-genetista militar do projeto VHYX-1 (sobrevivente da equipe original que ainda nega responsabilidade pelo Colapso). 51 anos. Doutrina: "Despertos são humanos editados pela sorte. Compete ao Estado editá-los pela ordem." Comanda CADEIA-1 desde 2078. Pessoalmente assinou a captura do pai do Axel. Usa máscara de meio rosto desde 2080 (queimadura de atentado falho — Operador anônimo conseguiu chegar a 4 metros dela antes de ser neutralizado).',
+      threat: 'Brilhante. Paciente. Inimiga principal do Axel.',
+    },
+    {
+      name: 'TENENTE YOSHIKAWA',
+      role: 'Comando CADEIA-7 · NEO-TÓQUIO (ÁSIA)',
+      avatar: '⚕',
+      bio: 'Ex-cirurgião militar especializado em implantes neurais. 47 anos. Calmo, religioso (segue ramo cristão sincretizado pós-Colapso). Vê os Marcados como "almas restauradas pela ordem divina do Estado". Arquiteto técnico do PROGRAMA CASSIA — que transformou 11 das 12 crianças órfãs do Orfanato Komorebi em soldados-atleta da NF. Acompanha pessoalmente Sora Takeda em todas as transmissões públicas. Acredita estar ajudando.',
+      threat: 'Crê no que faz — pior que sádico. Inimigo principal da Kai.',
+    },
+    {
+      name: 'MARSHAL HEINRICH BAUM',
+      role: 'Lidera o Conselho Militar das NF · DOMUS NOVA (EU)',
+      avatar: '⚜',
+      bio: 'Comandante supremo das forças coligadas das 9 nações. 63 anos. Stratega macro: não opera em campo, comanda os que operam. Doutrina pessoal: "Despertos são a próxima guerra mundial em corpo humano. Quem controla, vence o século. Quem não controla, deixa de existir." Símbolo: anel pesado com o selo das 9 nações que jamais tira. Pediu pessoalmente a Marsh autorizada pra desenvolver o emissor Anti-Flow contra Luan.',
+      threat: 'O cérebro estratégico do inimigo. Decide quem caça quem.',
+    },
+    {
+      name: 'O ARQUITETO',
+      role: 'Identidade desconhecida · paradeiro: ?',
+      avatar: '◇',
+      bio: 'Figura semi-mítica entre Operadores VHYX. Projetou os chips de obediência v3 — únicos resistentes à Reescrita Rítmica do Luan (até hoje). Estilo de design técnico inconfundível e profundo demais pra qualquer engenheiro registrado das NF. Teoria que ronda nas células: ele é um dos 7 fundadores originais do VHYX. Um traidor da Doutrina. Quem? Ninguém arrisca dizer em voz alta.',
+      threat: 'Se ele existe e é quem dizem, conhece TODAS as fraquezas do protocolo VHYX por dentro.',
+    },
+    {
+      name: 'O CÔNCLAVE',
+      role: 'Facção paralela · sem sede fixa',
+      avatar: '✦',
+      bio: 'Despertos colaboracionistas. Não são Marcados — não levaram chip à força. Aceitaram VOLUNTARIAMENTE implantes em troca de status social, segurança e dinheiro federal. Cerca de 600 confirmados, provavelmente o dobro. Argumentam que evolução acelerada por tecnologia é apenas "atalho legítimo". Operadores VHYX os desprezam mais que aos próprios agentes da CADEIA — porque sabiam, escolheram, e ensinam outros jovens a escolher também.',
+      threat: 'Recrutam Despertos jovens com discurso bonito. Cada um perdido pro CÔNCLAVE é um futuro inimigo VHYX.',
+    },
+  ],
+
+  // === GEOGRAFIA · 9 NAÇÕES + ZONAS LIVRES ===
+  geography: {
+    nations: [
+      { code: 'NF-1', name: 'NEW EDEN',         region: 'Norte da América',    capital: 'New Eden City',    cadeia: 'CADEIA-1' },
+      { code: 'NF-2', name: 'DOMUS NOVA',       region: 'Europa Central',      capital: 'Praga Reformada',  cadeia: 'CADEIA-2' },
+      { code: 'NF-3', name: 'BÁLTICA',          region: 'Norte Europeu',       capital: 'Helsínquia-2',     cadeia: 'CADEIA-3' },
+      { code: 'NF-4', name: 'SOL-EQUATORIANO',  region: 'América do Sul',      capital: 'Brasília Vertical',cadeia: 'CADEIA-4' },
+      { code: 'NF-5', name: 'AFREKA UNIDA',     region: 'África Subsaariana',  capital: 'Lagos Reerguida',  cadeia: 'CADEIA-5' },
+      { code: 'NF-6', name: 'SINO-PACÍFICO',    region: 'China continental',   capital: 'Shanghai-Alta',    cadeia: 'CADEIA-6' },
+      { code: 'NF-7', name: 'NEO-TÓQUIO',       region: 'Arquipélago japonês', capital: 'Neo-Tóquio',       cadeia: 'CADEIA-7' },
+      { code: 'NF-8', name: 'ÍNDICO MAIOR',     region: 'Índia + Sudeste',     capital: 'Mumbai-Submersa',  cadeia: 'CADEIA-8' },
+      { code: 'NF-9', name: 'AUSTRAL',          region: 'Oceania + Antártida', capital: 'Sydney Refundada', cadeia: 'CADEIA-9' },
+    ],
+    freeZones: [
+      { name: 'DISTRITO LÚMEN',     region: 'Brasil-Sul (Sol-Equatoriano)', desc: 'Última zona urbana fora do controle direto NF. Protegida por tratado frágil da ONU sobre cultura intangível. Lar do Luan. População ~80mil. NF-4 quer ocupar — ONU ainda segura, mas trinca a cada ano.' },
+      { name: 'SUBÚRBIOS LENTOS',   region: 'Cinturão urbano global',       desc: 'Periferias abandonadas pela infraestrutura federal das 9 nações. Sem vigilância de ponta, sem energia limpa, sem internet decente. Lar dos Apagados (Despertos escondidos). Maioria das células VHYX nasce aqui. Estimativa: 60 milhões de habitantes esquecidos.' },
+      { name: 'ILHAS DE VAPOR',     region: 'Pacífico Sul',                 desc: 'Arquipélago de pequenas ilhas vulcânicas — radiação geotérmica + interferência atmosférica criam zona cega pra satélites NF. Refúgio extremo, alcançável só por barco artesanal. ~3mil habitantes. Não tem governo. Tem regra.' },
+      { name: 'MONTANHAS SEM MAPA', region: 'Cordilheira Sul',              desc: 'Cadeia montanhosa que se reorganizou geologicamente após o Colapso — mapas antigos não servem mais, novos não foram refeitos. Quem entra precisa de guia local. Luan vai pra lá em breve atrás do COMPOSITOR.' },
+    ],
+    counts: {
+      totalAwakened:  78000,
+      vhyxOperators:   2400,
+      marked:         16000,
+      hidden:         59600,
+    },
+  },
 };
 
 // VHYX — mapeia atributo → action image do operador ativo, pra que o
@@ -13103,6 +13189,94 @@ const ATTR_LEVEL_UP_TIPS = {
   },
 };
 
+/** Modal MUNDO VHYX — crônica do universo, vilões, geografia.
+ *  Acessível por botão "🌐 ABRIR MUNDO VHYX" dentro do modal de lore
+ *  de qualquer operador. */
+function modalUniverseVHYX() {
+  const W = VHYX_WORLD;
+  const timelineRows = (W.timeline || []).map((e) => `
+    <div class="vhyx-univ-event">
+      <div class="vhyx-univ-event-year">${e.year}</div>
+      <div class="vhyx-univ-event-body">
+        <div class="vhyx-univ-event-title">${e.title}</div>
+        <p>${e.body}</p>
+      </div>
+    </div>
+  `).join('');
+  const villainsRows = (W.villains || []).map((v) => `
+    <div class="vhyx-univ-villain">
+      <div class="vhyx-univ-villain-avatar">${v.avatar}</div>
+      <div class="vhyx-univ-villain-body">
+        <div class="vhyx-univ-villain-name">${v.name}</div>
+        <div class="vhyx-univ-villain-role">${v.role}</div>
+        <p class="vhyx-univ-villain-bio">${v.bio}</p>
+        <p class="vhyx-univ-villain-threat"><b>Ameaça:</b> ${v.threat}</p>
+      </div>
+    </div>
+  `).join('');
+  const nationsRows = (W.geography?.nations || []).map((n) => `
+    <div class="vhyx-univ-nation">
+      <div class="vhyx-univ-nation-code">${n.code}</div>
+      <div class="vhyx-univ-nation-body">
+        <div class="vhyx-univ-nation-name">${n.name}</div>
+        <div class="vhyx-univ-nation-meta">${n.region} · capital ${n.capital} · ${n.cadeia}</div>
+      </div>
+    </div>
+  `).join('');
+  const freeZonesRows = (W.geography?.freeZones || []).map((z) => `
+    <div class="vhyx-univ-zone">
+      <div class="vhyx-univ-zone-name">⊘ ${z.name}</div>
+      <div class="vhyx-univ-zone-region">${z.region}</div>
+      <p>${z.desc}</p>
+    </div>
+  `).join('');
+  const c = W.geography?.counts || {};
+
+  openModal(`
+    <header class="vhyx-univ-header">
+      <div>
+        <div class="vhyx-univ-eyebrow">▸ ARQUIVO MESTRE · ${W.era}</div>
+        <h2 class="vhyx-univ-title">MUNDO VHYX</h2>
+        <div class="vhyx-univ-subtitle">Crônica do conflito Despertos × Nações Federadas</div>
+      </div>
+      <button class="workout-hero-btn workout-hero-btn-right modal-close" aria-label="Fechar">✕</button>
+    </header>
+    <div class="vhyx-univ-body">
+
+      <section class="vhyx-univ-section">
+        <div class="vhyx-univ-section-head">📊 NÚMEROS ATUAIS</div>
+        <div class="vhyx-univ-counts">
+          <div><b>${(c.totalAwakened ?? 0).toLocaleString('pt-BR')}</b><span>Despertos totais confirmados</span></div>
+          <div><b>${(c.vhyxOperators ?? 0).toLocaleString('pt-BR')}</b><span>Operadores VHYX ativos</span></div>
+          <div><b>${(c.marked ?? 0).toLocaleString('pt-BR')}</b><span>Marcados servindo às NF</span></div>
+          <div><b>${(c.hidden ?? 0).toLocaleString('pt-BR')}</b><span>Apagados (vivendo escondidos)</span></div>
+        </div>
+      </section>
+
+      <section class="vhyx-univ-section">
+        <div class="vhyx-univ-section-head">🕰 LINHA DO TEMPO</div>
+        <div class="vhyx-univ-timeline">${timelineRows}</div>
+      </section>
+
+      <section class="vhyx-univ-section">
+        <div class="vhyx-univ-section-head" style="color:#FF6B6B">⚔ VILÕES PRINCIPAIS</div>
+        <div class="vhyx-univ-villains">${villainsRows}</div>
+      </section>
+
+      <section class="vhyx-univ-section">
+        <div class="vhyx-univ-section-head">🌍 AS 9 NAÇÕES FEDERADAS</div>
+        <div class="vhyx-univ-nations">${nationsRows}</div>
+      </section>
+
+      <section class="vhyx-univ-section">
+        <div class="vhyx-univ-section-head">⊘ ZONAS LIVRES</div>
+        <div class="vhyx-univ-zones">${freeZonesRows}</div>
+      </section>
+
+    </div>
+  `);
+}
+
 /** Modal de LORE completa do operador — história, origem dos poderes,
  *  aliados, inimigos. Acessível via botão na tela expandida do SELECT
  *  OPERATOR e via botão na ficha do Elo Card da home. */
@@ -13228,6 +13402,7 @@ function modalCharacterLore(charId) {
         </div>
         <div class="vhyx-lore-factions">${universeFactions}</div>
         <p class="vhyx-lore-protocol-note">${VHYX_WORLD.protocol}</p>
+        <button class="cs-lore-btn vhyx-open-universe" data-open-universe style="margin-top:14px">🌐 ABRIR MUNDO VHYX · CRÔNICA COMPLETA</button>
       </section>
 
       <section class="vhyx-lore-section">
@@ -13244,6 +13419,11 @@ function modalCharacterLore(charId) {
       </section>
     </div>
   `);
+  // Liga o botão MUNDO VHYX dentro do modal de lore — abre crônica completa
+  document.querySelector('[data-open-universe]')?.addEventListener('click', () => {
+    closeModal();
+    setTimeout(() => modalUniverseVHYX(), 100);
+  });
 }
 
 function modalAttributeDetail(attrKey) {
