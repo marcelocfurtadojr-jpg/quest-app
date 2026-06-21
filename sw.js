@@ -15,7 +15,7 @@
 // Resultado: se você está online, sempre vê a versão mais recente do app.
 // Se você está offline, vê a última versão que foi cacheada (PWA mantém valor).
 
-const CACHE_VERSION = 'vhyx-v2.8.0';
+const CACHE_VERSION = 'vhyx-v2.9.0';
 const APP_SHELL = [
   './',
   './index.html',

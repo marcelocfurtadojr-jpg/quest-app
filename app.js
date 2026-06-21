@@ -72,6 +72,51 @@ function baseRankIndex(rankKey) {
 // Diamante I (2860) → 286 XP/sem. Ouro IV (510) → 51 XP/sem (semana decente).
 const RANK_DECAY = 0.10;
 
+// ====================================================================
+// VHYX — Lore do mundo (worldbuilding compartilhado entre os Operadores)
+// ====================================================================
+// Universo distópico em 2087, 16 anos após O Colapso. Disputa de poder
+// entre as Nações Federadas (NF) e os Operadores VHYX. Cada personagem
+// se posiciona em algum lugar desse conflito.
+const VHYX_WORLD = {
+  era: '2087 · 16 anos pós-Colapso',
+  origin: {
+    title: 'O COLAPSO · 2071',
+    body: 'Numa única noite, seis estações orbitais ativadas pelo programa secreto VHYX-1 emitiram um pulso de baixa frequência que atravessou a atmosfera. Cientificamente, foi classificado como "evento de ressonância genômica". Pra maioria, foi só uma madrugada estranha em que o céu pulsou de azul. Pra cerca de 1 em cada 100.000 humanos, abriu algo. Esses são os Despertos. Hoje 78.000 confirmados no planeta. Provavelmente o triplo escondidos.',
+  },
+  factions: [
+    {
+      key: 'nf',
+      name: 'NAÇÕES FEDERADAS',
+      side: 'inimigo',
+      tagline: 'A aliança de 9 megapotências',
+      desc: 'Coalizão formada em 2074 com pretexto de "gestão da nova ordem pós-Colapso". Controlam infraestrutura crítica das maiores cidades. Defendem que Despertos são "ativos estratégicos" — não cidadãos. Patrocinam o programa CADEIA.',
+    },
+    {
+      key: 'cadeia',
+      name: 'PROGRAMA CADEIA',
+      side: 'inimigo',
+      tagline: 'Captura · Adestramento · Implantação de Anomalias',
+      desc: 'Braço operacional das NF. Esquadrões treinados pra rastrear Despertos antes dos 25 anos (janela neurológica onde implante de obediência ainda funciona). Resultado: o Desperto vira "Marcado" — soldado-arma sem agência. Há 9 unidades CADEIA, uma por nação.',
+    },
+    {
+      key: 'vhyx',
+      name: 'OPERADORES VHYX',
+      side: 'aliado',
+      tagline: 'Resistência descentralizada',
+      desc: 'Rede de Despertos livres. Sem hierarquia formal: cada Operador escolhe sua célula e suas operações. Doutrina central: o poder vem de dentro através de protocolo físico rigoroso; quem aceita atalho (droga, implante, captura) deixa de ser livre. Salvam jovens Despertos antes que CADEIA os pegue.',
+    },
+    {
+      key: 'suburbios',
+      name: 'SUBÚRBIOS LENTOS',
+      side: 'neutro',
+      tagline: 'Zonas fora do mapa',
+      desc: 'Cinturões urbanos abandonados pelas NF, onde sobrevivem os Apagados (Despertos que escolheram esconder o poder) e gente comum cansada da vigilância. Lei é local. Cultura é viva. Maioria das células VHYX começa aqui.',
+    },
+  ],
+  protocol: 'A doutrina VHYX afirma que cada Desperto tem uma matriz física específica — força/stamina/disciplina/nutrição/recuperação — e que só o treino consistente desses cinco eixos ativa plenamente o poder herdado. Por isso o Codex pessoal (este app) é obrigatório: rastreia a evolução biométrica como evidência de que o Operador está em protocolo, não em decadência.',
+};
+
 // VHYX — mapeia atributo → action image do operador ativo, pra que o
 // STATS SHEET use só imagens DO personagem selecionado (Axel ou Kai).
 // Fallback pros webps fixos em icons/attrs/<key>.webp se não houver match.
@@ -5121,15 +5166,28 @@ const CHARACTERS = [
     signature: { name: 'IRON WILL · 鉄の意志', icon: '🔥',
       desc: 'Sets acima de 8 reps com carga alta rendem +25% XP. A barra obedece.' },
     mantra: 'O ferro não negocia. Só responde.',
-    history: 'Filho de um operário da fundição em New Eden Iron District. Viu o pai morrer cedo, exausto antes do tempo, sem ninguém forte o suficiente pra carregar a carga que ele largou. Jurou ali, aos 14, que ninguém mais cairia por falta de Força debaixo do nome dele. Quando o Colapso liberou os primeiros protocolos VHYX, foi o primeiro voluntário do programa Iron Core. Nem perguntou os efeitos colaterais.',
-    powerOrigin: 'Treinou 8 anos no Fundo — galpão clandestino onde sobreviventes adaptavam ferro queimado pós-Colapso. Seu poder não veio de implante, droga ou ritual: só barra, prato e disciplina. O selo Iron Core foi atribuído quando puxou 4× o próprio peso em deadlift, três semanas seguidas sem pausa. Massa muscular hipertrófica densa o suficiente pra absorver impacto que partiria osso comum.',
+    faction: 'vhyx',
+    bounty: '8.000.000 créditos federais · procurado VIVO (NF-1)',
+    ability: {
+      name: 'DENSIDADE ABSOLUTA',
+      desc: 'O corpo dele desenvolve, sob protocolo de carga progressiva, densidade muscular e óssea superior ao limite humano comum. Bala 9mm não perfura — vira hematoma. Pode segurar veículos em movimento. Concreto trinca antes da pele dele. Limite conhecido: até 2.4 toneladas de impacto sustentado por 8 segundos antes da reverberação interna o derrubar.',
+      cost: 'Cada uso pesado custa ~40h de recuperação. Se forçar dois dias seguidos, fratura por estresse na coluna. Por isso o Codex (este app) rastreia descanso obsessivamente — pra ele não é vaidade, é sobrevivência.',
+    },
+    awakening: {
+      age: 14,
+      year: 2073,
+      event: 'Viu o pai morrer aos 39 anos numa "explosão acidental" na fundição do Iron District. Anos depois descobriu: a fundição era fachada da CADEIA-1. O pai era um Apagado que se recusou a entrar no programa. O choque genético do trauma despertou o gene em Axel naquela mesma noite. Aos 15, levantou 180kg pela primeira vez. Aos 16, mãos calejadas de tanto bater na parede do Fundo, perguntando ao próprio corpo por que ele não parava de crescer.',
+    },
+    history: 'Cresceu em New Eden Iron District, periferia industrial da capital tecnocrática norte-americana. Pai operário, mãe enfermeira que sumiu quando ele tinha 9 — provavelmente Apagada também, fugindo antes que CADEIA chegasse na família. Após a morte do pai, foi acolhido pelo Velho Karras, ex-Operador VHYX da segunda geração, que abriu o Fundo (galpão de treino clandestino sob a antiga refinaria). Karras o treinou no protocolo livre por 8 anos — sem revelar o que ele realmente era até Axel completar 22 e estar pronto pra aceitar a missão.\\n\\nDe 22 a 28 anos, Axel liderou 47 operações de extração no nordeste do continente. Sua célula (chamada FUNDO ZERO) já tirou 116 jovens Despertos das mãos de CADEIA antes da implantação. Em 5 ocasiões enfrentou esquadrões NF abertamente — sobreviveu a tiros de fuzil, granada de fragmentação e até a uma carga elétrica de 4000V (que o derrubou por 11 minutos, mas não matou).\\n\\nO codinome Iron Core foi dado pela própria CADEIA-1 em relatório interno vazado: "o sujeito mantém integridade estrutural após impactos que classificaríamos como letais. Sugerimos captura prioritária." É o Desperto mais procurado da NF norte-americana.',
+    arc: 'Há 4 meses, um Marcado capturado em operação confessou sob interrogatório que viu um soldado experimental conhecido como "Sujeito Zero" no complexo CADEIA-1, no subsolo do antigo prédio da fundição. Descrição física: 1.78m, cicatriz vertical no peito esquerdo, marca de queimadura no antebraço direito. Idêntico ao pai dele. Axel está montando a maior operação da história da célula FUNDO ZERO: invadir CADEIA-1 e resgatar o Sujeito Zero. Sabe que pode ser armadilha — mas se for o pai, vale tudo.',
     allies: [
-      { id: 'kairyuen',   relation: 'Parceira de operação · ela faz reconhecimento, ele entra na linha de frente' },
-      { id: 'luansantos', relation: 'Mentor de mobilidade · Luan ensinou Axel a se mover quando o corpo travou aos 26' },
+      { id: 'kairyuen',   relation: 'Parceira de operação norte-asiática · faz reconhecimento aéreo enquanto ele entra na linha de frente. Confia nela pra ler ameaça que ele não enxerga.' },
+      { id: 'luansantos', relation: 'Aluno-mentor · Luan ensinou Axel a se mover quando o corpo travou aos 26. Em troca, Axel ofereceu proteção ao Distrito Lúmen. Dívida mútua perpétua.' },
     ],
     enemies: [
-      { name: 'O CÔNCLAVE', desc: 'Facção que defende implantes metálicos como atalho evolutivo. Axel despreza: "Não é evolução se vem de fora."' },
-      { name: 'BARÕES DO FUNDO', desc: 'Cartel que vende anabolizantes ilegais nos Subúrbios Lentos. Axel destruiu três entrepostos sozinho.' },
+      { name: 'CADEIA-1 (NEW EDEN)', desc: 'Unidade norte-americana do programa de captura. Comandada pela Diretora Vela Crowne. Caça Axel há 6 anos. Já perdeu 23 agentes em tentativas falhas — o último tinha 8M de bônus prometido se trouxesse a cabeça dele.' },
+      { name: 'O CÔNCLAVE', desc: 'Facção de Despertos colaboracionistas que defende implantes "voluntários" como caminho legítimo. Recrutam jovens com discurso de "evolução acelerada". Axel os despreza profundamente — vê neles a traição de tudo que VHYX representa.' },
+      { name: 'DIRETORA VELA CROWNE', desc: 'Comanda CADEIA-1 e o Programa Sujeito Zero. Foi a oficial que assinou a captura do pai dele. Sabe que Axel sabe. A operação inteira pode ser uma armadilha desenhada por ela.' },
     ],
     actionImages: {
       neutral:      'icons/characters/axelkael/actions/neutral.webp',
@@ -5184,15 +5242,28 @@ const CHARACTERS = [
     signature: { name: 'BLUE PULSE · 蒼脈', icon: '💨',
       desc: 'Cardio acima de 30min dá +30% XP. O pulso azul não para.' },
     mantra: 'Quem para, perde. Quem desacelera, morre.',
-    history: 'Órfã antes mesmo de saber soletrar o próprio nome. Cresceu correndo telhados de Neo-Tóquio pra fugir de cartéis que recrutavam crianças pra coleta de sucata. Aos 12 anos já tinha pulmão de atleta sem nunca ter treinado um dia formal. Aos 19 foi descoberta por um scout VHYX que assistia uma perseguição clandestina — Kai cruzou cinco quadras em 47 segundos por telhados quebrados. Recebeu o codinome Cardio Knight no mesmo dia.',
-    powerOrigin: 'A aura azul não é decorativa — é manifestação visual de hiperoxigenação. Os pulmões dela carregam ~40% mais ar que humano comum, sem nenhum implante. Treina hipóxia controlada (corre até desmaiar 1× por semana) pra forçar o corpo a reescrever capacidade respiratória. Cientistas VHYX ainda não explicam como o sangue dela libera tanto O₂ por batimento.',
+    faction: 'vhyx',
+    bounty: '5.500.000 créditos federais · captura preferida sobre execução (NF-7)',
+    ability: {
+      name: 'PULMÃO AZUL · 蒼肺',
+      desc: 'Sintetiza padrões respiratórios que aumentam absorção de O₂ em até 400% por batimento. Manifestação visual: aura azul-elétrica em torno do tórax quando sob carga máxima. Pode prender o ar por 11 minutos. Sustenta 40 km/h por até 90 minutos em terreno urbano misto. Pulso cardíaco em repouso: 31 bpm.',
+      cost: 'Hipóxia controlada é o único caminho pra evolução do poder — Kai literalmente corre até desmaiar 1× por semana pra forçar o corpo a expandir capacidade. Cada blackout custa 48h de regen. Há limite biológico que ainda não testou: ninguém sabe o que acontece se ela ficar consciente 12+ minutos sem respirar.',
+    },
+    awakening: {
+      age: 8,
+      year: 2073,
+      event: 'A batida de CADEIA-7 no Orfanato Komorebi (Neo-Tóquio leste) capturou 11 das 12 crianças. Kai foi a única que escapou — não porque era mais rápida que os adultos, mas porque o corpo dela começou a fazer algo que ninguém ensinou: respirar diferente. Aos 8 anos correu 6 quadras por telhados, sem parar, sem ofegar. Quando finalmente desabou num beco, percebeu pela primeira vez a aura azul nas próprias mãos.',
+    },
+    history: "Cresceu sozinha nos telhados de Neo-Tóquio dos 8 aos 16 anos. Sobreviveu roubando comida e dormindo em locais que ninguém mais alcançava (caixas d'água, antenas, vãos entre prédios). Foi recolhida aos 16 por Madame Itoh, ex-Operadora VHYX da geração fundadora, que dirigia uma cobertura de chá em Shibuya como fachada pra uma das maiores células asiáticas. Itoh treinou Kai por 4 anos no protocolo Aeruga (estudo formal de respiração consciente + arte marcial chinesa antiga adaptada).\n\nAos 20, Kai virou mensageira-fantasma do VHYX entre as células das 9 nações. Trabalho dela: atravessar territórios policiados sem ser detectada. Algoritmos de vigilância das NF a classificam como wildlife (pássaro grande) porque o calor corporal dela e o padrão respiratório imitam ave em voo. Entregou mais de 200 pacotes críticos — incluindo a lista de membros da CADEIA-3 que vazou em 2086 e derrubou três oficiais.\n\nNunca matou. É política dela — usa o poder pra escapar, nunca pra ferir. Mesmo em encurralamento, sempre achou rota de fuga. CADEIA-7 a chama de 'o pássaro que ninguém abate'.",
+    arc: 'Há 11 semanas, transmissão pública oficial das NF mostrou um time de "atletas modelo" do programa de propaganda olímpica. No segundo lugar do pódio dos 800m femininos: SORA TAKEDA, 22 anos. Kai congelou. Sora era uma das 11 crianças do orfanato Komorebi. Está viva. Está Marcada. Está ali, na frente das câmeras, sorrindo com o chip de obediência ativado e medalha de prata no pescoço. Kai começou a se preparar imediatamente: documentos falsos de atleta da NF-Sul-Coreana, padrão respiratório modificado pra burlar scan biométrico, equipe de extração esperando do lado de fora. O plano: infiltrar como atleta convidada na próxima rodada olímpica em Neo-Tóquio, e tirar Sora antes que o chip a force a competir mais uma vez.',
     allies: [
-      { id: 'axelkael',   relation: 'Parceiro de campo · ela abre rota, ele segura posição. Combinam força bruta + agilidade urbana' },
-      { id: 'luansantos', relation: 'Sincronia de treino · faz cardio enquanto Luan dança, retroalimentando energia rítmica' },
+      { id: 'axelkael',   relation: 'Parceiro de campo · ele entra escancarado, ela some no telhado. Salvaram juntos 23 Despertos na Operação Ponte Zero (DOMUS NOVA, 2086).' },
+      { id: 'luansantos', relation: 'Confidente cultural · única pessoa que ela permite ver a aura azul descontroladamente. Luan dança, Kai respira; juntos induzem flow neural mútuo que ela usa como meditação ativa.' },
     ],
     enemies: [
-      { name: 'REDE LENTA', desc: 'Coletivo anti-protocolo que prega "humanidade desacelerada". Acusa Operadores de abandonar os comuns. Kai não os odeia — recusa desacelerar pra acomodar ninguém.' },
-      { name: 'CAÇADORES DA SUCATA', desc: 'Cartel da infância dela. Ainda recruta crianças em Neo-Tóquio. Toda missão de Kai naquela zona é pessoal.' },
+      { name: 'CADEIA-7 (NEO-TÓQUIO)', desc: 'Unidade asiática. Caçou Kai desde os 8 anos. Tem o maior banco de dados biométricos sobre ela — e ainda não consegue prevê-la. Comandante: Ten. Yoshikawa, ex-cirurgião militar especializado em implantes neurais.' },
+      { name: 'PROGRAMA CASSIA', desc: 'Projeto experimental das NF-Ásia que transforma órfãs Despertas em "soldados-atleta" pra propaganda olímpica. Sora é o ativo mais visível. Há outras 10 ainda dentro.' },
+      { name: 'CARTEL KIROKAI', desc: 'O cartel da infância dela. Ainda existe, ainda recruta crianças em Neo-Tóquio. Toda missão dela na zona oeste vira pessoal.' },
     ],
     actionImages: {
       neutral:      'icons/characters/kairyuen/actions/neutral.webp',
@@ -5245,15 +5316,28 @@ const CHARACTERS = [
     signature: { name: 'RHYTHM CASCADE · 韻律', icon: '✨',
       desc: 'Sequências de dança acima de 20min rendem +30% XP. O ritmo não quebra, o corpo flui.' },
     mantra: 'O ritmo decide. O corpo segue.',
-    history: 'Cresceu em festas clandestinas dos Subúrbios Lentos onde batalhas de dança valiam comida, teto e respeito. Sem dinheiro pra academia, descobriu aos 17 que sequências longas de movimento desbloqueavam mobilidade que nenhum personal treinava. Dançava 8 horas seguidas só pra ter onde dormir. Aos 20 anos, um agente VHYX disfarçado de DJ filmou um freestyle dele numa rooftop party — três semanas depois o convite oficial chegou. Único Operador com codinome "Mágico", porque ninguém previu que dança fosse caminho pra Awakened.',
-    powerOrigin: 'O "magic" não é metáfora. Sequências rítmicas acima de 20min levam o cérebro dele a um estado de fluxo neural raro. Tomografias mostram reconexão neuromuscular acelerada — o corpo literalmente se reescreve durante a coreografia. Ninguém replicou ainda. Cientistas VHYX suspeitam que a música sintetiza dopamina/BDNF em níveis que treinos lineares não atingem.',
+    faction: 'vhyx',
+    bounty: '12.000.000 créditos federais · prioridade máxima de captura (NF-coalizão)',
+    ability: {
+      name: 'REESCRITA RÍTMICA · 律変',
+      desc: 'Sequências de movimento sincronizado com música em compasso 4/4 a 120+ BPM induzem em Luan um estado de fluxo neural raríssimo após ~20min. Nesse estado, a regeneração celular dele acelera 8×, lesões fecham em horas e — descoberto há 2 anos — o campo bioelétrico em torno dele anula temporariamente chips de obediência dos Marcados que estiverem num raio de ~12m. Quando para, o Marcado decide se quer continuar livre ou voltar.',
+      cost: 'Sair do estado de fluxo abruptamente custa migrânia incapacitante por 6-10h. Música errada (BPM irregular, dissonância forçada) bloqueia a indução. Por isso é fácil neutralizá-lo no papel: basta tocar ruído branco. Difícil na prática: ele dança onde a multidão escolheu a música.',
+    },
+    awakening: {
+      age: 17,
+      year: 2080,
+      event: 'Numa rave clandestina no Distrito Lúmen, rolou batida policial NF disfarçada de operação anti-narcóticos. Eram, na verdade, 5 Marcados infiltrados pra identificar Despertos jovens. Luan já dançava há 3 horas quando o primeiro Marcado começou a chorar no meio da pista e dizer "eu não quero machucar mais ninguém". Os outros 4 caíram em sequência. Luan não entendeu. Continuou dançando até o sol nascer. Foi quando os 5 Marcados, agora livres do chip, contaram tudo. Naquela manhã, o VHYX achou Luan antes da CADEIA.',
+    },
+    history: 'Filho único de uma costureira do Distrito Lúmen — única zona urbana ainda fora do controle direto das NF, protegida por tratado frágil de cultura intangível da ONU. Pai sumiu antes dele nascer. Cresceu vendendo café em festas clandestinas pra ajudar a mãe. Aos 12 já organizava as próprias festas. Aos 15, dançava como ninguém — não por aula, mas porque o corpo dele aprendia sozinho cada movimento que via.\\n\\nApós o despertar aos 17, foi acolhido pela MESTRA AYANO, ex-Operadora VHYX da primeira geração, hoje aposentada no Lúmen. Ayano não treinou Luan: explicou. Disse que o poder dele era único entre todos os Despertos catalogados — não defensivo (como Axel) nem evasivo (como Kai), mas LIBERTADOR. Disse: "Você vai ser o mais caçado de todos. Aprende a desaparecer no meio da multidão."\\n\\nDos 18 aos 24 anos, Luan virou figura mítica do underground latino. Organiza Raves de Liberação itinerantes nas franjas das megacidades — eventos públicos massivos onde dança por horas. Marcados infiltrados em busca de Despertos saem do passe sozinhos, fugem, somem. Já libertou mais de 80 documentados, provavelmente o dobro nos não confirmados. NF Sul-Americana tentou banir as Raves 3 vezes — falharam porque o Lúmen, apesar da pressão, ainda tem proteção da ONU.',
+    arc: 'A NF descobriu o poder dele há 8 meses. Análise científica feita em laboratório com Marcado capturado revelou: a "frequência Luan" pode ser bloqueada por dispositivo sonoro emissor de ruído branco modulado em 13kHz. As 9 nações já encomendaram 3.000 unidades pra distribuição em zonas-alvo. Próxima Rave de Liberação que Luan organizar, será cercada por anti-flow. Ele perde o poder na hora.\\n\\nÚnica saída conhecida: O COMPOSITOR — figura semi-mítica que dizem ter desenvolvido contra-frequência capaz de furar o bloqueio. Ninguém o viu nos últimos 4 anos. Última pista: assinatura sonora encontrada em fita pirata que circulou no Lúmen — mensagem cifrada na batida indicava ponto de encontro nas Montanhas Sem Mapa, ao sul do continente. Luan está se preparando pra ir. Sozinho. Não vai arrastar Axel nem Kai pra uma missão que pode ser ilusão.',
     allies: [
-      { id: 'axelkael', relation: 'Aluno de mobilidade · ensinou Axel a se soltar quando o corpo travou' },
-      { id: 'kairyuen', relation: 'Parceira de cardio-dança · treinam coreografias longas que viraram protocolo oficial' },
+      { id: 'axelkael', relation: 'Aluno de mobilidade · ensinou Axel a se soltar quando o corpo travou aos 26. Em troca, Axel jurou proteção ao Distrito Lúmen. Se as NF atacarem o Lúmen, Axel mata pra defender — Luan sabe disso e fica em paz.' },
+      { id: 'kairyuen', relation: 'Parceira de fluxo · só ela consegue sustentar a respiração necessária pra dançar 4h+ junto sem desidratar. As tomografias mostraram que o flow induzido pelo Luan otimiza o Pulmão Azul dela em 30%. Sinergia involuntária descoberta na Operação Ponte Zero.' },
     ],
     enemies: [
-      { name: 'ACADÊMICOS RÍGIDOS', desc: 'Facção pró-programação linear de treino. Acusam Luan de "vender ilusão". Luan responde dançando.' },
-      { name: 'SILÊNCIO ESTÉRIL', desc: 'Movimento underground que prega treino em silêncio absoluto. Acreditam que música corrompe disciplina. Luan os vê como inimigos do próprio corpo.' },
+      { name: 'COALIZÃO NF', desc: 'Pela primeira vez as 9 nações concordam: Luan é ameaça estratégica nível MÁXIMO. Bounty maior que Axel e Kai SOMADOS porque ele literalmente DESFAZ o investimento da NF em todo Marcado liberado.' },
+      { name: 'OS ANTI-FLOW', desc: 'Esquadrão experimental especializado em silenciar o poder dele. Equipados com emissores de 13kHz. Treinados pra atacar durante Raves. Primeira operação estimada: próximas 6-10 semanas.' },
+      { name: 'CADEIA-4 (SOL-EQUATORIANO)', desc: 'Unidade sul-americana. Vinha respeitando o tratado da ONU sobre o Lúmen — não mais. Ordem interna vazada autoriza incursão direta no distrito.' },
     ],
     actionImages: {
       neutral:      'icons/characters/luansantos/actions/neutral.webp',
@@ -13048,6 +13132,18 @@ function modalCharacterLore(charId) {
       </div>
     </div>`).join('');
 
+  // paragraphs(): aceita histories escritas com \n\n real OU com literal \\n\\n
+  // (4 chars: backslash-n-backslash-n). Normaliza tudo pra quebra real antes
+  // de splittar.
+  const paragraphs = (txt) => (txt || '').replace(/\\n\\n/g, '\n\n').split(/\n\n+/).map(p => `<p>${p}</p>`).join('');
+  const faction = (VHYX_WORLD.factions || []).find(f => f.key === ch.faction);
+  const universeFactions = (VHYX_WORLD.factions || []).map(f => `
+    <div class="vhyx-lore-faction vhyx-lore-faction-${f.side}">
+      <div class="vhyx-lore-faction-name">${f.name}</div>
+      <div class="vhyx-lore-faction-tagline">${f.tagline}</div>
+      <div class="vhyx-lore-faction-desc">${f.desc}</div>
+    </div>`).join('');
+
   openModal(`
     <div class="vhyx-lore-hero" style="background-image: url('${ch.img}')">
       <button class="workout-hero-btn workout-hero-btn-right modal-close" aria-label="Fechar">✕</button>
@@ -13055,25 +13151,53 @@ function modalCharacterLore(charId) {
         <div class="vhyx-lore-eyebrow" style="color:${accent}">▸ CODEX DO OPERADOR · ${ch.slot}</div>
         <h2 class="vhyx-lore-title">${ch.name}</h2>
         <div class="vhyx-lore-subtitle">${ch.title}</div>
+        ${faction ? `<div class="vhyx-lore-faction-pill" style="border-color:${accent}; color:${accent}">${faction.name}</div>` : ''}
         ${ch.mantra ? `<div class="vhyx-lore-mantra">"${ch.mantra}"</div>` : ''}
       </div>
     </div>
     <div class="vhyx-lore-body">
+
+      ${ch.bounty ? `
+      <div class="vhyx-lore-bounty">
+        <span class="vhyx-lore-bounty-label">⚠ FICHA NF</span>
+        <span class="vhyx-lore-bounty-value">${ch.bounty}</span>
+      </div>` : ''}
+
+      ${ch.ability ? `
+      <section class="vhyx-lore-section">
+        <div class="vhyx-lore-section-head" style="border-color:${accent}">
+          <span class="vhyx-lore-section-icon">⚡</span>
+          <h3>Habilidade · ${ch.ability.name}</h3>
+        </div>
+        <p>${ch.ability.desc}</p>
+        ${ch.ability.cost ? `<p class="vhyx-lore-cost"><b>Custo:</b> ${ch.ability.cost}</p>` : ''}
+      </section>` : ''}
+
+      ${ch.awakening ? `
+      <section class="vhyx-lore-section">
+        <div class="vhyx-lore-section-head" style="border-color:${accent}">
+          <span class="vhyx-lore-section-icon">🌀</span>
+          <h3>O Despertar · ${ch.awakening.age} anos · ${ch.awakening.year}</h3>
+        </div>
+        <p>${ch.awakening.event}</p>
+      </section>` : ''}
+
       <section class="vhyx-lore-section">
         <div class="vhyx-lore-section-head" style="border-color:${accent}">
           <span class="vhyx-lore-section-icon">📖</span>
           <h3>História</h3>
         </div>
-        <p>${ch.history || ch.lore || '—'}</p>
+        ${paragraphs(ch.history || ch.lore || '—')}
       </section>
 
-      <section class="vhyx-lore-section">
+      ${ch.arc ? `
+      <section class="vhyx-lore-section vhyx-lore-arc">
         <div class="vhyx-lore-section-head" style="border-color:${accent}">
-          <span class="vhyx-lore-section-icon">⚡</span>
-          <h3>Origem dos Poderes</h3>
+          <span class="vhyx-lore-section-icon">🎯</span>
+          <h3>Arco Atual</h3>
         </div>
-        <p>${ch.powerOrigin || 'Mistério ainda sob investigação do VHYX.'}</p>
-      </section>
+        ${paragraphs(ch.arc)}
+      </section>` : ''}
 
       ${allies ? `
       <section class="vhyx-lore-section">
@@ -13093,6 +13217,19 @@ function modalCharacterLore(charId) {
         <div class="vhyx-lore-relations">${enemies}</div>
       </section>` : ''}
 
+      <section class="vhyx-lore-section vhyx-lore-universe">
+        <div class="vhyx-lore-section-head" style="border-color:var(--vhyx-cyan, #6EEEFF)">
+          <span class="vhyx-lore-section-icon">🌐</span>
+          <h3>O Universo VHYX · ${VHYX_WORLD.era}</h3>
+        </div>
+        <div class="vhyx-lore-event">
+          <div class="vhyx-lore-event-title">${VHYX_WORLD.origin.title}</div>
+          <p>${VHYX_WORLD.origin.body}</p>
+        </div>
+        <div class="vhyx-lore-factions">${universeFactions}</div>
+        <p class="vhyx-lore-protocol-note">${VHYX_WORLD.protocol}</p>
+      </section>
+
       <section class="vhyx-lore-section">
         <div class="vhyx-lore-section-head" style="border-color:${accent}">
           <span class="vhyx-lore-section-icon">⚙</span>
@@ -13102,7 +13239,7 @@ function modalCharacterLore(charId) {
           <dt>Origem</dt><dd>${ch.origin || '—'}</dd>
           <dt>Estilo</dt><dd>${ch.style || '—'}</dd>
           <dt>Idade</dt><dd>${ch.age || '—'} anos</dd>
-          <dt>Categoria</dt><dd>${ch.slot}</dd>
+          <dt>Categoria</dt><dd>${ch.slot} · ${faction?.name || '—'}</dd>
         </dl>
       </section>
     </div>

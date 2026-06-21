@@ -4136,6 +4136,134 @@ html[data-character] .kombat-divider::after {
   color: var(--vhyx-text, #F4F6FA);
 }
 
+/* === Lore expandida: faction pill, bounty, ability cost, universe === */
+.vhyx-lore-faction-pill {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  background: rgba(0,0,0,0.35);
+}
+.vhyx-lore-bounty {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(255,107,107,0.12), transparent);
+  border: 1px solid rgba(255,107,107,0.35);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+}
+.vhyx-lore-bounty-label {
+  color: #FF6B6B;
+  letter-spacing: 0.15em;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.vhyx-lore-bounty-value {
+  color: var(--vhyx-text, #F4F6FA);
+  letter-spacing: 0.05em;
+}
+.vhyx-lore-cost {
+  margin-top: 6px !important;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.03);
+  border-left: 2px solid rgba(255,107,107,0.55);
+  font-size: 12px !important;
+}
+.vhyx-lore-cost b {
+  color: #FF6B6B;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+.vhyx-lore-arc {
+  padding: 12px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--char-accent, #6EEEFF)0F, transparent 70%);
+  border: 1px solid var(--char-accent, #6EEEFF)55;
+}
+
+/* Universo VHYX (worldbuilding compartilhado) */
+.vhyx-lore-universe {
+  margin-top: 4px;
+  padding: 14px;
+  border-radius: 12px;
+  background:
+    repeating-linear-gradient(0deg, rgba(110,238,255,0.02) 0 1px, transparent 1px 4px),
+    rgba(255,255,255,0.025);
+  border: 1px dashed var(--vhyx-cyan, #6EEEFF);
+}
+.vhyx-lore-event {
+  margin: 8px 0 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(0,0,0,0.35);
+}
+.vhyx-lore-event-title {
+  font-family: "Russo One", Impact, sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  color: var(--vhyx-cyan, #6EEEFF);
+  margin-bottom: 6px;
+}
+.vhyx-lore-event p {
+  font-size: 12.5px !important;
+  line-height: 1.55 !important;
+}
+.vhyx-lore-factions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.vhyx-lore-faction {
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.03);
+  border-left: 3px solid;
+}
+.vhyx-lore-faction-inimigo { border-left-color: #FF6B6B; }
+.vhyx-lore-faction-aliado  { border-left-color: var(--vhyx-cyan, #6EEEFF); }
+.vhyx-lore-faction-neutro  { border-left-color: rgba(255,255,255,0.25); }
+.vhyx-lore-faction-name {
+  font-family: "Russo One", Impact, sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: var(--vhyx-text, #F4F6FA);
+}
+.vhyx-lore-faction-tagline {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--vhyx-text-mid, rgba(244,246,250,0.65));
+  margin-top: 2px;
+}
+.vhyx-lore-faction-desc {
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--vhyx-text-mid, rgba(244,246,250,0.7));
+  margin-top: 4px;
+}
+.vhyx-lore-protocol-note {
+  margin-top: 12px !important;
+  padding-top: 10px;
+  border-top: 1px dashed rgba(255,255,255,0.08);
+  font-size: 12px !important;
+  font-style: italic;
+  color: var(--vhyx-text-mid, rgba(244,246,250,0.65)) !important;
+}
+
+/* Múltiplos parágrafos dentro da seção (history, arc) */
+.vhyx-lore-section p + p {
+  margin-top: 10px;
+}
+
 /* Botão LORE COMPLETA — destaque secundário (não compete com DEPLOY) */
 .cs-lore-btn {
   display: block;
