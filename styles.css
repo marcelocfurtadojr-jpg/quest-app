@@ -4136,6 +4136,535 @@ html[data-character] .kombat-divider::after {
   color: var(--vhyx-text, #F4F6FA);
 }
 
+/* ============================================================
+   VHYX HOME TDAH-first — Presença · Capítulo · Missão · Atalhos · Codex
+   ============================================================ */
+
+/* ZONA 1 · PRESENÇA — Operador + voz contextual */
+.vhyx-presence {
+  display: flex;
+  gap: 14px;
+  padding: 16px;
+  background:
+    radial-gradient(80% 60% at 0% 0%, var(--char-accent-soft, rgba(110,238,255,0.08)) 0%, transparent 65%),
+    linear-gradient(180deg, rgba(10,14,26,0.92), rgba(10,14,26,0.78));
+  border-bottom: 1px solid var(--vhyx-border, rgba(255,255,255,0.08));
+  align-items: flex-start;
+}
+.vhyx-presence-portrait {
+  position: relative;
+  width: 88px;
+  height: 88px;
+  flex-shrink: 0;
+  border-radius: 14px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid var(--char-accent, rgba(255,255,255,0.12));
+  background: var(--vhyx-bg, #0A0E1A);
+  box-shadow: 0 6px 18px var(--char-accent-soft, rgba(0,0,0,0.4));
+  transition: transform .15s ease;
+}
+.vhyx-presence-portrait:hover { transform: scale(1.03); }
+.vhyx-presence-portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 12%;
+}
+.vhyx-presence-tier {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-family: "Russo One", Impact, sans-serif;
+  font-size: 11px;
+  color: #FFF;
+  background: var(--tier-c, #6EEEFF);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+.vhyx-presence-tier sub {
+  font-size: 0.65em;
+  margin-left: 1px;
+}
+.vhyx-presence-text {
+  flex: 1;
+  min-width: 0;
+}
+.vhyx-presence-eyebrow {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.25em;
+  color: var(--char-accent-glow, var(--vhyx-cyan, #6EEEFF));
+}
+.vhyx-presence-name {
+  font-family: "Russo One", Impact, sans-serif;
+  font-size: 17px;
+  letter-spacing: 0.06em;
+  color: var(--vhyx-text, #F4F6FA);
+  margin-top: 2px;
+}
+.vhyx-presence-greet {
+  font-size: 13px;
+  color: var(--vhyx-text-mid, rgba(244,246,250,0.72));
+  margin-top: 2px;
+}
+.vhyx-presence-greet b {
+  color: var(--vhyx-text, #F4F6FA);
+}
+.vhyx-presence-voice {
+  font-style: italic;
+  font-size: 12.5px;
+  color: var(--vhyx-text-mid, rgba(244,246,250,0.7));
+  margin-top: 8px;
+  padding-left: 10px;
+  border-left: 2px solid var(--char-accent, var(--vhyx-cyan, #6EEEFF));
+  line-height: 1.5;
+}
+
+/* ZONA 2 · CAPÍTULO — semana narrativa */
+.vhyx-chapter {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--vhyx-border, rgba(255,255,255,0.08));
+}
+.vhyx-chapter-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.vhyx-chapter-num {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  color: var(--vhyx-text-low, rgba(244,246,250,0.45));
+}
+.vhyx-chapter-name {
+  font-family: "Russo One", Impact, sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  color: var(--vhyx-cyan, #6EEEFF);
+}
+.vhyx-chapter-objective {
+  font-size: 12px;
+  color: var(--vhyx-text-mid, rgba(244,246,250,0.72));
+  margin-top: 6px;
+  line-height: 1.55;
+}
+.vhyx-chapter-progress {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
+  gap: 6px;
+}
+.vhyx-chapter-dot {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 0;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--vhyx-border, rgba(255,255,255,0.06));
+  position: relative;
+  transition: background .15s;
+}
+.vhyx-chapter-dot::before {
+  content: "○";
+  font-size: 14px;
+  color: var(--vhyx-text-low, rgba(244,246,250,0.35));
+  line-height: 1;
+}
+.vhyx-chapter-dot.is-done {
+  background: rgba(123,255,176,0.08);
+  border-color: rgba(123,255,176,0.45);
+}
+.vhyx-chapter-dot.is-done::before {
+  content: "✓";
+  color: #7BFFB0;
+}
+.vhyx-chapter-dot.is-today {
+  background: var(--vhyx-cyan-soft, rgba(110,238,255,0.12));
+  border-color: var(--vhyx-cyan, #6EEEFF);
+  box-shadow: 0 0 0 1px var(--vhyx-cyan-glow, rgba(110,238,255,0.3));
+}
+.vhyx-chapter-dot.is-today::before {
+  content: "●";
+  color: var(--vhyx-cyan, #6EEEFF);
+  animation: vhyxBlink 1.6s ease-in-out infinite;
+}
+.vhyx-chapter-dot.is-future::before {
+  color: rgba(255,255,255,0.18);
+}
+.vhyx-chapter-dot-label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: var(--vhyx-text-low, rgba(244,246,250,0.4));
+}
+.vhyx-chapter-dot.is-today .vhyx-chapter-dot-label {
+  color: var(--vhyx-cyan, #6EEEFF);
+}
+.vhyx-chapter-meta {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--vhyx-text-mid, rgba(244,246,250,0.55));
+  margin-top: 10px;
+  text-align: center;
+}
+@keyframes vhyxBlink {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.35; }
+}
+
+/* ZONA 3 · MISSÃO ÚNICA — coração da home */
+.vhyx-mission {
+  padding: 22px 18px;
+  text-align: center;
+  background:
+    radial-gradient(70% 80% at 50% 100%, var(--char-accent-soft, rgba(110,238,255,0.1)) 0%, transparent 65%);
+}
+.vhyx-mission-eyebrow {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  color: var(--char-accent, var(--vhyx-cyan, #6EEEFF));
+}
+.vhyx-mission-title {
+  font-family: "Russo One", Impact, sans-serif;
+  font-size: 22px;
+  letter-spacing: 0.05em;
+  color: var(--vhyx-text, #F4F6FA);
+  margin: 6px 0 4px;
+  text-shadow: 0 0 18px var(--char-accent-soft, rgba(0,0,0,0.6));
+}
+.vhyx-mission-rest  { color: #B7B5FF; }
+.vhyx-mission-done  { color: #7BFFB0; }
+.vhyx-mission-free  { color: var(--vhyx-cyan, #6EEEFF); }
+.vhyx-mission-sub {
+  font-size: 12.5px;
+  color: var(--vhyx-text-mid, rgba(244,246,250,0.65));
+  margin: 0 0 14px;
+}
+.vhyx-mission-cta {
+  display: inline-block;
+  width: 100%;
+  padding: 16px;
+  border-radius: 14px;
+  border: 0;
+  background: linear-gradient(135deg, var(--char-accent, #6EEEFF), var(--char-accent-deep, #2A8AAF));
+  color: var(--vhyx-bg, #0A0E1A);
+  font-family: "Russo One", Impact, sans-serif;
+  font-size: 16px;
+  letter-spacing: 0.18em;
+  cursor: pointer;
+  box-shadow:
+    0 8px 26px var(--char-accent-glow, rgba(110,238,255,0.55)),
+    inset 0 -3px 0 rgba(0,0,0,0.22),
+    inset 0 1px 0 rgba(255,255,255,0.3);
+  transition: transform .12s ease;
+}
+.vhyx-mission-cta:hover, .vhyx-mission-cta:active {
+  transform: scale(1.02);
+}
+.vhyx-mission-alt {
+  display: block;
+  width: 100%;
+  background: transparent;
+  border: 0;
+  margin-top: 10px;
+  padding: 8px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  color: var(--vhyx-text-low, rgba(244,246,250,0.4));
+  cursor: pointer;
+  text-transform: uppercase;
+}
+.vhyx-mission-alt:hover {
+  color: var(--vhyx-text-mid, rgba(244,246,250,0.7));
+}
+
+/* ZONA 4 · ATALHOS — 3 grandes botões */
+.vhyx-quick {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  padding: 0 14px 14px;
+}
+.vhyx-quick-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 14px 6px;
+  border-radius: 12px;
+  border: 1px solid var(--vhyx-border, rgba(255,255,255,0.08));
+  background: var(--vhyx-bg-card, #131826);
+  cursor: pointer;
+  transition: background .15s, transform .12s, border-color .15s;
+}
+.vhyx-quick-btn:hover, .vhyx-quick-btn:active {
+  background: var(--vhyx-bg-alt, #1A1F30);
+  border-color: var(--char-accent, var(--vhyx-cyan, #6EEEFF));
+  transform: translateY(-2px);
+}
+.vhyx-quick-icon {
+  font-size: 26px;
+  line-height: 1;
+}
+.vhyx-quick-label {
+  font-family: "Russo One", Impact, sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: var(--vhyx-text, #F4F6FA);
+}
+
+/* Trigger Codex + Mundo VHYX */
+.vhyx-codex-trigger-wrap, .vhyx-world-trigger-wrap {
+  padding: 0 14px 8px;
+}
+.vhyx-codex-trigger, .vhyx-world-trigger {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--vhyx-border, rgba(255,255,255,0.08));
+  background: var(--vhyx-bg-card, #131826);
+  font-family: "Russo One", Impact, sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.15em;
+  color: var(--vhyx-text, #F4F6FA);
+  cursor: pointer;
+  transition: background .15s;
+}
+.vhyx-codex-trigger:hover, .vhyx-world-trigger:hover {
+  background: var(--vhyx-bg-alt, #1A1F30);
+}
+.vhyx-codex-trigger-meta, .vhyx-world-trigger-meta {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  color: var(--vhyx-text-low, rgba(244,246,250,0.45));
+  text-transform: lowercase;
+}
+.vhyx-world-trigger {
+  border-color: rgba(110,238,255,0.35);
+  color: var(--vhyx-cyan, #6EEEFF);
+}
+
+/* Daily missions compactas na home */
+.vhyx-dailies {
+  margin: 0 14px 12px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: var(--vhyx-bg-card, #131826);
+  border: 1px solid var(--vhyx-border, rgba(255,255,255,0.08));
+}
+.vhyx-dailies-head {
+  display: flex;
+  justify-content: space-between;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  color: var(--vhyx-cyan, #6EEEFF);
+  margin-bottom: 8px;
+}
+.vhyx-dailies-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.vhyx-daily-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.03);
+  border: 0;
+  text-align: left;
+  cursor: pointer;
+  width: 100%;
+  color: var(--vhyx-text, #F4F6FA);
+  font-size: 12.5px;
+}
+.vhyx-daily-row.is-done {
+  opacity: 0.55;
+  text-decoration: line-through;
+}
+.vhyx-daily-check {
+  font-family: "Russo One", Impact, sans-serif;
+  font-size: 14px;
+  color: var(--vhyx-cyan, #6EEEFF);
+  width: 18px;
+  flex-shrink: 0;
+}
+.vhyx-daily-row.is-done .vhyx-daily-check { color: #7BFFB0; }
+.vhyx-daily-text {
+  flex: 1;
+  min-width: 0;
+}
+.vhyx-daily-xp {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  color: var(--vhyx-text-mid, rgba(244,246,250,0.55));
+}
+
+/* MODO NÉVOA */
+.vhyx-fog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 20px 18px 14px;
+  border-bottom: 1px dashed rgba(255,183,197,0.35);
+  background: linear-gradient(180deg, rgba(183,181,255,0.08), transparent);
+}
+.vhyx-fog-eyebrow {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  color: #B7B5FF;
+}
+.vhyx-fog-title {
+  font-family: "Russo One", Impact, sans-serif;
+  font-size: 20px;
+  letter-spacing: 0.05em;
+  color: var(--vhyx-text, #F4F6FA);
+  margin: 4px 0;
+}
+.vhyx-fog-sub {
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--vhyx-text-mid, rgba(244,246,250,0.72));
+  margin: 0;
+}
+.vhyx-fog-body {
+  padding: 16px;
+  background: var(--vhyx-bg, #0A0E1A);
+}
+.vhyx-fog-question {
+  font-family: "Russo One", Impact, sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: var(--vhyx-text, #F4F6FA);
+  margin-bottom: 8px;
+  margin-top: 14px;
+}
+.vhyx-fog-question:first-child { margin-top: 0; }
+.vhyx-fog-choices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.vhyx-fog-btn {
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid var(--vhyx-border, rgba(255,255,255,0.1));
+  background: rgba(255,255,255,0.03);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--vhyx-text-mid, rgba(244,246,250,0.7));
+  cursor: pointer;
+  transition: all .15s ease;
+}
+.vhyx-fog-btn.is-on {
+  background: rgba(183,181,255,0.15);
+  border-color: #B7B5FF;
+  color: #FFF;
+}
+.vhyx-fog-save {
+  width: 100%;
+  padding: 14px;
+  margin-top: 20px;
+  border-radius: 12px;
+  border: 0;
+  background: linear-gradient(135deg, #B7B5FF, #6B5FB8);
+  color: var(--vhyx-bg, #0A0E1A);
+  font-family: "Russo One", Impact, sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.2em;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(183,181,255,0.45);
+}
+.vhyx-fog-footer {
+  margin-top: 12px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  color: var(--vhyx-text-low, rgba(244,246,250,0.45));
+  text-align: center;
+  line-height: 1.5;
+}
+
+/* MODAL CODEX */
+.vhyx-codex-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 22px 18px 16px;
+  background: linear-gradient(180deg, rgba(0,0,0,0.4), transparent);
+  border-bottom: 1px solid var(--vhyx-border, rgba(255,255,255,0.08));
+}
+.vhyx-codex-eyebrow {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  color: var(--vhyx-cyan, #6EEEFF);
+}
+.vhyx-codex-title {
+  font-family: "Russo One", Impact, sans-serif;
+  font-size: 22px;
+  letter-spacing: 0.06em;
+  color: var(--vhyx-text, #F4F6FA);
+  margin: 4px 0 2px;
+}
+.vhyx-codex-sub {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--vhyx-text-mid, rgba(244,246,250,0.65));
+}
+.vhyx-codex-body {
+  padding: 16px;
+  background: var(--vhyx-bg, #0A0E1A);
+  overflow-y: auto;
+  max-height: 78vh;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.vhyx-codex-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.vhyx-codex-section-head {
+  font-family: "Russo One", Impact, sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  color: var(--vhyx-cyan, #6EEEFF);
+  border-bottom: 1px solid var(--vhyx-border, rgba(255,255,255,0.08));
+  padding-bottom: 6px;
+}
+.vhyx-codex-tier-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.vhyx-codex-next {
+  margin-left: auto;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--vhyx-text-mid, rgba(244,246,250,0.6));
+}
+
 /* === FAT LOSS COACH — análise contextual do histórico === */
 .vhyx-fatloss-card {
   padding: 14px !important;

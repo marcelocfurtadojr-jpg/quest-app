@@ -8698,7 +8698,9 @@ function attachCharacterSelectHandlers() {
 
 // ----- 6.1 Dashboard ----------------------------------------
 
-function viewDashboard() {
+// LEGACY — versão pré-redesign TDAH-first. Mantido pra referência/rollback.
+// Routing aponta pra viewDashboard (novo) abaixo.
+function viewDashboardLegacy() {
   const u = state.user;
   const rxp = u.rankXP || 0;
   const wxp = weeklyXP();
@@ -9285,6 +9287,478 @@ function viewDashboard() {
   <section class="px-4 mt-6 pb-2 text-center">
     <div class="font-display text-[10px] tracking-[0.32em]" style="color: var(--vhyx-cyan-deep, #2A8AAF); opacity: 0.7;">${theme.labels.footer}</div>
   </section>` : ''}
+  `;
+}
+
+// ====================================================================
+// VHYX — HOME TDAH-first (lore-driven)
+// Princípios: carga cognitiva mínima · reforço imediato · urgência
+// narrativa > prazo abstrato · body-doubling permanente · modo névoa
+// pra dias ruins (anti-culpa). 4 zonas verticais, sem scroll exigido.
+// ====================================================================
+
+// 12 capítulos narrativos rotativos. Cada semana o app entra num arco.
+// O capítulo orienta a "missão da semana" — não muda funcionalidade, só
+// dá frame narrativo que mantém engajamento (em vez de "semana 14" seca,
+// vira "CAPÍTULO 14 · INFILTRAÇÃO").
+const VHYX_CHAPTERS = [
+  { name: 'INFILTRAÇÃO',    objective: 'Manter rotina enquanto CADEIA não percebe. Discreto. Constante.' },
+  { name: 'RECUPERAÇÃO',    objective: 'Voltar do recuo. Reconstruir a base sem afobar.' },
+  { name: 'ESCALADA',       objective: 'Subir uma carga, um tempo, uma rep. Não dois.' },
+  { name: 'FORJA',          objective: 'Densidade. Treino pesado, alimentação cheia, sono guardado.' },
+  { name: 'EMBOSCADA',      objective: 'Provocar progresso onde estagnou. Mudar variável de propósito.' },
+  { name: 'AURORA',         objective: 'Novo ciclo. Resetar foco, plantar 1 hábito novo discreto.' },
+  { name: 'FRATURA',        objective: 'Algo vai quebrar (sono, dieta, treino). Aceitar e proteger as outras duas pontas.' },
+  { name: 'RECONSTRUÇÃO',   objective: 'Voltar ao protocolo após a fratura. Sem voltar pro topo de uma vez.' },
+  { name: 'CAÇADA',         objective: 'Métrica única em foco. Tudo apoia uma melhoria mensurável.' },
+  { name: 'SILÊNCIO',       objective: 'Semana descansada de propósito. Só essencial. Operador em modo conservação.' },
+  { name: 'TRAVESSIA',      objective: 'Atravessar um ponto baixo. Bater o mínimo, todo dia.' },
+  { name: 'APROXIMAÇÃO',    objective: 'Cada drill aproxima do objetivo de longo prazo. Visualize.' },
+];
+
+/** Retorna o capítulo atual baseado em semana do ano + offset por user.
+ *  Determinístico — muda 1× por semana (segunda-feira). */
+function currentChapter() {
+  // Semana ISO 8601: dias / 7 desde epoch ajustado pra quinta-feira
+  const now = new Date();
+  const epoch = new Date(2024, 0, 1); // 1 jan 2024 = referência
+  const weeks = Math.floor((now - epoch) / (7 * 24 * 60 * 60 * 1000));
+  const idx = ((weeks % VHYX_CHAPTERS.length) + VHYX_CHAPTERS.length) % VHYX_CHAPTERS.length;
+  return { ...VHYX_CHAPTERS[idx], number: weeks + 1, weekIndex: idx };
+}
+
+/** Calcula progresso da semana corrente (dias com treino OU registro).
+ *  Retorna { done: n, total: 7, daysStatus: [✓|◯|today] x 7 }. */
+function weekProgress() {
+  const now = new Date();
+  const dayOfWeek = now.getDay(); // 0=dom
+  const monday = new Date(now);
+  monday.setDate(now.getDate() - ((dayOfWeek + 6) % 7));
+  monday.setHours(0, 0, 0, 0);
+  const days = [];
+  let done = 0;
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    const iso = isoDate(d);
+    const isToday = iso === todayISO();
+    const isFuture = d > now && !isToday;
+    const log = (state.dailyLogs || []).find(l => l.date === iso);
+    const hasActivity = log && (
+      log.training?.done ||
+      (log.meals && log.meals.length > 0) ||
+      (log.sleep?.hours > 0) ||
+      log.fogMode
+    );
+    if (hasActivity && !isToday) done++;
+    days.push({ iso, isToday, isFuture, hasActivity: !!hasActivity });
+  }
+  return { done, total: 7, days };
+}
+
+/** Saudação contextual do Operador — não-genérica. Combina hora + última
+ *  atividade + adesão da semana pra produzir uma linha curta com urgência
+ *  narrativa. Body-doubling: parece que o personagem está te observando. */
+function operatorVoiceLine() {
+  const ch = activeCharacter();
+  if (!ch) return null;
+  const h = new Date().getHours();
+  const wp = weekProgress();
+  const lastLog = (state.dailyLogs || []).slice().reverse().find(l => l.date !== todayISO() && (l.training?.done || (l.meals && l.meals.length)));
+  const todayLog = (state.dailyLogs || []).find(l => l.date === todayISO());
+  const daysSince = lastLog ? Math.round((Date.now() - new Date(lastLog.date).getTime()) / 86400000) : 999;
+  const isStreak = wp.done >= 3;
+  const isReturning = daysSince >= 3 && daysSince <= 7;
+  const isLongAway = daysSince > 7;
+
+  // Tabela voice lines por contexto. Curta. Sem emoji estranho.
+  if (todayLog?.fogMode) {
+    return 'Operador em recolhimento. VHYX entende. Volta quando voltar.';
+  }
+  if (isLongAway) {
+    return `${daysSince} dias fora. Sem julgamento. Bom retorno.`;
+  }
+  if (isReturning) {
+    return 'Bom te ver de novo. Não força — só registra hoje.';
+  }
+  if (isStreak && h < 12) {
+    return `${wp.done} dias seguidos. CADEIA já percebeu o padrão.`;
+  }
+  if (isStreak) {
+    return `${wp.done} dias firmes essa semana. Mantém leve.`;
+  }
+  if (h < 6) {
+    return 'Cedo demais. Só registra se já comeu ou treinou.';
+  }
+  if (h < 12) {
+    return 'Manhã é janela de protocolo. Pequeno passo conta.';
+  }
+  if (h < 18) {
+    return 'Hoje precisamos de você. Uma coisa basta.';
+  }
+  if (h < 22) {
+    return 'Ainda dá. Drill curto vale mais que zero.';
+  }
+  return 'Final do dia. Fecha o registro e descansa.';
+}
+
+/** Calcula a "missão de hoje" — única, contextual, baseada no plano da
+ *  semana. Retorna { kind, label, action, sub, alt }. */
+function missionOfTheDay() {
+  const todayKey = dayKeyFor();
+  const plan = state.user?.weeklyPlan || {};
+  const planned = plan[todayKey] || 'descanso';
+  const isRest = planned === 'descanso' || planned === 'Descanso';
+  const todayLog = (state.dailyLogs || []).find(l => l.date === todayISO());
+  const trainingDone = !!todayLog?.training?.done;
+  const hasLib = !isRest && (typeof EXERCISE_LIBRARY !== 'undefined') && EXERCISE_LIBRARY[planned];
+
+  if (trainingDone) {
+    return {
+      kind: 'done',
+      label: 'DRILL CONCLUÍDO',
+      sub: `${planned} · registrado`,
+      action: '↻ REGISTRAR DE NOVO',
+      alt: null,
+    };
+  }
+  if (isRest) {
+    return {
+      kind: 'rest',
+      label: 'DIA DE DESCANSO',
+      sub: 'Recuperação ativa. Caminhada leve se quiser.',
+      action: '✓ MARCAR DIA DE DESCANSO',
+      alt: 'Trocar pra treino mesmo assim',
+    };
+  }
+  if (hasLib) {
+    return {
+      kind: 'train',
+      label: planned,
+      sub: 'Drill do dia — operador em campo.',
+      action: '▶ INICIAR DRILL',
+      alt: 'Não consigo hoje (modo névoa)',
+    };
+  }
+  return {
+    kind: 'free',
+    label: planned || 'TREINO LIVRE',
+    sub: 'Sem template — você define os exercícios.',
+    action: '▶ INICIAR',
+    alt: 'Não consigo hoje (modo névoa)',
+  };
+}
+
+/** Modal MODO NÉVOA — saída honesta pra dias ruins. 3 escolhas binárias,
+ *  zero culpa, marca o dia como "registro válido" sem perder streak. */
+function modalFogMode() {
+  const todayLog = (state.dailyLogs || []).find(l => l.date === todayISO()) || { date: todayISO(), meals: [] };
+  const existing = todayLog.fogMode || {};
+  openModal(`
+    <header class="vhyx-fog-header">
+      <div>
+        <div class="vhyx-fog-eyebrow">▸ MODO NÉVOA</div>
+        <h2 class="vhyx-fog-title">Operador em recolhimento</h2>
+        <p class="vhyx-fog-sub">Dias ruins existem. VHYX entende. Faz só o mínimo. Marca pra eu saber que tá vivo.</p>
+      </div>
+      <button class="workout-hero-btn workout-hero-btn-right modal-close" aria-label="Fechar">✕</button>
+    </header>
+    <div class="vhyx-fog-body">
+      <div class="vhyx-fog-question">Bebeu água hoje?</div>
+      <div class="vhyx-fog-choices">
+        <button class="vhyx-fog-btn ${existing.water === true ? 'is-on' : ''}" data-fog="water" data-val="true">✓ sim</button>
+        <button class="vhyx-fog-btn ${existing.water === false ? 'is-on' : ''}" data-fog="water" data-val="false">— pouco</button>
+      </div>
+      <div class="vhyx-fog-question">Respirou fundo em algum momento?</div>
+      <div class="vhyx-fog-choices">
+        <button class="vhyx-fog-btn ${existing.breath === true ? 'is-on' : ''}" data-fog="breath" data-val="true">✓ sim</button>
+        <button class="vhyx-fog-btn ${existing.breath === false ? 'is-on' : ''}" data-fog="breath" data-val="false">— não</button>
+      </div>
+      <div class="vhyx-fog-question">Saiu da cama hoje?</div>
+      <div class="vhyx-fog-choices">
+        <button class="vhyx-fog-btn ${existing.outBed === true ? 'is-on' : ''}" data-fog="outBed" data-val="true">✓ sim</button>
+        <button class="vhyx-fog-btn ${existing.outBed === false ? 'is-on' : ''}" data-fog="outBed" data-val="false">— ainda não</button>
+      </div>
+      <button class="vhyx-fog-save" id="vhyx-fog-save">REGISTRAR DIA</button>
+      <p class="vhyx-fog-footer">Esse registro conta como dia válido no protocolo. Você não perde streak emocional.</p>
+    </div>
+  `);
+  // Handlers binários
+  const fog = { ...existing };
+  document.querySelectorAll('[data-fog]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const key = e.currentTarget.dataset.fog;
+      const val = e.currentTarget.dataset.val === 'true';
+      fog[key] = val;
+      // Visual on/off no grupo
+      document.querySelectorAll(`[data-fog="${key}"]`).forEach(b => b.classList.remove('is-on'));
+      e.currentTarget.classList.add('is-on');
+    });
+  });
+  document.getElementById('vhyx-fog-save')?.addEventListener('click', () => {
+    let log = state.dailyLogs.find(l => l.date === todayISO());
+    if (!log) {
+      log = { date: todayISO(), training: { type: 'névoa', done: false }, protein: { grams: 0, hit: false }, sleep: { hours: 0 }, reading: { minutes: 0 }, steps: 0, buffs: [], notes: '', meals: [], xp: 0 };
+      state.dailyLogs.push(log);
+    }
+    log.fogMode = fog;
+    saveState();
+    closeModal();
+    toast('Modo névoa registrado. Dia conta.');
+    vibrate(15);
+    render();
+  });
+}
+
+/** Modal CODEX — agrega tudo secundário que saiu da home: POWER CORE,
+ *  Elo Card / TIER, Stats Sheet (atributos), Field Log e Arsenal de
+ *  ferramentas (sleep/kpop/rewards/config). Acesso por toque no botão
+ *  ⌄ CODEX da home. */
+function modalCodex() {
+  const u = state.user;
+  const attrs = u.attributes || {};
+  const rxp = u.rankXP || 0;
+  const r = rankFromXP(rxp);
+  const nextIdx = RANKS.findIndex(x => x.key === r.key) + 1;
+  const next = RANKS[nextIdx] || null;
+  const tier = tierFromRank(r);
+  const nextTier = next ? tierFromRank(next) : null;
+  const progress = next ? Math.min(100, ((rxp - r.threshold) / (next.threshold - r.threshold)) * 100) : 100;
+  const ranked = ATTRIBUTES.map(a => ({ a, info: attrInfo(attrs[a.key] || 0) })).sort((x, y) => y.info.level - x.info.level);
+  const totalPower = ranked.reduce((s, x) => s + x.info.level, 0);
+  const top = ranked[0];
+  const dominant = top.info.level > 0 ? top.a : null;
+  const accentC = dominant?.color || '#6EEEFF';
+  const ch = activeCharacter();
+  const battleLog = (u.battleLog || []).slice(0, 8);
+
+  openModal(`
+    <header class="vhyx-codex-header">
+      <div>
+        <div class="vhyx-codex-eyebrow">▸ CODEX DO OPERADOR</div>
+        <h2 class="vhyx-codex-title">${ch?.name || 'OPERADOR'}</h2>
+        <div class="vhyx-codex-sub">${tier.letter}${tier.div ? ` ${tier.div}` : ''} · ${tier.label} · ${totalPower} PWR</div>
+      </div>
+      <button class="workout-hero-btn workout-hero-btn-right modal-close" aria-label="Fechar">✕</button>
+    </header>
+    <div class="vhyx-codex-body">
+
+      <section class="vhyx-codex-section">
+        <div class="vhyx-codex-section-head">⚡ POWER LEVEL</div>
+        <div class="vhyx-power-core" style="--pwr-accent:${accentC}">
+          <div class="vhyx-power-core-orb">
+            <div class="vhyx-power-core-value">${totalPower}</div>
+            <div class="vhyx-power-core-label">PWR</div>
+          </div>
+          <div class="vhyx-power-core-meta">
+            <div class="vhyx-power-core-eyebrow">${dominant ? `Foco em ${dominant.name}` : 'Multidisciplinar'}</div>
+            <div class="vhyx-power-core-title">${tier.label}</div>
+            <div class="vhyx-power-core-sub">${ranked.filter(x => x.info.level > 0).length}/${ATTRIBUTES.length} atributos ativos</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="vhyx-codex-section">
+        <div class="vhyx-codex-section-head">◆ TIER · ${tier.letter}${tier.div ? ` ${tier.div}` : ''}</div>
+        <div class="vhyx-codex-tier-row">
+          <span class="vhyx-tier-letter" style="color:${r.color}">${tier.letter}${tier.div ? ` ${tier.div}` : ''}</span>
+          <span class="vhyx-tier-label">${tier.label}</span>
+          <span class="vhyx-codex-next">${next ? `→ ${nextTier.letter}${nextTier.div ? ` ${nextTier.div}` : ''} · ${next.threshold - rxp} XP` : '◆ APEX'}</span>
+        </div>
+        <div class="xp-track is-kombat"><div class="xp-fill" style="width:${progress}%"></div></div>
+        <div class="elo-stats" style="margin-top:6px">
+          <span>TOTAL <b>${rxp}</b></span>
+          <span class="elo-stats-sep">·</span>
+          <span>SEM <b>${weeklyXP()}</b></span>
+        </div>
+      </section>
+
+      <section class="vhyx-codex-section">
+        <div class="vhyx-codex-section-head">▸ STATS SHEET</div>
+        <div class="vhyx-stats-list">
+          ${ATTRIBUTES.map(a => {
+            const xp = attrs[a.key] || 0;
+            const info = attrInfo(xp);
+            const t = attrTierFor(a.key, info.level);
+            const src = getAttrImageFor(a.key, ch?.id);
+            return `
+            <button class="vhyx-stat-row attr-tile" data-attr="${a.key}" style="--row-accent:${a.color}">
+              <div class="vhyx-stat-thumb">
+                <img src="${src}" alt="${a.name}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'" />
+                <div class="vhyx-stat-thumb-fallback" data-fallback="${a.icon}">${a.icon}</div>
+              </div>
+              <div class="vhyx-stat-body">
+                <div class="vhyx-stat-top">
+                  <span class="vhyx-stat-name">${a.name}</span>
+                  <span class="vhyx-stat-lvl">LVL ${info.level}</span>
+                </div>
+                <div class="vhyx-stat-bar"><div class="vhyx-stat-fill" style="width:${info.pctToNext}%; background:${a.color}"></div></div>
+                <div class="vhyx-stat-bot">
+                  <span class="vhyx-stat-tier">${t.current}</span>
+                  <span class="vhyx-stat-pct">${Math.round(info.pctToNext)}%</span>
+                </div>
+              </div>
+            </button>`;
+          }).join('')}
+        </div>
+      </section>
+
+      ${battleLog.length ? `
+      <section class="vhyx-codex-section">
+        <div class="vhyx-codex-section-head">▸ FIELD LOG · ÚLTIMAS ${battleLog.length} OPS</div>
+        <div class="vhyx-field-log-body" style="padding:0">
+          ${battleLog.map(ev => `
+            <div class="vhyx-field-log-entry ${ev.kind === 'pr' ? 'is-pr' : ev.kind === 'loss' ? 'is-loss' : ''}">
+              <span class="vhyx-field-log-time">${timeAgoShort(new Date(ev.ts))}</span>
+              <span class="vhyx-field-log-text">${ev.text}</span>
+            </div>
+          `).join('')}
+        </div>
+      </section>` : ''}
+
+      <section class="vhyx-codex-section">
+        <div class="vhyx-codex-section-head">⊙ ARSENAL</div>
+        <div class="grid grid-cols-2 gap-2">
+          ${quickTile('sleep',   'Sono',         I.moon,  'modal')}
+          ${quickTile('choreo',  'Dança K-pop',  I.spark, 'modal')}
+          ${quickTile('rewards', 'Recompensas',  I.gift,  'modal')}
+          ${quickTile('config',  'Configurações',I.cog)}
+        </div>
+      </section>
+
+    </div>
+  `);
+}
+
+/** Home TDAH-first · lore-driven. Substitui o legacy. */
+function viewDashboard() {
+  const u = state.user;
+  const ch = activeCharacter();
+  const chapter = currentChapter();
+  const wp = weekProgress();
+  const voice = operatorVoiceLine();
+  const mission = missionOfTheDay();
+  const playerName = (u.name && u.name.trim() && u.name !== 'Jogador') ? u.name : 'Operador';
+  const todayLog = (state.dailyLogs || []).find(l => l.date === todayISO());
+  const dayXP = todayLog?.xp || 0;
+  const rxp = u.rankXP || 0;
+  const r = rankFromXP(rxp);
+  const tier = tierFromRank(r);
+
+  // dayKey hoje → bullet do dia da semana
+  const todayKey = dayKeyFor();
+  const dayLabels = ['DOM','SEG','TER','QUA','QUI','SEX','SAB'];
+  const todayIdx = new Date().getDay();
+
+  return `
+  <!-- ZONA 1: PRESENÇA — quem está com você + voz contextual -->
+  <section class="vhyx-presence">
+    <div class="vhyx-presence-portrait" data-action="open-codex" title="Abrir Codex">
+      ${ch?.img ? `<img src="${ch.img}" alt="${ch.name}" loading="eager" />` : ''}
+      <div class="vhyx-presence-tier" style="--tier-c:${r.color}">${tier.letter}${tier.div ? `<sub>${tier.div}</sub>` : ''}</div>
+    </div>
+    <div class="vhyx-presence-text">
+      <div class="vhyx-presence-eyebrow">VHYX · ${ch?.slot || ''} EM CAMPO</div>
+      <div class="vhyx-presence-name">${ch?.name || 'OPERADOR'}</div>
+      <div class="vhyx-presence-greet">Olá, <b>${playerName}</b>.</div>
+      ${voice ? `<div class="vhyx-presence-voice">"${voice}"</div>` : ''}
+    </div>
+  </section>
+
+  <!-- ZONA 2: CAPÍTULO DA SEMANA -->
+  <section class="vhyx-chapter">
+    <div class="vhyx-chapter-head">
+      <div class="vhyx-chapter-num">CAPÍTULO ${chapter.number}</div>
+      <div class="vhyx-chapter-name">▸ ${chapter.name}</div>
+    </div>
+    <div class="vhyx-chapter-objective">${chapter.objective}</div>
+    <div class="vhyx-chapter-progress">
+      ${wp.days.map((d, i) => `
+        <div class="vhyx-chapter-dot ${d.hasActivity ? 'is-done' : ''} ${d.isToday ? 'is-today' : ''} ${d.isFuture ? 'is-future' : ''}"
+             title="${dayLabels[(i + 1) % 7]} ${d.iso}">
+          <span class="vhyx-chapter-dot-label">${dayLabels[(i + 1) % 7]}</span>
+        </div>
+      `).join('')}
+    </div>
+    <div class="vhyx-chapter-meta">${wp.done}/${wp.total} dias · ${dayXP}/${DAILY_XP_CAP} XP hoje</div>
+  </section>
+
+  <!-- ZONA 3: MISSÃO ÚNICA DO DIA -->
+  <section class="vhyx-mission">
+    <div class="vhyx-mission-eyebrow">▸ MISSÃO DE HOJE · ${dayLabels[todayIdx]}</div>
+    <h2 class="vhyx-mission-title vhyx-mission-${mission.kind}">${mission.label}</h2>
+    <p class="vhyx-mission-sub">${mission.sub}</p>
+    <button class="vhyx-mission-cta" id="vhyx-mission-cta" data-mission-kind="${mission.kind}">
+      ${mission.action}
+    </button>
+    ${mission.alt ? `
+    <button class="vhyx-mission-alt" id="vhyx-mission-alt">⊘ ${mission.alt}</button>` : ''}
+  </section>
+
+  <!-- ZONA 4: ATALHOS DE REGISTRO -->
+  <section class="vhyx-quick">
+    <button class="vhyx-quick-btn" data-quick-go="treino">
+      <span class="vhyx-quick-icon">💪</span>
+      <span class="vhyx-quick-label">TREINO</span>
+    </button>
+    <button class="vhyx-quick-btn" data-quick-go="nutri">
+      <span class="vhyx-quick-icon">🥩</span>
+      <span class="vhyx-quick-label">NUTRI</span>
+    </button>
+    <button class="vhyx-quick-btn" data-quick-go="sono">
+      <span class="vhyx-quick-icon">🌙</span>
+      <span class="vhyx-quick-label">SONO</span>
+    </button>
+  </section>
+
+  <!-- TRIGGER CODEX (tudo secundário) -->
+  <section class="vhyx-codex-trigger-wrap">
+    <button class="vhyx-codex-trigger" data-action="open-codex">
+      <span>⌄ CODEX</span>
+      <span class="vhyx-codex-trigger-meta">stats · atributos · log · arsenal</span>
+    </button>
+  </section>
+
+  <!-- Trigger MUNDO VHYX (lore + crônica) -->
+  <section class="vhyx-world-trigger-wrap">
+    <button class="vhyx-world-trigger" data-action="open-world">
+      <span>🌐 MUNDO VHYX</span>
+      <span class="vhyx-world-trigger-meta">lore · vilões · facções</span>
+    </button>
+  </section>
+
+  <!-- Daily missions abaixo (compacto) -->
+  ${(() => {
+    const da = state.quests.dailyAssigned;
+    const totalQ = da.items.length;
+    const doneQ = da.completed.length;
+    if (!totalQ) return '';
+    return `
+    <section class="vhyx-dailies">
+      <div class="vhyx-dailies-head">
+        <span>▸ BRIEFING</span>
+        <span class="vhyx-dailies-count">${doneQ}/${totalQ}</span>
+      </div>
+      <div class="vhyx-dailies-list">
+        ${da.items.slice(0, 3).map(q => {
+          const done = da.completed.includes(q.id);
+          return `
+          <button class="vhyx-daily-row ${done ? 'is-done' : ''}" data-quest-toggle="${q.id}">
+            <span class="vhyx-daily-check">${done ? '✓' : '○'}</span>
+            <span class="vhyx-daily-text">${q.text}</span>
+            <span class="vhyx-daily-xp">+${q.xp || 1}</span>
+          </button>`;
+        }).join('')}
+      </div>
+    </section>`;
+  })()}
+
+  <!-- FINISH IT -->
+  <section class="px-4 mt-3 mb-2">
+    <button id="open-log" class="q-btn q-btn-finish w-full py-3 text-sm">
+      ✓ ${getTheme(state).labels?.finishBtn || 'FECHAR OPERAÇÃO'}
+    </button>
+  </section>
   `;
 }
 
@@ -15157,6 +15631,70 @@ function attachHandlers() {
   document.getElementById('open-rewards-daily')?.addEventListener('click', () => { vibrate(8); modalRewards(); });
 
   document.getElementById('daily-spin-btn')?.addEventListener('click', () => spinDailyWheel());
+
+  // === VHYX home (TDAH-first) handlers ====================
+  // Trigger Codex (portrait + botão dedicado) → abre modal codex
+  document.querySelectorAll('[data-action="open-codex"]').forEach((btn) => {
+    btn.onclick = () => { vibrate(8); modalCodex(); };
+  });
+  // Trigger Mundo VHYX direto da home
+  document.querySelectorAll('[data-action="open-world"]').forEach((btn) => {
+    btn.onclick = () => { vibrate(8); modalUniverseVHYX(); };
+  });
+  // Missão CTA — abre treino se train, marca descanso se rest, registra de novo se done
+  document.getElementById('vhyx-mission-cta')?.addEventListener('click', () => {
+    const kind = document.getElementById('vhyx-mission-cta').dataset.missionKind;
+    vibrate(12);
+    if (kind === 'train' || kind === 'free' || kind === 'done') {
+      // dispara o today-workout flow
+      const planned = plannedToday();
+      const tpl = (typeof EXERCISE_LIBRARY !== 'undefined') ? EXERCISE_LIBRARY[planned] : null;
+      if (tpl && tpl.length) {
+        const start = { date: todayISO(), exercises: tpl.map(t => ({ name: t.name, sets: [{reps:'',weight:'',technique:t.defaultTech||''},{reps:'',weight:'',technique:''},{reps:'',weight:'',technique:''}] })) };
+        modalWorkoutSession(planned, todayISO(), start);
+      } else {
+        modalDailyLog();
+      }
+    } else if (kind === 'rest') {
+      // marca descanso explicitamente — abre daily log que tem o toggle
+      modalDailyLog();
+    }
+  });
+  // Alternativa "modo névoa"
+  document.getElementById('vhyx-mission-alt')?.addEventListener('click', () => {
+    vibrate(8);
+    modalFogMode();
+  });
+  // Atalhos de tab
+  document.querySelectorAll('[data-quick-go]').forEach((btn) => {
+    btn.onclick = () => {
+      const dest = btn.dataset.quickGo;
+      vibrate(8);
+      if (dest === 'treino') currentTab = 'treino';
+      else if (dest === 'nutri') currentTab = 'nutri';
+      else if (dest === 'sono') { modalSleep?.(); return; }
+      render();
+    };
+  });
+  // Daily quest toggle (versão compacta da home)
+  document.querySelectorAll('[data-quest-toggle]').forEach((btn) => {
+    btn.onclick = () => {
+      const id = btn.dataset.questToggle;
+      const da = state.quests.dailyAssigned;
+      if (da.completed.includes(id)) {
+        da.completed = da.completed.filter(x => x !== id);
+      } else {
+        da.completed.push(id);
+        const q = da.items.find(x => x.id === id);
+        if (q) {
+          addQuestXP(q);
+          confetti(200);
+        }
+      }
+      saveState();
+      render();
+    };
+  });
 
   // Atributo tile → abre modal com hero image + dicas pra subir
   document.querySelectorAll('.attr-tile').forEach((tile) => {
