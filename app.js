@@ -10171,35 +10171,19 @@ function modalWorkoutSession(type, dateISO = null, prebuiltStart = null) {
     }
     const newExercises = varyExercisesForSplit(type, start.exercises);
     if (!newExercises) {
-      // Fallback pros splits sem pool (Empurrar/Puxar/Pernas avulsos, livre, etc):
-      // apenas embaralha ordem e varia técnicas, como antes.
-      for (let i = start.exercises.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [start.exercises[i], start.exercises[j]] = [start.exercises[j], start.exercises[i]];
-      }
-      for (const ex of start.exercises) {
-        if (!ex.sets || ex.sets.length === 0) continue;
-        const cat = exerciseCategory(ex);
-        const opts = (TECH_BY_CAT[cat] || []).filter((t) => t);
-        if (!opts.length) continue;
-        const nToVary = Math.min(2, Math.max(1, Math.floor(ex.sets.length / 3)));
-        const idxs = new Set();
-        while (idxs.size < nToVary && idxs.size < ex.sets.length) {
-          idxs.add(Math.floor(Math.random() * ex.sets.length));
-        }
-        for (const i of idxs) {
-          ex.sets[i].technique = opts[Math.floor(Math.random() * opts.length)];
-        }
-      }
-      closeModal();
-      setTimeout(() => modalWorkoutSession(type, dateISO, start), 30);
-      toast('🎲 Ordem variada + técnicas sorteadas');
-    } else {
-      start.exercises = newExercises;
-      closeModal();
-      setTimeout(() => modalWorkoutSession(type, dateISO, start), 30);
-      toast('🎲 Novos exercícios sorteados');
+      // SEM POOL pra esse split — não embaralha mais (era confuso). Avisa e sai.
+      // Splits com pool: A · Peito, B · Costas, C · Pernas, Upper completo.
+      // Splits sem pool (Empurrar/Puxar avulsos, Livre, etc) só agora ganham
+      // mensagem explícita pra user saber por que nada mudou.
+      console.warn('[VHYX Variar] Sem pool de variação pra split:', type, '— pools disponíveis:', Object.keys(EXERCISE_POOL_BY_SPLIT));
+      toast(`⚠ Variação automática só está disponível pros splits ABC + Upper completo. "${type}" não tem pool ainda.`);
+      vibrate(8);
+      return;
     }
+    start.exercises = newExercises;
+    closeModal();
+    setTimeout(() => modalWorkoutSession(type, dateISO, start), 30);
+    toast(`🎲 ${newExercises.length} novos exercícios sorteados`);
     vibrate(15);
   });
 
