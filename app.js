@@ -9354,6 +9354,264 @@ function ensureBehaviors() {
 }
 
 // ====================================================================
+// VHYX — PLANO DA PRÓXIMA SEMANA · análise + sugestões ABA shaping
+// ====================================================================
+// Olha últimos 7 dias REAIS de logs e produz 5-8 mini-experimentos
+// concretos pra adotar/rejeitar. Cada sugestão segue shaping: pequena
+// e atingível, nunca radical. User aceita os que quer — vira pacto
+// salvo em state.user.nextWeekPlan e o operador cobra educadamente
+// na semana seguinte (voice line muda).
+
+/** Analisa últimos 7 dias com logs registrados e gera sugestões.
+ *  Retorna { snapshot, suggestions[] }. */
+function analyzeWeekForNextPlan() {
+  const todayIso = todayISO();
+  const last7 = (state.dailyLogs || [])
+    .filter(l => l.date <= todayIso)
+    .slice(-7);
+  if (!last7.length) return null;
+
+  // Snapshot bruto
+  const snap = {
+    days: last7.length,
+    workoutDays: last7.filter(l => l.training?.done).length,
+    proteinHitDays: last7.filter(l => l.protein?.hit).length,
+    sleepHitDays: last7.filter(l => (l.sleep?.hours || 0) >= 7).length,
+    avgWater: 0,
+    avgSteps: 0,
+    sunDays: 0,
+    breathDays: 0,
+    alcoholDays: 0,
+    fogDays: last7.filter(l => l.fogMode).length,
+    skippedDays: last7.filter(l => !l.training?.done && !(l.meals && l.meals.length) && !(l.sleep?.hours)).length,
+    protocolPct: 0,
+    weakest: null,
+  };
+  let totalProto = 0, possibleProto = 0;
+  const protoCounts = {};
+  for (const l of last7) {
+    const b = l.behaviors || {};
+    snap.avgWater += (b.water || 0);
+    snap.avgSteps += (l.steps || 0);
+    if (b.sun) snap.sunDays++;
+    if (b.breath) snap.breathDays++;
+    if (b.noAlcohol === false) snap.alcoholDays++;
+    // Conta protocolo
+    for (const def of PROTOCOL_BEHAVIORS) {
+      const ok = def.eval(l);
+      protoCounts[def.key] = (protoCounts[def.key] || 0) + (ok ? 1 : 0);
+      totalProto += ok ? 1 : 0;
+      possibleProto += 1;
+    }
+  }
+  snap.avgWater = +(snap.avgWater / last7.length).toFixed(1);
+  snap.avgSteps = Math.round(snap.avgSteps / last7.length);
+  snap.protocolPct = possibleProto > 0 ? Math.round((totalProto / possibleProto) * 100) : 0;
+
+  // Comportamento mais fraco (menor adesão)
+  let weakestKey = null, weakestCount = Infinity;
+  for (const def of PROTOCOL_BEHAVIORS) {
+    const c = protoCounts[def.key] || 0;
+    if (c < weakestCount) { weakestCount = c; weakestKey = def.key; }
+  }
+  snap.weakest = PROTOCOL_BEHAVIORS.find(b => b.key === weakestKey);
+  snap.weakestCount = weakestCount;
+  snap.protoCounts = protoCounts;
+
+  // === GERA SUGESTÕES (shaping — pequenas, mensuráveis) ===
+  const sug = [];
+
+  // 1. Álcool — gatilho prioritário pra fat loss
+  if (snap.alcoholDays >= 3) {
+    sug.push({ id: 'alc_3to1', icon: '🍷', cat: 'Álcool',
+      title: `Reduzir álcool: ${snap.alcoholDays} → 1 dia/sem`,
+      why: 'Álcool bloqueia oxidação de gordura por 36h. Cada dia a menos = ~1.5 dia de fat loss recuperado.',
+      micro: 'Combine com você: 1 noite escolhida na semana, as outras são "ouro" pro protocolo.' });
+  } else if (snap.alcoholDays >= 1) {
+    sug.push({ id: 'alc_keep', icon: '🍷', cat: 'Álcool',
+      title: `Manter ${snap.alcoholDays} dia/sem com álcool (já está bem)`,
+      why: 'Padrão atual já permite oxidação de gordura na maior parte da semana.',
+      micro: 'Só registra qual noite vai ser — antecipar reduz consumo total em ~30%.' });
+  }
+
+  // 2. Passos — alavanca silenciosa
+  const stepTarget = 8000;
+  if (snap.avgSteps < stepTarget) {
+    const next = Math.min(stepTarget, snap.avgSteps + 1000);
+    sug.push({ id: 'steps_up', icon: '👟', cat: 'NEAT',
+      title: `Passos: ${snap.avgSteps.toLocaleString('pt-BR')} → ${next.toLocaleString('pt-BR')}/dia`,
+      why: 'NEAT é metade do seu déficit. +1000 passos = ~50 kcal extra/dia = ~250g de gordura/mês.',
+      micro: 'Adicione 1 trajeto a pé que normalmente faz de carro. Não precisa academia extra.' });
+  } else {
+    sug.push({ id: 'steps_keep', icon: '👟', cat: 'NEAT',
+      title: `Manter ${snap.avgSteps.toLocaleString('pt-BR')} passos/dia (excelente)`,
+      why: 'Você já está acima da média ativa. Continuar é mais alavanca que treinar mais.',
+      micro: 'Defenda esse ritmo — não recue.' });
+  }
+
+  // 3. Proteína — preserva magra
+  if (snap.proteinHitDays < 4) {
+    sug.push({ id: 'prot_anchor', icon: '🥩', cat: 'Proteína',
+      title: `Bateu meta só ${snap.proteinHitDays} de 7 dias — vamos ancorar`,
+      why: 'Em déficit sem proteína = perde músculo + gordura. Definição depende de manter magra.',
+      micro: 'Adote 1 refeição PROTEICA FIXA (mesmo horário, mesma fonte). Ex: ovos no café-da-manhã todo dia. Vira hábito, sai do esforço.' });
+  }
+
+  // 4. Sono — cortisol/leptina
+  if (snap.sleepHitDays < 4) {
+    sug.push({ id: 'sleep_anchor', icon: '🌙', cat: 'Sono',
+      title: `Sono ≥7h em ${snap.sleepHitDays}/7 dias — mexer no antecedente`,
+      why: 'Insuficiência de sono crônica eleva cortisol e baixa leptina (fome + estoque abdominal). Maior sabotador silencioso de fat loss.',
+      micro: 'Defina horário de dormir fixo, escolha um. Avise: alarme de dormir 30min antes do horário pra você desacelerar. Mais eficaz que tentar dormir mais cedo "quando der".' });
+  }
+
+  // 5. Comportamento mais fraco do protocolo — micro-meta
+  if (snap.weakest && snap.weakestCount <= 1) {
+    const w = snap.weakest;
+    const microMap = {
+      breath: 'Defina o GATILHO: após o almoço, antes de levantar da cadeira. 1× só. Crescemos a partir daí.',
+      sun:    'Saia 10min pra tomar sol DURANTE o almoço. Já come, só leva pro lado de fora.',
+      water:  'Encha 1 garrafa de 500ml de manhã e DEIXE VISÍVEL na mesa. Beba quando ver.',
+      noAlc:  'Escolha já a noite que vai beber essa semana. Antecipação reduz consumo total.',
+    };
+    sug.push({ id: 'weak_'+w.key, icon: w.icon, cat: 'Ponto fraco',
+      title: `${w.label}: só ${snap.weakestCount}/7 dias essa semana`,
+      why: w.why,
+      micro: microMap[w.key] || 'Cole o comportamento num antecedente JÁ existente (escovar dente, tomar café, sair pro almoço). Ancoragem reduz a 90% o esforço de manutenção.' });
+  }
+
+  // 6. Treinos
+  if (snap.workoutDays < 3) {
+    sug.push({ id: 'train_3plus', icon: '💪', cat: 'Treino',
+      title: `Treinou ${snap.workoutDays}/7 dias — mínimo viável: 3`,
+      why: 'Treino de força é não-negociável pra DEFINIÇÃO. Sem ele, déficit consome músculo igual gordura.',
+      micro: 'Compromisso: 3 treinos curtos (30min) > 5 longos planejados que não saem. Coloque no calendário do celular como compromisso fixo.' });
+  } else if (snap.workoutDays >= 5) {
+    sug.push({ id: 'train_dload', icon: '🛌', cat: 'Recuperação',
+      title: `${snap.workoutDays} treinos/sem — considere semana de deload`,
+      why: 'Volume alto sem deload eleva cortisol crônico → estoque abdominal. Paradoxalmente, descansar acelera definição.',
+      micro: 'A cada 4 semanas, faça 1 semana com 50% do volume. Não é preguiça — é tática.' });
+  }
+
+  // 7. Modo névoa
+  if (snap.fogDays >= 2) {
+    sug.push({ id: 'fog_kind', icon: '🌫', cat: 'Cuidado',
+      title: `${snap.fogDays} dias em modo névoa — está pesado`,
+      why: 'Modo névoa repetido sinaliza esgotamento ou disforia. Forçar protocolo agora prejudica adesão de longo prazo.',
+      micro: 'Reduza protocolo a 3 comportamentos essa semana. Quando sair da névoa, sobe escala devagar. Sem culpa.' });
+  }
+
+  // 8. Adesão geral — calibra dificuldade
+  if (snap.protocolPct < 40) {
+    sug.push({ id: 'reduce_scope', icon: '🎯', cat: 'Calibrar',
+      title: `Adesão do protocolo em ${snap.protocolPct}% — reduzir escopo`,
+      why: 'Quando adesão cai abaixo de 50%, o problema é dificuldade, não preguiça. Bater 3/3 reforça mais que falhar 3/8.',
+      micro: 'Escolha SÓ 3 comportamentos pra semana (recomendo: TREINO, NUTRI, SONO). Quando bater 6/7 dias, abre +1 comportamento na semana seguinte.' });
+  } else if (snap.protocolPct >= 75) {
+    sug.push({ id: 'reinforce', icon: '✓', cat: 'Reforço',
+      title: `Adesão ${snap.protocolPct}% — você está em protocolo`,
+      why: 'Quando consistência passa de 75%, o sistema entra em modo "automático" — esforço subjetivo cai.',
+      micro: 'Próxima semana: nada muda. Apenas mantém. Resultado se acumula em 3-4 semanas dessas.' });
+  }
+
+  return { snapshot: snap, suggestions: sug };
+}
+
+/** Modal Plano da Próxima Semana — mostra análise + sugestões aceitáveis.
+ *  Sugestões aceitas são salvas em state.user.nextWeekPlan. */
+function modalNextWeekPlan() {
+  const res = analyzeWeekForNextPlan();
+  if (!res) {
+    openModal(`
+      <div class="vhyx-plan-empty">
+        <button class="workout-hero-btn workout-hero-btn-right modal-close" aria-label="Fechar">✕</button>
+        <div class="vhyx-plan-empty-eyebrow">▸ PLANO DA PRÓXIMA SEMANA</div>
+        <h2>Sem dados ainda</h2>
+        <p>Registre pelo menos 1 dia pra eu cruzar com o protocolo e gerar o plano. Volta amanhã.</p>
+      </div>`);
+    return;
+  }
+  const { snapshot, suggestions } = res;
+  const adopted = new Set((state.user?.nextWeekPlan?.adopted) || []);
+
+  openModal(`
+    <header class="vhyx-plan-header">
+      <div>
+        <div class="vhyx-plan-eyebrow">▸ PLANO DA PRÓXIMA SEMANA</div>
+        <h2 class="vhyx-plan-title">Briefing pós-análise</h2>
+        <p class="vhyx-plan-sub">Últimos ${snapshot.days} dias cruzados. ${suggestions.length} micro-experimentos propostos. Aceita o que fizer sentido.</p>
+      </div>
+      <button class="workout-hero-btn workout-hero-btn-right modal-close" aria-label="Fechar">✕</button>
+    </header>
+    <div class="vhyx-plan-body">
+
+      <section class="vhyx-plan-snapshot">
+        <div class="vhyx-plan-snap-head">▸ DIAGNÓSTICO DA SEMANA</div>
+        <div class="vhyx-plan-snap-grid">
+          <div><b>${snapshot.workoutDays}/7</b><span>treinos</span></div>
+          <div><b>${snapshot.proteinHitDays}/7</b><span>meta proteína</span></div>
+          <div><b>${snapshot.sleepHitDays}/7</b><span>sono ≥7h</span></div>
+          <div><b>${snapshot.protocolPct}%</b><span>adesão protocolo</span></div>
+          <div><b>${snapshot.avgSteps.toLocaleString('pt-BR')}</b><span>passos/dia</span></div>
+          <div><b>${snapshot.alcoholDays}</b><span>dias c/ álcool</span></div>
+        </div>
+      </section>
+
+      <section class="vhyx-plan-suggestions">
+        <div class="vhyx-plan-sug-head">▸ POSSIBILIDADES PRA ADOTAR</div>
+        ${suggestions.map(s => `
+          <div class="vhyx-plan-card ${adopted.has(s.id) ? 'is-adopted' : ''}" data-sug="${s.id}">
+            <div class="vhyx-plan-card-head">
+              <span class="vhyx-plan-card-icon">${s.icon}</span>
+              <div class="vhyx-plan-card-titlewrap">
+                <span class="vhyx-plan-card-cat">${s.cat}</span>
+                <span class="vhyx-plan-card-title">${s.title}</span>
+              </div>
+              <button class="vhyx-plan-toggle" data-toggle="${s.id}" aria-label="Adotar">
+                ${adopted.has(s.id) ? '✓ adotado' : '+ adotar'}
+              </button>
+            </div>
+            <p class="vhyx-plan-card-why"><b>Por quê:</b> ${s.why}</p>
+            <p class="vhyx-plan-card-micro"><b>Micro-passo:</b> ${s.micro}</p>
+          </div>
+        `).join('')}
+      </section>
+
+      <button class="vhyx-plan-save" id="vhyx-plan-save">SALVAR PLANO PRA PRÓXIMA SEMANA</button>
+      <p class="vhyx-plan-footer">As escolhidas viram lembrete sutil no Operador na semana que vem. Sem cobrança rígida.</p>
+    </div>
+  `);
+
+  // Toggle adoção
+  document.querySelectorAll('[data-toggle]').forEach(btn => {
+    btn.onclick = (e) => {
+      const id = e.currentTarget.dataset.toggle;
+      const card = document.querySelector(`[data-sug="${id}"]`);
+      if (adopted.has(id)) {
+        adopted.delete(id);
+        card?.classList.remove('is-adopted');
+        e.currentTarget.textContent = '+ adotar';
+      } else {
+        adopted.add(id);
+        card?.classList.add('is-adopted');
+        e.currentTarget.textContent = '✓ adotado';
+      }
+    };
+  });
+  document.getElementById('vhyx-plan-save')?.addEventListener('click', () => {
+    state.user.nextWeekPlan = {
+      adopted: Array.from(adopted),
+      generatedAt: todayISO(),
+      snapshot,
+    };
+    saveState();
+    closeModal();
+    toast(`Plano salvo · ${adopted.size} micro-experimentos pra próxima semana`);
+    vibrate(15);
+  });
+}
+
+// ====================================================================
 // VHYX — HOME TDAH-first (lore-driven)
 // Princípios: carga cognitiva mínima · reforço imediato · urgência
 // narrativa > prazo abstrato · body-doubling permanente · modo névoa
@@ -9744,6 +10002,10 @@ function viewDashboard() {
       `).join('')}
     </div>
     <div class="vhyx-chapter-meta">${wp.done}/${wp.total} dias · ${dayXP}/${DAILY_XP_CAP} XP hoje</div>
+    <button class="vhyx-plan-trigger" data-action="open-next-week-plan">
+      <span>▸ PLANO DA PRÓXIMA SEMANA</span>
+      <span class="vhyx-plan-trigger-meta">análise + dicas baseadas em padrão</span>
+    </button>
   </section>
 
   <!-- ZONA 3: MISSÃO ÚNICA DO DIA -->
@@ -15721,6 +15983,10 @@ function attachHandlers() {
   // Trigger Mundo VHYX direto da home
   document.querySelectorAll('[data-action="open-world"]').forEach((btn) => {
     btn.onclick = () => { vibrate(8); modalUniverseVHYX(); };
+  });
+  // Trigger Plano da Próxima Semana
+  document.querySelectorAll('[data-action="open-next-week-plan"]').forEach((btn) => {
+    btn.onclick = () => { vibrate(8); modalNextWeekPlan(); };
   });
   // Missão CTA — abre treino se train, marca descanso se rest, registra de novo se done
   document.getElementById('vhyx-mission-cta')?.addEventListener('click', () => {

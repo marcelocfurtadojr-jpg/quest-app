@@ -4386,6 +4386,222 @@ html[data-character] .kombat-divider::after {
   color: var(--vhyx-text-mid, rgba(244,246,250,0.7));
 }
 
+/* PLANO DA PRÓXIMA SEMANA — trigger na home + modal */
+.vhyx-plan-trigger {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px dashed var(--vhyx-cyan, #6EEEFF);
+  background: rgba(110,238,255,0.05);
+  color: var(--vhyx-cyan, #6EEEFF);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.15em;
+  cursor: pointer;
+  transition: background .15s ease;
+}
+.vhyx-plan-trigger:hover {
+  background: rgba(110,238,255,0.12);
+}
+.vhyx-plan-trigger-meta {
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: var(--vhyx-text-low, rgba(244,246,250,0.5));
+  text-transform: lowercase;
+}
+.vhyx-plan-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 22px 18px 16px;
+  border-bottom: 1px dashed var(--vhyx-cyan, #6EEEFF);
+  background: linear-gradient(180deg, rgba(110,238,255,0.08), transparent);
+}
+.vhyx-plan-eyebrow {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  color: var(--vhyx-cyan, #6EEEFF);
+}
+.vhyx-plan-title {
+  font-family: "Russo One", Impact, sans-serif;
+  font-size: 22px;
+  letter-spacing: 0.05em;
+  color: var(--vhyx-text, #F4F6FA);
+  margin: 4px 0 4px;
+}
+.vhyx-plan-sub {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--vhyx-text-mid, rgba(244,246,250,0.72));
+  margin: 0;
+}
+.vhyx-plan-body {
+  padding: 16px;
+  background: var(--vhyx-bg, #0A0E1A);
+  overflow-y: auto;
+  max-height: 76vh;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.vhyx-plan-snap-head, .vhyx-plan-sug-head {
+  font-family: "Russo One", Impact, sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  color: var(--vhyx-cyan, #6EEEFF);
+  border-bottom: 1px solid var(--vhyx-border, rgba(255,255,255,0.08));
+  padding-bottom: 6px;
+  margin-bottom: 10px;
+}
+.vhyx-plan-snap-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 6px;
+}
+.vhyx-plan-snap-grid > div {
+  padding: 10px 8px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.04);
+  text-align: center;
+}
+.vhyx-plan-snap-grid b {
+  display: block;
+  font-family: "Russo One", Impact, sans-serif;
+  font-size: 16px;
+  color: var(--vhyx-text, #F4F6FA);
+}
+.vhyx-plan-snap-grid span {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.04em;
+  color: var(--vhyx-text-mid, rgba(244,246,250,0.6));
+}
+.vhyx-plan-card {
+  padding: 12px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--vhyx-border, rgba(255,255,255,0.08));
+  margin-bottom: 8px;
+  transition: all .15s ease;
+}
+.vhyx-plan-card.is-adopted {
+  background: linear-gradient(135deg, rgba(123,255,176,0.08), rgba(110,238,255,0.04));
+  border-color: #7BFFB0;
+  box-shadow: 0 0 0 1px rgba(123,255,176,0.35);
+}
+.vhyx-plan-card-head {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+.vhyx-plan-card-icon {
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.vhyx-plan-card-titlewrap {
+  flex: 1;
+  min-width: 0;
+}
+.vhyx-plan-card-cat {
+  display: block;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  color: var(--vhyx-cyan, #6EEEFF);
+}
+.vhyx-plan-card-title {
+  display: block;
+  font-family: "Russo One", Impact, sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.03em;
+  color: var(--vhyx-text, #F4F6FA);
+  margin-top: 2px;
+  line-height: 1.35;
+}
+.vhyx-plan-toggle {
+  flex-shrink: 0;
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--vhyx-border, rgba(255,255,255,0.18));
+  background: transparent;
+  color: var(--vhyx-text-mid, rgba(244,246,250,0.7));
+  font-family: "JetBrains Mono", monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all .15s ease;
+  white-space: nowrap;
+}
+.vhyx-plan-card.is-adopted .vhyx-plan-toggle {
+  background: #7BFFB0;
+  border-color: #7BFFB0;
+  color: #0A0E1A;
+  font-weight: 700;
+}
+.vhyx-plan-card-why, .vhyx-plan-card-micro {
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--vhyx-text-mid, rgba(244,246,250,0.78));
+  margin: 6px 0 0;
+}
+.vhyx-plan-card-why b, .vhyx-plan-card-micro b {
+  color: var(--vhyx-cyan, #6EEEFF);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+.vhyx-plan-save {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  border: 0;
+  background: linear-gradient(135deg, var(--vhyx-cyan, #6EEEFF), #7BFFB0);
+  color: var(--vhyx-bg, #0A0E1A);
+  font-family: "Russo One", Impact, sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  cursor: pointer;
+  box-shadow: 0 6px 20px var(--vhyx-cyan-glow, rgba(110,238,255,0.45));
+  margin-top: 6px;
+}
+.vhyx-plan-footer {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.04em;
+  color: var(--vhyx-text-low, rgba(244,246,250,0.4));
+  text-align: center;
+  margin: 10px 0 0;
+  line-height: 1.5;
+}
+.vhyx-plan-empty {
+  padding: 28px 24px;
+  text-align: center;
+  background: var(--vhyx-bg, #0A0E1A);
+  color: var(--vhyx-text, #F4F6FA);
+}
+.vhyx-plan-empty-eyebrow {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  color: var(--vhyx-cyan, #6EEEFF);
+  margin-bottom: 12px;
+}
+.vhyx-plan-empty h2 {
+  font-family: "Russo One", Impact, sans-serif;
+  font-size: 18px;
+  margin: 0 0 8px;
+}
+.vhyx-plan-empty p {
+  font-size: 13px;
+  color: var(--vhyx-text-mid, rgba(244,246,250,0.7));
+  line-height: 1.55;
+}
+
 /* ZONA 4 · PROTOCOLO DIÁRIO — 8 comportamentos fat loss/definição */
 .vhyx-protocol {
   padding: 14px 14px 16px;
